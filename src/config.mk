@@ -40,7 +40,7 @@
 THIS = teletype
 
 # Path to top level ASF directory relative to this project directory.
-PRJ_PATH = ../xdk-asf-3.17.0
+PRJ_PATH = ../libavr32/asf
 
 # Target CPU architecture: ap, ucr1, ucr2 or ucr3
 # ARCH = ucr1
@@ -64,30 +64,30 @@ TARGET = $(THIS).elf
 
 # List of C source files.
 CSRCS = \
-       ../$(THIS)/main.c    \
-       ../$(THIS)/table.c    \
-       ../$(THIS)/teletype.c    \
-       ../$(THIS)/euclidean/euclidean.c    \
-       ../$(THIS)/euclidean/data.c    \
-       ../skeleton/adc.c     \
-       ../skeleton/events.c     \
-       ../skeleton/fix.c     \
-       ../skeleton/font.c     \
-       ../skeleton/i2c.c \
-       ../skeleton/init_teletype.c \
-       ../skeleton/init_common.c \
-       ../skeleton/kbd.c \
-       ../skeleton/region.c \
-       ../skeleton/screen.c \
-       ../skeleton/timers.c \
-       ../skeleton/usb.c \
-       ../skeleton/util.c \
-       ../skeleton/usb/ftdi/ftdi.c \
-       ../skeleton/usb/ftdi/uhi_ftdi.c \
-       ../skeleton/usb/hid/hid.c \
-       ../skeleton/usb/hid/uhi_hid.c \
-       ../skeleton/usb/midi/uhi_midi.c \
-       ../skeleton/usb/midi/midi.c \
+       ../src/main.c    \
+       ../src/table.c    \
+       ../src/teletype.c    \
+       ../src/euclidean/euclidean.c    \
+       ../src/euclidean/data.c    \
+       ../libavr32/src/adc.c     \
+       ../libavr32/src/events.c     \
+       ../libavr32/src/fix.c     \
+       ../libavr32/src/font.c     \
+       ../libavr32/src/i2c.c \
+       ../libavr32/src/init_teletype.c \
+       ../libavr32/src/init_common.c \
+       ../libavr32/src/kbd.c \
+       ../libavr32/src/region.c \
+       ../libavr32/src/screen.c \
+       ../libavr32/src/timers.c \
+       ../libavr32/src/usb.c \
+       ../libavr32/src/util.c \
+       ../libavr32/src/usb/ftdi/ftdi.c \
+       ../libavr32/src/usb/ftdi/uhi_ftdi.c \
+       ../libavr32/src/usb/hid/hid.c \
+       ../libavr32/src/usb/hid/uhi_hid.c \
+       ../libavr32/src/usb/midi/uhi_midi.c \
+       ../libavr32/src/usb/midi/midi.c \
        avr32/drivers/adc/adc.c                            \
        avr32/drivers/flashc/flashc.c                      \
        avr32/drivers/gpio/gpio.c                          \
@@ -120,15 +120,14 @@ ASSRCS = \
 
 # List of include paths.
 INC_PATH = \
-       ../$(THIS)           \
-       ../system                                        \
-       ../skeleton \
-       ../skeleton/conf \
-       ../skeleton/conf/teletype \
-       ../skeleton/usb \
-       ../skeleton/usb/ftdi \
-       ../skeleton/usb/hid \
-       ../skeleton/usb/midi \
+       ../../src           \
+       ../src \
+       ../src/usb \
+       ../src/usb/ftdi \
+       ../src/usb/hid \
+       ../src/usb/midi \
+       ../conf \
+       ../conf/teletype \
        avr32/boards                                       \
        avr32/drivers/cpu/cycle_counter                    \
        avr32/drivers/flashc                               \
@@ -169,7 +168,7 @@ LIBS =
 # LINKER_SCRIPT = avr32/utils/linker_scripts/at32uc3b/0256/gcc/link_uc3b0256.lds
 # LINKER_SCRIPT = avr32/drivers/flashc/flash_example/at32uc3b0256_evk1101/link_uc3b0256.lds
 # LINKER_SCRIPT = ../system/link_uc3b0256.lds
-LINKER_SCRIPT = ../skeleton/link_uc3b0512.lds
+LINKER_SCRIPT = ../src/link_uc3b0512.lds
 
 
 # Additional options for debugging. By default the common Makefile.in will
