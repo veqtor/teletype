@@ -1,3 +1,14 @@
+/*
+teletype!
+
+todo:
+
+- remove op text strings?
+- script tr execution clocked? on 1ms timer, where interrupts simply queue execution?
+- protect process() from ints? tele_tick??
+
+*/
+
 #include <stdio.h>	//sprintf
 #include <ctype.h>  //toupper
 #include <string.h> //memcpy
@@ -1816,7 +1827,7 @@ static void tele_mute(uint8_t i, uint8_t s) {
 // usb disk
 
 static void tele_usb_disk() {
-	uint8_t usb_retry = 10;
+	uint8_t usb_retry = 15;
 	print_dbg("\r\nusb");
 	while(usb_retry--) {
 		print_dbg(".");
@@ -1987,6 +1998,7 @@ static void tele_usb_disk() {
 					region_fill(&line[1], 0);
 					font_string_region_clip_tab(&line[1], input_buffer, 2, 0, 0xa, 0);
 					region_draw(&line[1]);
+					delay_ms(50);
 					if(nav_filelist_findname(filename,0)) {
 						print_dbg("\r\nfound: ");
 						print_dbg(filename);
