@@ -10,7 +10,7 @@
 #define TELE_STACK_SIZE 8
 #define TELE_D_SIZE 8
 
-#define WELCOME "TELETYPE 1.11"
+#define WELCOME "TELETYPE 1.12"
 
 #define TRUE 1
 #define FALSE 0

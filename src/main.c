@@ -7,6 +7,9 @@ todo:
 - script tr execution clocked? on 1ms timer, where interrupts simply queue execution?
 - protect process() from ints? tele_tick??
 
+serial framing:
+http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
+
 */
 
 #include <stdio.h>	//sprintf
@@ -1548,7 +1551,14 @@ static void handler_II(s32 data) {
 	uint8_t i = data & 0xff;
 	int16_t d = (int)(data >> 16);
 	uint8_t addr = i & 0xf0;
-	i2c_master_tx(addr, i, d);
+
+	uint8_t buffer[3];
+
+	buffer[0] = i;
+	buffer[1] = d >> 8;
+	buffer[2] = d & 0xff;
+
+	i2c_master_tx(addr, buffer, 3);
 	// print_dbg("\r\ni2c: ");
 	// print_dbg_ulong(addr);
 	// print_dbg(" ");
