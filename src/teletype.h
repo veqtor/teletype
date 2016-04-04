@@ -54,7 +54,7 @@ typedef struct {
 
 typedef struct {
 	const char *name;
-	void (*func)(uint8_t);
+	void (*func)(void);
 	int16_t v;
 } tele_var_t;
 

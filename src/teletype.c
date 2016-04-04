@@ -162,24 +162,24 @@ static tele_key_t tele_keys[KEYS] = {
 
 // ENUM IN HEADER
 
-static void v_P_N(uint8_t);
-static void v_M(uint8_t);
-static void v_M_ACT(uint8_t);
-static void v_P_L(uint8_t);
-static void v_P_I(uint8_t);
-static void v_P_HERE(uint8_t);
-static void v_P_NEXT(uint8_t);
-static void v_P_PREV(uint8_t);
-static void v_P_WRAP(uint8_t);
-static void v_P_START(uint8_t);
-static void v_P_END(uint8_t);
-static void v_O(uint8_t);
-static void v_DRUNK(uint8_t);
-static void v_Q(uint8_t);
-static void v_Q_N(uint8_t);
-static void v_Q_AVG(uint8_t);
-static void v_SCENE(uint8_t);
-static void v_FLIP(uint8_t);
+static void v_P_N(void);
+static void v_M(void);
+static void v_M_ACT(void);
+static void v_P_L(void);
+static void v_P_I(void);
+static void v_P_HERE(void);
+static void v_P_NEXT(void);
+static void v_P_PREV(void);
+static void v_P_WRAP(void);
+static void v_P_START(void);
+static void v_P_END(void);
+static void v_O(void);
+static void v_DRUNK(void);
+static void v_Q(void);
+static void v_Q_N(void);
+static void v_Q_AVG(void);
+static void v_SCENE(void);
+static void v_FLIP(void);
 
 static int16_t tele_q[16];
 
@@ -226,7 +226,7 @@ static tele_var_t tele_vars[VARS] = {
 	{"DRUNK.WRAP",NULL,0}
 };
 
-static void v_M(uint8_t n) {
+static void v_M() {
 	if(left || top == 0)
 		push(tele_vars[V_M].v);
 	else {
@@ -236,7 +236,7 @@ static void v_M(uint8_t n) {
 	}
 }
 
-static void v_M_ACT(uint8_t n) {
+static void v_M_ACT() {
 	if(left || top == 0)
 		push(tele_vars[V_M_ACT].v);
 	else {
@@ -247,7 +247,7 @@ static void v_M_ACT(uint8_t n) {
 	}
 }
 
-static void v_P_N(uint8_t n) {
+static void v_P_N() {
 	int16_t a;
 	if(left || top == 0) {
 		push(pn);
@@ -260,7 +260,7 @@ static void v_P_N(uint8_t n) {
 	}
 }
 
-static void v_P_L(uint8_t n) {
+static void v_P_L() {
 	int16_t a;
 	if(left || top == 0) {
 		push(tele_patterns[pn].l);
@@ -273,7 +273,7 @@ static void v_P_L(uint8_t n) {
 	}
 }
 
-static void v_P_I(uint8_t n) {
+static void v_P_I() {
 	int16_t a;
 	if(left || top == 0) {
 		push(tele_patterns[pn].i);
@@ -287,7 +287,7 @@ static void v_P_I(uint8_t n) {
 	}
 }
 
-static void v_P_HERE(uint8_t n) {
+static void v_P_HERE() {
 	int16_t a;
 	if(left || top == 0) {
 		push(tele_patterns[pn].v[tele_patterns[pn].i]);
@@ -298,7 +298,7 @@ static void v_P_HERE(uint8_t n) {
 	}
 }
 
-static void v_P_NEXT(uint8_t n) {
+static void v_P_NEXT() {
 	int16_t a;
 	if((tele_patterns[pn].i == (tele_patterns[pn].l - 1)) || (tele_patterns[pn].i == tele_patterns[pn].end)) {
 		if(tele_patterns[pn].wrap)
@@ -321,7 +321,7 @@ static void v_P_NEXT(uint8_t n) {
 	(*update_pi)();
 }
 
-static void v_P_PREV(uint8_t n) {
+static void v_P_PREV() {
 	int16_t a;
 	if((tele_patterns[pn].i == 0) || (tele_patterns[pn].i == tele_patterns[pn].start)) {
 		if(tele_patterns[pn].wrap) {
@@ -345,7 +345,7 @@ static void v_P_PREV(uint8_t n) {
 	(*update_pi)();
 }
 
-static void v_P_WRAP(uint8_t n) {
+static void v_P_WRAP() {
 	int16_t a;
 	if(left || top == 0) {
 		push(tele_patterns[pn].wrap);
@@ -358,7 +358,7 @@ static void v_P_WRAP(uint8_t n) {
 	}
 }
 
-static void v_P_START(uint8_t n) {
+static void v_P_START() {
 	int16_t a;
 	if(left || top == 0) {
 		push(tele_patterns[pn].start);
@@ -371,7 +371,7 @@ static void v_P_START(uint8_t n) {
 	}
 }
 
-static void v_P_END(uint8_t n) {
+static void v_P_END() {
 	int16_t a;
 	if(left || top == 0) {
 		push(tele_patterns[pn].end);
@@ -384,7 +384,7 @@ static void v_P_END(uint8_t n) {
 	}
 }
 
-static void v_O(uint8_t n) {
+static void v_O() {
 	if(left || top == 0) {
 		tele_vars[V_O].v += tele_vars[V_O_DIR].v;
 		if(tele_vars[V_O].v > tele_vars[V_O_MAX].v) {
@@ -407,7 +407,7 @@ static void v_O(uint8_t n) {
 	}
 }
 
-static void v_DRUNK(uint8_t n) {
+static void v_DRUNK() {
 	if(left || top == 0) {
 		tele_vars[V_DRUNK].v += (rand() % 3) - 1;
 		if(tele_vars[V_DRUNK].v < tele_vars[V_DRUNK_MIN].v) {
@@ -429,7 +429,7 @@ static void v_DRUNK(uint8_t n) {
 	}
 }
 
-static void v_Q(uint8_t n) {
+static void v_Q() {
 	if(left || top == 0) {
 		push(tele_q[tele_vars[V_Q_N].v-1]);
 	}
@@ -439,7 +439,7 @@ static void v_Q(uint8_t n) {
 		tele_q[0] = pop();
 	}
 }
-static void v_Q_N(uint8_t n) {
+static void v_Q_N() {
 	if(left || top == 0) {
 		push(tele_vars[V_Q_N].v);
 	}
@@ -451,7 +451,7 @@ static void v_Q_N(uint8_t n) {
 	}
 }
 
-static void v_Q_AVG(uint8_t n) {
+static void v_Q_AVG() {
 	if(left || top == 0) {
 		int32_t avg = 0;
 		for(int16_t i = 0;i<tele_vars[V_Q_N].v;i++)
@@ -466,7 +466,7 @@ static void v_Q_AVG(uint8_t n) {
 			tele_q[i] = a;
 	}
 }
-static void v_SCENE(uint8_t n) {
+static void v_SCENE() {
 	if(left || top == 0) {
 		push(tele_vars[V_SCENE].v);
 	}
@@ -475,7 +475,7 @@ static void v_SCENE(uint8_t n) {
 		(*update_scene)(tele_vars[V_SCENE].v);
 	}
 }
-static void v_FLIP(uint8_t n) {
+static void v_FLIP() {
 	if(left || top == 0) {
 		push(tele_vars[V_O].v);
 		tele_vars[V_O].v = (tele_vars[V_O].v == 0);
@@ -1560,7 +1560,7 @@ void process(tele_command_t *c) {
 					tele_vars[c->data[n].v].v = pop();
 			}
 			else
-				tele_vars[c->data[n].v].func(0);
+				tele_vars[c->data[n].v].func();
 		}
  		else if(c->data[n].t == ARRAY) {
 			i = pop();
