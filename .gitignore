@@ -40,3 +40,6 @@
 
 # Debug files
 *.dSYM/
+
+# Build outputs
+/simulator/tt
