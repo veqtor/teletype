@@ -128,7 +128,8 @@ int main() {
 			i++;
 		}
 
-		status = parse(in);
+    tele_command_t temp;
+		status = parse(in, &temp);
 		if(status == E_OK) {
 			status = validate(&temp);
 			printf("validate: %s", tele_error(status));

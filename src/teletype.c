@@ -44,7 +44,6 @@ char error_detail[16];
 
 uint8_t mutes[8];
 
-tele_command_t temp;
 tele_pattern_t tele_patterns[4];
 
 static uint8_t pn;
@@ -1289,25 +1288,25 @@ static void op_ER() {
 /////////////////////////////////////////////////////////////////
 // PROCESS //////////////////////////////////////////////////////
 
-error_t parse(char *cmd) {
-    char c[32];
-    strcpy(c, cmd);
+error_t parse(char *cmd, tele_command_t *out) {
+    char cmd_copy[32];
+    strcpy(cmd_copy, cmd);
     const char *delim = " \n";
-    const char *s = strtok(c, delim);
+    const char *s = strtok(cmd_copy, delim);
 
     uint8_t n = 0;
-    temp.l = n;
+    out->l = n;
 
     // sprintf(dbg,"\r\nparse: ");
 
     while (s) {
         // CHECK IF NUMBER
         if (isdigit(s[0]) || s[0] == '-') {
-            temp.data[n].t = NUMBER;
-            temp.data[n].v = strtol(s, NULL, 0);
+            out->data[n].t = NUMBER;
+            out->data[n].v = strtol(s, NULL, 0);
         }
         else if (s[0] == ':')
-            temp.data[n].t = SEP;
+            out->data[n].t = SEP;
         else {
             // CHECK AGAINST VARS
             int16_t i = VARS - 1;
@@ -1318,9 +1317,9 @@ error_t parse(char *cmd) {
                 // print_dbg("'");
 
                 if (!strcmp(s, tele_vars[i].name)) {
-                    temp.data[n].t = VAR;
-                    temp.data[n].v = i;
-                    // sprintf(dbg,"v(%d) ", temp.data[n].v);
+                    out->data[n].t = VAR;
+                    out->data[n].v = i;
+                    // sprintf(dbg,"v(%d) ", out->data[n].v);
                     break;
                 }
             } while (i--);
@@ -1335,9 +1334,9 @@ error_t parse(char *cmd) {
                     // print_dbg("'");
 
                     if (!strcmp(s, tele_arrays[i].name)) {
-                        temp.data[n].t = ARRAY;
-                        temp.data[n].v = i;
-                        // sprintf(dbg,"a(%d) ", temp.data[n].v);
+                        out->data[n].t = ARRAY;
+                        out->data[n].v = i;
+                        // sprintf(dbg,"a(%d) ", out->data[n].v);
                         break;
                     }
                 }
@@ -1353,9 +1352,9 @@ error_t parse(char *cmd) {
                     // print_dbg("'");
 
                     if (!strcmp(s, tele_ops[i].name)) {
-                        temp.data[n].t = OP;
-                        temp.data[n].v = i;
-                        // sprintf(dbg,"f(%d) ", temp.data[n].v);
+                        out->data[n].t = OP;
+                        out->data[n].v = i;
+                        // sprintf(dbg,"f(%d) ", out->data[n].v);
                         break;
                     }
                 }
@@ -1371,9 +1370,9 @@ error_t parse(char *cmd) {
                     // print_dbg("'");
 
                     if (!strcmp(s, tele_mods[i].name)) {
-                        temp.data[n].t = MOD;
-                        temp.data[n].v = i;
-                        // sprintf(dbg,"f(%d) ", temp.data[n].v);
+                        out->data[n].t = MOD;
+                        out->data[n].v = i;
+                        // sprintf(dbg,"f(%d) ", out->data[n].v);
                         break;
                     }
                 }
@@ -1389,9 +1388,9 @@ error_t parse(char *cmd) {
                     // print_dbg("'");
 
                     if (!strcmp(s, tele_keys[i].name)) {
-                        temp.data[n].t = KEY;
-                        temp.data[n].v = i;
-                        // sprintf(dbg,"f(%d) ", temp.data[n].v);
+                        out->data[n].t = KEY;
+                        out->data[n].v = i;
+                        // sprintf(dbg,"f(%d) ", out->data[n].v);
                         break;
                     }
                 }
@@ -1406,7 +1405,7 @@ error_t parse(char *cmd) {
         s = strtok(NULL, delim);
 
         n++;
-        temp.l = n;
+        out->l = n;
 
         if (n == COMMAND_MAX_LENGTH) return E_LENGTH;
     }
