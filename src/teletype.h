@@ -130,7 +130,7 @@ typedef struct {
 } tele_pattern_t;
 
 
-error_t parse(char *cmd);
+error_t parse(char *cmd, tele_command_t *out);
 error_t validate(tele_command_t *c);
 void process(tele_command_t *c);
 char *print_command(const tele_command_t *c);
@@ -147,8 +147,6 @@ void tele_set_val(uint8_t i, uint16_t v);
 
 const char *tele_error(error_t);
 const char *to_v(int16_t);
-
-extern tele_command_t temp;
 
 extern tele_pattern_t tele_patterns[4];
 

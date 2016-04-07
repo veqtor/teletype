@@ -868,7 +868,8 @@ static void handler_HidTimer(s32 data) {
 
                     case RETURN:
                         if (mode == M_EDIT || mode == M_LIVE) {
-                            status = parse(input);
+                            tele_command_t temp;
+                            status = parse(input, &temp);
 
                             if (status == E_OK) {
                                 status = validate(&temp);
@@ -2228,7 +2229,8 @@ static void tele_usb_disk() {
                                 else if (s >= 0 && s <= 9) {
                                     if (c == '\n') {
                                         if (p && l < SCRIPT_MAX_COMMANDS) {
-                                            status = parse(input);
+                                            tele_command_t temp;
+                                            status = parse(input, &temp);
 
                                             if (status == E_OK) {
                                                 // print_dbg("\r\nparsed: ");

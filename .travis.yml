@@ -1,4 +1,4 @@
-language: generic
+language: c
 
 install:
   - pushd $HOME
@@ -9,7 +9,9 @@ install:
   - mv avr32-gnu-toolchain-linux_x86_64 $HOME/avr32-tools
   - unzip avr32-headers-6.2.0.742.zip -d $HOME/avr32-tools/avr32/include
   - popd
-  
+
 script:
   - cd src
   - PATH="$HOME/avr32-tools/bin:$PATH" make
+  - cd ../tests
+  - make clean && make test
