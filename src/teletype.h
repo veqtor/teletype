@@ -1,6 +1,7 @@
 #ifndef _TELETYPE_H_
 #define _TELETYPE_H_
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #define SCRIPT_MAX_COMMANDS 6
@@ -116,8 +117,8 @@ typedef struct {
 typedef struct {
     const char *name;
     void (*func)(void);
-    char params;
-    int8_t returns;
+    uint8_t params;
+    bool returns;
     const char *doc;
 } tele_op_t;
 

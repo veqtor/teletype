@@ -771,60 +771,60 @@ static void op_ER(void);
 #define OPS 54
 // DO NOT INSERT in the middle. there's a hack in validate() for P and PN
 static const tele_op_t tele_ops[OPS] = {
-    MAKEOP(ADD, 2, 1, "[A B] ADD A TO B"),
-    MAKEOP(SUB, 2, 1, "[A B] SUBTRACT B FROM A"),
-    MAKEOP(MUL, 2, 1, "[A B] MULTIPLY TWO VALUES"),
-    MAKEOP(DIV, 2, 1, "[A B] DIVIDE FIRST BY SECOND"),
-    MAKEOP(MOD, 2, 1, "[A B] MOD FIRST BY SECOND"),
-    MAKEOP(RAND, 1, 1, "[A] RETURN RANDOM NUMBER UP TO A"),
-    MAKEOP(RRAND, 2, 1, "[A B] RETURN RANDOM NUMBER BETWEEN A AND B"),
-    MAKEOP(TOSS, 0, 1, "RETURN RANDOM STATE"),
-    MAKEOP(MIN, 2, 1, "RETURN LESSER OF TWO VALUES"),
-    MAKEOP(MAX, 2, 1, "RETURN GREATER OF TWO VALUES"),
-    MAKEOP(LIM, 3, 1, "[A B C] LIMIT C TO RANGE A TO B"),
-    MAKEOP(WRAP, 3, 1, "[A B C] WRAP C WITHIN RANGE A TO B"),
-    MAKEOP(QT, 2, 1, "[A B] QUANTIZE A TO STEP SIZE B"),
-    MAKEOP(AVG, 2, 1, "AVERAGE TWO VALUES"),
-    MAKEOP(EQ, 2, 1, "LOGIC: EQUAL"),
-    MAKEOP(NE, 2, 1, "LOGIC: NOT EQUAL"),
-    MAKEOP(LT, 2, 1, "LOGIC: LESS THAN"),
-    MAKEOP(GT, 2, 1, "LOGIC: GREATER THAN"),
-    MAKEOP(NZ, 1, 1, "LOGIC: NOT ZERO"),
-    MAKEOP(EZ, 1, 1, "LOGIC: EQUALS ZERO"),
-    { "TR.TOG", op_TR_TOG, 1, 0, "[A] TOGGLE TRIGGER A" },
-    MAKEOP(N, 1, 1, "TABLE FOR NOTE VALUES"),
-    { "S.ALL", op_S_ALL, 0, 0, "S: EXECUTE ALL" },
-    { "S.POP", op_S_POP, 0, 0, "S: POP LAST" },
-    { "S.CLR", op_S_CLR, 0, 0, "S: FLUSH" },
-    { "DEL.CLR", op_DEL_CLR, 0, 0, "DELAY: FLUSH" },
-    { "M.RESET", op_M_RESET, 0, 0, "METRO: RESET" },
-    MAKEOP(V, 1, 1, "TO VOLT"),
-    MAKEOP(VV, 1, 1, "TO VOLT WITH PRECISION"),
-    { "P", op_P, 1, 1, "PATTERN: GET/SET" },
-    { "P.INS", op_P_INS, 2, 0, "PATTERN: INSERT" },
-    { "P.RM", op_P_RM, 1, 1, "PATTERN: REMOVE" },
-    { "P.PUSH", op_P_PUSH, 1, 0, "PATTERN: PUSH" },
-    { "P.POP", op_P_POP, 0, 1, "PATTERN: POP" },
-    { "PN", op_PN, 2, 1, "PATTERN: GET/SET N" },
-    { "TR.PULSE", op_TR_PULSE, 1, 0, "PULSE TRIGGER" },
-    { "II", op_II, 2, 0, "II" },
-    { "RSH", op_RSH, 2, 1, "RIGHT SHIFT" },
-    { "LSH", op_LSH, 2, 1, "LEFT SHIFT" },
-    { "S.L", op_S_L, 0, 1, "STACK LENGTH" },
-    { "CV.SET", op_CV_SET, 2, 0, "CV SET" },
-    MAKEOP(EXP, 1, 1, "EXPONENTIATE"),
-    MAKEOP(ABS, 1, 1, "ABSOLUTE VALUE"),
-    MAKEOP(AND, 2, 1, "LOGIC: AND"),
-    MAKEOP(OR, 2, 1, "LOGIC: OR"),
-    MAKEOP(XOR, 2, 1, "LOGIC: XOR"),
-    MAKEOP(JI, 2, 1, "JUST INTONE DIVISON"),
-    MAKEOP(SCRIPT, 1, 0, "CALL SCRIPT"),
-    MAKEOP(KILL, 0, 0, "CLEAR DELAYS, STACK, SLEW"),
-    MAKEOP(MUTE, 1, 0, "MUTE INPUT"),
-    MAKEOP(UNMUTE, 1, 0, "UNMUTE INPUT"),
-    MAKEOP(SCALE, 5, 1, "SCALE NUMBER RANGES"),
-    MAKEOP(STATE, 1, 1, "GET INPUT STATE"),
-    MAKEOP(ER, 3, 1, "EUCLIDEAN RHYTHMS")
+    MAKEOP(ADD, 2, true, "[A B] ADD A TO B"),
+    MAKEOP(SUB, 2, true, "[A B] SUBTRACT B FROM A"),
+    MAKEOP(MUL, 2, true, "[A B] MULTIPLY TWO VALUES"),
+    MAKEOP(DIV, 2, true, "[A B] DIVIDE FIRST BY SECOND"),
+    MAKEOP(MOD, 2, true, "[A B] MOD FIRST BY SECOND"),
+    MAKEOP(RAND, 1, true, "[A] RETURN RANDOM NUMBER UP TO A"),
+    MAKEOP(RRAND, 2, true, "[A B] RETURN RANDOM NUMBER BETWEEN A AND B"),
+    MAKEOP(TOSS, 0, true, "RETURN RANDOM STATE"),
+    MAKEOP(MIN, 2, true, "RETURN LESSER OF TWO VALUES"),
+    MAKEOP(MAX, 2, true, "RETURN GREATER OF TWO VALUES"),
+    MAKEOP(LIM, 3, true, "[A B C] LIMIT C TO RANGE A TO B"),
+    MAKEOP(WRAP, 3, true, "[A B C] WRAP C WITHIN RANGE A TO B"),
+    MAKEOP(QT, 2, true, "[A B] QUANTIZE A TO STEP SIZE B"),
+    MAKEOP(AVG, 2, true, "AVERAGE TWO VALUES"),
+    MAKEOP(EQ, 2, true, "LOGIC: EQUAL"),
+    MAKEOP(NE, 2, true, "LOGIC: NOT EQUAL"),
+    MAKEOP(LT, 2, true, "LOGIC: LESS THAN"),
+    MAKEOP(GT, 2, true, "LOGIC: GREATER THAN"),
+    MAKEOP(NZ, 1, true, "LOGIC: NOT ZERO"),
+    MAKEOP(EZ, 1, true, "LOGIC: EQUALS ZERO"),
+    { "TR.TOG", op_TR_TOG, 1, false, "[A] TOGGLE TRIGGER A" },
+    MAKEOP(N, 1, true, "TABLE FOR NOTE VALUES"),
+    { "S.ALL", op_S_ALL, 0, false, "S: EXECUTE ALL" },
+    { "S.POP", op_S_POP, 0, false, "S: POP LAST" },
+    { "S.CLR", op_S_CLR, 0, false, "S: FLUSH" },
+    { "DEL.CLR", op_DEL_CLR, 0, false, "DELAY: FLUSH" },
+    { "M.RESET", op_M_RESET, 0, false, "METRO: RESET" },
+    MAKEOP(V, 1, true, "TO VOLT"),
+    MAKEOP(VV, 1, true, "TO VOLT WITH PRECISION"),
+    { "P", op_P, 1, true, "PATTERN: GET/SET" },
+    { "P.INS", op_P_INS, 2, false, "PATTERN: INSERT" },
+    { "P.RM", op_P_RM, 1, true, "PATTERN: REMOVE" },
+    { "P.PUSH", op_P_PUSH, 1, false, "PATTERN: PUSH" },
+    { "P.POP", op_P_POP, 0, true, "PATTERN: POP" },
+    { "PN", op_PN, 2, true, "PATTERN: GET/SET N" },
+    { "TR.PULSE", op_TR_PULSE, 1, false, "PULSE TRIGGER" },
+    { "II", op_II, 2, false, "II" },
+    { "RSH", op_RSH, 2, true, "RIGHT SHIFT" },
+    { "LSH", op_LSH, 2, true, "LEFT SHIFT" },
+    { "S.L", op_S_L, 0, true, "STACK LENGTH" },
+    { "CV.SET", op_CV_SET, 2, false, "CV SET" },
+    MAKEOP(EXP, 1, true, "EXPONENTIATE"),
+    MAKEOP(ABS, 1, true, "ABSOLUTE VALUE"),
+    MAKEOP(AND, 2, true, "LOGIC: AND"),
+    MAKEOP(OR, 2, true, "LOGIC: OR"),
+    MAKEOP(XOR, 2, true, "LOGIC: XOR"),
+    MAKEOP(JI, 2, true, "JUST INTONE DIVISON"),
+    MAKEOP(SCRIPT, 1, false, "CALL SCRIPT"),
+    MAKEOP(KILL, 0, false, "CLEAR DELAYS, STACK, SLEW"),
+    MAKEOP(MUTE, 1, false, "MUTE INPUT"),
+    MAKEOP(UNMUTE, 1, false, "UNMUTE INPUT"),
+    MAKEOP(SCALE, 5, true, "SCALE NUMBER RANGES"),
+    MAKEOP(STATE, 1, true, "GET INPUT STATE"),
+    MAKEOP(ER, 3, true, "EUCLIDEAN RHYTHMS")
 };
 
 static void op_ADD() {
@@ -1426,7 +1426,7 @@ error_t validate(tele_command_t *c) {
 
     while (n--) {
         if (c->data[n].t == OP) {
-            if (tele_ops[c->data[n].v].returns == 0 && n) {
+            if (tele_ops[c->data[n].v].returns == false && n) {
                 if (c->data[n - 1].t != SEP) {
                     strcpy(error_detail, tele_ops[c->data[n].v].name);
                     return E_NOT_LEFT;
@@ -1439,7 +1439,7 @@ error_t validate(tele_command_t *c) {
                 strcpy(error_detail, tele_ops[c->data[n].v].name);
                 return E_NEED_PARAMS;
             }
-            h += tele_ops[c->data[n].v].returns;
+            h += tele_ops[c->data[n].v].returns ? 1 : 0;
             // hack for var-length params for P
             if (c->data[n].v == 29 || c->data[n].v == 34) {
                 if (n == 0)
