@@ -13,5 +13,7 @@ install:
 script:
   - cd src
   - PATH="$HOME/avr32-tools/bin:$PATH" make
+  - cd ../simulator
+  - make clean && make
   - cd ../tests
   - make clean && make test

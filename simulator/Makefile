@@ -1,6 +1,5 @@
 .PHONY: clean format
-CC=gcc
-CFLAGS=-g -Wall -I. -I../src -I../../libavr32/src -DSIM
+CFLAGS=-std=c99 -g -Wall -DSIM -I. -I../src -I../libavr32/src
 DEPS =
 OBJ = tt.o ../src/teletype.o ../src/table.o \
 	../src/euclidean/euclidean.o ../src/euclidean/data.o \
@@ -13,10 +12,10 @@ tt: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
 
 clean:
-	rm *.o
-	rm ../src/*.o
-	rm ../src/euclidean/*.o
-	rm ../libavr32/src/*.o
+	rm -f *.o
+	rm -f ../src/*.o
+	rm -f ../src/euclidean/*.o
+	rm -f ../libavr32/src/*.o
 
 format:
 	clang-format -style=file -i tt.c
