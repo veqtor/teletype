@@ -766,8 +766,8 @@ static void op_STATE(void);
 static void op_ER(void);
 
 
-#define MAKEOP(name, params, returns, doc) \
-    { #name, op_##name, params, returns, doc }
+#define MAKEOP(n, p, r, d) \
+    { .name = #n, .func = op_##n, .params = p, .returns = r, .doc = d }
 #define OPS 54
 // DO NOT INSERT in the middle. there's a hack in validate() for P and PN
 static const tele_op_t tele_ops[OPS] = {
