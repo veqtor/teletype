@@ -767,7 +767,7 @@ static void op_ER(void);
 
 
 // clang-format off
-#define MAKEOP(n, f, p, r, d) { .name = #n, .func = f, .params = p, .returns = r, .doc = d }
+#define MAKEOP(n, f, p, r, d) { .name = #n, .get = f, .params = p, .returns = r, .doc = d }
 #define OPS 54
 // DO NOT INSERT in the middle. there's a hack in validate() for P and PN
 static const tele_op_t tele_ops[OPS] = {
@@ -1542,7 +1542,7 @@ void process(tele_command_t *c) {
         if (c->data[n].t == NUMBER)
             push(c->data[n].v);
         else if (c->data[n].t == OP)
-            tele_ops[c->data[n].v].func();
+            tele_ops[c->data[n].v].get();
         else if (c->data[n].t == MOD)
             tele_mods[c->data[n].v].func(c);
         else if (c->data[n].t == VAR) {

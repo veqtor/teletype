@@ -116,7 +116,7 @@ typedef struct {
 
 typedef struct {
     const char *name;
-    void (*func)(void);
+    void (*get)(void);
     uint8_t params;
     bool returns;
     const char *doc;
