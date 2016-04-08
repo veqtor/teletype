@@ -710,64 +710,65 @@ void mod_L(tele_command_t *c) {
 /////////////////////////////////////////////////////////////////
 // OPS //////////////////////////////////////////////////////////
 
-static void op_ADD(void);
-static void op_SUB(void);
-static void op_MUL(void);
-static void op_DIV(void);
-static void op_MOD(void);
-static void op_RAND(void);
-static void op_RRAND(void);
-static void op_TOSS(void);
-static void op_MIN(void);
-static void op_MAX(void);
-static void op_LIM(void);
-static void op_WRAP(void);
-static void op_QT(void);
-static void op_AVG(void);
-static void op_EQ(void);
-static void op_NE(void);
-static void op_LT(void);
-static void op_GT(void);
-static void op_NZ(void);
-static void op_EZ(void);
-static void op_TR_TOG(void);
-static void op_N(void);
-static void op_S_ALL(void);
-static void op_S_POP(void);
-static void op_S_CLR(void);
-static void op_DEL_CLR(void);
-static void op_M_RESET(void);
-static void op_V(void);
-static void op_VV(void);
-static void op_P(void);
-static void op_P_INS(void);
-static void op_P_RM(void);
-static void op_P_PUSH(void);
-static void op_P_POP(void);
-static void op_PN(void);
-static void op_TR_PULSE(void);
-static void op_II(void);
-static void op_RSH(void);
-static void op_LSH(void);
-static void op_S_L(void);
-static void op_CV_SET(void);
-static void op_EXP(void);
-static void op_ABS(void);
-static void op_AND(void);
-static void op_OR(void);
-static void op_XOR(void);
-static void op_JI(void);
-static void op_SCRIPT(void);
-static void op_KILL(void);
-static void op_MUTE(void);
-static void op_UNMUTE(void);
-static void op_SCALE(void);
-static void op_STATE(void);
-static void op_ER(void);
+static void op_ADD(const void *data);
+static void op_SUB(const void *data);
+static void op_MUL(const void *data);
+static void op_DIV(const void *data);
+static void op_MOD(const void *data);
+static void op_RAND(const void *data);
+static void op_RRAND(const void *data);
+static void op_TOSS(const void *data);
+static void op_MIN(const void *data);
+static void op_MAX(const void *data);
+static void op_LIM(const void *data);
+static void op_WRAP(const void *data);
+static void op_QT(const void *data);
+static void op_AVG(const void *data);
+static void op_EQ(const void *data);
+static void op_NE(const void *data);
+static void op_LT(const void *data);
+static void op_GT(const void *data);
+static void op_NZ(const void *data);
+static void op_EZ(const void *data);
+static void op_TR_TOG(const void *data);
+static void op_N(const void *data);
+static void op_S_ALL(const void *data);
+static void op_S_POP(const void *data);
+static void op_S_CLR(const void *data);
+static void op_DEL_CLR(const void *data);
+static void op_M_RESET(const void *data);
+static void op_V(const void *data);
+static void op_VV(const void *data);
+static void op_P(const void *data);
+static void op_P_INS(const void *data);
+static void op_P_RM(const void *data);
+static void op_P_PUSH(const void *data);
+static void op_P_POP(const void *data);
+static void op_PN(const void *data);
+static void op_TR_PULSE(const void *data);
+static void op_II(const void *data);
+static void op_RSH(const void *data);
+static void op_LSH(const void *data);
+static void op_S_L(const void *data);
+static void op_CV_SET(const void *data);
+static void op_EXP(const void *data);
+static void op_ABS(const void *data);
+static void op_AND(const void *data);
+static void op_OR(const void *data);
+static void op_XOR(const void *data);
+static void op_JI(const void *data);
+static void op_SCRIPT(const void *data);
+static void op_KILL(const void *data);
+static void op_MUTE(const void *data);
+static void op_UNMUTE(const void *data);
+static void op_SCALE(const void *data);
+static void op_STATE(const void *data);
+static void op_ER(const void *data);
 
 
 // clang-format off
-#define MAKEOP(n, f, p, r, d) { .name = #n, .get = f, .params = p, .returns = r, .doc = d }
+#define MAKEOP(n, f, p, r, d) \
+    { .name = #n, .get = f, .set = NULL, .params = p, .returns = r, .data = NULL, .doc = d }
 #define OPS 54
 // DO NOT INSERT in the middle. there's a hack in validate() for P and PN
 static const tele_op_t tele_ops[OPS] = {
@@ -828,30 +829,30 @@ static const tele_op_t tele_ops[OPS] = {
 };
 // clang-format on
 
-static void op_ADD() {
+static void op_ADD(const void *data) {
     push(pop() + pop());
 }
-static void op_SUB() {
+static void op_SUB(const void *data) {
     push(pop() - pop());
 }
-static void op_MUL() {
+static void op_MUL(const void *data) {
     push(pop() * pop());
 }
-static void op_DIV() {
+static void op_DIV(const void *data) {
     push(pop() / pop());
 }
 // can be optimized:
-static void op_MOD() {
+static void op_MOD(const void *data) {
     push(pop() % pop());
 }
-static void op_RAND() {
+static void op_RAND(const void *data) {
     int16_t a = pop();
     if (a == -1)
         push(0);
     else
         push(rand() % (a + 1));
 }
-static void op_RRAND() {
+static void op_RRAND(const void *data) {
     int16_t a, b, min, max, range;
     a = pop();
     b = pop();
@@ -869,10 +870,10 @@ static void op_RRAND() {
     else
         push(rand() % range + min);
 }
-static void op_TOSS() {
+static void op_TOSS(const void *data) {
     push(rand() & 1);
 }
-static void op_MIN() {
+static void op_MIN(const void *data) {
     int16_t a, b;
     a = pop();
     b = pop();
@@ -881,7 +882,7 @@ static void op_MIN() {
     else
         push(b);
 }
-static void op_MAX() {
+static void op_MAX(const void *data) {
     int16_t a, b;
     a = pop();
     b = pop();
@@ -890,7 +891,7 @@ static void op_MAX() {
     else
         push(b);
 }
-static void op_LIM() {
+static void op_LIM(const void *data) {
     int16_t a, b, i;
     i = pop();
     a = pop();
@@ -902,7 +903,7 @@ static void op_LIM() {
     else
         push(i);
 }
-static void op_WRAP() {
+static void op_WRAP(const void *data) {
     int16_t a, b, i, c;
     i = pop();
     a = pop();
@@ -919,7 +920,7 @@ static void op_WRAP() {
     }
     push(i);
 }
-static void op_QT() {
+static void op_QT(const void *data) {
     // this rounds negative numbers rather than quantize (choose closer)
     int16_t a, b, c, d, e;
     b = pop();
@@ -934,28 +935,28 @@ static void op_QT() {
     else
         push(e);
 }
-static void op_AVG() {
+static void op_AVG(const void *data) {
     push((pop() + pop()) >> 1);
 }
-static void op_EQ() {
+static void op_EQ(const void *data) {
     push(pop() == pop());
 }
-static void op_NE() {
+static void op_NE(const void *data) {
     push(pop() != pop());
 }
-static void op_LT() {
+static void op_LT(const void *data) {
     push(pop() < pop());
 }
-static void op_GT() {
+static void op_GT(const void *data) {
     push(pop() > pop());
 }
-static void op_NZ() {
+static void op_NZ(const void *data) {
     push(pop() != 0);
 }
-static void op_EZ() {
+static void op_EZ(const void *data) {
     push(pop() == 0);
 }
-static void op_TR_TOG() {
+static void op_TR_TOG(const void *data) {
     int16_t a = pop();
     // saturate and shift
     if (a < 1)
@@ -969,7 +970,7 @@ static void op_TR_TOG() {
         tele_arrays[0].v[a] = 1;
     update_tr(a, tele_arrays[0].v[a]);
 }
-static void op_N() {
+static void op_N(const void *data) {
     int16_t a = pop();
 
     if (a < 0) {
@@ -982,30 +983,30 @@ static void op_N() {
         push(table_n[a]);
     }
 }
-static void op_S_ALL() {
+static void op_S_ALL(const void *data) {
     for (int16_t i = 0; i < tele_stack_top; i++)
         process(&tele_stack[tele_stack_top - i - 1]);
     tele_stack_top = 0;
     (*update_s)(0);
 }
-static void op_S_POP() {
+static void op_S_POP(const void *data) {
     if (tele_stack_top) {
         tele_stack_top--;
         process(&tele_stack[tele_stack_top]);
         if (tele_stack_top == 0) (*update_s)(0);
     }
 }
-static void op_S_CLR() {
+static void op_S_CLR(const void *data) {
     tele_stack_top = 0;
     (*update_s)(0);
 }
-static void op_DEL_CLR() {
+static void op_DEL_CLR(const void *data) {
     clear_delays();
 }
-static void op_M_RESET() {
+static void op_M_RESET(const void *data) {
     (*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 1);
 }
-static void op_V() {
+static void op_V(const void *data) {
     int16_t a = pop();
     if (a > 10)
         a = 10;
@@ -1019,7 +1020,7 @@ static void op_V() {
     else
         push(table_v[a]);
 }
-static void op_VV() {
+static void op_VV(const void *data) {
     uint8_t negative = 1;
     int16_t a = pop();
     if (a < 0) {
@@ -1030,7 +1031,7 @@ static void op_VV() {
 
     push(negative * (table_v[a / 100] + table_vv[a % 100]));
 }
-static void op_P() {
+static void op_P(const void *data) {
     int16_t a, b;
     a = pop();
     if (a < 0) {
@@ -1052,7 +1053,7 @@ static void op_P() {
         push(tele_patterns[pn].v[a]);
     }
 }
-static void op_P_INS() {
+static void op_P_INS(const void *data) {
     int16_t a, b, i;
     a = pop();
     b = pop();
@@ -1076,7 +1077,7 @@ static void op_P_INS() {
     tele_patterns[pn].v[a] = b;
     (*update_pi)();
 }
-static void op_P_RM() {
+static void op_P_RM(const void *data) {
     int16_t a, i;
     a = pop();
 
@@ -1102,7 +1103,7 @@ static void op_P_RM() {
         push(0);
     (*update_pi)();
 }
-static void op_P_PUSH() {
+static void op_P_PUSH(const void *data) {
     int16_t a;
     a = pop();
 
@@ -1112,7 +1113,7 @@ static void op_P_PUSH() {
         (*update_pi)();
     }
 }
-static void op_P_POP() {
+static void op_P_POP(const void *data) {
     if (tele_patterns[pn].l > 0) {
         tele_patterns[pn].l--;
         push(tele_patterns[pn].v[tele_patterns[pn].l]);
@@ -1121,7 +1122,7 @@ static void op_P_POP() {
     else
         push(0);
 }
-static void op_PN() {
+static void op_PN(const void *data) {
     int16_t a, b, c;
     a = pop();
     b = pop();
@@ -1150,7 +1151,7 @@ static void op_PN() {
         push(tele_patterns[a].v[b]);
     }
 }
-static void op_TR_PULSE() {
+static void op_TR_PULSE(const void *data) {
     int16_t a = pop();
     // saturate and shift
     if (a < 1)
@@ -1164,21 +1165,21 @@ static void op_TR_PULSE() {
     tr_pulse[a] = time;  // set time
     update_tr(a, tele_arrays[0].v[a]);
 }
-static void op_II() {
+static void op_II(const void *data) {
     int16_t a = pop();
     int16_t b = pop();
     update_ii(a, b);
 }
-static void op_RSH() {
+static void op_RSH(const void *data) {
     push(pop() >> pop());
 }
-static void op_LSH() {
+static void op_LSH(const void *data) {
     push(pop() << pop());
 }
-static void op_S_L() {
+static void op_S_L(const void *data) {
     push(tele_stack_top);
 }
-static void op_CV_SET() {
+static void op_CV_SET(const void *data) {
     int16_t a = pop();
     int16_t b = pop();
     // saturate and shift
@@ -1194,7 +1195,7 @@ static void op_CV_SET() {
     tele_arrays[1].v[a] = b;
     (*update_cv)(a, b, 0);
 }
-static void op_EXP() {
+static void op_EXP(const void *data) {
     int16_t a = pop();
     if (a > 16383)
         a = 16383;
@@ -1210,7 +1211,7 @@ static void op_EXP() {
     else
         push(table_exp[a]);
 }
-static void op_ABS() {
+static void op_ABS(const void *data) {
     int16_t a = pop();
 
     if (a < 0)
@@ -1218,41 +1219,41 @@ static void op_ABS() {
     else
         push(a);
 }
-static void op_AND() {
+static void op_AND(const void *data) {
     push(pop() & pop());
 }
-static void op_OR() {
+static void op_OR(const void *data) {
     push(pop() | pop());
 }
-static void op_XOR() {
+static void op_XOR(const void *data) {
     push(pop() ^ pop());
 }
-static void op_JI() {
+static void op_JI(const void *data) {
     uint32_t ji = (((pop() << 8) / pop()) * 1684) >> 8;
     while (ji > 1683) ji >>= 1;
     push(ji);
 }
-static void op_SCRIPT() {
+static void op_SCRIPT(const void *data) {
     uint16_t a = pop();
     if (a > 0 && a < 9) (*run_script)(a);
 }
-static void op_KILL() {
+static void op_KILL(const void *data) {
     clear_delays();
     (*update_kill)();
 }
-static void op_MUTE() {
+static void op_MUTE(const void *data) {
     int16_t a;
     a = pop();
 
     if (a > 0 && a < 9) { (*update_mute)(a - 1, 0); }
 }
-static void op_UNMUTE() {
+static void op_UNMUTE(const void *data) {
     int16_t a;
     a = pop();
 
     if (a > 0 && a < 9) { (*update_mute)(a - 1, 1); }
 }
-static void op_SCALE() {
+static void op_SCALE(const void *data) {
     int16_t a, b, x, y, i;
     a = pop();
     b = pop();
@@ -1262,7 +1263,7 @@ static void op_SCALE() {
 
     push((i - a) * (y - x) / (b - a) + x);
 }
-static void op_STATE() {
+static void op_STATE(const void *data) {
     int16_t a = pop();
     a--;
     if (a < 0)
@@ -1274,7 +1275,7 @@ static void op_STATE() {
     push(input_states[a]);
 }
 
-static void op_ER() {
+static void op_ER(const void *data) {
     int16_t fill = pop();
     int16_t len = pop();
     int16_t step = pop();
@@ -1541,8 +1542,10 @@ void process(tele_command_t *c) {
         left = n;
         if (c->data[n].t == NUMBER)
             push(c->data[n].v);
-        else if (c->data[n].t == OP)
-            tele_ops[c->data[n].v].get();
+        else if (c->data[n].t == OP) {
+            const void *data = tele_ops[c->data[n].v].data;
+            tele_ops[c->data[n].v].get(data);
+        }
         else if (c->data[n].t == MOD)
             tele_mods[c->data[n].v].func(c);
         else if (c->data[n].t == VAR) {

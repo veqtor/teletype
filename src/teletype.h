@@ -116,9 +116,11 @@ typedef struct {
 
 typedef struct {
     const char *name;
-    void (*get)(void);
+    void (*get)(const void *data);
+    void (*set)(const void *data, int16_t value);
     uint8_t params;
     bool returns;
+    const void *data;
     const char *doc;
 } tele_op_t;
 
