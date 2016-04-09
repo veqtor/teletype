@@ -1428,43 +1428,46 @@ error_t validate(tele_command_t *c) {
     c->separator = -1;
 
     while (n--) {
-        if (c->data[n].t == OP) {
-            if (tele_ops[c->data[n].v].returns == false && n) {
+        tele_word_t word_type = c->data[n].t;
+        int16_t word_idx = c->data[n].v;
+
+        if (word_type == OP) {
+            if (tele_ops[word_idx].returns == false && n) {
                 if (c->data[n - 1].t != SEP) {
-                    strcpy(error_detail, tele_ops[c->data[n].v].name);
+                    strcpy(error_detail, tele_ops[word_idx].name);
                     return E_NOT_LEFT;
                 }
             }
 
-            stack_depth -= tele_ops[c->data[n].v].params;
+            stack_depth -= tele_ops[word_idx].params;
 
             if (stack_depth < 0) {
-                strcpy(error_detail, tele_ops[c->data[n].v].name);
+                strcpy(error_detail, tele_ops[word_idx].name);
                 return E_NEED_PARAMS;
             }
-            stack_depth += tele_ops[c->data[n].v].returns ? 1 : 0;
+            stack_depth += tele_ops[word_idx].returns ? 1 : 0;
             // hack for var-length params for P
-            if (c->data[n].v == 29 || c->data[n].v == 34) {
+            if (word_idx == 29 || word_idx == 34) {
                 if (n == 0)
                     stack_depth--;
                 else if (c->data[n - 1].t == SEP)
                     stack_depth--;
             }
         }
-        else if (c->data[n].t == MOD) {
-            strcpy(error_detail, tele_mods[c->data[n].v].name);
+        else if (word_type == MOD) {
+            strcpy(error_detail, tele_mods[word_idx].name);
             if (n != 0)
                 return E_NO_MOD_HERE;
             else if (c->separator == -1)
                 return E_NEED_SEP;
-            else if (stack_depth < tele_mods[c->data[n].v].params)
+            else if (stack_depth < tele_mods[word_idx].params)
                 return E_NEED_PARAMS;
-            else if (stack_depth > tele_mods[c->data[n].v].params)
+            else if (stack_depth > tele_mods[word_idx].params)
                 return E_EXTRA_PARAMS;
             else
                 stack_depth = 0;
         }
-        else if (c->data[n].t == SEP) {
+        else if (word_type == SEP) {
             if (c->separator != -1)
                 return E_MANY_SEP;
             else if (n == 0)
@@ -1479,23 +1482,23 @@ error_t validate(tele_command_t *c) {
 
         // RIGHT (get)
         else if (n && c->data[n - 1].t != SEP) {
-            if (c->data[n].t == NUMBER || c->data[n].t == VAR) { stack_depth++; }
-            else if (c->data[n].t == ARRAY) {
+            if (word_type == NUMBER || word_type == VAR) { stack_depth++; }
+            else if (word_type == ARRAY) {
                 if (stack_depth < 1) {
-                    strcpy(error_detail, tele_arrays[c->data[n].v].name);
+                    strcpy(error_detail, tele_arrays[word_idx].name);
                     return E_NEED_PARAMS;
                 }
             }
         }
         // LEFT (set)
         else {
-            if (c->data[n].t == NUMBER) { stack_depth++; }
-            else if (c->data[n].t == VAR) {
+            if (word_type == NUMBER) { stack_depth++; }
+            else if (word_type == VAR) {
                 if (stack_depth == 0) stack_depth++;
             }
-            else if (c->data[n].t == ARRAY) {
+            else if (word_type == ARRAY) {
                 if (stack_depth < 1) {
-                    strcpy(error_detail, tele_arrays[c->data[n].v].name);
+                    strcpy(error_detail, tele_arrays[word_idx].name);
                     return E_NEED_PARAMS;
                 }
                 stack_depth--;
