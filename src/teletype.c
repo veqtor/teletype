@@ -1524,34 +1524,37 @@ error_t validate(tele_command_t *c) {
 process_result_t process(tele_command_t *c) {
     top = 0;
     left = 0;
-    int16_t n;
 
-    if (c->separator == -1)
-        n = c->l;
-    else
-        n = c->separator;
+    // if the command has a MOD, only process it
+    // allow the MOD to deal with processing the remainder
+    int16_t idx = c->separator == -1 ? c->l : c->separator;
 
-    while (n--) {
-        left = n;
-        if (c->data[n].t == NUMBER)
-            push(c->data[n].v);
-        else if (c->data[n].t == OP) {
-            const void *data = tele_ops[c->data[n].v].data;
-            tele_ops[c->data[n].v].get(data);
+    while (idx--) {  // process from right to left
+        tele_word_t word_type = c->data[idx].t;
+        int16_t word_idx = c->data[idx].v;
+
+        left = idx;
+        if (word_type == NUMBER) { push(word_idx); }
+        else if (word_type == OP) {
+            const void *data = tele_ops[word_idx].data;
+            tele_ops[word_idx].get(data);
         }
-        else if (c->data[n].t == MOD)
-            tele_mods[c->data[n].v].func(c);
-        else if (c->data[n].t == VAR) {
-            if (tele_vars[c->data[n].v].func == NULL) {
-                if (n || top == 0)
-                    push(tele_vars[c->data[n].v].v);
+        else if (word_type == MOD) {
+            // TODO mods should be called with the subcommand (at the moment the
+            // mod creates the subcommand = lots of duplication)
+            tele_mods[word_idx].func(c);
+        }
+        else if (word_type == VAR) {
+            if (tele_vars[word_idx].func == NULL) {
+                if (idx || top == 0)
+                    push(tele_vars[word_idx].v);
                 else
-                    tele_vars[c->data[n].v].v = pop();
+                    tele_vars[word_idx].v = pop();
             }
             else
-                tele_vars[c->data[n].v].func();
+                tele_vars[word_idx].func();
         }
-        else if (c->data[n].t == ARRAY) {
+        else if (word_type == ARRAY) {
             int16_t i = pop();
 
             // saturate for 1-4 indexing
@@ -1561,12 +1564,13 @@ process_result_t process(tele_command_t *c) {
                 i = 4;
             i--;
 
-            if (n || top == 0) { push(tele_arrays[c->data[n].v].v[i]); }
+            if (idx || top == 0)
+                push(tele_arrays[word_idx].v[i]);
             else {
-                if (tele_arrays[c->data[n].v].func)
-                    tele_arrays[c->data[n].v].func(i);
+                if (tele_arrays[word_idx].func)
+                    tele_arrays[word_idx].func(i);
                 else
-                    tele_arrays[c->data[n].v].v[i] = pop();
+                    tele_arrays[word_idx].v[i] = pop();
             }
         }
     }
