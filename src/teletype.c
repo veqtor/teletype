@@ -1423,7 +1423,7 @@ error_t parse(char *cmd, tele_command_t *out) {
 // VALIDATE /////////////////////////////////////////////////////
 
 error_t validate(tele_command_t *c) {
-    int16_t h = 0;
+    int16_t stack_depth = 0;
     uint8_t n = c->l;
     c->separator = -1;
 
@@ -1436,19 +1436,19 @@ error_t validate(tele_command_t *c) {
                 }
             }
 
-            h -= tele_ops[c->data[n].v].params;
+            stack_depth -= tele_ops[c->data[n].v].params;
 
-            if (h < 0) {
+            if (stack_depth < 0) {
                 strcpy(error_detail, tele_ops[c->data[n].v].name);
                 return E_NEED_PARAMS;
             }
-            h += tele_ops[c->data[n].v].returns ? 1 : 0;
+            stack_depth += tele_ops[c->data[n].v].returns ? 1 : 0;
             // hack for var-length params for P
             if (c->data[n].v == 29 || c->data[n].v == 34) {
                 if (n == 0)
-                    h--;
+                    stack_depth--;
                 else if (c->data[n - 1].t == SEP)
-                    h--;
+                    stack_depth--;
             }
         }
         else if (c->data[n].t == MOD) {
@@ -1457,12 +1457,12 @@ error_t validate(tele_command_t *c) {
                 return E_NO_MOD_HERE;
             else if (c->separator == -1)
                 return E_NEED_SEP;
-            else if (h < tele_mods[c->data[n].v].params)
+            else if (stack_depth < tele_mods[c->data[n].v].params)
                 return E_NEED_PARAMS;
-            else if (h > tele_mods[c->data[n].v].params)
+            else if (stack_depth > tele_mods[c->data[n].v].params)
                 return E_EXTRA_PARAMS;
             else
-                h = 0;
+                stack_depth = 0;
         }
         else if (c->data[n].t == SEP) {
             if (c->separator != -1)
@@ -1471,17 +1471,17 @@ error_t validate(tele_command_t *c) {
                 return E_PLACE_SEP;
 
             c->separator = n;
-            if (h > 1)
+            if (stack_depth > 1)
                 return E_EXTRA_PARAMS;
             else
-                h = 0;
+                stack_depth = 0;
         }
 
         // RIGHT (get)
         else if (n && c->data[n - 1].t != SEP) {
-            if (c->data[n].t == NUMBER || c->data[n].t == VAR) { h++; }
+            if (c->data[n].t == NUMBER || c->data[n].t == VAR) { stack_depth++; }
             else if (c->data[n].t == ARRAY) {
-                if (h < 1) {
+                if (stack_depth < 1) {
                     strcpy(error_detail, tele_arrays[c->data[n].v].name);
                     return E_NEED_PARAMS;
                 }
@@ -1489,22 +1489,22 @@ error_t validate(tele_command_t *c) {
         }
         // LEFT (set)
         else {
-            if (c->data[n].t == NUMBER) { h++; }
+            if (c->data[n].t == NUMBER) { stack_depth++; }
             else if (c->data[n].t == VAR) {
-                if (h == 0) h++;
+                if (stack_depth == 0) stack_depth++;
             }
             else if (c->data[n].t == ARRAY) {
-                if (h < 1) {
+                if (stack_depth < 1) {
                     strcpy(error_detail, tele_arrays[c->data[n].v].name);
                     return E_NEED_PARAMS;
                 }
-                h--;
-                if (h == 0) h++;
+                stack_depth--;
+                if (stack_depth == 0) stack_depth++;
             }
         }
     }
 
-    if (h > 1)
+    if (stack_depth > 1)
         return E_EXTRA_PARAMS;
     else
         return E_OK;
