@@ -12,6 +12,7 @@ tt: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
 
 clean:
+	rm -f tt
 	rm -f *.o
 	rm -f ../src/*.o
 	rm -f ../src/euclidean/*.o

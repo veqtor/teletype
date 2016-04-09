@@ -8,6 +8,7 @@ test: tests
 	@./tests | greatest/greenest
 
 clean:
+	rm -f tests
 	rm -f *.o
 	rm -f ../src/*.o
 	rm -f ../src/euclidean/*.o
