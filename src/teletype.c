@@ -1524,7 +1524,6 @@ error_t validate(tele_command_t *c) {
 process_result_t process(tele_command_t *c) {
     top = 0;
     left = 0;
-    int16_t i;
     int16_t n;
 
     if (c->separator == -1)
@@ -1553,7 +1552,7 @@ process_result_t process(tele_command_t *c) {
                 tele_vars[c->data[n].v].func();
         }
         else if (c->data[n].t == ARRAY) {
-            i = pop();
+            int16_t i = pop();
 
             // saturate for 1-4 indexing
             if (i < 1)
