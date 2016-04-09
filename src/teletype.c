@@ -1425,18 +1425,20 @@ error_t parse(char *cmd, tele_command_t *out) {
 error_t validate(tele_command_t *c) {
     int16_t stack_depth = 0;
     uint8_t idx = c->l;
-    c->separator = -1; // i.e. the index ':'
+    c->separator = -1;  // i.e. the index ':'
 
-    while (idx--) { // process words right to left
+    while (idx--) {  // process words right to left
         tele_word_t word_type = c->data[idx].t;
         int16_t word_idx = c->data[idx].v;
+        // A first_cmd is either at the beginning of the command or immediately
+        // after the SEP
+        bool first_cmd = idx == 0 || c->data[idx - 1].t == SEP;
 
         if (word_type == OP) {
-            if (tele_ops[word_idx].returns == false && idx) {
-                if (c->data[idx - 1].t != SEP) {
-                    strcpy(error_detail, tele_ops[word_idx].name);
-                    return E_NOT_LEFT;
-                }
+            // if we're not a first_cmd we need to return something
+            if (!first_cmd && tele_ops[word_idx].returns == false) {
+                strcpy(error_detail, tele_ops[word_idx].name);
+                return E_NOT_LEFT;
             }
 
             stack_depth -= tele_ops[word_idx].params;
@@ -1445,14 +1447,10 @@ error_t validate(tele_command_t *c) {
                 strcpy(error_detail, tele_ops[word_idx].name);
                 return E_NEED_PARAMS;
             }
+
             stack_depth += tele_ops[word_idx].returns ? 1 : 0;
             // hack for var-length params for P
-            if (word_idx == 29 || word_idx == 34) {
-                if (idx == 0)
-                    stack_depth--;
-                else if (c->data[idx - 1].t == SEP)
-                    stack_depth--;
-            }
+            if ((word_idx == 29 || word_idx == 34) && first_cmd) stack_depth--;
         }
         else if (word_type == MOD) {
             strcpy(error_detail, tele_mods[word_idx].name);
@@ -1481,7 +1479,7 @@ error_t validate(tele_command_t *c) {
         }
 
         // RIGHT (get)
-        else if (idx && c->data[idx - 1].t != SEP) {
+        else if (!first_cmd) {
             if (word_type == NUMBER || word_type == VAR) { stack_depth++; }
             else if (word_type == ARRAY) {
                 if (stack_depth < 1) {
@@ -1558,9 +1556,7 @@ process_result_t process(tele_command_t *c) {
                 i = 4;
             i--;
 
-            if (n || top == 0) {
-                push(tele_arrays[c->data[n].v].v[i]);
-            }
+            if (n || top == 0) { push(tele_arrays[c->data[n].v].v[i]); }
             else {
                 if (tele_arrays[c->data[n].v].func)
                     tele_arrays[c->data[n].v].func(i);
