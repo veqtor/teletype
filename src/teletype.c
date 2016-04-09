@@ -1453,17 +1453,23 @@ error_t validate(tele_command_t *c) {
             if ((word_idx == 29 || word_idx == 34) && first_cmd) stack_depth--;
         }
         else if (word_type == MOD) {
-            strcpy(error_detail, tele_mods[word_idx].name);
+            error_t mod_error = E_OK;
+
             if (idx != 0)
-                return E_NO_MOD_HERE;
+                mod_error = E_NO_MOD_HERE;
             else if (c->separator == -1)
-                return E_NEED_SEP;
+                mod_error = E_NEED_SEP;
             else if (stack_depth < tele_mods[word_idx].params)
-                return E_NEED_PARAMS;
+                mod_error = E_NEED_PARAMS;
             else if (stack_depth > tele_mods[word_idx].params)
-                return E_EXTRA_PARAMS;
-            else
-                stack_depth = 0;
+                mod_error = E_EXTRA_PARAMS;
+
+            if (mod_error != E_OK) {
+                strcpy(error_detail, tele_mods[word_idx].name);
+                return mod_error;
+            }
+
+            stack_depth = 0;
         }
         else if (word_type == SEP) {
             if (c->separator != -1)
