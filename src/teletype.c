@@ -1424,16 +1424,16 @@ error_t parse(char *cmd, tele_command_t *out) {
 
 error_t validate(tele_command_t *c) {
     int16_t stack_depth = 0;
-    uint8_t n = c->l;
-    c->separator = -1;
+    uint8_t idx = c->l;
+    c->separator = -1; // i.e. the index ':'
 
-    while (n--) {
-        tele_word_t word_type = c->data[n].t;
-        int16_t word_idx = c->data[n].v;
+    while (idx--) { // process words right to left
+        tele_word_t word_type = c->data[idx].t;
+        int16_t word_idx = c->data[idx].v;
 
         if (word_type == OP) {
-            if (tele_ops[word_idx].returns == false && n) {
-                if (c->data[n - 1].t != SEP) {
+            if (tele_ops[word_idx].returns == false && idx) {
+                if (c->data[idx - 1].t != SEP) {
                     strcpy(error_detail, tele_ops[word_idx].name);
                     return E_NOT_LEFT;
                 }
@@ -1448,15 +1448,15 @@ error_t validate(tele_command_t *c) {
             stack_depth += tele_ops[word_idx].returns ? 1 : 0;
             // hack for var-length params for P
             if (word_idx == 29 || word_idx == 34) {
-                if (n == 0)
+                if (idx == 0)
                     stack_depth--;
-                else if (c->data[n - 1].t == SEP)
+                else if (c->data[idx - 1].t == SEP)
                     stack_depth--;
             }
         }
         else if (word_type == MOD) {
             strcpy(error_detail, tele_mods[word_idx].name);
-            if (n != 0)
+            if (idx != 0)
                 return E_NO_MOD_HERE;
             else if (c->separator == -1)
                 return E_NEED_SEP;
@@ -1470,10 +1470,10 @@ error_t validate(tele_command_t *c) {
         else if (word_type == SEP) {
             if (c->separator != -1)
                 return E_MANY_SEP;
-            else if (n == 0)
+            else if (idx == 0)
                 return E_PLACE_SEP;
 
-            c->separator = n;
+            c->separator = idx;
             if (stack_depth > 1)
                 return E_EXTRA_PARAMS;
             else
@@ -1481,7 +1481,7 @@ error_t validate(tele_command_t *c) {
         }
 
         // RIGHT (get)
-        else if (n && c->data[n - 1].t != SEP) {
+        else if (idx && c->data[idx - 1].t != SEP) {
             if (word_type == NUMBER || word_type == VAR) { stack_depth++; }
             else if (word_type == ARRAY) {
                 if (stack_depth < 1) {
