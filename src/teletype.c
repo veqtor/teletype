@@ -1434,7 +1434,8 @@ error_t validate(tele_command_t *c) {
         // after the SEP
         bool first_cmd = idx == 0 || c->data[idx - 1].t == SEP;
 
-        if (word_type == OP) {
+        if (word_type == NUMBER) { stack_depth++; }
+        else if (word_type == OP) {
             // if we're not a first_cmd we need to return something
             if (!first_cmd && tele_ops[word_idx].returns == false) {
                 strcpy(error_detail, tele_ops[word_idx].name);
@@ -1486,7 +1487,7 @@ error_t validate(tele_command_t *c) {
 
         // RIGHT (get)
         else if (!first_cmd) {
-            if (word_type == NUMBER || word_type == VAR) { stack_depth++; }
+            if (word_type == VAR) { stack_depth++; }
             else if (word_type == ARRAY) {
                 if (stack_depth < 1) {
                     strcpy(error_detail, tele_arrays[word_idx].name);
@@ -1496,8 +1497,7 @@ error_t validate(tele_command_t *c) {
         }
         // LEFT (set)
         else {
-            if (word_type == NUMBER) { stack_depth++; }
-            else if (word_type == VAR) {
+            if (word_type == VAR) {
                 if (stack_depth == 0) stack_depth++;
             }
             else if (word_type == ARRAY) {

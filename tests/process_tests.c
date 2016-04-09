@@ -21,6 +21,23 @@ TEST process_helper(size_t n, char* lines[], int16_t answer) {
     PASS();
 }
 
+TEST test_numbers() {
+    // beware of global state!!!
+    char* test1[1] = { "1" };
+    CHECK_CALL(process_helper(1, test1, 1));
+
+    char* test2[1] = { "2" };
+    CHECK_CALL(process_helper(1, test2, 2));
+
+    char* test3[1] = { "0" };
+    CHECK_CALL(process_helper(1, test3, 0));
+
+    char* test4[1] = { "-1" };
+    CHECK_CALL(process_helper(1, test4, -1));
+
+    PASS();
+}
+
 TEST test_ADD() {
     // beware of global state!!!
     char* test1[1] = { "ADD 5 6" };
@@ -33,16 +50,16 @@ TEST test_ADD() {
 }
 
 TEST test_IF() {
-    char* test1[3] = { "X 0", "IF 1 : X 1", "X"};
+    char* test1[3] = { "X 0", "IF 1 : X 1", "X" };
     CHECK_CALL(process_helper(3, test1, 1));
 
-    char* test2[3] = { "X 0", "IF 0 : X 1", "X"};
+    char* test2[3] = { "X 0", "IF 0 : X 1", "X" };
     CHECK_CALL(process_helper(3, test2, 0));
 
-    char* test3[3] = { "PN 0 0 0", "IF 1 : PN 0 0 1", "PN 0 0"};
+    char* test3[3] = { "PN 0 0 0", "IF 1 : PN 0 0 1", "PN 0 0" };
     CHECK_CALL(process_helper(3, test3, 1));
 
-    char* test4[3] = { "PN 0 0 0", "IF 0 : PN 0 0 1", "PN 0 0"};
+    char* test4[3] = { "PN 0 0 0", "IF 0 : PN 0 0 1", "PN 0 0" };
     CHECK_CALL(process_helper(3, test4, 0));
 
     PASS();
@@ -88,6 +105,7 @@ TEST test_X() {
 }
 
 SUITE(process_suite) {
+    RUN_TEST(test_numbers);
     RUN_TEST(test_ADD);
     RUN_TEST(test_IF);
     RUN_TEST(test_P);
