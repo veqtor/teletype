@@ -72,7 +72,7 @@ typedef enum {
     E_NOT_LEFT
 } error_t;
 
-typedef enum { NUMBER, MOD, SEP, OP, VAR, ARRAY, KEY } tele_word_t;
+typedef enum { NUMBER, MOD, SEP, OP, VAR, ARRAY } tele_word_t;
 
 typedef struct {
     tele_word_t t;
@@ -95,11 +95,6 @@ typedef struct {
     void (*func)(void);
     int16_t v;
 } tele_var_t;
-
-typedef struct {
-    const char *name;
-    int16_t v;
-} tele_key_t;
 
 typedef struct {
     const char *name;

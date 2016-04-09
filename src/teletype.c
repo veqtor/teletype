@@ -108,39 +108,7 @@ void push(int16_t data) {
 
 
 /////////////////////////////////////////////////////////////////
-// VARS ARRAYS KEYS /////////////////////////////////////////////
-
-
-#define KEYS 47
-static tele_key_t tele_keys[KEYS] = {
-    { "WW.PRESET", WW_PRESET },     { "WW.POS", WW_POS },
-    { "WW.SYNC", WW_SYNC },         { "WW.START", WW_START },
-    { "WW.END", WW_END },           { "WW.PMODE", WW_PMODE },
-    { "WW.PATTERN", WW_PATTERN },   { "WW.QPATTERN", WW_QPATTERN },
-    { "WW.MUTE1", WW_MUTE1 },       { "WW.MUTE2", WW_MUTE2 },
-    { "WW.MUTE3", WW_MUTE3 },       { "WW.MUTE4", WW_MUTE4 },
-    { "WW.MUTEA", WW_MUTEA },       { "WW.MUTEB", WW_MUTEB },
-    { "MP.PRESET", MP_PRESET },     { "MP.RESET", MP_RESET },
-    { "MP.SYNC", MP_SYNC },         { "MP.MUTE", MP_MUTE },
-    { "MP.UNMUTE", MP_UNMUTE },     { "MP.FREEZE", MP_FREEZE },
-    { "MP.UNFREEZE", MP_UNFREEZE }, { "MP.STOP", MP_STOP },
-    { "ES.PRESET", ES_PRESET },     { "ES.MODE", ES_MODE },
-    { "ES.CLOCK", ES_CLOCK },       { "ES.RESET", ES_RESET },
-    { "ES.PATTERN", ES_PATTERN },   { "ES.TRANS", ES_TRANS },
-    { "ES.STOP", ES_STOP },         { "ES.TRIPLE", ES_TRIPLE },
-    { "ES.MAGIC", ES_MAGIC },       { "OR.TRK", ORCA_TRACK },
-    { "OR.CLK", ORCA_CLOCK },       { "OR.DIV", ORCA_DIVISOR },
-    { "OR.PHASE", ORCA_PHASE },     { "OR.RST", ORCA_RESET },
-    { "OR.WGT", ORCA_WEIGHT },      { "OR.MUTE", ORCA_MUTE },
-    { "OR.SCALE", ORCA_SCALE },     { "OR.BANK", ORCA_BANK },
-    { "OR.PRESET", ORCA_PRESET },   { "OR.RELOAD", ORCA_RELOAD },
-    { "OR.ROTS", ORCA_ROTATES },    { "OR.ROTW", ORCA_ROTATEW },
-    { "OR.GRST", ORCA_GRESET },     { "OR.CVA", ORCA_CVA },
-    { "OR.CVB", ORCA_CVB }
-};
-
-
-// {NAME,VAL}
+// VARS ARRAYS //////////////////////////////////////////////////
 
 // ENUM IN HEADER
 
@@ -719,6 +687,8 @@ void mod_L(tele_command_t *c) {
 /////////////////////////////////////////////////////////////////
 // OPS //////////////////////////////////////////////////////////
 
+static void op_CONSTANT(const void *data);
+
 static void op_ADD(const void *data);
 static void op_SUB(const void *data);
 static void op_MUL(const void *data);
@@ -775,66 +745,132 @@ static void op_STATE(const void *data);
 static void op_ER(const void *data);
 
 
+// Get only ops
+#define MAKE_GET_OP(n, f, p, r, d)                                    \
+    {                                                                 \
+        .name = #n, .get = f, .set = NULL, .params = p, .returns = r, \
+        .data = NULL, .doc = d                                        \
+    }
+
+// Constant Ops
+static void op_CONSTANT(const void *data) {
+    push((intptr_t)data);
+}
+
+#define MAKE_CONSTANT_OP(n, v, d)                                 \
+    {                                                             \
+        .name = #n, .get = op_CONSTANT, .set = NULL, .params = 0, \
+        .returns = 1, .data = (void *)v, .doc = d                 \
+    }
+
+#define OPS 101
 // clang-format off
-#define MAKEOP(n, f, p, r, d) \
-    { .name = #n, .get = f, .set = NULL, .params = p, .returns = r, .data = NULL, .doc = d }
-#define OPS 54
 // DO NOT INSERT in the middle. there's a hack in validate() for P and PN
 static const tele_op_t tele_ops[OPS] = {
-    MAKEOP(ADD     , op_ADD     , 2, true , "[A B] ADD A TO B"                          ),
-    MAKEOP(SUB     , op_SUB     , 2, true , "[A B] SUBTRACT B FROM A"                   ),
-    MAKEOP(MUL     , op_MUL     , 2, true , "[A B] MULTIPLY TWO VALUES"                 ),
-    MAKEOP(DIV     , op_DIV     , 2, true , "[A B] DIVIDE FIRST BY SECOND"              ),
-    MAKEOP(MOD     , op_MOD     , 2, true , "[A B] MOD FIRST BY SECOND"                 ),
-    MAKEOP(RAND    , op_RAND    , 1, true , "[A] RETURN RANDOM NUMBER UP TO A"          ),
-    MAKEOP(RRAND   , op_RRAND   , 2, true , "[A B] RETURN RANDOM NUMBER BETWEEN A AND B"),
-    MAKEOP(TOSS    , op_TOSS    , 0, true , "RETURN RANDOM STATE"                       ),
-    MAKEOP(MIN     , op_MIN     , 2, true , "RETURN LESSER OF TWO VALUES"               ),
-    MAKEOP(MAX     , op_MAX     , 2, true , "RETURN GREATER OF TWO VALUES"              ),
-    MAKEOP(LIM     , op_LIM     , 3, true , "[A B C] LIMIT C TO RANGE A TO B"           ),
-    MAKEOP(WRAP    , op_WRAP    , 3, true , "[A B C] WRAP C WITHIN RANGE A TO B"        ),
-    MAKEOP(QT      , op_QT      , 2, true , "[A B] QUANTIZE A TO STEP SIZE B"           ),
-    MAKEOP(AVG     , op_AVG     , 2, true , "AVERAGE TWO VALUES"                        ),
-    MAKEOP(EQ      , op_EQ      , 2, true , "LOGIC: EQUAL"                              ),
-    MAKEOP(NE      , op_NE      , 2, true , "LOGIC: NOT EQUAL"                          ),
-    MAKEOP(LT      , op_LT      , 2, true , "LOGIC: LESS THAN"                          ),
-    MAKEOP(GT      , op_GT      , 2, true , "LOGIC: GREATER THAN"                       ),
-    MAKEOP(NZ      , op_NZ      , 1, true , "LOGIC: NOT ZERO"                           ),
-    MAKEOP(EZ      , op_EZ      , 1, true , "LOGIC: EQUALS ZERO"                        ),
-    MAKEOP(TR.TOG  , op_TR_TOG  , 1, false, "[A] TOGGLE TRIGGER A"                      ),
-    MAKEOP(N       , op_N       , 1, true , "TABLE FOR NOTE VALUES"                     ),
-    MAKEOP(S.ALL   , op_S_ALL   , 0, false, "S: EXECUTE ALL"                            ),
-    MAKEOP(S.POP   , op_S_POP   , 0, false, "S: POP LAST"                               ),
-    MAKEOP(S.CLR   , op_S_CLR   , 0, false, "S: FLUSH"                                  ),
-    MAKEOP(DEL.CLR , op_DEL_CLR , 0, false, "DELAY: FLUSH"                              ),
-    MAKEOP(M.RESET , op_M_RESET , 0, false, "METRO: RESET"                              ),
-    MAKEOP(V       , op_V       , 1, true , "TO VOLT"                                   ),
-    MAKEOP(VV      , op_VV      , 1, true , "TO VOLT WITH PRECISION"                    ),
-    MAKEOP(P       , op_P       , 1, true , "PATTERN: GET/SET"                          ),
-    MAKEOP(P.INS   , op_P_INS   , 2, false, "PATTERN: INSERT"                           ),
-    MAKEOP(P.RM    , op_P_RM    , 1, true , "PATTERN: REMOVE"                           ),
-    MAKEOP(P.PUSH  , op_P_PUSH  , 1, false, "PATTERN: PUSH"                             ),
-    MAKEOP(P.POP   , op_P_POP   , 0, true , "PATTERN: POP"                              ),
-    MAKEOP(PN      , op_PN      , 2, true , "PATTERN: GET/SET N"                        ),
-    MAKEOP(TR.PULSE, op_TR_PULSE, 1, false, "PULSE TRIGGER"                             ),
-    MAKEOP(II      , op_II      , 2, false, "II"                                        ),
-    MAKEOP(RSH     , op_RSH     , 2, true , "RIGHT SHIFT"                               ),
-    MAKEOP(LSH     , op_LSH     , 2, true , "LEFT SHIFT"                                ),
-    MAKEOP(S.L     , op_S_L     , 0, true , "STACK LENGTH"                              ),
-    MAKEOP(CV.SET  , op_CV_SET  , 2, false, "CV SET"                                    ),
-    MAKEOP(EXP     , op_EXP     , 1, true , "EXPONENTIATE"                              ),
-    MAKEOP(ABS     , op_ABS     , 1, true , "ABSOLUTE VALUE"                            ),
-    MAKEOP(AND     , op_AND     , 2, true , "LOGIC: AND"                                ),
-    MAKEOP(OR      , op_OR      , 2, true , "LOGIC: OR"                                 ),
-    MAKEOP(XOR     , op_XOR     , 2, true , "LOGIC: XOR"                                ),
-    MAKEOP(JI      , op_JI      , 2, true , "JUST INTONE DIVISON"                       ),
-    MAKEOP(SCRIPT  , op_SCRIPT  , 1, false, "CALL SCRIPT"                               ),
-    MAKEOP(KILL    , op_KILL    , 0, false, "CLEAR DELAYS, STACK, SLEW"                 ),
-    MAKEOP(MUTE    , op_MUTE    , 1, false, "MUTE INPUT"                                ),
-    MAKEOP(UNMUTE  , op_UNMUTE  , 1, false, "UNMUTE INPUT"                              ),
-    MAKEOP(SCALE   , op_SCALE   , 5, true , "SCALE NUMBER RANGES"                       ),
-    MAKEOP(STATE   , op_STATE   , 1, true , "GET INPUT STATE"                           ),
-    MAKEOP(ER      , op_ER      , 3, true , "EUCLIDEAN RHYTHMS"                         )
+    //          op        get fn   inputs output docs
+    MAKE_GET_OP(ADD     , op_ADD     , 2, true , "[A B] ADD A TO B"                          ),
+    MAKE_GET_OP(SUB     , op_SUB     , 2, true , "[A B] SUBTRACT B FROM A"                   ),
+    MAKE_GET_OP(MUL     , op_MUL     , 2, true , "[A B] MULTIPLY TWO VALUES"                 ),
+    MAKE_GET_OP(DIV     , op_DIV     , 2, true , "[A B] DIVIDE FIRST BY SECOND"              ),
+    MAKE_GET_OP(MOD     , op_MOD     , 2, true , "[A B] MOD FIRST BY SECOND"                 ),
+    MAKE_GET_OP(RAND    , op_RAND    , 1, true , "[A] RETURN RANDOM NUMBER UP TO A"          ),
+    MAKE_GET_OP(RRAND   , op_RRAND   , 2, true , "[A B] RETURN RANDOM NUMBER BETWEEN A AND B"),
+    MAKE_GET_OP(TOSS    , op_TOSS    , 0, true , "RETURN RANDOM STATE"                       ),
+    MAKE_GET_OP(MIN     , op_MIN     , 2, true , "RETURN LESSER OF TWO VALUES"               ),
+    MAKE_GET_OP(MAX     , op_MAX     , 2, true , "RETURN GREATER OF TWO VALUES"              ),
+    MAKE_GET_OP(LIM     , op_LIM     , 3, true , "[A B C] LIMIT C TO RANGE A TO B"           ),
+    MAKE_GET_OP(WRAP    , op_WRAP    , 3, true , "[A B C] WRAP C WITHIN RANGE A TO B"        ),
+    MAKE_GET_OP(QT      , op_QT      , 2, true , "[A B] QUANTIZE A TO STEP SIZE B"           ),
+    MAKE_GET_OP(AVG     , op_AVG     , 2, true , "AVERAGE TWO VALUES"                        ),
+    MAKE_GET_OP(EQ      , op_EQ      , 2, true , "LOGIC: EQUAL"                              ),
+    MAKE_GET_OP(NE      , op_NE      , 2, true , "LOGIC: NOT EQUAL"                          ),
+    MAKE_GET_OP(LT      , op_LT      , 2, true , "LOGIC: LESS THAN"                          ),
+    MAKE_GET_OP(GT      , op_GT      , 2, true , "LOGIC: GREATER THAN"                       ),
+    MAKE_GET_OP(NZ      , op_NZ      , 1, true , "LOGIC: NOT ZERO"                           ),
+    MAKE_GET_OP(EZ      , op_EZ      , 1, true , "LOGIC: EQUALS ZERO"                        ),
+    MAKE_GET_OP(TR.TOG  , op_TR_TOG  , 1, false, "[A] TOGGLE TRIGGER A"                      ),
+    MAKE_GET_OP(N       , op_N       , 1, true , "TABLE FOR NOTE VALUES"                     ),
+    MAKE_GET_OP(S.ALL   , op_S_ALL   , 0, false, "S: EXECUTE ALL"                            ),
+    MAKE_GET_OP(S.POP   , op_S_POP   , 0, false, "S: POP LAST"                               ),
+    MAKE_GET_OP(S.CLR   , op_S_CLR   , 0, false, "S: FLUSH"                                  ),
+    MAKE_GET_OP(DEL.CLR , op_DEL_CLR , 0, false, "DELAY: FLUSH"                              ),
+    MAKE_GET_OP(M.RESET , op_M_RESET , 0, false, "METRO: RESET"                              ),
+    MAKE_GET_OP(V       , op_V       , 1, true , "TO VOLT"                                   ),
+    MAKE_GET_OP(VV      , op_VV      , 1, true , "TO VOLT WITH PRECISION"                    ),
+    MAKE_GET_OP(P       , op_P       , 1, true , "PATTERN: GET/SET"                          ),
+    MAKE_GET_OP(P.INS   , op_P_INS   , 2, false, "PATTERN: INSERT"                           ),
+    MAKE_GET_OP(P.RM    , op_P_RM    , 1, true , "PATTERN: REMOVE"                           ),
+    MAKE_GET_OP(P.PUSH  , op_P_PUSH  , 1, false, "PATTERN: PUSH"                             ),
+    MAKE_GET_OP(P.POP   , op_P_POP   , 0, true , "PATTERN: POP"                              ),
+    MAKE_GET_OP(PN      , op_PN      , 2, true , "PATTERN: GET/SET N"                        ),
+    MAKE_GET_OP(TR.PULSE, op_TR_PULSE, 1, false, "PULSE TRIGGER"                             ),
+    MAKE_GET_OP(II      , op_II      , 2, false, "II"                                        ),
+    MAKE_GET_OP(RSH     , op_RSH     , 2, true , "RIGHT SHIFT"                               ),
+    MAKE_GET_OP(LSH     , op_LSH     , 2, true , "LEFT SHIFT"                                ),
+    MAKE_GET_OP(S.L     , op_S_L     , 0, true , "STACK LENGTH"                              ),
+    MAKE_GET_OP(CV.SET  , op_CV_SET  , 2, false, "CV SET"                                    ),
+    MAKE_GET_OP(EXP     , op_EXP     , 1, true , "EXPONENTIATE"                              ),
+    MAKE_GET_OP(ABS     , op_ABS     , 1, true , "ABSOLUTE VALUE"                            ),
+    MAKE_GET_OP(AND     , op_AND     , 2, true , "LOGIC: AND"                                ),
+    MAKE_GET_OP(OR      , op_OR      , 2, true , "LOGIC: OR"                                 ),
+    MAKE_GET_OP(XOR     , op_XOR     , 2, true , "LOGIC: XOR"                                ),
+    MAKE_GET_OP(JI      , op_JI      , 2, true , "JUST INTONE DIVISON"                       ),
+    MAKE_GET_OP(SCRIPT  , op_SCRIPT  , 1, false, "CALL SCRIPT"                               ),
+    MAKE_GET_OP(KILL    , op_KILL    , 0, false, "CLEAR DELAYS, STACK, SLEW"                 ),
+    MAKE_GET_OP(MUTE    , op_MUTE    , 1, false, "MUTE INPUT"                                ),
+    MAKE_GET_OP(UNMUTE  , op_UNMUTE  , 1, false, "UNMUTE INPUT"                              ),
+    MAKE_GET_OP(SCALE   , op_SCALE   , 5, true , "SCALE NUMBER RANGES"                       ),
+    MAKE_GET_OP(STATE   , op_STATE   , 1, true , "GET INPUT STATE"                           ),
+    MAKE_GET_OP(ER      , op_ER      , 3, true , "EUCLIDEAN RHYTHMS"                         ),
+
+    //               op           constant      doc
+    MAKE_CONSTANT_OP(WW.PRESET  , WW_PRESET   , "WW.PRESET"  ),
+    MAKE_CONSTANT_OP(WW.POS     , WW_POS      , "WW.POS"     ),
+    MAKE_CONSTANT_OP(WW.SYNC    , WW_SYNC     , "WW.SYNC"    ),
+    MAKE_CONSTANT_OP(WW.START   , WW_START    , "WW.START"   ),
+    MAKE_CONSTANT_OP(WW.END     , WW_END      , "WW.END"     ),
+    MAKE_CONSTANT_OP(WW.PMODE   , WW_PMODE    , "WW.PMODE"   ),
+    MAKE_CONSTANT_OP(WW.PATTERN , WW_PATTERN  , "WW.PATTERN" ),
+    MAKE_CONSTANT_OP(WW.QPATTERN, WW_QPATTERN , "WW.QPATTERN"),
+    MAKE_CONSTANT_OP(WW.MUTE1   , WW_MUTE1    , "WW.MUTE1"   ),
+    MAKE_CONSTANT_OP(WW.MUTE2   , WW_MUTE2    , "WW.MUTE2"   ),
+    MAKE_CONSTANT_OP(WW.MUTE3   , WW_MUTE3    , "WW.MUTE3"   ),
+    MAKE_CONSTANT_OP(WW.MUTE4   , WW_MUTE4    , "WW.MUTE4"   ),
+    MAKE_CONSTANT_OP(WW.MUTEA   , WW_MUTEA    , "WW.MUTEA"   ),
+    MAKE_CONSTANT_OP(WW.MUTEB   , WW_MUTEB    , "WW.MUTEB"   ),
+    MAKE_CONSTANT_OP(MP.PRESET  , MP_PRESET   , "MP.PRESET"  ),
+    MAKE_CONSTANT_OP(MP.RESET   , MP_RESET    , "MP.RESET"   ),
+    MAKE_CONSTANT_OP(MP.SYNC    , MP_SYNC     , "MP.SYNC"    ),
+    MAKE_CONSTANT_OP(MP.MUTE    , MP_MUTE     , "MP.MUTE"    ),
+    MAKE_CONSTANT_OP(MP.UNMUTE  , MP_UNMUTE   , "MP.UNMUTE"  ),
+    MAKE_CONSTANT_OP(MP.FREEZE  , MP_FREEZE   , "MP.FREEZE"  ),
+    MAKE_CONSTANT_OP(MP.UNFREEZE, MP_UNFREEZE , "MP.UNFREEZE"),
+    MAKE_CONSTANT_OP(MP.STOP    , MP_STOP     , "MP.STOP"    ),
+    MAKE_CONSTANT_OP(ES.PRESET  , ES_PRESET   , "ES.PRESET"  ),
+    MAKE_CONSTANT_OP(ES.MODE    , ES_MODE     , "ES.MODE"    ),
+    MAKE_CONSTANT_OP(ES.CLOCK   , ES_CLOCK    , "ES.CLOCK"   ),
+    MAKE_CONSTANT_OP(ES.RESET   , ES_RESET    , "ES.RESET"   ),
+    MAKE_CONSTANT_OP(ES.PATTERN , ES_PATTERN  , "ES.PATTERN" ),
+    MAKE_CONSTANT_OP(ES.TRANS   , ES_TRANS    , "ES.TRANS"   ),
+    MAKE_CONSTANT_OP(ES.STOP    , ES_STOP     , "ES.STOP"    ),
+    MAKE_CONSTANT_OP(ES.TRIPLE  , ES_TRIPLE   , "ES.TRIPLE"  ),
+    MAKE_CONSTANT_OP(ES.MAGIC   , ES_MAGIC    , "ES.MAGIC"   ),
+    MAKE_CONSTANT_OP(OR.TRK     , ORCA_TRACK  , "OR.TRK"     ),
+    MAKE_CONSTANT_OP(OR.CLK     , ORCA_CLOCK  , "OR.CLK"     ),
+    MAKE_CONSTANT_OP(OR.DIV     , ORCA_DIVISOR, "OR.DIV"     ),
+    MAKE_CONSTANT_OP(OR.PHASE   , ORCA_PHASE  , "OR.PHASE"   ),
+    MAKE_CONSTANT_OP(OR.RST     , ORCA_RESET  , "OR.RST"     ),
+    MAKE_CONSTANT_OP(OR.WGT     , ORCA_WEIGHT , "OR.WGT"     ),
+    MAKE_CONSTANT_OP(OR.MUTE    , ORCA_MUTE   , "OR.MUTE"    ),
+    MAKE_CONSTANT_OP(OR.SCALE   , ORCA_SCALE  , "OR.SCALE"   ),
+    MAKE_CONSTANT_OP(OR.BANK    , ORCA_BANK   , "OR.BANK"    ),
+    MAKE_CONSTANT_OP(OR.PRESET  , ORCA_PRESET , "OR.PRESET"  ),
+    MAKE_CONSTANT_OP(OR.RELOAD  , ORCA_RELOAD , "OR.RELOAD"  ),
+    MAKE_CONSTANT_OP(OR.ROTS    , ORCA_ROTATES, "OR.ROTS"    ),
+    MAKE_CONSTANT_OP(OR.ROTW    , ORCA_ROTATEW, "OR.ROTW"    ),
+    MAKE_CONSTANT_OP(OR.GRST    , ORCA_GRESET , "OR.GRST"    ),
+    MAKE_CONSTANT_OP(OR.CVA     , ORCA_CVA    , "OR.CVA"     ),
+    MAKE_CONSTANT_OP(OR.CVB     , ORCA_CVB    , "OR.CVB"     ),
 };
 // clang-format on
 
@@ -1390,24 +1426,6 @@ error_t parse(char *cmd, tele_command_t *out) {
             }
 
             if (i == -1) {
-                // CHECK AGAINST KEY
-                i = KEYS;
-
-                while (i--) {
-                    //   	print_dbg("\r\nmods '");
-                    // print_dbg(tele_mods[i].name);
-                    // print_dbg("'");
-
-                    if (!strcmp(s, tele_keys[i].name)) {
-                        out->data[n].t = KEY;
-                        out->data[n].v = i;
-                        // sprintf(dbg,"f(%d) ", out->data[n].v);
-                        break;
-                    }
-                }
-            }
-
-            if (i == -1) {
                 strcpy(error_detail, s);
                 return E_PARSE;
             }
@@ -1487,10 +1505,7 @@ error_t validate(tele_command_t *c) {
 
         // RIGHT (get)
         else if (n && c->data[n - 1].t != SEP) {
-            if (c->data[n].t == NUMBER || c->data[n].t == VAR ||
-                c->data[n].t == KEY) {
-                h++;
-            }
+            if (c->data[n].t == NUMBER || c->data[n].t == VAR) { h++; }
             else if (c->data[n].t == ARRAY) {
                 if (h < 1) {
                     strcpy(error_detail, tele_arrays[c->data[n].v].name);
@@ -1501,7 +1516,7 @@ error_t validate(tele_command_t *c) {
         }
         // LEFT (set)
         else {
-            if (c->data[n].t == NUMBER || c->data[n].t == KEY) { h++; }
+            if (c->data[n].t == NUMBER) { h++; }
             else if (c->data[n].t == VAR) {
                 if (h == 0) h++;
                 // else {
@@ -1595,9 +1610,6 @@ void process(tele_command_t *c) {
                     tele_arrays[c->data[n].v].v[i] = pop();
             }
         }
-        else if (c->data[n].t == KEY) {
-            push(tele_keys[c->data[n].v].v);
-        }
     }
 
     // PRint16_t DEBUG OUTPUT IF VAL LEFT ON STACK
@@ -1642,10 +1654,6 @@ char *print_command(const tele_command_t *c) {
                 p += strlen(tele_mods[c->data[n].v].name) - 1;
                 break;
             case SEP: *p = ':'; break;
-            case KEY:
-                strcpy(p, tele_keys[c->data[n].v].name);
-                p += strlen(tele_keys[c->data[n].v].name) - 1;
-                break;
             default: break;
         }
 
