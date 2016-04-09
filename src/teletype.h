@@ -72,6 +72,13 @@ typedef enum {
     E_NOT_LEFT
 } error_t;
 
+typedef enum { PR_EMPTY, PR_VALUE } process_result_has_value_t;
+
+typedef struct {
+    process_result_has_value_t h;
+    int16_t v;
+} process_result_t;
+
 typedef enum { NUMBER, MOD, SEP, OP, VAR, ARRAY } tele_word_t;
 
 typedef struct {
@@ -130,7 +137,7 @@ typedef struct {
 
 error_t parse(char *cmd, tele_command_t *out);
 error_t validate(tele_command_t *c);
-void process(tele_command_t *c);
+process_result_t process(tele_command_t *c);
 char *print_command(const tele_command_t *c);
 
 void tele_tick(uint8_t);
@@ -191,7 +198,6 @@ typedef void (*update_input_t)(uint8_t);
 extern volatile update_input_t update_input;
 
 extern char error_detail[16];
-extern int16_t output, output_new;
 
 extern volatile uint8_t input_states[8];
 

@@ -137,7 +137,10 @@ int main() {
             if (error_detail[0]) printf(": %s", error_detail);
             error_detail[0] = 0;
             printf("\n");
-            if (status == E_OK) process(&temp);
+            if (status == E_OK) {
+                process_result_t output = process(&temp);
+                if (output.h == PR_VALUE) { printf(">>> %i\n", output.v); }
+            }
         }
         else {
             printf("ERROR: %s", tele_error(status));

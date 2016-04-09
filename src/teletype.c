@@ -47,8 +47,6 @@ const char *tele_error(error_t e) {
 static char pcmd[32];
 
 
-int16_t output, output_new;
-
 char error_detail[16];
 
 uint8_t mutes[8];
@@ -1548,7 +1546,7 @@ error_t validate(tele_command_t *c) {
 /////////////////////////////////////////////////////////////////
 // PROCESS //////////////////////////////////////////////////////
 
-void process(tele_command_t *c) {
+process_result_t process(tele_command_t *c) {
     top = 0;
     left = 0;
     int16_t i;
@@ -1612,13 +1610,13 @@ void process(tele_command_t *c) {
         }
     }
 
-    // PRint16_t DEBUG OUTPUT IF VAL LEFT ON STACK
     if (top) {
-        output = pop();
-        output_new++;
-        // sprintf(dbg,"\r\n>>> %d", output);
-        // DBG
-        // to_v(output);
+        process_result_t o = {.h = PR_VALUE, .v = pop() };
+        return o;
+    }
+    else {
+        process_result_t o = {.h = PR_EMPTY, .v = 0 };
+        return o;
     }
 }
 

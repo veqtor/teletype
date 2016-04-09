@@ -126,6 +126,7 @@ uint8_t help_length[8] = { HELP1_LENGTH, HELP2_LENGTH, HELP3_LENGTH,
                            HELP4_LENGTH, HELP5_LENGTH, HELP6_LENGTH,
                            HELP7_LENGTH, HELP8_LENGTH };
 
+int16_t output, output_new;
 
 #define FIRSTRUN_KEY 0x22
 
@@ -892,7 +893,11 @@ static void handler_HidTimer(s32 data) {
                                             memcpy(&history.c[5], &temp,
                                                    sizeof(tele_command_t));
 
-                                            process(&temp);
+                                            process_result_t o = process(&temp);
+                                            if (o.h == PR_VALUE) {
+                                                output = o.v;
+                                                output_new++;
+                                            }
                                         }
 
                                         for (n = 0; n < 32; n++) input[n] = 0;
