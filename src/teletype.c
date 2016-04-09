@@ -716,12 +716,14 @@ static void op_DEL_CLR(const void *data);
 static void op_M_RESET(const void *data);
 static void op_V(const void *data);
 static void op_VV(const void *data);
-static void op_P(const void *data);
+static void op_P_get(const void *data);
+static void op_P_set(const void *data);
 static void op_P_INS(const void *data);
 static void op_P_RM(const void *data);
 static void op_P_PUSH(const void *data);
 static void op_P_POP(const void *data);
-static void op_PN(const void *data);
+static void op_PN_get(const void *data);
+static void op_PN_set(const void *data);
 static void op_TR_PULSE(const void *data);
 static void op_II(const void *data);
 static void op_RSH(const void *data);
@@ -744,10 +746,17 @@ static void op_ER(const void *data);
 
 
 // Get only ops
-#define MAKE_GET_OP(n, f, p, r, d)                                    \
+#define MAKE_GET_OP(n, g, p, r, d)                                    \
     {                                                                 \
-        .name = #n, .get = f, .set = NULL, .params = p, .returns = r, \
+        .name = #n, .get = g, .set = NULL, .params = p, .returns = r, \
         .data = NULL, .doc = d                                        \
+    }
+
+// Get & set ops
+#define MAKE_GET_SET_OP(n, g, s, p, r, d)                          \
+    {                                                              \
+        .name = #n, .get = g, .set = s, .params = p, .returns = r, \
+        .data = NULL, .doc = d                                     \
     }
 
 // Constant Ops
@@ -763,7 +772,6 @@ static void op_CONSTANT(const void *data) {
 
 #define OPS 101
 // clang-format off
-// DO NOT INSERT in the middle. there's a hack in validate() for P and PN
 static const tele_op_t tele_ops[OPS] = {
     //          op        get fn   inputs output docs
     MAKE_GET_OP(ADD     , op_ADD     , 2, true , "[A B] ADD A TO B"                          ),
@@ -795,12 +803,10 @@ static const tele_op_t tele_ops[OPS] = {
     MAKE_GET_OP(M.RESET , op_M_RESET , 0, false, "METRO: RESET"                              ),
     MAKE_GET_OP(V       , op_V       , 1, true , "TO VOLT"                                   ),
     MAKE_GET_OP(VV      , op_VV      , 1, true , "TO VOLT WITH PRECISION"                    ),
-    MAKE_GET_OP(P       , op_P       , 1, true , "PATTERN: GET/SET"                          ),
     MAKE_GET_OP(P.INS   , op_P_INS   , 2, false, "PATTERN: INSERT"                           ),
     MAKE_GET_OP(P.RM    , op_P_RM    , 1, true , "PATTERN: REMOVE"                           ),
     MAKE_GET_OP(P.PUSH  , op_P_PUSH  , 1, false, "PATTERN: PUSH"                             ),
     MAKE_GET_OP(P.POP   , op_P_POP   , 0, true , "PATTERN: POP"                              ),
-    MAKE_GET_OP(PN      , op_PN      , 2, true , "PATTERN: GET/SET N"                        ),
     MAKE_GET_OP(TR.PULSE, op_TR_PULSE, 1, false, "PULSE TRIGGER"                             ),
     MAKE_GET_OP(II      , op_II      , 2, false, "II"                                        ),
     MAKE_GET_OP(RSH     , op_RSH     , 2, true , "RIGHT SHIFT"                               ),
@@ -820,6 +826,10 @@ static const tele_op_t tele_ops[OPS] = {
     MAKE_GET_OP(SCALE   , op_SCALE   , 5, true , "SCALE NUMBER RANGES"                       ),
     MAKE_GET_OP(STATE   , op_STATE   , 1, true , "GET INPUT STATE"                           ),
     MAKE_GET_OP(ER      , op_ER      , 3, true , "EUCLIDEAN RHYTHMS"                         ),
+
+    //              op  get        set    inputs output docs
+    MAKE_GET_SET_OP(P , op_P_get , op_P_set , 1, true , "PATTERN: GET/SET"  ),
+    MAKE_GET_SET_OP(PN, op_PN_get, op_PN_set, 2, true , "PATTERN: GET/SET N"),
 
     //               op           constant      doc
     MAKE_CONSTANT_OP(WW.PRESET  , WW_PRESET   , "WW.PRESET"  ),
@@ -1074,9 +1084,8 @@ static void op_VV(const void *NOTUSED(data)) {
 
     push(negative * (table_v[a / 100] + table_vv[a % 100]));
 }
-static void op_P(const void *NOTUSED(data)) {
-    int16_t a, b;
-    a = pop();
+static void op_P_get(const void *NOTUSED(data)) {
+    int16_t a = pop();
     if (a < 0) {
         if (tele_patterns[pn].l == 0)
             a = 0;
@@ -1087,14 +1096,23 @@ static void op_P(const void *NOTUSED(data)) {
     }
     if (a > 63) a = 63;
 
-    if (left == 0 && top > 0) {
-        b = pop();
-        tele_patterns[pn].v[a] = b;
-        (*update_pi)();
+    push(tele_patterns[pn].v[a]);
+}
+static void op_P_set(const void *NOTUSED(data)) {
+    int16_t a = pop();
+    int16_t b = pop();
+    if (a < 0) {
+        if (tele_patterns[pn].l == 0)
+            a = 0;
+        else if (a < -tele_patterns[pn].l)
+            a = 0;
+        else
+            a = tele_patterns[pn].l + a;
     }
-    else {
-        push(tele_patterns[pn].v[a]);
-    }
+    if (a > 63) a = 63;
+
+    tele_patterns[pn].v[a] = b;
+    (*update_pi)();
 }
 static void op_P_INS(const void *NOTUSED(data)) {
     int16_t a, b, i;
@@ -1165,10 +1183,9 @@ static void op_P_POP(const void *NOTUSED(data)) {
     else
         push(0);
 }
-static void op_PN(const void *NOTUSED(data)) {
-    int16_t a, b, c;
-    a = pop();
-    b = pop();
+static void op_PN_get(const void *NOTUSED(data)) {
+    int16_t a = pop();
+    int16_t b = pop();
 
     if (a < 0)
         a = 0;
@@ -1185,14 +1202,30 @@ static void op_PN(const void *NOTUSED(data)) {
     }
     if (b > 63) b = 63;
 
-    if (left == 0 && top > 0) {
-        c = pop();
-        tele_patterns[a].v[b] = c;
-        (*update_pi)();
+    push(tele_patterns[a].v[b]);
+}
+static void op_PN_set(const void *NOTUSED(data)) {
+    int16_t a = pop();
+    int16_t b = pop();
+    int16_t c = pop();
+
+    if (a < 0)
+        a = 0;
+    else if (a > 3)
+        a = 3;
+
+    if (b < 0) {
+        if (tele_patterns[a].l == 0)
+            b = 0;
+        else if (b < -tele_patterns[a].l)
+            b = 0;
+        else
+            b = tele_patterns[a].l + b;
     }
-    else {
-        push(tele_patterns[a].v[b]);
-    }
+    if (b > 63) b = 63;
+
+    tele_patterns[a].v[b] = c;
+    (*update_pi)();
 }
 static void op_TR_PULSE(const void *NOTUSED(data)) {
     int16_t a = pop();
@@ -1436,22 +1469,28 @@ error_t validate(tele_command_t *c) {
 
         if (word_type == NUMBER) { stack_depth++; }
         else if (word_type == OP) {
+            tele_op_t op = tele_ops[word_idx];
+
             // if we're not a first_cmd we need to return something
-            if (!first_cmd && tele_ops[word_idx].returns == false) {
-                strcpy(error_detail, tele_ops[word_idx].name);
+            if (!first_cmd && op.returns == false) {
+                strcpy(error_detail, op.name);
                 return E_NOT_LEFT;
             }
 
-            stack_depth -= tele_ops[word_idx].params;
+            stack_depth -= op.params;
 
             if (stack_depth < 0) {
-                strcpy(error_detail, tele_ops[word_idx].name);
+                strcpy(error_detail, op.name);
                 return E_NEED_PARAMS;
             }
 
-            stack_depth += tele_ops[word_idx].returns ? 1 : 0;
-            // hack for var-length params for P
-            if ((word_idx == 29 || word_idx == 34) && first_cmd) stack_depth--;
+            stack_depth += op.returns ? 1 : 0;
+
+            // if we are in the first_cmd position and there is a set fn
+            // decrease the stack depth
+            // TODO this is technically wrong. the only reason we get away with
+            // it is that it's idx == 0, and the while loop is about to end.
+            if (first_cmd && op.set != NULL) stack_depth--;
         }
         else if (word_type == MOD) {
             error_t mod_error = E_OK;
@@ -1536,8 +1575,14 @@ process_result_t process(tele_command_t *c) {
         left = idx;
         if (word_type == NUMBER) { push(word_idx); }
         else if (word_type == OP) {
-            const void *data = tele_ops[word_idx].data;
-            tele_ops[word_idx].get(data);
+            tele_op_t op = tele_ops[word_idx];
+
+            // if we're in the first command position, and there is a set fn
+            // pointer and we have enough params, then run set, else run get
+            if (idx == 0 && op.set != NULL && top >= op.params + 1)
+                op.set(op.data);
+            else
+                op.get(op.data);
         }
         else if (word_type == MOD) {
             // TODO mods should be called with the subcommand (at the moment the

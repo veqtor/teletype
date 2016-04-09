@@ -119,7 +119,7 @@ typedef struct {
 typedef struct {
     const char *name;
     void (*get)(const void *data);
-    void (*set)(const void *data, int16_t value);
+    void (*set)(const void *data);
     uint8_t params;
     bool returns;
     const void *data;
