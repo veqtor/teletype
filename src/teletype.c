@@ -1342,8 +1342,6 @@ error_t parse(char *cmd, tele_command_t *out) {
     uint8_t n = 0;
     out->l = n;
 
-    // sprintf(dbg,"\r\nparse: ");
-
     while (s) {
         // CHECK IF NUMBER
         if (isdigit(s[0]) || s[0] == '-') {
@@ -1357,14 +1355,9 @@ error_t parse(char *cmd, tele_command_t *out) {
             int16_t i = VARS - 1;
 
             do {
-                // print_dbg("\r\nvar '");
-                // print_dbg(tele_vars[i].name);
-                // print_dbg("'");
-
                 if (!strcmp(s, tele_vars[i].name)) {
                     out->data[n].t = VAR;
                     out->data[n].v = i;
-                    // sprintf(dbg,"v(%d) ", out->data[n].v);
                     break;
                 }
             } while (i--);
@@ -1374,14 +1367,9 @@ error_t parse(char *cmd, tele_command_t *out) {
                 i = ARRAYS;
 
                 while (i--) {
-                    //   	print_dbg("\r\narrays '");
-                    // print_dbg(tele_arrays[i].name);
-                    // print_dbg("'");
-
                     if (!strcmp(s, tele_arrays[i].name)) {
                         out->data[n].t = ARRAY;
                         out->data[n].v = i;
-                        // sprintf(dbg,"a(%d) ", out->data[n].v);
                         break;
                     }
                 }
@@ -1392,14 +1380,9 @@ error_t parse(char *cmd, tele_command_t *out) {
                 i = OPS;
 
                 while (i--) {
-                    //   	print_dbg("\r\nops '");
-                    // print_dbg(tele_ops[i].name);
-                    // print_dbg("'");
-
                     if (!strcmp(s, tele_ops[i].name)) {
                         out->data[n].t = OP;
                         out->data[n].v = i;
-                        // sprintf(dbg,"f(%d) ", out->data[n].v);
                         break;
                     }
                 }
@@ -1410,14 +1393,9 @@ error_t parse(char *cmd, tele_command_t *out) {
                 i = MODS;
 
                 while (i--) {
-                    //   	print_dbg("\r\nmods '");
-                    // print_dbg(tele_mods[i].name);
-                    // print_dbg("'");
-
                     if (!strcmp(s, tele_mods[i].name)) {
                         out->data[n].t = MOD;
                         out->data[n].v = i;
-                        // sprintf(dbg,"f(%d) ", out->data[n].v);
                         break;
                     }
                 }
@@ -1436,8 +1414,6 @@ error_t parse(char *cmd, tele_command_t *out) {
 
         if (n == COMMAND_MAX_LENGTH) return E_LENGTH;
     }
-
-    // sprintf(dbg,"// length: %d", temp.l);
 
     return E_OK;
 }
@@ -1509,7 +1485,6 @@ error_t validate(tele_command_t *c) {
                     strcpy(error_detail, tele_arrays[c->data[n].v].name);
                     return E_NEED_PARAMS;
                 }
-                // h-- then h++
             }
         }
         // LEFT (set)
@@ -1517,11 +1492,6 @@ error_t validate(tele_command_t *c) {
             if (c->data[n].t == NUMBER) { h++; }
             else if (c->data[n].t == VAR) {
                 if (h == 0) h++;
-                // else {
-                // 	h--;
-                // 	if(h > 0)
-                // 		return E_EXTRA_PARAMS;
-                // }
             }
             else if (c->data[n].t == ARRAY) {
                 if (h < 1) {
@@ -1530,8 +1500,6 @@ error_t validate(tele_command_t *c) {
                 }
                 h--;
                 if (h == 0) h++;
-                // else if(h > 1)
-                // return E_EXTRA_PARAMS;
             }
         }
     }
@@ -1556,9 +1524,6 @@ process_result_t process(tele_command_t *c) {
         n = c->l;
     else
         n = c->separator;
-
-    // sprintf(dbg,"\r\r\nprocess (%d): %s", n, print_command(c));
-    // DBG;
 
     while (n--) {
         left = n;
@@ -1591,17 +1556,9 @@ process_result_t process(tele_command_t *c) {
             i--;
 
             if (n || top == 0) {
-                // sprintf(dbg,"\r\nget array %s @ %d : %d",
-                // tele_arrays[c->data[n].v].name, i,
-                // tele_arrays[c->data[n].v].v[i]);
-                // DBG
                 push(tele_arrays[c->data[n].v].v[i]);
             }
             else {
-                // sprintf(dbg,"\r\nset array %s @ %d to %d",
-                // tele_arrays[c->data[n].v].name, i,
-                // tele_arrays[c->data[n].v].v[i]);
-                // DBG
                 if (tele_arrays[c->data[n].v].func)
                     tele_arrays[c->data[n].v].func(i);
                 else
