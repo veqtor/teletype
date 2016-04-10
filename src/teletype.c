@@ -1472,7 +1472,7 @@ error_t validate(tele_command_t *c) {
             tele_op_t op = tele_ops[word_idx];
 
             // if we're not a first_cmd we need to return something
-            if (!first_cmd && op.returns == false) {
+            if (!first_cmd && !op.returns) {
                 strcpy(error_detail, op.name);
                 return E_NOT_LEFT;
             }
