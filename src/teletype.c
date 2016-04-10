@@ -613,10 +613,10 @@ void mod_S(tele_command_t *c) {
     }
 }
 void mod_IF(tele_command_t *c) {
-    condition = FALSE;
+    condition = false;
     tele_command_t cc;
     if (pop()) {
-        condition = TRUE;
+        condition = true;
         cc.l = c->l - c->separator - 1;
         cc.separator = -1;
         memcpy(cc.data, &c->data[c->separator + 1], cc.l * sizeof(tele_data_t));
@@ -628,7 +628,7 @@ void mod_ELIF(tele_command_t *c) {
     tele_command_t cc;
     if (!condition) {
         if (pop()) {
-            condition = TRUE;
+            condition = true;
             cc.l = c->l - c->separator - 1;
             cc.separator = -1;
             memcpy(cc.data, &c->data[c->separator + 1],
@@ -641,7 +641,7 @@ void mod_ELIF(tele_command_t *c) {
 void mod_ELSE(tele_command_t *c) {
     tele_command_t cc;
     if (!condition) {
-        condition = TRUE;
+        condition = true;
         cc.l = c->l - c->separator - 1;
         cc.separator = -1;
         memcpy(cc.data, &c->data[c->separator + 1], cc.l * sizeof(tele_data_t));
