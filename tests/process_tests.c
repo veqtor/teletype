@@ -101,6 +101,9 @@ TEST test_X() {
     char* test2[2] = { "X 10", "X" };
     CHECK_CALL(process_helper(2, test2, 10));
 
+    char* test3[2] = { "X 10", "ADD 5 X" };
+    CHECK_CALL(process_helper(2, test3, 15));
+
     PASS();
 }
 

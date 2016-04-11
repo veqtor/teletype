@@ -1,4 +1,5 @@
 #include <ctype.h>   // isdigit
+#include <stddef.h>  // offsetof
 #include <stdint.h>  // types
 #include <stdio.h>   // printf
 #include <stdlib.h>  // rand, strtol
@@ -138,46 +139,26 @@ static void v_FLIP(void);
 
 static int16_t tele_q[16];
 
-#define VARS 39
+#define VARS 36
 static tele_var_t tele_vars[VARS] = {
     { "I", NULL, 0 },  // gets overwritten by ITER
-    { "TIME", NULL, 0 },
-    { "TIME.ACT", NULL, 1 },
-    { "IN", NULL, 0 },
-    { "PARAM", NULL, 0 },
-    { "PRESET", NULL, 0 },
-    { "M", v_M, 1000 },
-    { "M.ACT", v_M_ACT, 1 },
-    { "X", NULL, 0 },
-    { "Y", NULL, 0 },
-    { "Z", NULL, 0 },
-    { "T", NULL, 0 },
-    { "A", NULL, 1 },
-    { "B", NULL, 2 },
-    { "C", NULL, 3 },
-    { "D", NULL, 4 },
-    { "O", v_O, 0 },
-    { "DRUNK", v_DRUNK, 0 },
-    { "Q", v_Q, 0 },
-    { "Q.N", v_Q_N, 1 },
-    { "Q.AVG", v_Q_AVG, 0 },
-    { "SCENE", v_SCENE, 0 },
-    { "P.N", v_P_N, 0 },
-    { "P.L", v_P_L, 0 },
-    { "P.I", v_P_I, 0 },
-    { "P.HERE", v_P_HERE, 0 },
-    { "P.NEXT", v_P_NEXT, 0 },
-    { "P.PREV", v_P_PREV, 0 },
-    { "P.WRAP", v_P_WRAP, 0 },
-    { "P.START", v_P_START, 0 },
-    { "P.END", v_P_END, 0 },
-    { "FLIP", v_FLIP, 0 },
-    { "O.MIN", NULL, 0 },
-    { "O.MAX", NULL, 63 },
-    { "O.WRAP", NULL, 1 },
-    { "O.DIR", NULL, 1 },
-    { "DRUNK.MIN", NULL, 0 },
-    { "DRUNK.MAX", NULL, 255 },
+    { "TIME", NULL, 0 },       { "TIME.ACT", NULL, 1 },
+    { "IN", NULL, 0 },         { "PARAM", NULL, 0 },
+    { "PRESET", NULL, 0 },     { "M", v_M, 1000 },
+    { "M.ACT", v_M_ACT, 1 },   { "T", NULL, 0 },
+    { "A", NULL, 1 },          { "B", NULL, 2 },
+    { "C", NULL, 3 },          { "D", NULL, 4 },
+    { "O", v_O, 0 },           { "DRUNK", v_DRUNK, 0 },
+    { "Q", v_Q, 0 },           { "Q.N", v_Q_N, 1 },
+    { "Q.AVG", v_Q_AVG, 0 },   { "SCENE", v_SCENE, 0 },
+    { "P.N", v_P_N, 0 },       { "P.L", v_P_L, 0 },
+    { "P.I", v_P_I, 0 },       { "P.HERE", v_P_HERE, 0 },
+    { "P.NEXT", v_P_NEXT, 0 }, { "P.PREV", v_P_PREV, 0 },
+    { "P.WRAP", v_P_WRAP, 0 }, { "P.START", v_P_START, 0 },
+    { "P.END", v_P_END, 0 },   { "FLIP", v_FLIP, 0 },
+    { "O.MIN", NULL, 0 },      { "O.MAX", NULL, 63 },
+    { "O.WRAP", NULL, 1 },     { "O.DIR", NULL, 1 },
+    { "DRUNK.MIN", NULL, 0 },  { "DRUNK.MAX", NULL, 255 },
     { "DRUNK.WRAP", NULL, 0 }
 };
 
@@ -694,6 +675,12 @@ void mod_L(tele_command_t *c) {
 
 static void op_CONSTANT(const void *data, scene_state_t *ss, exec_state_t *es,
                         command_state_t *cs);
+static void op_PEEK_I16(const void *data, scene_state_t *ss,
+                        exec_state_t *NOTUSED(es),
+                        command_state_t *NOTUSED(cs));
+static void op_POKE_I16(const void *data, scene_state_t *ss,
+                        exec_state_t *NOTUSED(es),
+                        command_state_t *NOTUSED(cs));
 
 static void op_ADD(const void *data, scene_state_t *ss, exec_state_t *es,
                    command_state_t *cs);
@@ -836,9 +823,39 @@ static void op_CONSTANT(const void *data, scene_state_t *NOTUSED(ss),
         .returns = 1, .data = (void *)v, .doc = d                 \
     }
 
-#define OPS 101
+// Variables, peek & poke
+static void op_PEEK_I16(const void *data, scene_state_t *ss,
+                        exec_state_t *NOTUSED(es),
+                        command_state_t *NOTUSED(cs)) {
+    char *base = (char *)ss;
+    size_t offset = (size_t)data;
+    int16_t *ptr = (int16_t *)(base + offset);
+    push(*ptr);
+}
+
+static void op_POKE_I16(const void *data, scene_state_t *ss,
+                        exec_state_t *NOTUSED(es),
+                        command_state_t *NOTUSED(cs)) {
+    char *base = (char *)ss;
+    size_t offset = (size_t)data;
+    int16_t *ptr = (int16_t *)(base + offset);
+    *ptr = pop();
+}
+
+#define MAKE_SIMPLE_VARIABLE_OP(n, v, d)                                   \
+    {                                                                      \
+        .name = #n, .get = op_PEEK_I16, .set = op_POKE_I16, .params = 0,   \
+        .returns = 1, .data = (void *)offsetof(scene_state_t, v), .doc = d \
+    }
+
+#define OPS 104
 // clang-format off
 static const tele_op_t tele_ops[OPS] = {
+    //                    var  member       docs
+    MAKE_SIMPLE_VARIABLE_OP(X, variables.x, "X"),
+    MAKE_SIMPLE_VARIABLE_OP(Y, variables.y, "Y"),
+    MAKE_SIMPLE_VARIABLE_OP(Z, variables.z, "Z"),
+
     //          op        get fn   inputs output docs
     MAKE_GET_OP(ADD     , op_ADD     , 2, true , "[A B] ADD A TO B"                          ),
     MAKE_GET_OP(SUB     , op_SUB     , 2, true , "[A B] SUBTRACT B FROM A"                   ),
