@@ -1462,14 +1462,14 @@ error_t validate(tele_command_t *c) {
 
     while (idx--) {  // process words right to left
         tele_word_t word_type = c->data[idx].t;
-        int16_t word_idx = c->data[idx].v;
+        int16_t word_value = c->data[idx].v;
         // A first_cmd is either at the beginning of the command or immediately
         // after the SEP
         bool first_cmd = idx == 0 || c->data[idx - 1].t == SEP;
 
         if (word_type == NUMBER) { stack_depth++; }
         else if (word_type == OP) {
-            tele_op_t op = tele_ops[word_idx];
+            tele_op_t op = tele_ops[word_value];
 
             // if we're not a first_cmd we need to return something
             if (!first_cmd && !op.returns) {
@@ -1499,13 +1499,13 @@ error_t validate(tele_command_t *c) {
                 mod_error = E_NO_MOD_HERE;
             else if (c->separator == -1)
                 mod_error = E_NEED_SEP;
-            else if (stack_depth < tele_mods[word_idx].params)
+            else if (stack_depth < tele_mods[word_value].params)
                 mod_error = E_NEED_PARAMS;
-            else if (stack_depth > tele_mods[word_idx].params)
+            else if (stack_depth > tele_mods[word_value].params)
                 mod_error = E_EXTRA_PARAMS;
 
             if (mod_error != E_OK) {
-                strcpy(error_detail, tele_mods[word_idx].name);
+                strcpy(error_detail, tele_mods[word_value].name);
                 return mod_error;
             }
 
@@ -1529,7 +1529,7 @@ error_t validate(tele_command_t *c) {
             if (word_type == VAR) { stack_depth++; }
             else if (word_type == ARRAY) {
                 if (stack_depth < 1) {
-                    strcpy(error_detail, tele_arrays[word_idx].name);
+                    strcpy(error_detail, tele_arrays[word_value].name);
                     return E_NEED_PARAMS;
                 }
             }
@@ -1541,7 +1541,7 @@ error_t validate(tele_command_t *c) {
             }
             else if (word_type == ARRAY) {
                 if (stack_depth < 1) {
-                    strcpy(error_detail, tele_arrays[word_idx].name);
+                    strcpy(error_detail, tele_arrays[word_value].name);
                     return E_NEED_PARAMS;
                 }
                 stack_depth--;
@@ -1570,12 +1570,12 @@ process_result_t process(tele_command_t *c) {
 
     while (idx--) {  // process from right to left
         tele_word_t word_type = c->data[idx].t;
-        int16_t word_idx = c->data[idx].v;
+        int16_t word_value = c->data[idx].v;
 
         left = idx;
-        if (word_type == NUMBER) { push(word_idx); }
+        if (word_type == NUMBER) { push(word_value); }
         else if (word_type == OP) {
-            tele_op_t op = tele_ops[word_idx];
+            tele_op_t op = tele_ops[word_value];
 
             // if we're in the first command position, and there is a set fn
             // pointer and we have enough params, then run set, else run get
@@ -1587,17 +1587,17 @@ process_result_t process(tele_command_t *c) {
         else if (word_type == MOD) {
             // TODO mods should be called with the subcommand (at the moment the
             // mod creates the subcommand = lots of duplication)
-            tele_mods[word_idx].func(c);
+            tele_mods[word_value].func(c);
         }
         else if (word_type == VAR) {
-            if (tele_vars[word_idx].func == NULL) {
+            if (tele_vars[word_value].func == NULL) {
                 if (idx || top == 0)
-                    push(tele_vars[word_idx].v);
+                    push(tele_vars[word_value].v);
                 else
-                    tele_vars[word_idx].v = pop();
+                    tele_vars[word_value].v = pop();
             }
             else
-                tele_vars[word_idx].func();
+                tele_vars[word_value].func();
         }
         else if (word_type == ARRAY) {
             int16_t i = pop();
@@ -1610,12 +1610,12 @@ process_result_t process(tele_command_t *c) {
             i--;
 
             if (idx || top == 0)
-                push(tele_arrays[word_idx].v[i]);
+                push(tele_arrays[word_value].v[i]);
             else {
-                if (tele_arrays[word_idx].func)
-                    tele_arrays[word_idx].func(i);
+                if (tele_arrays[word_value].func)
+                    tele_arrays[word_value].func(i);
                 else
-                    tele_arrays[word_idx].v[i] = pop();
+                    tele_arrays[word_value].v[i] = pop();
             }
         }
     }
