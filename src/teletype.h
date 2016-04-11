@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "state.h"
+
 #define SCRIPT_MAX_COMMANDS 6
 #define SCRIPT_MAX_COMMANDS_ 5
 #define COMMAND_MAX_LENGTH 12
@@ -113,8 +115,10 @@ typedef struct {
 
 typedef struct {
     const char *name;
-    void (*get)(const void *data);
-    void (*set)(const void *data);
+    void (*get)(const void *data, scene_state_t *ss, exec_state_t *es,
+                command_state_t *cs);
+    void (*set)(const void *data, scene_state_t *ss, exec_state_t *es,
+                command_state_t *cs);
     uint8_t params;
     bool returns;
     const void *data;
