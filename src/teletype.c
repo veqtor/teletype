@@ -1621,11 +1621,11 @@ process_result_t process(tele_command_t *c) {
     }
 
     if (top) {
-        process_result_t o = {.h = PR_VALUE, .v = pop() };
+        process_result_t o = {.has_value = true, .value = pop() };
         return o;
     }
     else {
-        process_result_t o = {.h = PR_EMPTY, .v = 0 };
+        process_result_t o = {.has_value = false, .value = 0 };
         return o;
     }
 }

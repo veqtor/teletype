@@ -69,11 +69,9 @@ typedef enum {
     E_NOT_LEFT
 } error_t;
 
-typedef enum { PR_EMPTY, PR_VALUE } process_result_has_value_t;
-
 typedef struct {
-    process_result_has_value_t h;
-    int16_t v;
+    bool has_value;
+    int16_t value;
 } process_result_t;
 
 typedef enum { NUMBER, MOD, SEP, OP, VAR, ARRAY } tele_word_t;

@@ -139,7 +139,7 @@ int main() {
             printf("\n");
             if (status == E_OK) {
                 process_result_t output = process(&temp);
-                if (output.h == PR_VALUE) { printf(">>> %i\n", output.v); }
+                if (output.has_value) { printf(">>> %i\n", output.value); }
             }
         }
         else {

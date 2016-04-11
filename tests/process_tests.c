@@ -7,7 +7,7 @@
 // runs multiple lines of commands and then asserts that the final answer is
 // correct
 TEST process_helper(size_t n, char* lines[], int16_t answer) {
-    process_result_t result = {.h = PR_EMPTY, .v = 0 };
+    process_result_t result = {.has_value = false, .value = 0 };
     for (size_t i = 0; i < n; i++) {
         tele_command_t cmd;
         error_t error = parse(lines[i], &cmd);
@@ -15,8 +15,8 @@ TEST process_helper(size_t n, char* lines[], int16_t answer) {
         if (validate(&cmd) != E_OK) { FAIL(); }
         result = process(&cmd);
     }
-    ASSERT_EQ(PR_VALUE, result.h);
-    ASSERT_EQ(answer, result.v);
+    ASSERT_EQ(result.has_value, true);
+    ASSERT_EQ(result.value, answer);
 
     PASS();
 }

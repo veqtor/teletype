@@ -894,8 +894,8 @@ static void handler_HidTimer(s32 data) {
                                                    sizeof(tele_command_t));
 
                                             process_result_t o = process(&temp);
-                                            if (o.h == PR_VALUE) {
-                                                output = o.v;
+                                            if (o.has_value) {
+                                                output = o.value;
                                                 output_new++;
                                             }
                                         }
