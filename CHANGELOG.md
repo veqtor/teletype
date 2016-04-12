@@ -5,6 +5,7 @@
 - **NEW**: `ER` op
 - **IMP**: a `TR.TIME` of 0 will disable the pulse
 - **FIX**: `FLIP` won't interfere with the value of `O`
+- **FIX**: the `O` op now returns it's set value *before* updating itself
 
 ## v1.1
 - **NEW**: USB flash drive read/write

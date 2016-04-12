@@ -326,23 +326,36 @@ static void v_P_END() {
     }
 }
 
+int16_t normalise_value(int16_t min, int16_t max, int16_t wrap, int16_t value);
+int16_t normalise_value(int16_t min, int16_t max, int16_t wrap, int16_t value) {
+    if (value >= min && value <= max)
+        return value;
+
+    if (wrap) {
+        if (value < min)
+            return max;
+        else
+            return min;
+    }
+    else {
+        if (value < min)
+            return min;
+        else
+            return max;
+    }
+}
+
 static void op_O_get(const void *NOTUSED(data), scene_state_t *ss,
                      exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs)) {
-    ss->variables.o += ss->variables.o_dir;
-    if (ss->variables.o > ss->variables.o_max) {
-        if (ss->variables.o_wrap)
-            ss->variables.o = ss->variables.o_min;
-        else
-            ss->variables.o = ss->variables.o_max;
-    }
-    else if (ss->variables.o < ss->variables.o_min) {
-        if (ss->variables.o_wrap)
-            ss->variables.o = ss->variables.o_max;
-        else
-            ss->variables.o = ss->variables.o_min;
-    }
+    int16_t min = ss->variables.o_min;
+    int16_t max = ss->variables.o_max;
+    int16_t wrap = ss->variables.o_wrap;
+    // restrict current_value to (wrapped) bounds
+    int16_t current_value = normalise_value(min, max, wrap, ss->variables.o);
+    push(current_value);
 
-    push(ss->variables.o);
+    // calculate new_value
+    ss->variables.o = normalise_value(min, max, wrap, current_value + ss->variables.o_dir);
 }
 
 static void op_O_set(const void *NOTUSED(data), scene_state_t *ss,
