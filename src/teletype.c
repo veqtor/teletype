@@ -142,9 +142,8 @@ static void v_FLIP(void);
 
 static int16_t tele_q[16];
 
-#define VARS 32
+#define VARS 31
 static tele_var_t tele_vars[VARS] = {
-    { "I", NULL, 0 },  // gets overwritten by ITER
     { "TIME", NULL, 0 },       { "TIME.ACT", NULL, 1 },
     { "IN", NULL, 0 },         { "PARAM", NULL, 0 },
     { "PRESET", NULL, 0 },     { "M", v_M, 1000 },
@@ -647,7 +646,7 @@ void mod_L(tele_command_t *c) {
     if (a < b) {
         d = b - a + 1;
         for (i = 0; i < d; i++) {
-            tele_vars[V_I].v = a + i;
+            scene_state.variables.i = a + i;
             cc.l = c->l - c->separator - 1;
             cc.separator = -1;
             memcpy(cc.data, &c->data[c->separator + 1],
@@ -659,7 +658,7 @@ void mod_L(tele_command_t *c) {
     else {
         d = a - b + 1;
         for (i = 0; i < d; i++) {
-            tele_vars[V_I].v = a - i;
+            scene_state.variables.i = a - i;
             cc.l = c->l - c->separator - 1;
             cc.separator = -1;
             memcpy(cc.data, &c->data[c->separator + 1],
@@ -849,7 +848,7 @@ static void op_POKE_I16(const void *data, scene_state_t *ss,
         .returns = 1, .data = (void *)offsetof(scene_state_t, v), .doc = d \
     }
 
-#define OPS 108
+#define OPS 109
 // clang-format off
 static const tele_op_t tele_ops[OPS] = {
     //                    var  member       docs
@@ -857,6 +856,7 @@ static const tele_op_t tele_ops[OPS] = {
     MAKE_SIMPLE_VARIABLE_OP(B, variables.b, "B"),
     MAKE_SIMPLE_VARIABLE_OP(C, variables.c, "C"),
     MAKE_SIMPLE_VARIABLE_OP(D, variables.d, "D"),
+    MAKE_SIMPLE_VARIABLE_OP(I, variables.i, "I: GETS OVERWRITTEN BY L"),
     MAKE_SIMPLE_VARIABLE_OP(X, variables.x, "X"),
     MAKE_SIMPLE_VARIABLE_OP(Y, variables.y, "Y"),
     MAKE_SIMPLE_VARIABLE_OP(Z, variables.z, "Z"),

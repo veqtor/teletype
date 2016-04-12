@@ -65,6 +65,19 @@ TEST test_IF() {
     PASS();
 }
 
+TEST test_L() {
+    char* test1[3] = { "X 0", "L 1 10 : X I", "X" };
+    CHECK_CALL(process_helper(3, test1, 10));
+
+    char* test2[3] = { "X 0", "L 1 -10 : X I", "X" };
+    CHECK_CALL(process_helper(3, test2, -10));
+
+    char* test3[3] = { "X 0", "L 1 10 : X ADD X I", "X" };
+    CHECK_CALL(process_helper(3, test3, 55));
+
+    PASS();
+}
+
 TEST test_P() {
     // beware of global state!!!
     char* test1[2] = { "P 0 1", "P 0" };
@@ -111,6 +124,7 @@ SUITE(process_suite) {
     RUN_TEST(test_numbers);
     RUN_TEST(test_ADD);
     RUN_TEST(test_IF);
+    RUN_TEST(test_L);
     RUN_TEST(test_P);
     RUN_TEST(test_PN);
     RUN_TEST(test_X);
