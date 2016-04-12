@@ -93,7 +93,7 @@ static scene_state_t scene_state = {
                   .b = 2,
                   .c = 3,
                   .d = 4,
-                  .o_dir = 1,
+                  .o_inc = 1,
                   .o_min = 0,
                   .o_max = 63,
                   .o_wrap = 1 }
@@ -328,8 +328,7 @@ static void v_P_END() {
 
 int16_t normalise_value(int16_t min, int16_t max, int16_t wrap, int16_t value);
 int16_t normalise_value(int16_t min, int16_t max, int16_t wrap, int16_t value) {
-    if (value >= min && value <= max)
-        return value;
+    if (value >= min && value <= max) return value;
 
     if (wrap) {
         if (value < min)
@@ -354,8 +353,9 @@ static void op_O_get(const void *NOTUSED(data), scene_state_t *ss,
     int16_t current_value = normalise_value(min, max, wrap, ss->variables.o);
     push(current_value);
 
-    // calculate new_value
-    ss->variables.o = normalise_value(min, max, wrap, current_value + ss->variables.o_dir);
+    // calculate new value
+    ss->variables.o =
+        normalise_value(min, max, wrap, current_value + ss->variables.o_inc);
 }
 
 static void op_O_set(const void *NOTUSED(data), scene_state_t *ss,
@@ -861,7 +861,7 @@ static const tele_op_t tele_ops[OPS] = {
     MAKE_SIMPLE_VARIABLE_OP(C     , variables.c     , "C"                       ),
     MAKE_SIMPLE_VARIABLE_OP(D     , variables.d     , "D"                       ),
     MAKE_SIMPLE_VARIABLE_OP(I     , variables.i     , "I: GETS OVERWRITTEN BY L"),
-    MAKE_SIMPLE_VARIABLE_OP(O.DIR , variables.o_dir , "O.DIR"                   ),
+    MAKE_SIMPLE_VARIABLE_OP(O.INC , variables.o_inc , "O.DIR"                   ),
     MAKE_SIMPLE_VARIABLE_OP(O.MAX , variables.o_max , "O.MAX"                   ),
     MAKE_SIMPLE_VARIABLE_OP(O.MIN , variables.o_min , "O.MIN"                   ),
     MAKE_SIMPLE_VARIABLE_OP(O.WRAP, variables.o_wrap, "O.WRAP"                  ),

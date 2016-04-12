@@ -83,7 +83,7 @@ TEST test_L() {
 TEST test_O() {
     // beware of global state!!!
     char* test1[6] = {
-        "O.MIN 0", "O.MAX 63", "O.DIR 1", "O.WRAP 1", "O 0", "O"
+        "O.MIN 0", "O.MAX 63", "O.INC 1", "O.WRAP 1", "O 0", "O"
     };
     CHECK_CALL(process_helper(6, test1, 0));
 
@@ -99,7 +99,7 @@ TEST test_O() {
     char* test5[1] = { "O" };
     CHECK_CALL(process_helper(1, test5, 0));
 
-    char* test6[4] = { "O 0", "O.DIR -1", "O", "O" };
+    char* test6[4] = { "O 0", "O.INC -1", "O", "O" };
     CHECK_CALL(process_helper(4, test6, 63));
 
     char* test7[4] = { "O 0", "O.WRAP 0", "O", "O" };
