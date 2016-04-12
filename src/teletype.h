@@ -23,7 +23,6 @@ enum varnames {
     V_PRESET,
     V_M,
     V_M_ACT,
-    V_T,
     V_O,
     V_DRUNK,
     V_Q,

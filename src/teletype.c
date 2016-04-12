@@ -142,12 +142,12 @@ static void v_FLIP(void);
 
 static int16_t tele_q[16];
 
-#define VARS 31
+#define VARS 30
 static tele_var_t tele_vars[VARS] = {
     { "TIME", NULL, 0 },       { "TIME.ACT", NULL, 1 },
     { "IN", NULL, 0 },         { "PARAM", NULL, 0 },
     { "PRESET", NULL, 0 },     { "M", v_M, 1000 },
-    { "M.ACT", v_M_ACT, 1 },   { "T", NULL, 0 },
+    { "M.ACT", v_M_ACT, 1 },
     { "O", v_O, 0 },           { "DRUNK", v_DRUNK, 0 },
     { "Q", v_Q, 0 },           { "Q.N", v_Q_N, 1 },
     { "Q.AVG", v_Q_AVG, 0 },   { "SCENE", v_SCENE, 0 },
@@ -832,7 +832,7 @@ static void op_POKE_I16(const void *data, scene_state_t *ss,
         .returns = 1, .data = (void *)offsetof(scene_state_t, v), .doc = d \
     }
 
-#define OPS 109
+#define OPS 110
 // clang-format off
 static const tele_op_t tele_ops[OPS] = {
     //                    var  member       docs
@@ -841,6 +841,7 @@ static const tele_op_t tele_ops[OPS] = {
     MAKE_SIMPLE_VARIABLE_OP(C, variables.c, "C"),
     MAKE_SIMPLE_VARIABLE_OP(D, variables.d, "D"),
     MAKE_SIMPLE_VARIABLE_OP(I, variables.i, "I: GETS OVERWRITTEN BY L"),
+    MAKE_SIMPLE_VARIABLE_OP(T, variables.x, "T"),
     MAKE_SIMPLE_VARIABLE_OP(X, variables.x, "X"),
     MAKE_SIMPLE_VARIABLE_OP(Y, variables.y, "Y"),
     MAKE_SIMPLE_VARIABLE_OP(Z, variables.z, "Z"),

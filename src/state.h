@@ -9,6 +9,7 @@ typedef struct {
     int16_t c;
     int16_t d;
     int16_t i;
+    int16_t t;
     int16_t x;
     int16_t y;
     int16_t z;
