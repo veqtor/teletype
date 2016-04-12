@@ -638,34 +638,18 @@ void mod_ELSE(tele_command_t *c) {
     }
 }
 void mod_L(tele_command_t *c) {
-    int16_t a, b, d, i;
     tele_command_t cc;
-    a = pop();
-    b = pop();
+    cc.l = c->l - c->separator - 1;
+    cc.separator = -1;
+    memcpy(cc.data, &c->data[c->separator + 1], cc.l * sizeof(tele_data_t));
 
-    if (a < b) {
-        d = b - a + 1;
-        for (i = 0; i < d; i++) {
-            scene_state.variables.i = a + i;
-            cc.l = c->l - c->separator - 1;
-            cc.separator = -1;
-            memcpy(cc.data, &c->data[c->separator + 1],
-                   cc.l * sizeof(tele_data_t));
-            // sprintf(dbg,"\r\nsub-length: %d", cc.l);
-            process(&cc);
-        }
-    }
-    else {
-        d = a - b + 1;
-        for (i = 0; i < d; i++) {
-            scene_state.variables.i = a - i;
-            cc.l = c->l - c->separator - 1;
-            cc.separator = -1;
-            memcpy(cc.data, &c->data[c->separator + 1],
-                   cc.l * sizeof(tele_data_t));
-            // sprintf(dbg,"\r\nsub-length: %d", cc.l);
-            process(&cc);
-        }
+    int16_t a = pop();
+    int16_t b = pop();
+    int16_t loop_size = a < b ? b - a : a - b;
+
+    for (int16_t i = 0; i <= loop_size; i++) {
+        scene_state.variables.i = a < b ? a + i : a - i;
+        process(&cc);
     }
 }
 
