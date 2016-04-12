@@ -20,7 +20,6 @@ enum varnames {
     V_TIME_ACT,
     V_IN,
     V_PARAM,
-    V_PRESET,
     V_M,
     V_M_ACT,
     V_O,

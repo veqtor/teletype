@@ -142,12 +142,11 @@ static void v_FLIP(void);
 
 static int16_t tele_q[16];
 
-#define VARS 30
+#define VARS 29
 static tele_var_t tele_vars[VARS] = {
     { "TIME", NULL, 0 },       { "TIME.ACT", NULL, 1 },
     { "IN", NULL, 0 },         { "PARAM", NULL, 0 },
-    { "PRESET", NULL, 0 },     { "M", v_M, 1000 },
-    { "M.ACT", v_M_ACT, 1 },
+    { "M", v_M, 1000 },        { "M.ACT", v_M_ACT, 1 },
     { "O", v_O, 0 },           { "DRUNK", v_DRUNK, 0 },
     { "Q", v_Q, 0 },           { "Q.N", v_Q_N, 1 },
     { "Q.AVG", v_Q_AVG, 0 },   { "SCENE", v_SCENE, 0 },
