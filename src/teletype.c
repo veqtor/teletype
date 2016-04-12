@@ -93,6 +93,8 @@ static scene_state_t scene_state = {
                   .b = 2,
                   .c = 3,
                   .d = 4,
+                  .drunk_min = 0,
+                  .drunk_max = 255,
                   .o_inc = 1,
                   .o_min = 0,
                   .o_max = 63,
@@ -143,7 +145,10 @@ static void op_O_get(const void *data, scene_state_t *ss, exec_state_t *es,
                      command_state_t *cs);
 static void op_O_set(const void *data, scene_state_t *ss, exec_state_t *es,
                      command_state_t *cs);
-static void v_DRUNK(void);
+static void op_DRUNK_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                         command_state_t *cs);
+static void op_DRUNK_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                         command_state_t *cs);
 static void v_Q(void);
 static void v_Q_N(void);
 static void v_Q_AVG(void);
@@ -152,20 +157,18 @@ static void v_FLIP(void);
 
 static int16_t tele_q[16];
 
-#define VARS 24
+#define VARS 20
 static tele_var_t tele_vars[VARS] = {
-    { "TIME", NULL, 0 },         { "TIME.ACT", NULL, 1 },
-    { "IN", NULL, 0 },           { "PARAM", NULL, 0 },
-    { "M", v_M, 1000 },          { "M.ACT", v_M_ACT, 1 },
-    { "DRUNK", v_DRUNK, 0 },     { "Q", v_Q, 0 },
-    { "Q.N", v_Q_N, 1 },         { "Q.AVG", v_Q_AVG, 0 },
-    { "SCENE", v_SCENE, 0 },     { "P.N", v_P_N, 0 },
-    { "P.L", v_P_L, 0 },         { "P.I", v_P_I, 0 },
-    { "P.HERE", v_P_HERE, 0 },   { "P.NEXT", v_P_NEXT, 0 },
-    { "P.PREV", v_P_PREV, 0 },   { "P.WRAP", v_P_WRAP, 0 },
-    { "P.START", v_P_START, 0 }, { "P.END", v_P_END, 0 },
-    { "FLIP", v_FLIP, 0 },       { "DRUNK.MIN", NULL, 0 },
-    { "DRUNK.MAX", NULL, 255 },  { "DRUNK.WRAP", NULL, 0 }
+    { "TIME", NULL, 0 },       { "TIME.ACT", NULL, 1 },
+    { "IN", NULL, 0 },         { "PARAM", NULL, 0 },
+    { "M", v_M, 1000 },        { "M.ACT", v_M_ACT, 1 },
+    { "Q", v_Q, 0 },           { "Q.N", v_Q_N, 1 },
+    { "Q.AVG", v_Q_AVG, 0 },   { "SCENE", v_SCENE, 0 },
+    { "P.N", v_P_N, 0 },       { "P.L", v_P_L, 0 },
+    { "P.I", v_P_I, 0 },       { "P.HERE", v_P_HERE, 0 },
+    { "P.NEXT", v_P_NEXT, 0 }, { "P.PREV", v_P_PREV, 0 },
+    { "P.WRAP", v_P_WRAP, 0 }, { "P.START", v_P_START, 0 },
+    { "P.END", v_P_END, 0 },   { "FLIP", v_FLIP, 0 }
 };
 
 static void v_M() {
@@ -349,6 +352,7 @@ static void op_O_get(const void *NOTUSED(data), scene_state_t *ss,
     int16_t min = ss->variables.o_min;
     int16_t max = ss->variables.o_max;
     int16_t wrap = ss->variables.o_wrap;
+
     // restrict current_value to (wrapped) bounds
     int16_t current_value = normalise_value(min, max, wrap, ss->variables.o);
     push(current_value);
@@ -363,26 +367,27 @@ static void op_O_set(const void *NOTUSED(data), scene_state_t *ss,
     ss->variables.o = pop();
 }
 
-static void v_DRUNK() {
-    if (left || top == 0) {
-        tele_vars[V_DRUNK].v += (rand() % 3) - 1;
-        if (tele_vars[V_DRUNK].v < tele_vars[V_DRUNK_MIN].v) {
-            if (tele_vars[V_DRUNK_WRAP].v)
-                tele_vars[V_DRUNK].v = tele_vars[V_DRUNK_MAX].v;
-            else
-                tele_vars[V_DRUNK].v = tele_vars[V_DRUNK_MIN].v;
-        }
-        else if (tele_vars[V_DRUNK].v > tele_vars[V_DRUNK_MAX].v) {
-            if (tele_vars[V_DRUNK_WRAP].v)
-                tele_vars[V_DRUNK].v = tele_vars[V_DRUNK_MIN].v;
-            else
-                tele_vars[V_DRUNK].v = tele_vars[V_DRUNK_MAX].v;
-        }
-        push(tele_vars[V_DRUNK].v);
-    }
-    else {
-        tele_vars[V_DRUNK].v = pop();
-    }
+static void op_DRUNK_get(const void *NOTUSED(data), scene_state_t *ss,
+                         exec_state_t *NOTUSED(es),
+                         command_state_t *NOTUSED(cs)) {
+    int16_t min = ss->variables.drunk_min;
+    int16_t max = ss->variables.drunk_max;
+    int16_t wrap = ss->variables.drunk_wrap;
+
+    // restrict current_value to (wrapped) bounds
+    int16_t current_value =
+        normalise_value(min, max, wrap, ss->variables.drunk);
+    push(current_value);
+
+    // calculate new value
+    int16_t new_value = current_value + (rand() % 3) - 1;
+    ss->variables.drunk = normalise_value(min, max, wrap, new_value);
+}
+
+static void op_DRUNK_set(const void *NOTUSED(data), scene_state_t *ss,
+                         exec_state_t *NOTUSED(es),
+                         command_state_t *NOTUSED(cs)) {
+    ss->variables.drunk = pop();
 }
 
 static void v_Q() {
@@ -852,23 +857,26 @@ static void op_POKE_I16(const void *data, scene_state_t *ss,
         .returns = 1, .data = (void *)offsetof(scene_state_t, v), .doc = d \
     }
 
-#define OPS 115
+#define OPS 119
 // clang-format off
 static const tele_op_t tele_ops[OPS] = {
     //                    var  member       docs
-    MAKE_SIMPLE_VARIABLE_OP(A     , variables.a     , "A"                       ),
-    MAKE_SIMPLE_VARIABLE_OP(B     , variables.b     , "B"                       ),
-    MAKE_SIMPLE_VARIABLE_OP(C     , variables.c     , "C"                       ),
-    MAKE_SIMPLE_VARIABLE_OP(D     , variables.d     , "D"                       ),
-    MAKE_SIMPLE_VARIABLE_OP(I     , variables.i     , "I: GETS OVERWRITTEN BY L"),
-    MAKE_SIMPLE_VARIABLE_OP(O.INC , variables.o_inc , "O.DIR"                   ),
-    MAKE_SIMPLE_VARIABLE_OP(O.MAX , variables.o_max , "O.MAX"                   ),
-    MAKE_SIMPLE_VARIABLE_OP(O.MIN , variables.o_min , "O.MIN"                   ),
-    MAKE_SIMPLE_VARIABLE_OP(O.WRAP, variables.o_wrap, "O.WRAP"                  ),
-    MAKE_SIMPLE_VARIABLE_OP(T     , variables.x     , "T"                       ),
-    MAKE_SIMPLE_VARIABLE_OP(X     , variables.x     , "X"                       ),
-    MAKE_SIMPLE_VARIABLE_OP(Y     , variables.y     , "Y"                       ),
-    MAKE_SIMPLE_VARIABLE_OP(Z     , variables.z     , "Z"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(A         , variables.a         , "A"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(B         , variables.b         , "B"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(C         , variables.c         , "C"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(D         , variables.d         , "D"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(DRUNK.MAX , variables.drunk_max , "DRUNK.MAX"               ),
+    MAKE_SIMPLE_VARIABLE_OP(DRUNK.MIN , variables.drunk_min , "DRUNK.MIN"               ),
+    MAKE_SIMPLE_VARIABLE_OP(DRUNK.WRAP, variables.drunk_wrap, "DRUNK.WRAP"              ),
+    MAKE_SIMPLE_VARIABLE_OP(I         , variables.i         , "I: GETS OVERWRITTEN BY L"),
+    MAKE_SIMPLE_VARIABLE_OP(O.INC     , variables.o_inc     , "O.DIR"                   ),
+    MAKE_SIMPLE_VARIABLE_OP(O.MAX     , variables.o_max     , "O.MAX"                   ),
+    MAKE_SIMPLE_VARIABLE_OP(O.MIN     , variables.o_min     , "O.MIN"                   ),
+    MAKE_SIMPLE_VARIABLE_OP(O.WRAP    , variables.o_wrap    , "O.WRAP"                  ),
+    MAKE_SIMPLE_VARIABLE_OP(T         , variables.x         , "T"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(X         , variables.x         , "X"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(Y         , variables.y         , "Y"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(Z         , variables.z         , "Z"                       ),
 
     //          op        get fn   inputs output docs
     MAKE_GET_OP(ADD     , op_ADD     , 2, true , "[A B] ADD A TO B"                          ),
@@ -924,10 +932,11 @@ static const tele_op_t tele_ops[OPS] = {
     MAKE_GET_OP(STATE   , op_STATE   , 1, true , "GET INPUT STATE"                           ),
     MAKE_GET_OP(ER      , op_ER      , 3, true , "EUCLIDEAN RHYTHMS"                         ),
 
-    //              op  get        set    inputs output docs
-    MAKE_GET_SET_OP(O , op_O_get , op_O_set , 0, true , "O"                 ),
-    MAKE_GET_SET_OP(P , op_P_get , op_P_set , 1, true , "PATTERN: GET/SET"  ),
-    MAKE_GET_SET_OP(PN, op_PN_get, op_PN_set, 2, true , "PATTERN: GET/SET N"),
+    //              op     get           set      inputs output docs
+    MAKE_GET_SET_OP(DRUNK, op_DRUNK_get, op_DRUNK_set, 0, true, "DRUNK"             ),
+    MAKE_GET_SET_OP(O    , op_O_get    , op_O_set    , 0, true, "O"                 ),
+    MAKE_GET_SET_OP(P    , op_P_get    , op_P_set    , 1, true, "PATTERN: GET/SET"  ),
+    MAKE_GET_SET_OP(PN   , op_PN_get   , op_PN_set   , 2, true, "PATTERN: GET/SET N"),
 
     //               op           constant      doc
     MAKE_CONSTANT_OP(WW.PRESET  , WW_PRESET   , "WW.PRESET"  ),

@@ -22,7 +22,6 @@ enum varnames {
     V_PARAM,
     V_M,
     V_M_ACT,
-    V_DRUNK,
     V_Q,
     V_Q_N,
     V_Q_AVG,
@@ -37,9 +36,6 @@ enum varnames {
     V_P_START,
     V_P_END,
     V_FLIP,
-    V_DRUNK_MIN,
-    V_DRUNK_MAX,
-    V_DRUNK_WRAP
 };
 
 typedef enum {

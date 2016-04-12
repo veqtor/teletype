@@ -7,6 +7,7 @@
 - **IMP**: `O.DIR` renamed to `O.INC`, it's the value by which `O` is *incremented* when it is accessed
 - **FIX**: `FLIP` won't interfere with the value of `O`
 - **FIX**: the `O` op now returns it's set value *before* updating itself
+- **FIX**: the `DRUNK` op now returns it's set value *before* updating itself
 
 ## v1.1
 - **NEW**: USB flash drive read/write
