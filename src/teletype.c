@@ -87,7 +87,10 @@ const char *to_v(int16_t);
 // STATE ////////////////////////////////////////////////////////
 
 // eventually these will not be global variables
-static scene_state_t scene_state;
+static scene_state_t scene_state = {
+    // variables that haven't been explicitly initialised, will be set to 0
+    .variables = {.a = 1, .b = 2, .c = 3, .d = 4 }
+};
 static exec_state_t exec_state;
 static command_state_t command_state;
 
@@ -139,15 +142,13 @@ static void v_FLIP(void);
 
 static int16_t tele_q[16];
 
-#define VARS 36
+#define VARS 32
 static tele_var_t tele_vars[VARS] = {
     { "I", NULL, 0 },  // gets overwritten by ITER
     { "TIME", NULL, 0 },       { "TIME.ACT", NULL, 1 },
     { "IN", NULL, 0 },         { "PARAM", NULL, 0 },
     { "PRESET", NULL, 0 },     { "M", v_M, 1000 },
     { "M.ACT", v_M_ACT, 1 },   { "T", NULL, 0 },
-    { "A", NULL, 1 },          { "B", NULL, 2 },
-    { "C", NULL, 3 },          { "D", NULL, 4 },
     { "O", v_O, 0 },           { "DRUNK", v_DRUNK, 0 },
     { "Q", v_Q, 0 },           { "Q.N", v_Q_N, 1 },
     { "Q.AVG", v_Q_AVG, 0 },   { "SCENE", v_SCENE, 0 },
@@ -848,10 +849,14 @@ static void op_POKE_I16(const void *data, scene_state_t *ss,
         .returns = 1, .data = (void *)offsetof(scene_state_t, v), .doc = d \
     }
 
-#define OPS 104
+#define OPS 108
 // clang-format off
 static const tele_op_t tele_ops[OPS] = {
     //                    var  member       docs
+    MAKE_SIMPLE_VARIABLE_OP(A, variables.a, "A"),
+    MAKE_SIMPLE_VARIABLE_OP(B, variables.b, "B"),
+    MAKE_SIMPLE_VARIABLE_OP(C, variables.c, "C"),
+    MAKE_SIMPLE_VARIABLE_OP(D, variables.d, "D"),
     MAKE_SIMPLE_VARIABLE_OP(X, variables.x, "X"),
     MAKE_SIMPLE_VARIABLE_OP(Y, variables.y, "Y"),
     MAKE_SIMPLE_VARIABLE_OP(Z, variables.z, "Z"),
