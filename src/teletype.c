@@ -89,7 +89,14 @@ const char *to_v(int16_t);
 // eventually these will not be global variables
 static scene_state_t scene_state = {
     // variables that haven't been explicitly initialised, will be set to 0
-    .variables = {.a = 1, .b = 2, .c = 3, .d = 4 }
+    .variables = {.a = 1,
+                  .b = 2,
+                  .c = 3,
+                  .d = 4,
+                  .o_dir = 1,
+                  .o_min = 0,
+                  .o_max = 63,
+                  .o_wrap = 1 }
 };
 static exec_state_t exec_state;
 static command_state_t command_state;
@@ -132,7 +139,10 @@ static void v_P_PREV(void);
 static void v_P_WRAP(void);
 static void v_P_START(void);
 static void v_P_END(void);
-static void v_O(void);
+static void op_O_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                     command_state_t *cs);
+static void op_O_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                     command_state_t *cs);
 static void v_DRUNK(void);
 static void v_Q(void);
 static void v_Q_N(void);
@@ -142,23 +152,20 @@ static void v_FLIP(void);
 
 static int16_t tele_q[16];
 
-#define VARS 29
+#define VARS 24
 static tele_var_t tele_vars[VARS] = {
-    { "TIME", NULL, 0 },       { "TIME.ACT", NULL, 1 },
-    { "IN", NULL, 0 },         { "PARAM", NULL, 0 },
-    { "M", v_M, 1000 },        { "M.ACT", v_M_ACT, 1 },
-    { "O", v_O, 0 },           { "DRUNK", v_DRUNK, 0 },
-    { "Q", v_Q, 0 },           { "Q.N", v_Q_N, 1 },
-    { "Q.AVG", v_Q_AVG, 0 },   { "SCENE", v_SCENE, 0 },
-    { "P.N", v_P_N, 0 },       { "P.L", v_P_L, 0 },
-    { "P.I", v_P_I, 0 },       { "P.HERE", v_P_HERE, 0 },
-    { "P.NEXT", v_P_NEXT, 0 }, { "P.PREV", v_P_PREV, 0 },
-    { "P.WRAP", v_P_WRAP, 0 }, { "P.START", v_P_START, 0 },
-    { "P.END", v_P_END, 0 },   { "FLIP", v_FLIP, 0 },
-    { "O.MIN", NULL, 0 },      { "O.MAX", NULL, 63 },
-    { "O.WRAP", NULL, 1 },     { "O.DIR", NULL, 1 },
-    { "DRUNK.MIN", NULL, 0 },  { "DRUNK.MAX", NULL, 255 },
-    { "DRUNK.WRAP", NULL, 0 }
+    { "TIME", NULL, 0 },         { "TIME.ACT", NULL, 1 },
+    { "IN", NULL, 0 },           { "PARAM", NULL, 0 },
+    { "M", v_M, 1000 },          { "M.ACT", v_M_ACT, 1 },
+    { "DRUNK", v_DRUNK, 0 },     { "Q", v_Q, 0 },
+    { "Q.N", v_Q_N, 1 },         { "Q.AVG", v_Q_AVG, 0 },
+    { "SCENE", v_SCENE, 0 },     { "P.N", v_P_N, 0 },
+    { "P.L", v_P_L, 0 },         { "P.I", v_P_I, 0 },
+    { "P.HERE", v_P_HERE, 0 },   { "P.NEXT", v_P_NEXT, 0 },
+    { "P.PREV", v_P_PREV, 0 },   { "P.WRAP", v_P_WRAP, 0 },
+    { "P.START", v_P_START, 0 }, { "P.END", v_P_END, 0 },
+    { "FLIP", v_FLIP, 0 },       { "DRUNK.MIN", NULL, 0 },
+    { "DRUNK.MAX", NULL, 255 },  { "DRUNK.WRAP", NULL, 0 }
 };
 
 static void v_M() {
@@ -319,27 +326,28 @@ static void v_P_END() {
     }
 }
 
-static void v_O() {
-    if (left || top == 0) {
-        tele_vars[V_O].v += tele_vars[V_O_DIR].v;
-        if (tele_vars[V_O].v > tele_vars[V_O_MAX].v) {
-            if (tele_vars[V_O_WRAP].v)
-                tele_vars[V_O].v = tele_vars[V_O_MIN].v;
-            else
-                tele_vars[V_O].v = tele_vars[V_O_MAX].v;
-        }
-        else if (tele_vars[V_O].v < tele_vars[V_O_MIN].v) {
-            if (tele_vars[V_O_WRAP].v)
-                tele_vars[V_O].v = tele_vars[V_O_MAX].v;
-            else
-                tele_vars[V_O].v = tele_vars[V_O_MIN].v;
-        }
+static void op_O_get(const void *NOTUSED(data), scene_state_t *ss,
+                     exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs)) {
+    ss->variables.o += ss->variables.o_dir;
+    if (ss->variables.o > ss->variables.o_max) {
+        if (ss->variables.o_wrap)
+            ss->variables.o = ss->variables.o_min;
+        else
+            ss->variables.o = ss->variables.o_max;
+    }
+    else if (ss->variables.o < ss->variables.o_min) {
+        if (ss->variables.o_wrap)
+            ss->variables.o = ss->variables.o_max;
+        else
+            ss->variables.o = ss->variables.o_min;
+    }
 
-        push(tele_vars[V_O].v);
-    }
-    else {
-        tele_vars[V_O].v = pop();
-    }
+    push(ss->variables.o);
+}
+
+static void op_O_set(const void *NOTUSED(data), scene_state_t *ss,
+                     exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs)) {
+    ss->variables.o = pop();
 }
 
 static void v_DRUNK() {
@@ -831,19 +839,23 @@ static void op_POKE_I16(const void *data, scene_state_t *ss,
         .returns = 1, .data = (void *)offsetof(scene_state_t, v), .doc = d \
     }
 
-#define OPS 110
+#define OPS 115
 // clang-format off
 static const tele_op_t tele_ops[OPS] = {
     //                    var  member       docs
-    MAKE_SIMPLE_VARIABLE_OP(A, variables.a, "A"),
-    MAKE_SIMPLE_VARIABLE_OP(B, variables.b, "B"),
-    MAKE_SIMPLE_VARIABLE_OP(C, variables.c, "C"),
-    MAKE_SIMPLE_VARIABLE_OP(D, variables.d, "D"),
-    MAKE_SIMPLE_VARIABLE_OP(I, variables.i, "I: GETS OVERWRITTEN BY L"),
-    MAKE_SIMPLE_VARIABLE_OP(T, variables.x, "T"),
-    MAKE_SIMPLE_VARIABLE_OP(X, variables.x, "X"),
-    MAKE_SIMPLE_VARIABLE_OP(Y, variables.y, "Y"),
-    MAKE_SIMPLE_VARIABLE_OP(Z, variables.z, "Z"),
+    MAKE_SIMPLE_VARIABLE_OP(A     , variables.a     , "A"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(B     , variables.b     , "B"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(C     , variables.c     , "C"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(D     , variables.d     , "D"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(I     , variables.i     , "I: GETS OVERWRITTEN BY L"),
+    MAKE_SIMPLE_VARIABLE_OP(O.DIR , variables.o_dir , "O.DIR"                   ),
+    MAKE_SIMPLE_VARIABLE_OP(O.MAX , variables.o_max , "O.MAX"                   ),
+    MAKE_SIMPLE_VARIABLE_OP(O.MIN , variables.o_min , "O.MIN"                   ),
+    MAKE_SIMPLE_VARIABLE_OP(O.WRAP, variables.o_wrap, "O.WRAP"                  ),
+    MAKE_SIMPLE_VARIABLE_OP(T     , variables.x     , "T"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(X     , variables.x     , "X"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(Y     , variables.y     , "Y"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(Z     , variables.z     , "Z"                       ),
 
     //          op        get fn   inputs output docs
     MAKE_GET_OP(ADD     , op_ADD     , 2, true , "[A B] ADD A TO B"                          ),
@@ -900,6 +912,7 @@ static const tele_op_t tele_ops[OPS] = {
     MAKE_GET_OP(ER      , op_ER      , 3, true , "EUCLIDEAN RHYTHMS"                         ),
 
     //              op  get        set    inputs output docs
+    MAKE_GET_SET_OP(O , op_O_get , op_O_set , 0, true , "O"                 ),
     MAKE_GET_SET_OP(P , op_P_get , op_P_set , 1, true , "PATTERN: GET/SET"  ),
     MAKE_GET_SET_OP(PN, op_PN_get, op_PN_set, 2, true , "PATTERN: GET/SET N"),
 

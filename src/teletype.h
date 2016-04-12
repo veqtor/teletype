@@ -22,7 +22,6 @@ enum varnames {
     V_PARAM,
     V_M,
     V_M_ACT,
-    V_O,
     V_DRUNK,
     V_Q,
     V_Q_N,
@@ -38,10 +37,6 @@ enum varnames {
     V_P_START,
     V_P_END,
     V_FLIP,
-    V_O_MIN,
-    V_O_MAX,
-    V_O_WRAP,
-    V_O_DIR,
     V_DRUNK_MIN,
     V_DRUNK_MAX,
     V_DRUNK_WRAP
