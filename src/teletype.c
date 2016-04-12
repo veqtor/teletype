@@ -405,11 +405,11 @@ static void v_SCENE() {
 }
 static void v_FLIP() {
     if (left || top == 0) {
-        push(tele_vars[V_O].v);
-        tele_vars[V_O].v = (tele_vars[V_O].v == 0);
+        push(tele_vars[V_FLIP].v);
+        tele_vars[V_FLIP].v = (tele_vars[V_FLIP].v == 0);
     }
     else {
-        tele_vars[V_O].v = (pop() != 0);
+        tele_vars[V_FLIP].v = (pop() != 0);
     }
 }
 
