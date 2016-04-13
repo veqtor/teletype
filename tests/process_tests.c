@@ -66,6 +66,32 @@ TEST test_IF() {
     PASS();
 }
 
+TEST test_FLIP() {
+    // beware of global state!!!
+    char* test1[2] = { "FLIP 0", "FLIP" };
+    CHECK_CALL(process_helper(2, test1, 0));
+
+    char* test2[1] = { "FLIP" };
+    CHECK_CALL(process_helper(1, test2, 1));
+
+    char* test3[1] = { "FLIP" };
+    CHECK_CALL(process_helper(1, test3, 0));
+
+    char* test4[2] = { "FLIP 1", "FLIP" };
+    CHECK_CALL(process_helper(2, test4, 1));
+
+    char* test5[1] = { "FLIP" };
+    CHECK_CALL(process_helper(1, test5, 0));
+
+    char* test6[2] = { "FLIP 100", "FLIP" };
+    CHECK_CALL(process_helper(2, test6, 1));
+
+    char* test7[1] = { "FLIP" };
+    CHECK_CALL(process_helper(1, test7, 0));
+
+    PASS();
+}
+
 TEST test_L() {
     // beware of global state!!!
     char* test1[3] = { "X 0", "L 1 10 : X I", "X" };
@@ -154,6 +180,7 @@ SUITE(process_suite) {
     RUN_TEST(test_numbers);
     RUN_TEST(test_ADD);
     RUN_TEST(test_IF);
+    RUN_TEST(test_FLIP);
     RUN_TEST(test_L);
     RUN_TEST(test_O);
     RUN_TEST(test_P);

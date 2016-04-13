@@ -153,11 +153,15 @@ static void v_Q(void);
 static void v_Q_N(void);
 static void v_Q_AVG(void);
 static void v_SCENE(void);
-static void v_FLIP(void);
+static void op_FLIP_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                        command_state_t *cs);
+
+static void op_FLIP_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                        command_state_t *cs);
 
 static int16_t tele_q[16];
 
-#define VARS 20
+#define VARS 19
 static tele_var_t tele_vars[VARS] = {
     { "TIME", NULL, 0 },       { "TIME.ACT", NULL, 1 },
     { "IN", NULL, 0 },         { "PARAM", NULL, 0 },
@@ -168,7 +172,7 @@ static tele_var_t tele_vars[VARS] = {
     { "P.I", v_P_I, 0 },       { "P.HERE", v_P_HERE, 0 },
     { "P.NEXT", v_P_NEXT, 0 }, { "P.PREV", v_P_PREV, 0 },
     { "P.WRAP", v_P_WRAP, 0 }, { "P.START", v_P_START, 0 },
-    { "P.END", v_P_END, 0 },   { "FLIP", v_FLIP, 0 }
+    { "P.END", v_P_END, 0 }
 };
 
 static void v_M() {
@@ -429,14 +433,19 @@ static void v_SCENE() {
         (*update_scene)(tele_vars[V_SCENE].v);
     }
 }
-static void v_FLIP() {
-    if (left || top == 0) {
-        push(tele_vars[V_FLIP].v);
-        tele_vars[V_FLIP].v = (tele_vars[V_FLIP].v == 0);
-    }
-    else {
-        tele_vars[V_FLIP].v = (pop() != 0);
-    }
+
+static void op_FLIP_get(const void *NOTUSED(data), scene_state_t *ss,
+                        exec_state_t *NOTUSED(es),
+                        command_state_t *NOTUSED(cs)) {
+    int16_t flip = ss->variables.flip;
+    push(flip);
+    ss->variables.flip = flip == 0;
+}
+
+static void op_FLIP_set(const void *NOTUSED(data), scene_state_t *ss,
+                        exec_state_t *NOTUSED(es),
+                        command_state_t *NOTUSED(cs)) {
+    ss->variables.flip = pop() != 0;
 }
 
 
@@ -857,7 +866,7 @@ static void op_POKE_I16(const void *data, scene_state_t *ss,
         .returns = 1, .data = (void *)offsetof(scene_state_t, v), .doc = d \
     }
 
-#define OPS 119
+#define OPS 120
 // clang-format off
 static const tele_op_t tele_ops[OPS] = {
     //                    var  member       docs
@@ -934,6 +943,7 @@ static const tele_op_t tele_ops[OPS] = {
 
     //              op     get           set      inputs output docs
     MAKE_GET_SET_OP(DRUNK, op_DRUNK_get, op_DRUNK_set, 0, true, "DRUNK"             ),
+    MAKE_GET_SET_OP(FLIP , op_FLIP_get , op_FLIP_set , 0, true, "FLIP"              ),
     MAKE_GET_SET_OP(O    , op_O_get    , op_O_set    , 0, true, "O"                 ),
     MAKE_GET_SET_OP(P    , op_P_get    , op_P_set    , 1, true, "PATTERN: GET/SET"  ),
     MAKE_GET_SET_OP(PN   , op_PN_get   , op_PN_set   , 2, true, "PATTERN: GET/SET N"),

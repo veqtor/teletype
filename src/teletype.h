@@ -35,7 +35,6 @@ enum varnames {
     V_P_WRAP,
     V_P_START,
     V_P_END,
-    V_FLIP,
 };
 
 typedef enum {
