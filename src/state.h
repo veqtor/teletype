@@ -20,6 +20,8 @@ typedef struct {
     int16_t o_max;
     int16_t o_wrap;
     int16_t t;
+    int16_t time;
+    int16_t time_act;
     int16_t x;
     int16_t y;
     int16_t z;

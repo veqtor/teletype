@@ -98,7 +98,8 @@ static scene_state_t scene_state = {
                   .o_inc = 1,
                   .o_min = 0,
                   .o_max = 63,
-                  .o_wrap = 1 }
+                  .o_wrap = 1,
+                  .time_act = 1 }
 };
 static exec_state_t exec_state;
 static command_state_t command_state;
@@ -161,9 +162,8 @@ static void op_FLIP_set(const void *data, scene_state_t *ss, exec_state_t *es,
 
 static int16_t tele_q[16];
 
-#define VARS 19
+#define VARS 17
 static tele_var_t tele_vars[VARS] = {
-    { "TIME", NULL, 0 },       { "TIME.ACT", NULL, 1 },
     { "IN", NULL, 0 },         { "PARAM", NULL, 0 },
     { "M", v_M, 1000 },        { "M.ACT", v_M_ACT, 1 },
     { "Q", v_Q, 0 },           { "Q.N", v_Q_N, 1 },
@@ -866,7 +866,7 @@ static void op_POKE_I16(const void *data, scene_state_t *ss,
         .returns = 1, .data = (void *)offsetof(scene_state_t, v), .doc = d \
     }
 
-#define OPS 120
+#define OPS 122
 // clang-format off
 static const tele_op_t tele_ops[OPS] = {
     //                    var  member       docs
@@ -883,6 +883,8 @@ static const tele_op_t tele_ops[OPS] = {
     MAKE_SIMPLE_VARIABLE_OP(O.MIN     , variables.o_min     , "O.MIN"                   ),
     MAKE_SIMPLE_VARIABLE_OP(O.WRAP    , variables.o_wrap    , "O.WRAP"                  ),
     MAKE_SIMPLE_VARIABLE_OP(T         , variables.t         , "T"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(TIME      , variables.time      , "TIME"                    ),
+    MAKE_SIMPLE_VARIABLE_OP(TIME.ACT  , variables.time_act  , "TIME.ACT"                ),
     MAKE_SIMPLE_VARIABLE_OP(X         , variables.x         , "X"                       ),
     MAKE_SIMPLE_VARIABLE_OP(Y         , variables.y         , "Y"                       ),
     MAKE_SIMPLE_VARIABLE_OP(Z         , variables.z         , "Z"                       ),
@@ -1869,7 +1871,7 @@ void tele_tick(uint8_t i) {
     process_delays(i);
 
     // inc time
-    if (tele_vars[V_TIME_ACT].v) tele_vars[V_TIME].v += i;
+    if (scene_state.variables.time_act) scene_state.variables.time += i;
 }
 
 void tele_init() {

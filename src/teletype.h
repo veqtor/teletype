@@ -16,8 +16,6 @@
 #define WELCOME "TELETYPE 1.12"
 
 enum varnames {
-    V_TIME,
-    V_TIME_ACT,
     V_IN,
     V_PARAM,
     V_M,
