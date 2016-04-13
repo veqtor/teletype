@@ -882,7 +882,7 @@ static const tele_op_t tele_ops[OPS] = {
     MAKE_SIMPLE_VARIABLE_OP(O.MAX     , variables.o_max     , "O.MAX"                   ),
     MAKE_SIMPLE_VARIABLE_OP(O.MIN     , variables.o_min     , "O.MIN"                   ),
     MAKE_SIMPLE_VARIABLE_OP(O.WRAP    , variables.o_wrap    , "O.WRAP"                  ),
-    MAKE_SIMPLE_VARIABLE_OP(T         , variables.x         , "T"                       ),
+    MAKE_SIMPLE_VARIABLE_OP(T         , variables.t         , "T"                       ),
     MAKE_SIMPLE_VARIABLE_OP(X         , variables.x         , "X"                       ),
     MAKE_SIMPLE_VARIABLE_OP(Y         , variables.y         , "Y"                       ),
     MAKE_SIMPLE_VARIABLE_OP(Z         , variables.z         , "Z"                       ),
