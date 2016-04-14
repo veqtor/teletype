@@ -1873,14 +1873,6 @@ char *print_command(const tele_command_t *c) {
 }
 
 
-int16_t tele_get_array(uint8_t a, uint8_t i) {
-    return tele_arrays[a].v[i];
-}
-
-void tele_set_array(uint8_t a, uint8_t i, uint16_t v) {
-    tele_arrays[a].v[i] = v;
-}
-
 void tele_set_in(int16_t value) {
     scene_state.variables.in = value;
 }

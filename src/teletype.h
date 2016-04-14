@@ -120,8 +120,6 @@ void clear_delays(void);
 
 void tele_init(void);
 
-int16_t tele_get_array(uint8_t a, uint8_t i);
-void tele_set_array(uint8_t a, uint8_t i, uint16_t v);
 void tele_set_in(int16_t value);
 void tele_set_param(int16_t value);
 void tele_set_scene(int16_t value);
