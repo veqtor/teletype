@@ -162,9 +162,8 @@ static void op_FLIP_set(const void *data, scene_state_t *ss, exec_state_t *es,
 
 static int16_t tele_q[16];
 
-#define VARS 17
+#define VARS 15
 static tele_var_t tele_vars[VARS] = {
-    { "IN", NULL, 0 },         { "PARAM", NULL, 0 },
     { "M", v_M, 1000 },        { "M.ACT", v_M_ACT, 1 },
     { "Q", v_Q, 0 },           { "Q.N", v_Q_N, 1 },
     { "Q.AVG", v_Q_AVG, 0 },   { "SCENE", v_SCENE, 0 },
@@ -866,7 +865,7 @@ static void op_POKE_I16(const void *data, scene_state_t *ss,
         .returns = 1, .data = (void *)offsetof(scene_state_t, v), .doc = d \
     }
 
-#define OPS 122
+#define OPS 124
 // clang-format off
 static const tele_op_t tele_ops[OPS] = {
     //                    var  member       docs
@@ -878,10 +877,12 @@ static const tele_op_t tele_ops[OPS] = {
     MAKE_SIMPLE_VARIABLE_OP(DRUNK.MIN , variables.drunk_min , "DRUNK.MIN"               ),
     MAKE_SIMPLE_VARIABLE_OP(DRUNK.WRAP, variables.drunk_wrap, "DRUNK.WRAP"              ),
     MAKE_SIMPLE_VARIABLE_OP(I         , variables.i         , "I: GETS OVERWRITTEN BY L"),
+    MAKE_SIMPLE_VARIABLE_OP(IN        , variables.in        , "IN                      "),
     MAKE_SIMPLE_VARIABLE_OP(O.INC     , variables.o_inc     , "O.DIR"                   ),
     MAKE_SIMPLE_VARIABLE_OP(O.MAX     , variables.o_max     , "O.MAX"                   ),
     MAKE_SIMPLE_VARIABLE_OP(O.MIN     , variables.o_min     , "O.MIN"                   ),
     MAKE_SIMPLE_VARIABLE_OP(O.WRAP    , variables.o_wrap    , "O.WRAP"                  ),
+    MAKE_SIMPLE_VARIABLE_OP(PARAM     , variables.param     , "PARAM"                   ),
     MAKE_SIMPLE_VARIABLE_OP(T         , variables.t         , "T"                       ),
     MAKE_SIMPLE_VARIABLE_OP(TIME      , variables.time      , "TIME"                    ),
     MAKE_SIMPLE_VARIABLE_OP(TIME.ACT  , variables.time_act  , "TIME.ACT"                ),
@@ -1865,6 +1866,14 @@ void tele_set_array(uint8_t a, uint8_t i, uint16_t v) {
 
 void tele_set_val(uint8_t i, uint16_t v) {
     tele_vars[i].v = v;
+}
+
+void tele_set_in(int16_t value) {
+    scene_state.variables.in = value;
+}
+
+void tele_set_param(int16_t value) {
+    scene_state.variables.param = value;
 }
 
 void tele_tick(uint8_t i) {

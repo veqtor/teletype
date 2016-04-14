@@ -394,7 +394,7 @@ static void handler_Front(s32 data) {
 static void handler_PollADC(s32 data) {
     adc_convert(&adc);
 
-    tele_set_val(V_IN, adc[0] << 2);  // IN
+    tele_set_in(adc[0] << 2);
 
     if (mode == M_TRACK && mod_CTRL) {
         if (mod_SH)
@@ -414,7 +414,7 @@ static void handler_PollADC(s32 data) {
         knob_last = knob_now;
     }
     else
-        tele_set_val(V_PARAM, adc[1] << 2);  // PARAM
+        tele_set_param(adc[1] << 2);
 
     // print_dbg("\r\nadc:\t"); print_dbg_ulong(adc[0]);
     // print_dbg("\t"); print_dbg_ulong(adc[1]);

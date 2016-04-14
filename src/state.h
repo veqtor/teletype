@@ -14,11 +14,13 @@ typedef struct {
     int16_t drunk_wrap;
     int16_t flip;
     int16_t i;
+    int16_t in;
     int16_t o;
     int16_t o_inc;
     int16_t o_min;
     int16_t o_max;
     int16_t o_wrap;
+    int16_t param;
     int16_t t;
     int16_t time;
     int16_t time_act;
