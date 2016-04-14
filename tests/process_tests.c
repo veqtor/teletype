@@ -162,6 +162,44 @@ TEST test_PN() {
     PASS();
 }
 
+TEST test_Q() {
+    // beware of global state!!!
+    char* test1[2] = { "Q.N 16", "Q.N" };
+    CHECK_CALL(process_helper(2, test1, 16));
+
+    for (int i = 1; i <= 16; i++) {
+        char buf1[20];
+        char buf2[20];
+        sprintf(buf1, "Q.N %d", i);
+        sprintf(buf2, "Q %d", i);
+        char* test2[3] = { buf1, buf2, "Q" };
+        CHECK_CALL(process_helper(3, test2, 1));
+    }
+
+    for (int i = 1; i <= 16; i++) {
+        char buf1[20];
+        sprintf(buf1, "Q.N %d", i);
+        char* test3[2] = { buf1, "Q" };
+        CHECK_CALL(process_helper(2, test3, 17 - i));
+    }
+
+    // 1+2+3+4+5+6+7+8+9+10+11+12+13+14+15+16 = 136
+    // 136 / 16 = 8.5
+    // TODO fix Q.AVG to return 9 in this circumstance
+    char* test4[1] = { "Q.AVG" };
+    CHECK_CALL(process_helper(1, test4, 8));
+
+    char* test5[2] = { "Q.AVG 5", "Q.AVG" };
+    CHECK_CALL(process_helper(2, test5, 5));
+
+    for (int i = 1; i <= 16; i++) {
+        char* test6[1] = { "Q" };
+        CHECK_CALL(process_helper(1, test6, 5));
+    }
+
+    PASS();
+}
+
 TEST test_X() {
     // beware of global state!!!
     char* test1[2] = { "X 0", "X" };
@@ -184,6 +222,7 @@ SUITE(process_suite) {
     RUN_TEST(test_L);
     RUN_TEST(test_O);
     RUN_TEST(test_P);
+    RUN_TEST(test_Q);
     RUN_TEST(test_PN);
     RUN_TEST(test_X);
 }

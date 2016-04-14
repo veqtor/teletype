@@ -101,6 +101,7 @@ static scene_state_t scene_state = {
                   .o_min = 0,
                   .o_max = 63,
                   .o_wrap = 1,
+                  .q_n = 1,
                   .time_act = 1 }
 };
 static exec_state_t exec_state;
@@ -161,9 +162,20 @@ static void op_DRUNK_get(const void *data, scene_state_t *ss, exec_state_t *es,
                          command_state_t *cs);
 static void op_DRUNK_set(const void *data, scene_state_t *ss, exec_state_t *es,
                          command_state_t *cs);
-static void v_Q(void);
-static void v_Q_N(void);
-static void v_Q_AVG(void);
+static void op_Q_get(const void *NOTUSED(data), scene_state_t *ss,
+                     exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs));
+static void op_Q_set(const void *NOTUSED(data), scene_state_t *ss,
+                     exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs));
+static void op_Q_N_get(const void *NOTUSED(data), scene_state_t *ss,
+                       exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs));
+static void op_Q_N_set(const void *NOTUSED(data), scene_state_t *ss,
+                       exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs));
+static void op_Q_AVG_get(const void *NOTUSED(data), scene_state_t *ss,
+                         exec_state_t *NOTUSED(es),
+                         command_state_t *NOTUSED(cs));
+static void op_Q_AVG_set(const void *NOTUSED(data), scene_state_t *ss,
+                         exec_state_t *NOTUSED(es),
+                         command_state_t *NOTUSED(cs));
 static void op_SCENE_get(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *NOTUSED(es),
                          command_state_t *NOTUSED(cs));
@@ -176,21 +188,14 @@ static void op_FLIP_get(const void *data, scene_state_t *ss, exec_state_t *es,
 static void op_FLIP_set(const void *data, scene_state_t *ss, exec_state_t *es,
                         command_state_t *cs);
 
-static int16_t tele_q[16];
-
-#define VARS 12
-static tele_var_t tele_vars[VARS] = { { "Q", v_Q, 0 },
-                                      { "Q.N", v_Q_N, 1 },
-                                      { "Q.AVG", v_Q_AVG, 0 },
-                                      { "P.N", v_P_N, 0 },
-                                      { "P.L", v_P_L, 0 },
-                                      { "P.I", v_P_I, 0 },
-                                      { "P.HERE", v_P_HERE, 0 },
-                                      { "P.NEXT", v_P_NEXT, 0 },
-                                      { "P.PREV", v_P_PREV, 0 },
-                                      { "P.WRAP", v_P_WRAP, 0 },
-                                      { "P.START", v_P_START, 0 },
-                                      { "P.END", v_P_END, 0 } };
+#define VARS 9
+static tele_var_t tele_vars[VARS] = {
+    { "P.N", v_P_N, 0 },       { "P.L", v_P_L, 0 },
+    { "P.I", v_P_I, 0 },       { "P.HERE", v_P_HERE, 0 },
+    { "P.NEXT", v_P_NEXT, 0 }, { "P.PREV", v_P_PREV, 0 },
+    { "P.WRAP", v_P_WRAP, 0 }, { "P.START", v_P_START, 0 },
+    { "P.END", v_P_END, 0 }
+};
 
 
 static void op_M_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -420,37 +425,55 @@ static void op_DRUNK_set(const void *NOTUSED(data), scene_state_t *ss,
     ss->variables.drunk = pop();
 }
 
-static void v_Q() {
-    if (left || top == 0) { push(tele_q[tele_vars[V_Q_N].v - 1]); }
-    else {
-        for (int16_t i = 15; i > 0; i--) tele_q[i] = tele_q[i - 1];
-        tele_q[0] = pop();
-    }
-}
-static void v_Q_N() {
-    if (left || top == 0) { push(tele_vars[V_Q_N].v); }
-    else {
-        int16_t a = pop();
-        if (a < 1)
-            a = 1;
-        else if (a > 16)
-            a = 16;
-        tele_vars[V_Q_N].v = a;
-    }
+static void op_Q_get(const void *NOTUSED(data), scene_state_t *ss,
+                     exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs)) {
+    int16_t *q = ss->variables.q;
+    int16_t q_n = ss->variables.q_n;
+    push(q[q_n - 1]);
 }
 
-static void v_Q_AVG() {
-    if (left || top == 0) {
-        int32_t avg = 0;
-        for (int16_t i = 0; i < tele_vars[V_Q_N].v; i++) avg += tele_q[i];
-        avg /= tele_vars[V_Q_N].v;
+static void op_Q_set(const void *NOTUSED(data), scene_state_t *ss,
+                     exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs)) {
+    int16_t *q = ss->variables.q;
+    for (int16_t i = Q_LENGTH - 1; i > 0; i--) { q[i] = q[i - 1]; }
+    q[0] = pop();
+}
 
-        push(avg);
-    }
-    else {
-        int16_t a = pop();
-        for (int16_t i = 0; i < 16; i++) tele_q[i] = a;
-    }
+static void op_Q_N_get(const void *NOTUSED(data), scene_state_t *ss,
+                       exec_state_t *NOTUSED(es),
+                       command_state_t *NOTUSED(cs)) {
+    push(ss->variables.q_n);
+}
+
+static void op_Q_N_set(const void *NOTUSED(data), scene_state_t *ss,
+                       exec_state_t *NOTUSED(es),
+                       command_state_t *NOTUSED(cs)) {
+    int16_t a = pop();
+    if (a < 1)
+        a = 1;
+    else if (a > Q_LENGTH)
+        a = Q_LENGTH;
+    ss->variables.q_n = a;
+}
+
+static void op_Q_AVG_get(const void *NOTUSED(data), scene_state_t *ss,
+                         exec_state_t *NOTUSED(es),
+                         command_state_t *NOTUSED(cs)) {
+    int16_t avg = 0;
+    int16_t *q = ss->variables.q;
+    int16_t q_n = ss->variables.q_n;
+    for (int16_t i = 0; i < q_n; i++) { avg += q[i]; }
+    avg /= q_n;
+
+    push(avg);
+}
+
+static void op_Q_AVG_set(const void *NOTUSED(data), scene_state_t *ss,
+                         exec_state_t *NOTUSED(es),
+                         command_state_t *NOTUSED(cs)) {
+    int16_t a = pop();
+    int16_t *q = ss->variables.q;
+    for (int16_t i = 0; i < Q_LENGTH; i++) { q[i] = a; }
 }
 
 static void op_SCENE_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -899,7 +922,7 @@ static void op_POKE_I16(const void *data, scene_state_t *ss,
         .returns = 1, .data = (void *)offsetof(scene_state_t, v), .doc = d \
     }
 
-#define OPS 127
+#define OPS 130
 // clang-format off
 static const tele_op_t tele_ops[OPS] = {
     //                    var  member       docs
@@ -986,7 +1009,10 @@ static const tele_op_t tele_ops[OPS] = {
     MAKE_GET_SET_OP(O    , op_O_get    , op_O_set    , 0, true, "O"                 ),
     MAKE_GET_SET_OP(P    , op_P_get    , op_P_set    , 1, true, "PATTERN: GET/SET"  ),
     MAKE_GET_SET_OP(PN   , op_PN_get   , op_PN_set   , 2, true, "PATTERN: GET/SET N"),
-    MAKE_GET_SET_OP(SCENE, op_SCENE_get, op_SCENE_set, 0, true, "SCENE             "),
+    MAKE_GET_SET_OP(Q    , op_Q_get    , op_Q_set    , 0, true, "Q"                 ),
+    MAKE_GET_SET_OP(Q.AVG, op_Q_AVG_get, op_Q_AVG_set, 0, true, "Q.AVG"             ),
+    MAKE_GET_SET_OP(Q.N  , op_Q_N_get  , op_Q_N_set  , 0, true, "Q.N"               ),
+    MAKE_GET_SET_OP(SCENE, op_SCENE_get, op_SCENE_set, 0, true, "SCENE"             ),
 
     //               op           constant      doc
     MAKE_CONSTANT_OP(WW.PRESET  , WW_PRESET   , "WW.PRESET"  ),
