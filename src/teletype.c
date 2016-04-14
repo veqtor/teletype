@@ -95,6 +95,8 @@ static scene_state_t scene_state = {
                   .d = 4,
                   .drunk_min = 0,
                   .drunk_max = 255,
+                  .m = 1000,
+                  .m_act = 1,
                   .o_inc = 1,
                   .o_min = 0,
                   .o_max = 63,
@@ -131,9 +133,18 @@ void push(int16_t data) {
 
 // ENUM IN HEADER
 
+static void op_M_get(const void *NOTUSED(data), scene_state_t *ss,
+                     exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs));
+
+static void op_M_set(const void *NOTUSED(data), scene_state_t *ss,
+                     exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs));
+static void op_M_ACT_get(const void *NOTUSED(data), scene_state_t *ss,
+                         exec_state_t *NOTUSED(es),
+                         command_state_t *NOTUSED(cs));
+static void op_M_ACT_set(const void *NOTUSED(data), scene_state_t *ss,
+                         exec_state_t *NOTUSED(es),
+                         command_state_t *NOTUSED(cs));
 static void v_P_N(void);
-static void v_M(void);
-static void v_M_ACT(void);
 static void v_P_L(void);
 static void v_P_I(void);
 static void v_P_HERE(void);
@@ -167,10 +178,8 @@ static void op_FLIP_set(const void *data, scene_state_t *ss, exec_state_t *es,
 
 static int16_t tele_q[16];
 
-#define VARS 14
-static tele_var_t tele_vars[VARS] = { { "M", v_M, 1000 },
-                                      { "M.ACT", v_M_ACT, 1 },
-                                      { "Q", v_Q, 0 },
+#define VARS 12
+static tele_var_t tele_vars[VARS] = { { "Q", v_Q, 0 },
                                       { "Q.N", v_Q_N, 1 },
                                       { "Q.AVG", v_Q_AVG, 0 },
                                       { "P.N", v_P_N, 0 },
@@ -183,24 +192,33 @@ static tele_var_t tele_vars[VARS] = { { "M", v_M, 1000 },
                                       { "P.START", v_P_START, 0 },
                                       { "P.END", v_P_END, 0 } };
 
-static void v_M() {
-    if (left || top == 0)
-        push(tele_vars[V_M].v);
-    else {
-        tele_vars[V_M].v = pop();
-        if (tele_vars[V_M].v < 10) tele_vars[V_M].v = 10;
-        (*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 0);
-    }
+
+static void op_M_get(const void *NOTUSED(data), scene_state_t *ss,
+                     exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs)) {
+    push(ss->variables.m);
 }
 
-static void v_M_ACT() {
-    if (left || top == 0)
-        push(tele_vars[V_M_ACT].v);
-    else {
-        tele_vars[V_M_ACT].v = pop();
-        if (tele_vars[V_M_ACT].v != 0) tele_vars[V_M_ACT].v = 1;
-        (*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 0);
-    }
+static void op_M_set(const void *NOTUSED(data), scene_state_t *ss,
+                     exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs)) {
+    int16_t m = pop();
+    if (m < 10) m = 10;
+    ss->variables.m = m;
+    (*update_metro)(m, ss->variables.m_act, 0);
+}
+
+static void op_M_ACT_get(const void *NOTUSED(data), scene_state_t *ss,
+                         exec_state_t *NOTUSED(es),
+                         command_state_t *NOTUSED(cs)) {
+    push(ss->variables.m_act);
+}
+
+static void op_M_ACT_set(const void *NOTUSED(data), scene_state_t *ss,
+                         exec_state_t *NOTUSED(es),
+                         command_state_t *NOTUSED(cs)) {
+    int16_t m_act = pop();
+    if (m_act != 0) m_act = 1;
+    ss->variables.m_act = m_act;
+    (*update_metro)(ss->variables.m, m_act, 0);
 }
 
 static void v_P_N() {
@@ -881,7 +899,7 @@ static void op_POKE_I16(const void *data, scene_state_t *ss,
         .returns = 1, .data = (void *)offsetof(scene_state_t, v), .doc = d \
     }
 
-#define OPS 125
+#define OPS 127
 // clang-format off
 static const tele_op_t tele_ops[OPS] = {
     //                    var  member       docs
@@ -963,6 +981,8 @@ static const tele_op_t tele_ops[OPS] = {
     //              op     get           set      inputs output docs
     MAKE_GET_SET_OP(DRUNK, op_DRUNK_get, op_DRUNK_set, 0, true, "DRUNK"             ),
     MAKE_GET_SET_OP(FLIP , op_FLIP_get , op_FLIP_set , 0, true, "FLIP"              ),
+    MAKE_GET_SET_OP(M    , op_M_get    , op_M_set    , 0, true, "M"                 ),
+    MAKE_GET_SET_OP(M.ACT, op_M_ACT_get, op_M_ACT_set, 0, true, "M.ACT"             ),
     MAKE_GET_SET_OP(O    , op_O_get    , op_O_set    , 0, true, "O"                 ),
     MAKE_GET_SET_OP(P    , op_P_get    , op_P_set    , 1, true, "PATTERN: GET/SET"  ),
     MAKE_GET_SET_OP(PN   , op_PN_get   , op_PN_set   , 2, true, "PATTERN: GET/SET N"),
@@ -1220,10 +1240,10 @@ static void op_DEL_CLR(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                        command_state_t *NOTUSED(cs)) {
     clear_delays();
 }
-static void op_M_RESET(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_M_RESET(const void *NOTUSED(data), scene_state_t *ss,
                        exec_state_t *NOTUSED(es),
                        command_state_t *NOTUSED(cs)) {
-    (*update_metro)(tele_vars[V_M].v, tele_vars[V_M_ACT].v, 1);
+    (*update_metro)(ss->variables.m, ss->variables.m_act, 1);
 }
 static void op_V(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                  exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs)) {
