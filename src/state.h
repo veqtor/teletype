@@ -21,6 +21,7 @@ typedef struct {
     int16_t o_max;
     int16_t o_wrap;
     int16_t param;
+    int16_t scene;
     int16_t t;
     int16_t time;
     int16_t time_act;

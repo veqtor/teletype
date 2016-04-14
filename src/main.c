@@ -1031,7 +1031,7 @@ static void handler_HidTimer(s32 data) {
                         }
                         else if (mode == M_PRESET_R) {
                             flash_read();
-                            tele_set_val(V_SCENE, preset_select);
+                            tele_set_scene(preset_select);
 
                             for (int i = 0; i < script[INIT_SCRIPT].l; i++)
                                 process(&script[INIT_SCRIPT].c[i]);
@@ -2440,7 +2440,7 @@ int main(void) {
     }
     else {
         preset_select = f.scene;
-        tele_set_val(V_SCENE, preset_select);
+        tele_set_scene(preset_select);
         flash_read();
         // load from flash at startup
     }

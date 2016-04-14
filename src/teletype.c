@@ -153,7 +153,12 @@ static void op_DRUNK_set(const void *data, scene_state_t *ss, exec_state_t *es,
 static void v_Q(void);
 static void v_Q_N(void);
 static void v_Q_AVG(void);
-static void v_SCENE(void);
+static void op_SCENE_get(const void *NOTUSED(data), scene_state_t *ss,
+                         exec_state_t *NOTUSED(es),
+                         command_state_t *NOTUSED(cs));
+static void op_SCENE_set(const void *NOTUSED(data), scene_state_t *ss,
+                         exec_state_t *NOTUSED(es),
+                         command_state_t *NOTUSED(cs));
 static void op_FLIP_get(const void *data, scene_state_t *ss, exec_state_t *es,
                         command_state_t *cs);
 
@@ -162,17 +167,21 @@ static void op_FLIP_set(const void *data, scene_state_t *ss, exec_state_t *es,
 
 static int16_t tele_q[16];
 
-#define VARS 15
-static tele_var_t tele_vars[VARS] = {
-    { "M", v_M, 1000 },        { "M.ACT", v_M_ACT, 1 },
-    { "Q", v_Q, 0 },           { "Q.N", v_Q_N, 1 },
-    { "Q.AVG", v_Q_AVG, 0 },   { "SCENE", v_SCENE, 0 },
-    { "P.N", v_P_N, 0 },       { "P.L", v_P_L, 0 },
-    { "P.I", v_P_I, 0 },       { "P.HERE", v_P_HERE, 0 },
-    { "P.NEXT", v_P_NEXT, 0 }, { "P.PREV", v_P_PREV, 0 },
-    { "P.WRAP", v_P_WRAP, 0 }, { "P.START", v_P_START, 0 },
-    { "P.END", v_P_END, 0 }
-};
+#define VARS 14
+static tele_var_t tele_vars[VARS] = { { "M", v_M, 1000 },
+                                      { "M.ACT", v_M_ACT, 1 },
+                                      { "Q", v_Q, 0 },
+                                      { "Q.N", v_Q_N, 1 },
+                                      { "Q.AVG", v_Q_AVG, 0 },
+                                      { "P.N", v_P_N, 0 },
+                                      { "P.L", v_P_L, 0 },
+                                      { "P.I", v_P_I, 0 },
+                                      { "P.HERE", v_P_HERE, 0 },
+                                      { "P.NEXT", v_P_NEXT, 0 },
+                                      { "P.PREV", v_P_PREV, 0 },
+                                      { "P.WRAP", v_P_WRAP, 0 },
+                                      { "P.START", v_P_START, 0 },
+                                      { "P.END", v_P_END, 0 } };
 
 static void v_M() {
     if (left || top == 0)
@@ -425,12 +434,19 @@ static void v_Q_AVG() {
         for (int16_t i = 0; i < 16; i++) tele_q[i] = a;
     }
 }
-static void v_SCENE() {
-    if (left || top == 0) { push(tele_vars[V_SCENE].v); }
-    else {
-        tele_vars[V_SCENE].v = pop();
-        (*update_scene)(tele_vars[V_SCENE].v);
-    }
+
+static void op_SCENE_get(const void *NOTUSED(data), scene_state_t *ss,
+                         exec_state_t *NOTUSED(es),
+                         command_state_t *NOTUSED(cs)) {
+    push(ss->variables.scene);
+}
+
+static void op_SCENE_set(const void *NOTUSED(data), scene_state_t *ss,
+                         exec_state_t *NOTUSED(es),
+                         command_state_t *NOTUSED(cs)) {
+    int16_t scene = pop();
+    ss->variables.scene = scene;
+    (*update_scene)(scene);
 }
 
 static void op_FLIP_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -865,7 +881,7 @@ static void op_POKE_I16(const void *data, scene_state_t *ss,
         .returns = 1, .data = (void *)offsetof(scene_state_t, v), .doc = d \
     }
 
-#define OPS 124
+#define OPS 125
 // clang-format off
 static const tele_op_t tele_ops[OPS] = {
     //                    var  member       docs
@@ -950,6 +966,7 @@ static const tele_op_t tele_ops[OPS] = {
     MAKE_GET_SET_OP(O    , op_O_get    , op_O_set    , 0, true, "O"                 ),
     MAKE_GET_SET_OP(P    , op_P_get    , op_P_set    , 1, true, "PATTERN: GET/SET"  ),
     MAKE_GET_SET_OP(PN   , op_PN_get   , op_PN_set   , 2, true, "PATTERN: GET/SET N"),
+    MAKE_GET_SET_OP(SCENE, op_SCENE_get, op_SCENE_set, 0, true, "SCENE             "),
 
     //               op           constant      doc
     MAKE_CONSTANT_OP(WW.PRESET  , WW_PRESET   , "WW.PRESET"  ),
@@ -1864,16 +1881,16 @@ void tele_set_array(uint8_t a, uint8_t i, uint16_t v) {
     tele_arrays[a].v[i] = v;
 }
 
-void tele_set_val(uint8_t i, uint16_t v) {
-    tele_vars[i].v = v;
-}
-
 void tele_set_in(int16_t value) {
     scene_state.variables.in = value;
 }
 
 void tele_set_param(int16_t value) {
     scene_state.variables.param = value;
+}
+
+void tele_set_scene(int16_t value) {
+    scene_state.variables.scene = value;
 }
 
 void tele_tick(uint8_t i) {
