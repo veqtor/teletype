@@ -15,16 +15,6 @@
 
 #define WELCOME "TELETYPE 1.12"
 
-enum varnames {
-    V_P_L,
-    V_P_I,
-    V_P_HERE,
-    V_P_NEXT,
-    V_P_PREV,
-    V_P_WRAP,
-    V_P_START,
-    V_P_END,
-};
 
 typedef enum {
     E_OK,
