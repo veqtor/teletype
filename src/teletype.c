@@ -348,7 +348,7 @@ static void v_P_START() {
         if (a < 0)
             tele_patterns[pn].start = 0;
         else if (a > 63)
-            tele_patterns[pn].start = 1;
+            tele_patterns[pn].start = 63;
         else
             tele_patterns[pn].start = a;
     }
@@ -362,7 +362,7 @@ static void v_P_END() {
         if (a < 0)
             tele_patterns[pn].end = 0;
         else if (a > 63)
-            tele_patterns[pn].end = 1;
+            tele_patterns[pn].end = 63;
         else
             tele_patterns[pn].end = a;
     }
