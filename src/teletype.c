@@ -58,8 +58,6 @@ static char condition;
 
 static tele_command_t tele_stack[TELE_STACK_SIZE];
 static uint8_t tele_stack_top;
-static uint8_t left;
-
 
 volatile update_metro_t update_metro;
 volatile update_tr_t update_tr;
@@ -204,9 +202,6 @@ static void op_FLIP_get(const void *data, scene_state_t *ss, exec_state_t *es,
                         command_state_t *cs);
 static void op_FLIP_set(const void *data, scene_state_t *ss, exec_state_t *es,
                         command_state_t *cs);
-
-#define VARS 0
-static tele_var_t tele_vars[VARS] = {};
 
 
 static void op_M_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -1863,8 +1858,7 @@ error_t validate(tele_command_t *c) {
 
         // RIGHT (get)
         else if (!first_cmd) {
-            if (word_type == VAR) { stack_depth++; }
-            else if (word_type == ARRAY) {
+            if (word_type == ARRAY) {
                 if (stack_depth < 1) {
                     strcpy(error_detail, tele_arrays[word_value].name);
                     return E_NEED_PARAMS;
@@ -1873,10 +1867,7 @@ error_t validate(tele_command_t *c) {
         }
         // LEFT (set)
         else {
-            if (word_type == VAR) {
-                if (stack_depth == 0) stack_depth++;
-            }
-            else if (word_type == ARRAY) {
+            if (word_type == ARRAY) {
                 if (stack_depth < 1) {
                     strcpy(error_detail, tele_arrays[word_value].name);
                     return E_NEED_PARAMS;
@@ -1899,7 +1890,6 @@ error_t validate(tele_command_t *c) {
 
 process_result_t process(tele_command_t *c) {
     top = 0;
-    left = 0;
 
     // if the command has a MOD, only process it
     // allow the MOD to deal with processing the remainder
@@ -1909,7 +1899,6 @@ process_result_t process(tele_command_t *c) {
         tele_word_t word_type = c->data[idx].t;
         int16_t word_value = c->data[idx].v;
 
-        left = idx;
         if (word_type == NUMBER) { push(word_value); }
         else if (word_type == OP) {
             tele_op_t op = tele_ops[word_value];
@@ -1925,16 +1914,6 @@ process_result_t process(tele_command_t *c) {
             // TODO mods should be called with the subcommand (at the moment the
             // mod creates the subcommand = lots of duplication)
             tele_mods[word_value].func(c);
-        }
-        else if (word_type == VAR) {
-            if (tele_vars[word_value].func == NULL) {
-                if (idx || top == 0)
-                    push(tele_vars[word_value].v);
-                else
-                    tele_vars[word_value].v = pop();
-            }
-            else
-                tele_vars[word_value].func();
         }
         else if (word_type == ARRAY) {
             int16_t i = pop();
@@ -1989,10 +1968,6 @@ char *print_command(const tele_command_t *c) {
                 itoa(c->data[n].v, number, 10);
                 strcpy(p, number);
                 p += strlen(number) - 1;
-                break;
-            case VAR:
-                strcpy(p, tele_vars[c->data[n].v].name);
-                p += strlen(tele_vars[c->data[n].v].name) - 1;
                 break;
             case MOD:
                 strcpy(p, tele_mods[c->data[n].v].name);
