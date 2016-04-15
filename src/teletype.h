@@ -35,7 +35,7 @@ typedef struct {
     int16_t value;
 } process_result_t;
 
-typedef enum { NUMBER, MOD, SEP, OP, ARRAY } tele_word_t;
+typedef enum { NUMBER, MOD, SEP, OP } tele_word_t;
 
 typedef struct {
     tele_word_t t;
@@ -52,12 +52,6 @@ typedef struct {
     uint8_t l;
     tele_command_t c[SCRIPT_MAX_COMMANDS];
 } tele_script_t;
-
-typedef struct {
-    const char *name;
-    int16_t v[4];
-    void (*func)(uint8_t);
-} tele_array_t;
 
 typedef struct {
     const char *name;

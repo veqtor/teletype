@@ -9,6 +9,7 @@
 - **FIX**: the `O` op now returns it's set value *before* updating itself
 - **FIX**: the `DRUNK` op now returns it's set value *before* updating itself
 - **FIX**: `P.START` and `P.END` were set to 1 when set with too large values, now are set to 63
+- **FIX**: `CV.SLEW` is correctly initialised to 1 for all outputs
 
 ## v1.1
 - **NEW**: USB flash drive read/write

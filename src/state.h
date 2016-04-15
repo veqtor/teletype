@@ -3,12 +3,17 @@
 
 #include <stdint.h>
 
+#define CV_COUNT 4
 #define Q_LENGTH 16
+#define TR_COUNT 4
 
 typedef struct {
     int16_t a;
     int16_t b;
     int16_t c;
+    int16_t cv[CV_COUNT];
+    int16_t cv_off[CV_COUNT];
+    int16_t cv_slew[CV_COUNT];
     int16_t d;
     int16_t drunk;
     int16_t drunk_max;
@@ -32,6 +37,9 @@ typedef struct {
     int16_t t;
     int16_t time;
     int16_t time_act;
+    int16_t tr[TR_COUNT];
+    int16_t tr_pol[TR_COUNT];
+    int16_t tr_time[TR_COUNT];
     int16_t x;
     int16_t y;
     int16_t z;
