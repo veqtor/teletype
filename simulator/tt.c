@@ -117,6 +117,8 @@ int main() {
 
     in = malloc(256);
 
+    tele_init();
+
     printf("teletype. (blank line quits)\n\n");
 
     do {
