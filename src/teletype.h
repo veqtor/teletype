@@ -16,7 +16,6 @@
 #define WELCOME "TELETYPE 1.12"
 
 enum varnames {
-    V_P_N,
     V_P_L,
     V_P_I,
     V_P_HERE,
@@ -99,7 +98,8 @@ typedef struct {
     int16_t i;
     uint16_t l;
     uint16_t wrap;
-    int16_t start, end;
+    int16_t start;
+    int16_t end;
     int16_t v[64];
 } tele_pattern_t;
 

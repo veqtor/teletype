@@ -134,18 +134,18 @@ void push(int16_t data) {
 
 // ENUM IN HEADER
 
-static void op_M_get(const void *NOTUSED(data), scene_state_t *ss,
-                     exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs));
-
-static void op_M_set(const void *NOTUSED(data), scene_state_t *ss,
-                     exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs));
-static void op_M_ACT_get(const void *NOTUSED(data), scene_state_t *ss,
-                         exec_state_t *NOTUSED(es),
-                         command_state_t *NOTUSED(cs));
-static void op_M_ACT_set(const void *NOTUSED(data), scene_state_t *ss,
-                         exec_state_t *NOTUSED(es),
-                         command_state_t *NOTUSED(cs));
-static void v_P_N(void);
+static void op_M_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                     command_state_t *cs);
+static void op_M_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                     command_state_t *cs);
+static void op_M_ACT_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                         command_state_t *cs);
+static void op_M_ACT_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                         command_state_t *cs);
+static void op_P_N_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                       command_state_t *cs);
+static void op_P_N_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                       command_state_t *cs);
 static void v_P_L(void);
 static void v_P_I(void);
 static void v_P_HERE(void);
@@ -188,13 +188,12 @@ static void op_FLIP_get(const void *data, scene_state_t *ss, exec_state_t *es,
 static void op_FLIP_set(const void *data, scene_state_t *ss, exec_state_t *es,
                         command_state_t *cs);
 
-#define VARS 9
+#define VARS 8
 static tele_var_t tele_vars[VARS] = {
-    { "P.N", v_P_N, 0 },       { "P.L", v_P_L, 0 },
-    { "P.I", v_P_I, 0 },       { "P.HERE", v_P_HERE, 0 },
-    { "P.NEXT", v_P_NEXT, 0 }, { "P.PREV", v_P_PREV, 0 },
-    { "P.WRAP", v_P_WRAP, 0 }, { "P.START", v_P_START, 0 },
-    { "P.END", v_P_END, 0 }
+    { "P.L", v_P_L, 0 },         { "P.I", v_P_I, 0 },
+    { "P.HERE", v_P_HERE, 0 },   { "P.NEXT", v_P_NEXT, 0 },
+    { "P.PREV", v_P_PREV, 0 },   { "P.WRAP", v_P_WRAP, 0 },
+    { "P.START", v_P_START, 0 }, { "P.END", v_P_END, 0 }
 };
 
 
@@ -226,18 +225,23 @@ static void op_M_ACT_set(const void *NOTUSED(data), scene_state_t *ss,
     (*update_metro)(ss->variables.m, m_act, 0);
 }
 
-static void v_P_N() {
-    int16_t a;
-    if (left || top == 0) { push(pn); }
-    else {
-        a = pop();
-        if (a < 0)
-            pn = 0;
-        else if (a > 3)
-            pn = 3;
-        else
-            pn = a;
-    }
+static void op_P_N_get(const void *NOTUSED(data), scene_state_t *ss,
+                       exec_state_t *NOTUSED(es),
+                       command_state_t *NOTUSED(cs)) {
+    push(ss->variables.p_n);
+}
+
+static void op_P_N_set(const void *NOTUSED(data), scene_state_t *ss,
+                       exec_state_t *NOTUSED(es),
+                       command_state_t *NOTUSED(cs)) {
+    int16_t a = pop();
+    if (a < 0)
+        pn = 0;
+    else if (a > 3)
+        pn = 3;
+    else
+        pn = a;
+    ss->variables.p_n = pn;
 }
 
 static void v_P_L() {
@@ -922,7 +926,7 @@ static void op_POKE_I16(const void *data, scene_state_t *ss,
         .returns = 1, .data = (void *)offsetof(scene_state_t, v), .doc = d \
     }
 
-#define OPS 130
+#define OPS 131
 // clang-format off
 static const tele_op_t tele_ops[OPS] = {
     //                    var  member       docs
@@ -1008,6 +1012,7 @@ static const tele_op_t tele_ops[OPS] = {
     MAKE_GET_SET_OP(M.ACT, op_M_ACT_get, op_M_ACT_set, 0, true, "M.ACT"             ),
     MAKE_GET_SET_OP(O    , op_O_get    , op_O_set    , 0, true, "O"                 ),
     MAKE_GET_SET_OP(P    , op_P_get    , op_P_set    , 1, true, "PATTERN: GET/SET"  ),
+    MAKE_GET_SET_OP(P.N  , op_P_N_get  , op_P_N_set  , 0, true, "P.N"               ),
     MAKE_GET_SET_OP(PN   , op_PN_get   , op_PN_set   , 2, true, "PATTERN: GET/SET N"),
     MAKE_GET_SET_OP(Q    , op_Q_get    , op_Q_set    , 0, true, "Q"                 ),
     MAKE_GET_SET_OP(Q.AVG, op_Q_AVG_get, op_Q_AVG_set, 0, true, "Q.AVG"             ),

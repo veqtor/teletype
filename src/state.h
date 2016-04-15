@@ -24,6 +24,7 @@ typedef struct {
     int16_t o_min;
     int16_t o_max;
     int16_t o_wrap;
+    int16_t p_n;
     int16_t param;
     int16_t q[Q_LENGTH];
     int16_t q_n;
