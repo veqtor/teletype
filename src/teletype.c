@@ -162,29 +162,24 @@ static void op_DRUNK_get(const void *data, scene_state_t *ss, exec_state_t *es,
                          command_state_t *cs);
 static void op_DRUNK_set(const void *data, scene_state_t *ss, exec_state_t *es,
                          command_state_t *cs);
-static void op_Q_get(const void *NOTUSED(data), scene_state_t *ss,
-                     exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs));
-static void op_Q_set(const void *NOTUSED(data), scene_state_t *ss,
-                     exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs));
-static void op_Q_N_get(const void *NOTUSED(data), scene_state_t *ss,
-                       exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs));
-static void op_Q_N_set(const void *NOTUSED(data), scene_state_t *ss,
-                       exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs));
-static void op_Q_AVG_get(const void *NOTUSED(data), scene_state_t *ss,
-                         exec_state_t *NOTUSED(es),
-                         command_state_t *NOTUSED(cs));
-static void op_Q_AVG_set(const void *NOTUSED(data), scene_state_t *ss,
-                         exec_state_t *NOTUSED(es),
-                         command_state_t *NOTUSED(cs));
-static void op_SCENE_get(const void *NOTUSED(data), scene_state_t *ss,
-                         exec_state_t *NOTUSED(es),
-                         command_state_t *NOTUSED(cs));
-static void op_SCENE_set(const void *NOTUSED(data), scene_state_t *ss,
-                         exec_state_t *NOTUSED(es),
-                         command_state_t *NOTUSED(cs));
+static void op_Q_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                     command_state_t *cs);
+static void op_Q_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                     command_state_t *cs);
+static void op_Q_N_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                       command_state_t *cs);
+static void op_Q_N_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                       command_state_t *cs);
+static void op_Q_AVG_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                         command_state_t *cs);
+static void op_Q_AVG_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                         command_state_t *cs);
+static void op_SCENE_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                         command_state_t *cs);
+static void op_SCENE_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                         command_state_t *cs);
 static void op_FLIP_get(const void *data, scene_state_t *ss, exec_state_t *es,
                         command_state_t *cs);
-
 static void op_FLIP_set(const void *data, scene_state_t *ss, exec_state_t *es,
                         command_state_t *cs);
 
