@@ -68,6 +68,7 @@ include $(MAKEFILE_PATH)
 .PHONY: format
 format:
 	clang-format -style=file -i main.c
+	clang-format -style=file -i state.h
 	clang-format -style=file -i table.h
 	clang-format -style=file -i table.c
 	clang-format -style=file -i teletype.h

@@ -1,7 +1,10 @@
 #ifndef _TELETYPE_H_
 #define _TELETYPE_H_
 
+#include <stdbool.h>
 #include <stdint.h>
+
+#include "state.h"
 
 #define SCRIPT_MAX_COMMANDS 6
 #define SCRIPT_MAX_COMMANDS_ 5
@@ -12,50 +15,6 @@
 
 #define WELCOME "TELETYPE 1.12"
 
-#define TRUE 1
-#define FALSE 0
-
-enum varnames {
-    V_I,
-    V_TIME,
-    V_TIME_ACT,
-    V_IN,
-    V_PARAM,
-    V_PRESET,
-    V_M,
-    V_M_ACT,
-    V_X,
-    V_Y,
-    V_Z,
-    V_T,
-    V_A,
-    V_B,
-    V_C,
-    V_D,
-    V_O,
-    V_DRUNK,
-    V_Q,
-    V_Q_N,
-    V_Q_AVG,
-    V_SCENE,
-    V_P_N,
-    V_P_L,
-    V_P_I,
-    V_P_HERE,
-    V_P_NEXT,
-    V_P_PREV,
-    V_P_WRAP,
-    V_P_START,
-    V_P_END,
-    V_FLIP,
-    V_O_MIN,
-    V_O_MAX,
-    V_O_WRAP,
-    V_O_DIR,
-    V_DRUNK_MIN,
-    V_DRUNK_MAX,
-    V_DRUNK_WRAP
-};
 
 typedef enum {
     E_OK,
@@ -71,7 +30,12 @@ typedef enum {
     E_NOT_LEFT
 } error_t;
 
-typedef enum { NUMBER, MOD, SEP, OP, VAR, ARRAY, KEY } tele_word_t;
+typedef struct {
+    bool has_value;
+    int16_t value;
+} process_result_t;
+
+typedef enum { NUMBER, MOD, SEP, OP } tele_word_t;
 
 typedef struct {
     tele_word_t t;
@@ -91,23 +55,6 @@ typedef struct {
 
 typedef struct {
     const char *name;
-    void (*func)(void);
-    int16_t v;
-} tele_var_t;
-
-typedef struct {
-    const char *name;
-    int16_t v;
-} tele_key_t;
-
-typedef struct {
-    const char *name;
-    int16_t v[4];
-    void (*func)(uint8_t);
-} tele_array_t;
-
-typedef struct {
-    const char *name;
     void (*func)(tele_command_t *c);
     char params;
     const char *doc;
@@ -115,9 +62,13 @@ typedef struct {
 
 typedef struct {
     const char *name;
-    void (*func)(void);
-    char params;
-    int8_t returns;
+    void (*get)(const void *data, scene_state_t *ss, exec_state_t *es,
+                command_state_t *cs);
+    void (*set)(const void *data, scene_state_t *ss, exec_state_t *es,
+                command_state_t *cs);
+    uint8_t params;
+    bool returns;
+    const void *data;
     const char *doc;
 } tele_op_t;
 
@@ -125,14 +76,15 @@ typedef struct {
     int16_t i;
     uint16_t l;
     uint16_t wrap;
-    int16_t start, end;
+    int16_t start;
+    int16_t end;
     int16_t v[64];
 } tele_pattern_t;
 
 
 error_t parse(char *cmd, tele_command_t *out);
 error_t validate(tele_command_t *c);
-void process(tele_command_t *c);
+process_result_t process(tele_command_t *c);
 char *print_command(const tele_command_t *c);
 
 void tele_tick(uint8_t);
@@ -141,9 +93,9 @@ void clear_delays(void);
 
 void tele_init(void);
 
-int16_t tele_get_array(uint8_t a, uint8_t i);
-void tele_set_array(uint8_t a, uint8_t i, uint16_t v);
-void tele_set_val(uint8_t i, uint16_t v);
+void tele_set_in(int16_t value);
+void tele_set_param(int16_t value);
+void tele_set_scene(int16_t value);
 
 const char *tele_error(error_t);
 const char *to_v(int16_t);
@@ -193,7 +145,6 @@ typedef void (*update_input_t)(uint8_t);
 extern volatile update_input_t update_input;
 
 extern char error_detail[16];
-extern int16_t output, output_new;
 
 extern volatile uint8_t input_states[8];
 

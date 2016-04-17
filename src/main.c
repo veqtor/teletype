@@ -126,6 +126,7 @@ uint8_t help_length[8] = { HELP1_LENGTH, HELP2_LENGTH, HELP3_LENGTH,
                            HELP4_LENGTH, HELP5_LENGTH, HELP6_LENGTH,
                            HELP7_LENGTH, HELP8_LENGTH };
 
+int16_t output, output_new;
 
 #define FIRSTRUN_KEY 0x22
 
@@ -393,7 +394,7 @@ static void handler_Front(s32 data) {
 static void handler_PollADC(s32 data) {
     adc_convert(&adc);
 
-    tele_set_val(V_IN, adc[0] << 2);  // IN
+    tele_set_in(adc[0] << 2);
 
     if (mode == M_TRACK && mod_CTRL) {
         if (mod_SH)
@@ -413,7 +414,7 @@ static void handler_PollADC(s32 data) {
         knob_last = knob_now;
     }
     else
-        tele_set_val(V_PARAM, adc[1] << 2);  // PARAM
+        tele_set_param(adc[1] << 2);
 
     // print_dbg("\r\nadc:\t"); print_dbg_ulong(adc[0]);
     // print_dbg("\t"); print_dbg_ulong(adc[1]);
@@ -892,7 +893,11 @@ static void handler_HidTimer(s32 data) {
                                             memcpy(&history.c[5], &temp,
                                                    sizeof(tele_command_t));
 
-                                            process(&temp);
+                                            process_result_t o = process(&temp);
+                                            if (o.has_value) {
+                                                output = o.value;
+                                                output_new++;
+                                            }
                                         }
 
                                         for (n = 0; n < 32; n++) input[n] = 0;
@@ -1026,7 +1031,7 @@ static void handler_HidTimer(s32 data) {
                         }
                         else if (mode == M_PRESET_R) {
                             flash_read();
-                            tele_set_val(V_SCENE, preset_select);
+                            tele_set_scene(preset_select);
 
                             for (int i = 0; i < script[INIT_SCRIPT].l; i++)
                                 process(&script[INIT_SCRIPT].c[i]);
@@ -2435,7 +2440,7 @@ int main(void) {
     }
     else {
         preset_select = f.scene;
-        tele_set_val(V_SCENE, preset_select);
+        tele_set_scene(preset_select);
         flash_read();
         // load from flash at startup
     }

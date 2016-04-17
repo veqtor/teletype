@@ -117,6 +117,8 @@ int main() {
 
     in = malloc(256);
 
+    tele_init();
+
     printf("teletype. (blank line quits)\n\n");
 
     do {
@@ -137,7 +139,10 @@ int main() {
             if (error_detail[0]) printf(": %s", error_detail);
             error_detail[0] = 0;
             printf("\n");
-            if (status == E_OK) process(&temp);
+            if (status == E_OK) {
+                process_result_t output = process(&temp);
+                if (output.has_value) { printf(">>> %i\n", output.value); }
+            }
         }
         else {
             printf("ERROR: %s", tele_error(status));
