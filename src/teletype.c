@@ -79,6 +79,9 @@ volatile uint8_t input_states[8];
 
 const char *to_v(int16_t);
 
+void copy_command(tele_command_t *dst, tele_command_t *src);
+void copy_sub_command(tele_command_t *dst, tele_command_t *src);
+
 /////////////////////////////////////////////////////////////////
 // STATE ////////////////////////////////////////////////////////
 
@@ -778,13 +781,20 @@ void clear_delays(void) {
 /////////////////////////////////////////////////////////////////
 // MOD //////////////////////////////////////////////////////////
 
-static void mod_PROB(tele_command_t *);
-static void mod_DEL(tele_command_t *);
-static void mod_S(tele_command_t *);
-static void mod_IF(tele_command_t *);
-static void mod_ELIF(tele_command_t *);
-static void mod_ELSE(tele_command_t *);
-static void mod_L(tele_command_t *);
+static void mod_PROB(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
+                     tele_command_t *sub_command);
+static void mod_DEL(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
+                    tele_command_t *sub_command);
+static void mod_S(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
+                  tele_command_t *sub_command);
+static void mod_IF(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
+                   tele_command_t *sub_command);
+static void mod_ELIF(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
+                     tele_command_t *sub_command);
+static void mod_ELSE(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
+                     tele_command_t *sub_command);
+static void mod_L(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
+                  tele_command_t *sub_command);
 
 #define MAKEMOD(name, params, doc) \
     { #name, mod_##name, params, doc }
@@ -800,19 +810,14 @@ static const tele_mod_t tele_mods[MODS] = {
 };
 
 
-void mod_PROB(tele_command_t *c) {
+void mod_PROB(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
+              command_state_t *NOTUSED(cs), tele_command_t *sub_command) {
     int16_t a = pop();
 
-    tele_command_t cc;
-    if (rand() % 101 < a) {
-        cc.l = c->l - c->separator - 1;
-        cc.separator = -1;
-        memcpy(cc.data, &c->data[c->separator + 1], cc.l * sizeof(tele_data_t));
-        // sprintf(dbg,"\r\nsub-length: %d", cc.l);
-        process(&cc);
-    }
+    if (rand() % 101 < a) { process(sub_command); }
 }
-void mod_DEL(tele_command_t *c) {
+void mod_DEL(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
+             command_state_t *NOTUSED(cs), tele_command_t *sub_command) {
     int16_t i = 0;
     int16_t a = pop();
 
@@ -825,73 +830,50 @@ void mod_DEL(tele_command_t *c) {
         if (delay_count == 1) (*update_delay)(1);
         delay_t[i] = a;
 
-        delay_c[i].l = c->l - c->separator - 1;
-        delay_c[i].separator = -1;
-
-        memcpy(delay_c[i].data, &c->data[c->separator + 1],
-               delay_c[i].l * sizeof(tele_data_t));
+        copy_command(&delay_c[i], sub_command);
     }
 }
-void mod_S(tele_command_t *c) {
+void mod_S(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
+           command_state_t *NOTUSED(cs), tele_command_t *sub_command) {
     if (tele_stack_top < TELE_STACK_SIZE) {
-        tele_stack[tele_stack_top].l = c->l - c->separator - 1;
-        memcpy(tele_stack[tele_stack_top].data, &c->data[c->separator + 1],
-               tele_stack[tele_stack_top].l * sizeof(tele_data_t));
-        tele_stack[tele_stack_top].separator = -1;
+        copy_command(&tele_stack[tele_stack_top], sub_command);
         tele_stack_top++;
         if (tele_stack_top == 1) (*update_s)(1);
     }
 }
-void mod_IF(tele_command_t *c) {
+void mod_IF(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
+            command_state_t *NOTUSED(cs), tele_command_t *sub_command) {
     condition = false;
-    tele_command_t cc;
     if (pop()) {
         condition = true;
-        cc.l = c->l - c->separator - 1;
-        cc.separator = -1;
-        memcpy(cc.data, &c->data[c->separator + 1], cc.l * sizeof(tele_data_t));
-        // sprintf(dbg,"\r\nsub-length: %d", cc.l);
-        process(&cc);
+        process(sub_command);
     }
 }
-void mod_ELIF(tele_command_t *c) {
-    tele_command_t cc;
+void mod_ELIF(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
+              command_state_t *NOTUSED(cs), tele_command_t *sub_command) {
     if (!condition) {
         if (pop()) {
             condition = true;
-            cc.l = c->l - c->separator - 1;
-            cc.separator = -1;
-            memcpy(cc.data, &c->data[c->separator + 1],
-                   cc.l * sizeof(tele_data_t));
-            // sprintf(dbg,"\r\nsub-length: %d", cc.l);
-            process(&cc);
+            process(sub_command);
         }
     }
 }
-void mod_ELSE(tele_command_t *c) {
-    tele_command_t cc;
+void mod_ELSE(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
+              command_state_t *NOTUSED(cs), tele_command_t *sub_command) {
     if (!condition) {
         condition = true;
-        cc.l = c->l - c->separator - 1;
-        cc.separator = -1;
-        memcpy(cc.data, &c->data[c->separator + 1], cc.l * sizeof(tele_data_t));
-        // sprintf(dbg,"\r\nsub-length: %d", cc.l);
-        process(&cc);
+        process(sub_command);
     }
 }
-void mod_L(tele_command_t *c) {
-    tele_command_t cc;
-    cc.l = c->l - c->separator - 1;
-    cc.separator = -1;
-    memcpy(cc.data, &c->data[c->separator + 1], cc.l * sizeof(tele_data_t));
-
+void mod_L(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
+           command_state_t *NOTUSED(cs), tele_command_t *sub_command) {
     int16_t a = pop();
     int16_t b = pop();
     int16_t loop_size = a < b ? b - a : a - b;
 
     for (int16_t i = 0; i <= loop_size; i++) {
         scene_state.variables.i = a < b ? a + i : a - i;
-        process(&cc);
+        process(sub_command);
     }
 }
 
@@ -1924,6 +1906,17 @@ error_t validate(tele_command_t *c) {
         return E_OK;
 }
 
+void copy_command(tele_command_t *dst, tele_command_t *src) {
+    // TODO does this need to use memcpy?
+    memcpy(dst, src, sizeof(tele_command_t));
+}
+
+void copy_sub_command(tele_command_t *dst, tele_command_t *src) {
+    dst->l = src->l - src->separator - 1;
+    dst->separator = -1;
+    memcpy(dst->data, &src->data[src->separator + 1],
+           dst->l * sizeof(tele_data_t));
+}
 
 /////////////////////////////////////////////////////////////////
 // PROCESS //////////////////////////////////////////////////////
@@ -1951,9 +1944,10 @@ process_result_t process(tele_command_t *c) {
                 op.get(op.data, &scene_state, &exec_state, &command_state);
         }
         else if (word_type == MOD) {
-            // TODO mods should be called with the subcommand (at the moment the
-            // mod creates the subcommand = lots of duplication)
-            tele_mods[word_value].func(c);
+            tele_command_t sub_command;
+            copy_sub_command(&sub_command, c);
+            tele_mods[word_value].func(&scene_state, &exec_state,
+                                       &command_state, &sub_command);
         }
     }
 

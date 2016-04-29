@@ -55,7 +55,8 @@ typedef struct {
 
 typedef struct {
     const char *name;
-    void (*func)(tele_command_t *c);
+    void (*func)(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
+                 tele_command_t *sub_command);
     char params;
     const char *doc;
 } tele_mod_t;
