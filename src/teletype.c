@@ -9,6 +9,7 @@
 #include "ii.h"
 #include "table.h"
 #include "teletype.h"
+#include "teletype_io.h"
 #include "util.h"
 
 #ifdef SIM

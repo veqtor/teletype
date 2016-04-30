@@ -7,6 +7,7 @@
 #include <time.h>
 
 #include "teletype.h"
+#include "teletype_io.h"
 #include "util.h"
 
 

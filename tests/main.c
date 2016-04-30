@@ -3,6 +3,7 @@
 #include "greatest/greatest.h"
 
 #include "teletype.h"
+#include "teletype_io.h"
 
 #include "parser_tests.h"
 #include "process_tests.h"

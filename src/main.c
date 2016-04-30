@@ -58,6 +58,7 @@ http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
 #include "conf_board.h"
 #include "help.h"
 #include "teletype.h"
+#include "teletype_io.h"
 
 #define METRO_SCRIPT 8
 #define INIT_SCRIPT 9
