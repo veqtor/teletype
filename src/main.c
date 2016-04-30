@@ -90,8 +90,6 @@ typedef struct {
 
 aout_t aout[4];
 
-volatile uint8_t input_states[8];
-
 u8 mutes[8];
 
 error_t status;
@@ -2354,8 +2352,8 @@ void tele_mem_clear(void) {
     memset(&scene_text, 0, sizeof(scene_text));
 }
 
-void tele_input_state(uint8_t n) {
-    input_states[n] = gpio_get_pin_value(A00 + n);
+bool tele_get_input_state(uint8_t n) {
+    return gpio_get_pin_value(A00 + n) > 0;
 }
 
 

@@ -60,9 +60,6 @@ static char condition;
 static tele_command_t tele_stack[TELE_STACK_SIZE];
 static uint8_t tele_stack_top;
 
-
-volatile uint8_t input_states[8];
-
 const char *to_v(int16_t);
 
 void copy_command(tele_command_t *dst, tele_command_t *src);
@@ -1660,8 +1657,7 @@ static void op_STATE(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
     else if (a > 7)
         a = 7;
 
-    tele_input_state(a);
-    cs_push(cs, input_states[a]);
+    cs_push(cs, tele_get_input_state(a));
 }
 
 static void op_ER(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),

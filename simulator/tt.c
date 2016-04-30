@@ -76,9 +76,10 @@ void tele_mute(uint8_t i, uint8_t s) {
     printf("\n");
 }
 
-void tele_input_state(uint8_t n) {
+bool tele_get_input_state(uint8_t n) {
     printf("INPUT_STATE  n:%" PRIu8, n);
     printf("\n");
+    return false;
 }
 
 int main() {

@@ -1,6 +1,7 @@
 #ifndef _TELETYPE_IO_H_
 #define _TELETYPE_IO_H_
 
+#include <stdbool.h>
 #include <stdint.h>
 
 // These functions are for interacting with the teletype hardware, each target
@@ -19,6 +20,6 @@ extern void tele_pi(void);
 extern void tele_script(uint8_t a);
 extern void tele_kill(void);
 extern void tele_mute(uint8_t, uint8_t);
-extern void tele_input_state(uint8_t);
+extern bool tele_get_input_state(uint8_t);
 
 #endif

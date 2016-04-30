@@ -102,9 +102,6 @@ const char *to_v(int16_t);
 
 extern tele_pattern_t tele_patterns[4];
 
-
 extern char error_detail[16];
-
-extern volatile uint8_t input_states[8];
 
 #endif
