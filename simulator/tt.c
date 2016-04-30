@@ -89,21 +89,6 @@ int main() {
 
     srand((unsigned)time(&t));
 
-    update_metro = &tele_metro;
-    update_tr = &tele_tr;
-    update_cv = &tele_cv;
-    update_cv_slew = &tele_cv_slew;
-    update_delay = &tele_delay;
-    update_s = &tele_s;
-    update_cv_off = &tele_cv_off;
-    update_ii = &tele_ii;
-    update_scene = &tele_scene;
-    update_pi = &tele_pi;
-    run_script = &tele_script;
-    update_kill = &tele_kill;
-    update_mute = &tele_mute;
-    update_input = &tele_input_state;
-
     // tele_command_t stored;
     // stored.data[0].t = OP;
     // stored.data[0].v = 2;

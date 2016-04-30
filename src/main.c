@@ -212,21 +212,6 @@ static void render_init(void);
 
 static void set_mode(uint8_t);
 
-static void tele_metro(int16_t, int16_t, uint8_t);
-static void tele_tr(uint8_t i, int16_t v);
-static void tele_cv(uint8_t i, int16_t v, uint8_t s);
-static void tele_cv_slew(uint8_t i, int16_t v);
-static void tele_delay(uint8_t i);
-static void tele_s(uint8_t i);
-static void tele_cv_off(uint8_t i, int16_t v);
-static void tele_ii(uint8_t i, int16_t d);
-static void tele_scene(uint8_t i);
-static void tele_pi(void);
-static void tele_script(uint8_t a);
-static void tele_kill(void);
-static void tele_mute(uint8_t, uint8_t);
-static void tele_input_state(uint8_t);
-
 static void tele_usb_disk(void);
 static void tele_mem_clear(void);
 
@@ -1851,7 +1836,7 @@ void render_init(void) {
 }
 
 
-static void tele_metro(int16_t m, int16_t m_act, uint8_t m_reset) {
+void tele_metro(int16_t m, int16_t m_act, uint8_t m_reset) {
     metro_time = m;
 
     if (m_act && !metro_act) {
@@ -1877,14 +1862,14 @@ static void tele_metro(int16_t m, int16_t m_act, uint8_t m_reset) {
     if (!metro_act) activity &= ~A_METRO;
 }
 
-static void tele_tr(uint8_t i, int16_t v) {
+void tele_tr(uint8_t i, int16_t v) {
     if (v)
         gpio_set_pin_high(B08 + i);
     else
         gpio_set_pin_low(B08 + i);
 }
 
-static void tele_cv(uint8_t i, int16_t v, uint8_t s) {
+void tele_cv(uint8_t i, int16_t v, uint8_t s) {
     int16_t t = v + aout[i].off;
     if (t < 0)
         t = 0;
@@ -1905,45 +1890,45 @@ static void tele_cv(uint8_t i, int16_t v, uint8_t s) {
     timer_manual(&adcTimer);
 }
 
-static void tele_cv_slew(uint8_t i, int16_t v) {
+void tele_cv_slew(uint8_t i, int16_t v) {
     aout[i].slew = v / RATE_CV;
     if (aout[i].slew == 0) aout[i].slew = 1;
 }
 
-static void tele_delay(uint8_t i) {
+void tele_delay(uint8_t i) {
     if (i) { activity |= A_DELAY; }
     else
         activity &= ~A_DELAY;
 }
 
-static void tele_s(uint8_t i) {
+void tele_s(uint8_t i) {
     if (i) { activity |= A_Q; }
     else
         activity &= ~A_Q;
 }
 
-static void tele_cv_off(uint8_t i, int16_t v) {
+void tele_cv_off(uint8_t i, int16_t v) {
     aout[i].off = v;
 }
 
-static void tele_ii(uint8_t i, int16_t d) {
+void tele_ii(uint8_t i, int16_t d) {
     static event_t e;
     e.type = kEventII;
     e.data = (d << 16) + i;
     event_post(&e);
 }
 
-static void tele_scene(uint8_t i) {
+void tele_scene(uint8_t i) {
     preset_select = i;
     flash_read();
 }
 
-static void tele_pi() {
+void tele_pi() {
     if (mode == M_TRACK) r_edit_dirty |= R_ALL;
 }
 
 int8_t script_caller;
-static void tele_script(uint8_t a) {
+void tele_script(uint8_t a) {
     if (!script_caller) {
         script_caller = a;
         for (int i = 0; i < script[a - 1].l; i++) process(&script[a - 1].c[i]);
@@ -1955,11 +1940,11 @@ static void tele_script(uint8_t a) {
     script_caller = 0;
 }
 
-static void tele_kill() {
+void tele_kill() {
     for (int i = 0; i < 4; i++) aout[i].step = 1;
 }
 
-static void tele_mute(uint8_t i, uint8_t s) {
+void tele_mute(uint8_t i, uint8_t s) {
     mutes[i] = s;
     activity |= A_MUTES;
 }
@@ -2468,21 +2453,6 @@ int main(void) {
     metro_act = 1;
     metro_time = 1000;
     timer_add(&metroTimer, metro_time, &metroTimer_callback, NULL);
-
-    update_metro = &tele_metro;
-    update_tr = &tele_tr;
-    update_cv = &tele_cv;
-    update_cv_slew = &tele_cv_slew;
-    update_delay = &tele_delay;
-    update_s = &tele_s;
-    update_cv_off = &tele_cv_off;
-    update_ii = &tele_ii;
-    update_scene = &tele_scene;
-    update_pi = &tele_pi;
-    run_script = &tele_script;
-    update_kill = &tele_kill;
-    update_mute = &tele_mute;
-    update_input = &tele_input_state;
 
     clear_delays();
 

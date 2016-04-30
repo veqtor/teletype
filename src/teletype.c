@@ -60,21 +60,6 @@ static char condition;
 static tele_command_t tele_stack[TELE_STACK_SIZE];
 static uint8_t tele_stack_top;
 
-volatile update_metro_t update_metro;
-volatile update_tr_t update_tr;
-volatile update_cv_t update_cv;
-volatile update_cv_slew_t update_cv_slew;
-volatile update_delay_t update_delay;
-volatile update_s_t update_s;
-volatile update_cv_off_t update_cv_off;
-volatile update_ii_t update_ii;
-volatile update_scene_t update_scene;
-volatile update_pi_t update_pi;
-volatile update_kill_t update_kill;
-volatile update_mute_t update_mute;
-volatile update_input_t update_input;
-
-volatile run_script_t run_script;
 
 volatile uint8_t input_states[8];
 
@@ -196,7 +181,7 @@ static void op_M_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t m = cs_pop(cs);
     if (m < 10) m = 10;
     ss->variables.m = m;
-    (*update_metro)(m, ss->variables.m_act, 0);
+    tele_metro(m, ss->variables.m_act, 0);
 }
 
 static void op_M_ACT_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -209,7 +194,7 @@ static void op_M_ACT_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t m_act = cs_pop(cs);
     if (m_act != 0) m_act = 1;
     ss->variables.m_act = m_act;
-    (*update_metro)(ss->variables.m, m_act, 0);
+    tele_metro(ss->variables.m, m_act, 0);
 }
 
 static void op_P_N_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -261,7 +246,7 @@ static void op_P_I_set(const void *NOTUSED(data), scene_state_t *ss,
         tele_patterns[pn].i = tele_patterns[pn].l;
     else
         tele_patterns[pn].i = a;
-    (*update_pi)();
+    tele_pi();
 }
 
 static void op_P_HERE_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -292,7 +277,7 @@ static void op_P_NEXT_get(const void *NOTUSED(data), scene_state_t *ss,
 
     cs_push(cs, tele_patterns[pn].v[tele_patterns[pn].i]);
 
-    (*update_pi)();
+    tele_pi();
 }
 
 static void op_P_NEXT_set(const void *NOTUSED(data), scene_state_t *ss,
@@ -311,7 +296,7 @@ static void op_P_NEXT_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t a = cs_pop(cs);
     tele_patterns[pn].v[tele_patterns[pn].i] = a;
 
-    (*update_pi)();
+    tele_pi();
 }
 
 static void op_P_PREV_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -331,7 +316,7 @@ static void op_P_PREV_get(const void *NOTUSED(data), scene_state_t *ss,
 
     cs_push(cs, tele_patterns[pn].v[tele_patterns[pn].i]);
 
-    (*update_pi)();
+    tele_pi();
 }
 
 static void op_P_PREV_set(const void *NOTUSED(data), scene_state_t *ss,
@@ -352,7 +337,7 @@ static void op_P_PREV_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t a = cs_pop(cs);
     tele_patterns[pn].v[tele_patterns[pn].i] = a;
 
-    (*update_pi)();
+    tele_pi();
 }
 
 static void op_P_WRAP_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -524,7 +509,7 @@ static void op_SCENE_set(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t scene = cs_pop(cs);
     ss->variables.scene = scene;
-    (*update_scene)(scene);
+    tele_scene(scene);
 }
 
 static void op_FLIP_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -579,7 +564,7 @@ static void op_CV_set(const void *NOTUSED(data), scene_state_t *ss,
     a = normalise_value(0, CV_COUNT - 1, 0, a - 1);
     b = normalise_value(0, 16383, 0, b);
     ss->variables.cv[a] = b;
-    (*update_cv)(a, b, 1);
+    tele_cv(a, b, 1);
 }
 
 static void op_CV_SLEW_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -596,7 +581,7 @@ static void op_CV_SLEW_set(const void *NOTUSED(data), scene_state_t *ss,
     a = normalise_value(0, CV_COUNT - 1, 0, a - 1);
     b = normalise_value(1, 32767, 0, b);  // min slew = 1
     ss->variables.cv_slew[a] = b;
-    (*update_cv_slew)(a, b);
+    tele_cv_slew(a, b);
 }
 
 static void op_CV_OFF_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -612,8 +597,8 @@ static void op_CV_OFF_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t b = cs_pop(cs);
     a = normalise_value(0, CV_COUNT - 1, 0, a - 1);
     ss->variables.cv_off[a] = b;
-    (*update_cv_off)(a, b);
-    (*update_cv)(a, ss->variables.cv[a], 1);
+    tele_cv_off(a, b);
+    tele_cv(a, ss->variables.cv[a], 1);
 }
 
 static void op_TR_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -629,7 +614,7 @@ static void op_TR_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t b = cs_pop(cs);
     a = normalise_value(0, TR_COUNT - 1, 0, a - 1);
     ss->variables.tr[a] = b != 0;
-    (*update_tr)(a, b);
+    tele_tr(a, b);
 }
 
 static void op_TR_POL_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -684,7 +669,7 @@ static void process_delays(uint8_t v) {
                 process(&delay_c[i]);
                 delay_t[i] = 0;
                 delay_count--;
-                if (delay_count == 0) (*update_delay)(0);
+                if (delay_count == 0) tele_delay(0);
             }
         }
     }
@@ -696,7 +681,7 @@ static void process_delays(uint8_t v) {
                 tr_pulse[i] = 0;
                 scene_state.variables.tr[i] =
                     scene_state.variables.tr_pol[i] == 0;
-                (*update_tr)(i, scene_state.variables.tr[i]);
+                tele_tr(i, scene_state.variables.tr[i]);
             }
         }
     }
@@ -711,8 +696,8 @@ void clear_delays(void) {
 
     tele_stack_top = 0;
 
-    (*update_delay)(0);
-    (*update_s)(0);
+    tele_delay(0);
+    tele_s(0);
 }
 
 
@@ -765,7 +750,7 @@ void mod_DEL(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
 
     if (i < TELE_D_SIZE) {
         delay_count++;
-        if (delay_count == 1) (*update_delay)(1);
+        if (delay_count == 1) tele_delay(1);
         delay_t[i] = a;
 
         copy_command(&delay_c[i], sub_command);
@@ -776,7 +761,7 @@ void mod_S(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
     if (tele_stack_top < TELE_STACK_SIZE) {
         copy_command(&tele_stack[tele_stack_top], sub_command);
         tele_stack_top++;
-        if (tele_stack_top == 1) (*update_s)(1);
+        if (tele_stack_top == 1) tele_s(1);
     }
 }
 void mod_IF(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
@@ -1307,7 +1292,7 @@ static void op_TR_TOG(const void *NOTUSED(data), scene_state_t *ss,
         ss->variables.tr[a] = 0;
     else
         ss->variables.tr[a] = 1;
-    update_tr(a, ss->variables.tr[a]);
+    tele_tr(a, ss->variables.tr[a]);
 }
 static void op_N(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                  exec_state_t *NOTUSED(es), command_state_t *cs) {
@@ -1328,20 +1313,20 @@ static void op_S_ALL(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
     for (int16_t i = 0; i < tele_stack_top; i++)
         process(&tele_stack[tele_stack_top - i - 1]);
     tele_stack_top = 0;
-    (*update_s)(0);
+    tele_s(0);
 }
 static void op_S_POP(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                      exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs)) {
     if (tele_stack_top) {
         tele_stack_top--;
         process(&tele_stack[tele_stack_top]);
-        if (tele_stack_top == 0) (*update_s)(0);
+        if (tele_stack_top == 0) tele_s(0);
     }
 }
 static void op_S_CLR(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                      exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs)) {
     tele_stack_top = 0;
-    (*update_s)(0);
+    tele_s(0);
 }
 static void op_DEL_CLR(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                        exec_state_t *NOTUSED(es),
@@ -1351,7 +1336,7 @@ static void op_DEL_CLR(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
 static void op_M_RESET(const void *NOTUSED(data), scene_state_t *ss,
                        exec_state_t *NOTUSED(es),
                        command_state_t *NOTUSED(cs)) {
-    (*update_metro)(ss->variables.m, ss->variables.m_act, 1);
+    tele_metro(ss->variables.m, ss->variables.m_act, 1);
 }
 static void op_V(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                  exec_state_t *NOTUSED(es), command_state_t *cs) {
@@ -1412,7 +1397,7 @@ static void op_P_set(const void *NOTUSED(data), scene_state_t *ss,
     if (a > 63) a = 63;
 
     tele_patterns[pn].v[a] = b;
-    (*update_pi)();
+    tele_pi();
 }
 static void op_P_INS(const void *NOTUSED(data), scene_state_t *ss,
                      exec_state_t *NOTUSED(es), command_state_t *cs) {
@@ -1438,7 +1423,7 @@ static void op_P_INS(const void *NOTUSED(data), scene_state_t *ss,
     }
 
     tele_patterns[pn].v[a] = b;
-    (*update_pi)();
+    tele_pi();
 }
 static void op_P_RM(const void *NOTUSED(data), scene_state_t *ss,
                     exec_state_t *NOTUSED(es), command_state_t *cs) {
@@ -1466,7 +1451,7 @@ static void op_P_RM(const void *NOTUSED(data), scene_state_t *ss,
     }
     else
         cs_push(cs, 0);
-    (*update_pi)();
+    tele_pi();
 }
 static void op_P_PUSH(const void *NOTUSED(data), scene_state_t *ss,
                       exec_state_t *NOTUSED(es), command_state_t *cs) {
@@ -1477,7 +1462,7 @@ static void op_P_PUSH(const void *NOTUSED(data), scene_state_t *ss,
     if (tele_patterns[pn].l < 64) {
         tele_patterns[pn].v[tele_patterns[pn].l] = a;
         tele_patterns[pn].l++;
-        (*update_pi)();
+        tele_pi();
     }
 }
 static void op_P_POP(const void *NOTUSED(data), scene_state_t *ss,
@@ -1486,7 +1471,7 @@ static void op_P_POP(const void *NOTUSED(data), scene_state_t *ss,
     if (tele_patterns[pn].l > 0) {
         tele_patterns[pn].l--;
         cs_push(cs, tele_patterns[pn].v[tele_patterns[pn].l]);
-        (*update_pi)();
+        tele_pi();
     }
     else
         cs_push(cs, 0);
@@ -1535,7 +1520,7 @@ static void op_PN_set(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
     if (b > 63) b = 63;
 
     tele_patterns[a].v[b] = c;
-    (*update_pi)();
+    tele_pi();
 }
 static void op_TR_PULSE(const void *NOTUSED(data), scene_state_t *ss,
                         exec_state_t *NOTUSED(es), command_state_t *cs) {
@@ -1550,13 +1535,13 @@ static void op_TR_PULSE(const void *NOTUSED(data), scene_state_t *ss,
     if (time <= 0) return;                    // if time <= 0 don't do anything
     ss->variables.tr[a] = ss->variables.tr_pol[a];
     tr_pulse[a] = time;  // set time
-    update_tr(a, ss->variables.tr[a]);
+    tele_tr(a, ss->variables.tr[a]);
 }
 static void op_II(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                   exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
-    update_ii(a, b);
+    tele_ii(a, b);
 }
 static void op_RSH(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                    exec_state_t *NOTUSED(es), command_state_t *cs) {
@@ -1585,7 +1570,7 @@ static void op_CV_SET(const void *NOTUSED(data), scene_state_t *ss,
     else if (b > 16383)
         b = 16383;
     ss->variables.cv[a] = b;
-    (*update_cv)(a, b, 0);
+    tele_cv(a, b, 0);
 }
 static void op_EXP(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                    exec_state_t *NOTUSED(es), command_state_t *cs) {
@@ -1634,26 +1619,26 @@ static void op_JI(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
 static void op_SCRIPT(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                       exec_state_t *NOTUSED(es), command_state_t *cs) {
     uint16_t a = cs_pop(cs);
-    if (a > 0 && a < 9) (*run_script)(a);
+    if (a > 0 && a < 9) tele_script(a);
 }
 static void op_KILL(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                     exec_state_t *NOTUSED(es), command_state_t *NOTUSED(cs)) {
     clear_delays();
-    (*update_kill)();
+    tele_kill();
 }
 static void op_MUTE(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                     exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a;
     a = cs_pop(cs);
 
-    if (a > 0 && a < 9) { (*update_mute)(a - 1, 0); }
+    if (a > 0 && a < 9) { tele_mute(a - 1, 0); }
 }
 static void op_UNMUTE(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                       exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a;
     a = cs_pop(cs);
 
-    if (a > 0 && a < 9) { (*update_mute)(a - 1, 1); }
+    if (a > 0 && a < 9) { tele_mute(a - 1, 1); }
 }
 static void op_SCALE(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                      exec_state_t *NOTUSED(es), command_state_t *cs) {
@@ -1675,7 +1660,7 @@ static void op_STATE(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
     else if (a > 7)
         a = 7;
 
-    (*update_input)(a);
+    tele_input_state(a);
     cs_push(cs, input_states[a]);
 }
 

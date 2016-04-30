@@ -74,5 +74,6 @@ format:
 	clang-format -style=file -i table.c
 	clang-format -style=file -i teletype.h
 	clang-format -style=file -i teletype.c
+	clang-format -style=file -i teletype_io.h
 	clang-format -style=file -i euclidean/euclidean.h
 	clang-format -style=file -i euclidean/euclidean.c
