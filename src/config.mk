@@ -62,6 +62,7 @@ TARGET = $(THIS).elf
 # List of C source files.
 CSRCS = \
 	../src/main.c						\
+	../src/state.c						\
 	../src/table.c						\
 	../src/teletype.c					\
 	../src/euclidean/euclidean.c				\

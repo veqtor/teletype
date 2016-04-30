@@ -107,34 +107,9 @@ static scene_state_t scene_state = {
                   .tr_time = { 100, 100, 100, 100 } }
 };
 static exec_state_t exec_state;
-static command_state_t command_state;
-
-/////////////////////////////////////////////////////////////////
-// STACK ////////////////////////////////////////////////////////
-
-static int16_t cs_pop(command_state_t *cs);
-static void cs_push(command_state_t *cs, int16_t data);
-
-static int16_t top;
-static int16_t stack[STACK_SIZE];
-
-int16_t cs_pop(command_state_t *NOTUSED(cs)) {
-    top--;
-    // sprintf(dbg,"\r\npop %d", stack[top]);
-    return stack[top];
-}
-
-void cs_push(command_state_t *NOTUSED(cs), int16_t data) {
-    stack[top] = data;
-    // sprintf(dbg,"\r\npush %d", stack[top]);
-    top++;
-}
-
 
 /////////////////////////////////////////////////////////////////
 // VARS ARRAYS //////////////////////////////////////////////////
-
-// ENUM IN HEADER
 
 static void op_M_get(const void *data, scene_state_t *ss, exec_state_t *es,
                      command_state_t *cs);
@@ -1878,7 +1853,8 @@ void copy_sub_command(tele_command_t *dst, tele_command_t *src) {
 // PROCESS //////////////////////////////////////////////////////
 
 process_result_t process(tele_command_t *c) {
-    top = 0;
+    command_state_t cs;
+    cs_init(&cs);
 
     // if the command has a MOD, only process it
     // allow the MOD to deal with processing the remainder
@@ -1888,28 +1864,28 @@ process_result_t process(tele_command_t *c) {
         tele_word_t word_type = c->data[idx].t;
         int16_t word_value = c->data[idx].v;
 
-        if (word_type == NUMBER) { cs_push(&command_state, word_value); }
+        if (word_type == NUMBER) { cs_push(&cs, word_value); }
         else if (word_type == OP) {
             tele_op_t op = tele_ops[word_value];
 
             // if we're in the first command position, and there is a set fn
             // pointer and we have enough params, then run set, else run get
-            if (idx == 0 && op.set != NULL && top >= op.params + 1)
-                op.set(op.data, &scene_state, &exec_state, &command_state);
+            if (idx == 0 && op.set != NULL &&
+                cs_stack_size(&cs) >= op.params + 1)
+                op.set(op.data, &scene_state, &exec_state, &cs);
             else
-                op.get(op.data, &scene_state, &exec_state, &command_state);
+                op.get(op.data, &scene_state, &exec_state, &cs);
         }
         else if (word_type == MOD) {
             tele_command_t sub_command;
             copy_sub_command(&sub_command, c);
-            tele_mods[word_value].func(&scene_state, &exec_state,
-                                       &command_state, &sub_command);
+            tele_mods[word_value].func(&scene_state, &exec_state, &cs,
+                                       &sub_command);
         }
     }
 
-    if (top) {
-        process_result_t o = {.has_value = true,
-                              .value = cs_pop(&command_state) };
+    if (cs_stack_size(&cs)) {
+        process_result_t o = {.has_value = true, .value = cs_pop(&cs) };
         return o;
     }
     else {

@@ -3,9 +3,14 @@
 
 #include <stdint.h>
 
+#define STACK_SIZE 8
 #define CV_COUNT 4
 #define Q_LENGTH 16
 #define TR_COUNT 4
+
+////////////////////////////////////////////////////////////////////////////////
+// SCENE STATE /////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 typedef struct {
     int16_t a;
@@ -47,10 +52,38 @@ typedef struct {
 
 typedef struct { scene_variables_t variables; } scene_state_t;
 
+////////////////////////////////////////////////////////////////////////////////
+// EXEC STATE //////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 typedef struct {
 } exec_state_t;
 
+////////////////////////////////////////////////////////////////////////////////
+// COMMAND STATE ///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 typedef struct {
-} command_state_t;
+    int16_t values[STACK_SIZE];
+    int16_t top;
+} command_state_stack_t;
+
+typedef struct { command_state_stack_t stack; } command_state_t;
+
+extern void cs_init(command_state_t *cs);
+extern int16_t cs_stack_size(command_state_t *cs);
+
+// by declaring the following static inline, each compilation unit (i.e. C
+// file), gets its own copy of the function
+static inline int16_t cs_pop(command_state_t *cs) {
+    cs->stack.top--;
+    return cs->stack.values[cs->stack.top];
+}
+
+static inline void cs_push(command_state_t *cs, int16_t data) {
+    cs->stack.values[cs->stack.top] = data;
+    cs->stack.top++;
+}
+
 
 #endif
