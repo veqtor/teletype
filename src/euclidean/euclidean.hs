@@ -71,10 +71,12 @@ array :: Int -> String
 array x = arrayPrototype x ++ " = " ++ bitArrayCLiteral (bitArray <$> allEuclideans x) ++ ";"
 
 dataC :: String
-dataC = intercalate "\n\n" (fmap array [1..32]) ++ "\n"
+dataC = "// clang-format off\n\n" ++
+        intercalate "\n\n" (fmap array [1..32]) ++ "\n"
 
 headerC :: String
-headerC = "#ifndef _EUCLIDEAN_DATA_H_\n" ++
+headerC = "// clang-format off\n\n" ++
+          "#ifndef _EUCLIDEAN_DATA_H_\n" ++
           "#define _EUCLIDEAN_DATA_H_\n" ++
           concatMap (\i -> "extern " ++ arrayPrototype i ++ ";\n") [1..32] ++
           "#endif\n"
