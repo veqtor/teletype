@@ -67,13 +67,4 @@ include $(MAKEFILE_PATH)
 
 .PHONY: format
 format:
-	clang-format -style=file -i main.c
-	clang-format -style=file -i state.h
-	clang-format -style=file -i state.c
-	clang-format -style=file -i table.h
-	clang-format -style=file -i table.c
-	clang-format -style=file -i teletype.h
-	clang-format -style=file -i teletype.c
-	clang-format -style=file -i teletype_io.h
-	clang-format -style=file -i euclidean/euclidean.h
-	clang-format -style=file -i euclidean/euclidean.c
+	find . -type f -name "*.c" -o -name "*.h" | xargs clang-format -style=file -i
