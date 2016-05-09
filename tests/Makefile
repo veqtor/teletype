@@ -2,8 +2,9 @@
 CFLAGS = -std=c99 -g -Wall -DSIM -I../src -I../libavr32/src
 
 tests: main.o parser_tests.o process_tests.o \
-	../src/teletype.o ../src/state.o \
-	../src/table.o ../src/euclidean/data.o ../src/euclidean/euclidean.o \
+	../src/teletype.o ../src/state.o ../src/table.o \
+	../src/ops/op.o \
+	../src/euclidean/data.o ../src/euclidean/euclidean.o \
 	../libavr32/src/util.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
@@ -15,6 +16,7 @@ clean:
 	rm -f *.o
 	rm -f ../src/*.o
 	rm -f ../src/euclidean/*.o
+	rm -f ../src/ops/*.o
 	rm -f ../libavr32/src/*.o
 
 format:

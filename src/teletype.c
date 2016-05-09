@@ -6,7 +6,9 @@
 #include <string.h>
 
 #include "euclidean/euclidean.h"
+#include "helpers.h"
 #include "ii.h"
+#include "ops/op.h"
 #include "table.h"
 #include "teletype.h"
 #include "teletype_io.h"
@@ -17,16 +19,6 @@
 #else
 #include "print_funcs.h"
 #define DBG print_dbg(dbg);
-#endif
-
-// http://stackoverflow.com/questions/3599160/unused-parameter-warnings-in-c-code
-// Needs to be named NOTUSED to void conflict with UNUSED from
-// libavr32/asf/avr32/utils/compiler.h
-// Probably should put this macro somewhere else
-#ifdef __GNUC__
-#define NOTUSED(x) UNUSED_##x __attribute__((__unused__))
-#else
-#define NOTUSED(x) UNUSED_##x
 #endif
 
 static const char *errordesc[] = { "OK",
@@ -801,13 +793,6 @@ void mod_L(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
 /////////////////////////////////////////////////////////////////
 // OPS //////////////////////////////////////////////////////////
 
-static void op_CONSTANT(const void *data, scene_state_t *ss, exec_state_t *es,
-                        command_state_t *cs);
-static void op_PEEK_I16(const void *data, scene_state_t *ss,
-                        exec_state_t *NOTUSED(es), command_state_t *cs);
-static void op_POKE_I16(const void *data, scene_state_t *ss,
-                        exec_state_t *NOTUSED(es), command_state_t *cs);
-
 static void op_ADD(const void *data, scene_state_t *ss, exec_state_t *es,
                    command_state_t *cs);
 static void op_SUB(const void *data, scene_state_t *ss, exec_state_t *es,
@@ -921,55 +906,6 @@ static void op_STATE(const void *data, scene_state_t *ss, exec_state_t *es,
 static void op_ER(const void *data, scene_state_t *ss, exec_state_t *es,
                   command_state_t *cs);
 
-
-// Get only ops
-#define MAKE_GET_OP(n, g, p, r, d)                                    \
-    {                                                                 \
-        .name = #n, .get = g, .set = NULL, .params = p, .returns = r, \
-        .data = NULL, .doc = d                                        \
-    }
-
-// Get & set ops
-#define MAKE_GET_SET_OP(n, g, s, p, r, d)                          \
-    {                                                              \
-        .name = #n, .get = g, .set = s, .params = p, .returns = r, \
-        .data = NULL, .doc = d                                     \
-    }
-
-// Constant Ops
-static void op_CONSTANT(const void *data, scene_state_t *NOTUSED(ss),
-                        exec_state_t *NOTUSED(es), command_state_t *cs) {
-    cs_push(cs, (intptr_t)data);
-}
-
-#define MAKE_CONSTANT_OP(n, v, d)                                 \
-    {                                                             \
-        .name = #n, .get = op_CONSTANT, .set = NULL, .params = 0, \
-        .returns = 1, .data = (void *)v, .doc = d                 \
-    }
-
-// Variables, peek & poke
-static void op_PEEK_I16(const void *data, scene_state_t *ss,
-                        exec_state_t *NOTUSED(es), command_state_t *cs) {
-    char *base = (char *)ss;
-    size_t offset = (size_t)data;
-    int16_t *ptr = (int16_t *)(base + offset);
-    cs_push(cs, *ptr);
-}
-
-static void op_POKE_I16(const void *data, scene_state_t *ss,
-                        exec_state_t *NOTUSED(es), command_state_t *cs) {
-    char *base = (char *)ss;
-    size_t offset = (size_t)data;
-    int16_t *ptr = (int16_t *)(base + offset);
-    *ptr = cs_pop(cs);
-}
-
-#define MAKE_SIMPLE_VARIABLE_OP(n, v, d)                                   \
-    {                                                                      \
-        .name = #n, .get = op_PEEK_I16, .set = op_POKE_I16, .params = 0,   \
-        .returns = 1, .data = (void *)offsetof(scene_state_t, v), .doc = d \
-    }
 
 #define OPS 145
 // clang-format off

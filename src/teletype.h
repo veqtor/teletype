@@ -52,25 +52,6 @@ typedef struct {
     tele_command_t c[SCRIPT_MAX_COMMANDS];
 } tele_script_t;
 
-typedef struct {
-    const char *name;
-    void (*func)(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
-                 tele_command_t *sub_command);
-    char params;
-    const char *doc;
-} tele_mod_t;
-
-typedef struct {
-    const char *name;
-    void (*get)(const void *data, scene_state_t *ss, exec_state_t *es,
-                command_state_t *cs);
-    void (*set)(const void *data, scene_state_t *ss, exec_state_t *es,
-                command_state_t *cs);
-    uint8_t params;
-    bool returns;
-    const void *data;
-    const char *doc;
-} tele_op_t;
 
 typedef struct {
     int16_t i;

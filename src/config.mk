@@ -67,6 +67,7 @@ CSRCS = \
 	../src/teletype.c					\
 	../src/euclidean/euclidean.c				\
 	../src/euclidean/data.c					\
+	../src/ops/op.c					\
 	../libavr32/src/adc.c					\
 	../libavr32/src/events.c				\
 	../libavr32/src/fix.c					\
