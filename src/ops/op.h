@@ -4,8 +4,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "command.h"
 #include "state.h"
-#include "teletype.h"
 
 typedef struct {
     const char *name;

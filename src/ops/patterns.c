@@ -1,6 +1,7 @@
 #include "ops/patterns.h"
 
 #include "helpers.h"
+#include "teletype.h"
 #include "teletype_io.h"
 
 static void op_P_N_get(const void *data, scene_state_t *ss, exec_state_t *es,

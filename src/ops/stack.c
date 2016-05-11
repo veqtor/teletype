@@ -1,6 +1,7 @@
 #include "ops/stack.h"
 
 #include "helpers.h"
+#include "teletype.h"
 #include "teletype_io.h"
 
 static void mod_S_func(scene_state_t *ss, exec_state_t *es, command_state_t *cs,

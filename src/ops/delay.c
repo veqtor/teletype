@@ -1,6 +1,7 @@
 #include "ops/delay.h"
 
 #include "helpers.h"
+#include "teletype.h"
 #include "teletype_io.h"
 
 static void mod_DEL_func(scene_state_t *ss, exec_state_t *es,
