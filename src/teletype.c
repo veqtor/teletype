@@ -135,99 +135,18 @@ void clear_delays(void) {
 /////////////////////////////////////////////////////////////////
 // MOD //////////////////////////////////////////////////////////
 
-static void mod_PROB(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
-                     tele_command_t *sub_command);
-static void mod_DEL(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
-                    tele_command_t *sub_command);
-static void mod_S(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
-                  tele_command_t *sub_command);
-static void mod_IF(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
-                   tele_command_t *sub_command);
-static void mod_ELIF(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
-                     tele_command_t *sub_command);
-static void mod_ELSE(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
-                     tele_command_t *sub_command);
-static void mod_L(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
-                  tele_command_t *sub_command);
-
 #define MODS 7
-static const tele_mod_t tele_mods[MODS] = {
-    MAKE_MOD(PROB, mod_PROB, 1, "PROBABILITY TO CONTINUE EXECUTING LINE"),
-    MAKE_MOD(DEL, mod_DEL, 1, "DELAY THIS COMMAND"),
-    MAKE_MOD(S, mod_S, 0, "ADD COMMAND TO STACK"),
-    MAKE_MOD(IF, mod_IF, 1, "IF CONDITION FOR COMMAND"),
-    MAKE_MOD(ELIF, mod_ELIF, 1, "ELSE IF"),
-    MAKE_MOD(ELSE, mod_ELSE, 0, "ELSE"),
-    MAKE_MOD(L, mod_L, 2, "LOOPED COMMAND WITH ITERATION")
+static const tele_mod_t *tele_mods[MODS] = {
+    // controlflow
+    &mod_IF, &mod_ELIF, &mod_ELSE, &mod_L, &mod_PROB,
+
+    // delay
+    &mod_DEL,
+
+    // stack
+    &mod_S
+
 };
-
-
-void mod_PROB(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
-              command_state_t *cs, tele_command_t *sub_command) {
-    int16_t a = cs_pop(cs);
-
-    if (rand() % 101 < a) { process(sub_command); }
-}
-void mod_DEL(scene_state_t *ss, exec_state_t *NOTUSED(es),
-             command_state_t *cs, tele_command_t *sub_command) {
-    int16_t i = 0;
-    int16_t a = cs_pop(cs);
-
-    if (a < 1) a = 1;
-
-    while (ss->delay.time[i] != 0 && i != DELAY_SIZE) i++;
-
-    if (i < DELAY_SIZE) {
-        ss->delay.count++;
-        if (ss->delay.count == 1) tele_delay(1);
-        ss->delay.time[i] = a;
-
-        copy_command(&ss->delay.commands[i], sub_command);
-    }
-}
-void mod_S(scene_state_t *ss, exec_state_t *NOTUSED(es),
-           command_state_t *NOTUSED(cs), tele_command_t *sub_command) {
-    if (ss->stack_op.top < STACK_OP_SIZE) {
-        copy_command(&ss->stack_op.commands[ss->stack_op.top], sub_command);
-        ss->stack_op.top++;
-        if (ss->stack_op.top == 1) tele_s(1);
-    }
-}
-void mod_IF(scene_state_t *NOTUSED(ss), exec_state_t *es, command_state_t *cs,
-            tele_command_t *sub_command) {
-    es->if_else_condition = false;
-    if (cs_pop(cs)) {
-        es->if_else_condition = true;
-        process(sub_command);
-    }
-}
-void mod_ELIF(scene_state_t *NOTUSED(ss), exec_state_t *es, command_state_t *cs,
-              tele_command_t *sub_command) {
-    if (!es->if_else_condition) {
-        if (cs_pop(cs)) {
-            es->if_else_condition = true;
-            process(sub_command);
-        }
-    }
-}
-void mod_ELSE(scene_state_t *NOTUSED(ss), exec_state_t *es,
-              command_state_t *NOTUSED(cs), tele_command_t *sub_command) {
-    if (!es->if_else_condition) {
-        es->if_else_condition = true;
-        process(sub_command);
-    }
-}
-void mod_L(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
-           command_state_t *cs, tele_command_t *sub_command) {
-    int16_t a = cs_pop(cs);
-    int16_t b = cs_pop(cs);
-    int16_t loop_size = a < b ? b - a : a - b;
-
-    for (int16_t i = 0; i <= loop_size; i++) {
-        scene_state.variables.i = a < b ? a + i : a - i;
-        process(sub_command);
-    }
-}
 
 
 /////////////////////////////////////////////////////////////////
@@ -334,7 +253,7 @@ error_t parse(char *cmd, tele_command_t *out) {
                 i = MODS;
 
                 while (i--) {
-                    if (!strcmp(s, tele_mods[i].name)) {
+                    if (!strcmp(s, tele_mods[i]->name)) {
                         out->data[n].t = MOD;
                         out->data[n].v = i;
                         break;
@@ -407,13 +326,13 @@ error_t validate(tele_command_t *c) {
                 mod_error = E_NO_MOD_HERE;
             else if (c->separator == -1)
                 mod_error = E_NEED_SEP;
-            else if (stack_depth < tele_mods[word_value].params)
+            else if (stack_depth < tele_mods[word_value]->params)
                 mod_error = E_NEED_PARAMS;
-            else if (stack_depth > tele_mods[word_value].params)
+            else if (stack_depth > tele_mods[word_value]->params)
                 mod_error = E_EXTRA_PARAMS;
 
             if (mod_error != E_OK) {
-                strcpy(error_detail, tele_mods[word_value].name);
+                strcpy(error_detail, tele_mods[word_value]->name);
                 return mod_error;
             }
 
@@ -469,8 +388,8 @@ process_result_t process(tele_command_t *c) {
         else if (word_type == MOD) {
             tele_command_t sub_command;
             copy_sub_command(&sub_command, c);
-            tele_mods[word_value].func(&scene_state, &exec_state, &cs,
-                                       &sub_command);
+            tele_mods[word_value]->func(&scene_state, &exec_state, &cs,
+                                        &sub_command);
         }
     }
 
@@ -504,8 +423,8 @@ char *print_command(const tele_command_t *c) {
                 p += strlen(number) - 1;
                 break;
             case MOD:
-                strcpy(p, tele_mods[c->data[n].v].name);
-                p += strlen(tele_mods[c->data[n].v].name) - 1;
+                strcpy(p, tele_mods[c->data[n].v]->name);
+                p += strlen(tele_mods[c->data[n].v]->name) - 1;
                 break;
             case SEP: *p = ':'; break;
             default: break;

@@ -69,7 +69,7 @@ void op_poke_i16(const void *data, scene_state_t *ss, exec_state_t *es,
 
 // Mods
 #define MAKE_MOD(n, f, p, d) \
-    { .name = #n, .func = mod_##n, .params = p, .doc = d }
+    { .name = #n, .func = f, .params = p, .doc = d }
 
 
 #endif

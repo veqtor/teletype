@@ -1,6 +1,6 @@
 #include "command.h"
 
-#include <string.h> // memcpy
+#include <string.h>  // memcpy
 
 void copy_command(tele_command_t *dst, tele_command_t *src) {
     // TODO does this need to use memcpy?
