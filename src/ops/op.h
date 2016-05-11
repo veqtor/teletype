@@ -67,4 +67,9 @@ void op_peek_i16(const void *data, scene_state_t *ss, exec_state_t *es,
 void op_poke_i16(const void *data, scene_state_t *ss, exec_state_t *es,
                  command_state_t *cs);
 
+// Mods
+#define MAKE_MOD(n, f, p, d) \
+    { .name = #n, .func = mod_##n, .params = p, .doc = d }
+
+
 #endif

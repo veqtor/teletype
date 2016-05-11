@@ -159,17 +159,15 @@ static void mod_ELSE(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
 static void mod_L(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
                   tele_command_t *sub_command);
 
-#define MAKEMOD(name, params, doc) \
-    { #name, mod_##name, params, doc }
 #define MODS 7
 static const tele_mod_t tele_mods[MODS] = {
-    MAKEMOD(PROB, 1, "PROBABILITY TO CONTINUE EXECUTING LINE"),
-    MAKEMOD(DEL, 1, "DELAY THIS COMMAND"),
-    MAKEMOD(S, 0, "ADD COMMAND TO STACK"),
-    MAKEMOD(IF, 1, "IF CONDITION FOR COMMAND"),
-    MAKEMOD(ELIF, 1, "ELSE IF"),
-    MAKEMOD(ELSE, 0, "ELSE"),
-    MAKEMOD(L, 2, "LOOPED COMMAND WITH ITERATION")
+    MAKE_MOD(PROB, mod_PROB, 1, "PROBABILITY TO CONTINUE EXECUTING LINE"),
+    MAKE_MOD(DEL, mod_DEL, 1, "DELAY THIS COMMAND"),
+    MAKE_MOD(S, mod_S, 0, "ADD COMMAND TO STACK"),
+    MAKE_MOD(IF, mod_IF, 1, "IF CONDITION FOR COMMAND"),
+    MAKE_MOD(ELIF, mod_ELIF, 1, "ELSE IF"),
+    MAKE_MOD(ELSE, mod_ELSE, 0, "ELSE"),
+    MAKE_MOD(L, mod_L, 2, "LOOPED COMMAND WITH ITERATION")
 };
 
 
