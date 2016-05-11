@@ -55,9 +55,6 @@ uint8_t mutes[8];
 
 tele_pattern_t tele_patterns[4];
 
-tele_command_t tele_stack[TELE_STACK_SIZE];
-uint8_t tele_stack_top;
-
 const char *to_v(int16_t);
 
 /////////////////////////////////////////////////////////////////
@@ -128,7 +125,7 @@ void clear_delays(void) {
 
     scene_state.delay.count = 0;
 
-    tele_stack_top = 0;
+    scene_state.stack_op.top = 0;
 
     tele_delay(0);
     tele_s(0);
@@ -188,12 +185,12 @@ void mod_DEL(scene_state_t *ss, exec_state_t *NOTUSED(es),
         copy_command(&ss->delay.commands[i], sub_command);
     }
 }
-void mod_S(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
+void mod_S(scene_state_t *ss, exec_state_t *NOTUSED(es),
            command_state_t *NOTUSED(cs), tele_command_t *sub_command) {
-    if (tele_stack_top < TELE_STACK_SIZE) {
-        copy_command(&tele_stack[tele_stack_top], sub_command);
-        tele_stack_top++;
-        if (tele_stack_top == 1) tele_s(1);
+    if (ss->stack_op.top < STACK_OP_SIZE) {
+        copy_command(&ss->stack_op.commands[ss->stack_op.top], sub_command);
+        ss->stack_op.top++;
+        if (ss->stack_op.top == 1) tele_s(1);
     }
 }
 void mod_IF(scene_state_t *NOTUSED(ss), exec_state_t *es, command_state_t *cs,

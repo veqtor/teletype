@@ -22,33 +22,33 @@ const tele_op_t op_S_CLR =
 const tele_op_t op_S_L = MAKE_GET_OP(S.L, op_S_L_get, 0, true, "STACK LENGTH");
 
 
-static void op_S_ALL_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_S_ALL_get(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *NOTUSED(es),
                          command_state_t *NOTUSED(cs)) {
-    for (int16_t i = 0; i < tele_stack_top; i++)
-        process(&tele_stack[tele_stack_top - i - 1]);
-    tele_stack_top = 0;
+    for (int16_t i = 0; i < ss->stack_op.top; i++)
+        process(&ss->stack_op.commands[ss->stack_op.top - i - 1]);
+    ss->stack_op.top = 0;
     tele_s(0);
 }
 
-static void op_S_POP_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_S_POP_get(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *NOTUSED(es),
                          command_state_t *NOTUSED(cs)) {
-    if (tele_stack_top) {
-        tele_stack_top--;
-        process(&tele_stack[tele_stack_top]);
-        if (tele_stack_top == 0) tele_s(0);
+    if (ss->stack_op.top) {
+        ss->stack_op.top--;
+        process(&ss->stack_op.commands[ss->stack_op.top]);
+        if (ss->stack_op.top == 0) tele_s(0);
     }
 }
 
-static void op_S_CLR_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_S_CLR_get(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *NOTUSED(es),
                          command_state_t *NOTUSED(cs)) {
-    tele_stack_top = 0;
+    ss->stack_op.top = 0;
     tele_s(0);
 }
 
-static void op_S_L_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_S_L_get(const void *NOTUSED(data), scene_state_t *ss,
                        exec_state_t *NOTUSED(es), command_state_t *cs) {
-    cs_push(cs, tele_stack_top);
+    cs_push(cs, ss->stack_op.top);
 }

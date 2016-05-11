@@ -9,7 +9,6 @@
 
 #define SCRIPT_MAX_COMMANDS 6
 #define SCRIPT_MAX_COMMANDS_ 5
-#define TELE_STACK_SIZE 8
 
 #define WELCOME "TELETYPE 1.12"
 
@@ -72,8 +71,6 @@ const char *to_v(int16_t);
 extern void clear_delays(void);
 extern int16_t tr_pulse[4];
 extern tele_pattern_t tele_patterns[4];
-extern tele_command_t tele_stack[TELE_STACK_SIZE];
-extern uint8_t tele_stack_top;
 
 extern char error_detail[16];
 

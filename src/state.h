@@ -11,6 +11,7 @@
 #define Q_LENGTH 16
 #define TR_COUNT 4
 #define DELAY_SIZE 8
+#define STACK_OP_SIZE 8
 
 ////////////////////////////////////////////////////////////////////////////////
 // SCENE STATE /////////////////////////////////////////////////////////////////
@@ -61,8 +62,14 @@ typedef struct {
 } scene_delay_t;
 
 typedef struct {
+    tele_command_t commands[STACK_OP_SIZE];
+    uint8_t top;
+} scene_stack_op_t;
+
+typedef struct {
     scene_variables_t variables;
     scene_delay_t delay;
+    scene_stack_op_t stack_op;
 } scene_state_t;
 
 ////////////////////////////////////////////////////////////////////////////////
