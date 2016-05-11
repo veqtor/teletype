@@ -4,13 +4,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "command.h"
 #include "state.h"
 
 #define SCRIPT_MAX_COMMANDS 6
 #define SCRIPT_MAX_COMMANDS_ 5
-#define COMMAND_MAX_LENGTH 12
 #define TELE_STACK_SIZE 8
-#define TELE_D_SIZE 8
 
 #define WELCOME "TELETYPE 1.12"
 
@@ -34,18 +33,6 @@ typedef struct {
     int16_t value;
 } process_result_t;
 
-typedef enum { NUMBER, MOD, SEP, OP } tele_word_t;
-
-typedef struct {
-    tele_word_t t;
-    int16_t v;
-} tele_data_t;
-
-typedef struct {
-    uint8_t l;
-    signed char separator;
-    tele_data_t data[COMMAND_MAX_LENGTH];
-} tele_command_t;
 
 typedef struct {
     uint8_t l;

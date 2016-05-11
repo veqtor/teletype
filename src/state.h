@@ -4,10 +4,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "command.h"
+
 #define STACK_SIZE 8
 #define CV_COUNT 4
 #define Q_LENGTH 16
 #define TR_COUNT 4
+#define DELAY_SIZE 8
 
 ////////////////////////////////////////////////////////////////////////////////
 // SCENE STATE /////////////////////////////////////////////////////////////////
@@ -51,7 +54,16 @@ typedef struct {
     int16_t z;
 } scene_variables_t;
 
-typedef struct { scene_variables_t variables; } scene_state_t;
+typedef struct {
+    tele_command_t commands[DELAY_SIZE];
+    int16_t time[DELAY_SIZE];
+    uint8_t count;
+} scene_delay_t;
+
+typedef struct {
+    scene_variables_t variables;
+    scene_delay_t delay;
+} scene_state_t;
 
 ////////////////////////////////////////////////////////////////////////////////
 // EXEC STATE //////////////////////////////////////////////////////////////////

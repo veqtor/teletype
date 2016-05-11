@@ -60,9 +60,6 @@ uint8_t tele_stack_top;
 
 const char *to_v(int16_t);
 
-void copy_command(tele_command_t *dst, tele_command_t *src);
-void copy_sub_command(tele_command_t *dst, tele_command_t *src);
-
 /////////////////////////////////////////////////////////////////
 // STATE ////////////////////////////////////////////////////////
 
@@ -92,24 +89,21 @@ static exec_state_t exec_state = {};
 /////////////////////////////////////////////////////////////////
 // DELAY ////////////////////////////////////////////////////////
 
-static tele_command_t delay_c[TELE_D_SIZE];
-static int16_t delay_t[TELE_D_SIZE];
-static uint8_t delay_count;
 int16_t tr_pulse[4];
 
 static void process_delays(uint8_t);
 
 static void process_delays(uint8_t v) {
-    for (int16_t i = 0; i < TELE_D_SIZE; i++) {
-        if (delay_t[i]) {
-            delay_t[i] -= v;
-            if (delay_t[i] <= 0) {
+    for (int16_t i = 0; i < DELAY_SIZE; i++) {
+        if (scene_state.delay.time[i]) {
+            scene_state.delay.time[i] -= v;
+            if (scene_state.delay.time[i] <= 0) {
                 // sprintf(dbg,"\r\ndelay %d", i);
                 // DBG
-                process(&delay_c[i]);
-                delay_t[i] = 0;
-                delay_count--;
-                if (delay_count == 0) tele_delay(0);
+                process(&scene_state.delay.commands[i]);
+                scene_state.delay.time[i] = 0;
+                scene_state.delay.count--;
+                if (scene_state.delay.count == 0) tele_delay(0);
             }
         }
     }
@@ -130,9 +124,9 @@ static void process_delays(uint8_t v) {
 void clear_delays(void) {
     for (int16_t i = 0; i < 4; i++) tr_pulse[i] = 0;
 
-    for (int16_t i = 0; i < TELE_D_SIZE; i++) { delay_t[i] = 0; }
+    for (int16_t i = 0; i < DELAY_SIZE; i++) { scene_state.delay.time[i] = 0; }
 
-    delay_count = 0;
+    scene_state.delay.count = 0;
 
     tele_stack_top = 0;
 
@@ -177,21 +171,21 @@ void mod_PROB(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
 
     if (rand() % 101 < a) { process(sub_command); }
 }
-void mod_DEL(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
+void mod_DEL(scene_state_t *ss, exec_state_t *NOTUSED(es),
              command_state_t *cs, tele_command_t *sub_command) {
     int16_t i = 0;
     int16_t a = cs_pop(cs);
 
     if (a < 1) a = 1;
 
-    while (delay_t[i] != 0 && i != TELE_D_SIZE) i++;
+    while (ss->delay.time[i] != 0 && i != DELAY_SIZE) i++;
 
-    if (i < TELE_D_SIZE) {
-        delay_count++;
-        if (delay_count == 1) tele_delay(1);
-        delay_t[i] = a;
+    if (i < DELAY_SIZE) {
+        ss->delay.count++;
+        if (ss->delay.count == 1) tele_delay(1);
+        ss->delay.time[i] = a;
 
-        copy_command(&delay_c[i], sub_command);
+        copy_command(&ss->delay.commands[i], sub_command);
     }
 }
 void mod_S(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
@@ -446,18 +440,6 @@ error_t validate(tele_command_t *c) {
         return E_EXTRA_PARAMS;
     else
         return E_OK;
-}
-
-void copy_command(tele_command_t *dst, tele_command_t *src) {
-    // TODO does this need to use memcpy?
-    memcpy(dst, src, sizeof(tele_command_t));
-}
-
-void copy_sub_command(tele_command_t *dst, tele_command_t *src) {
-    dst->l = src->l - src->separator - 1;
-    dst->separator = -1;
-    memcpy(dst->data, &src->data[src->separator + 1],
-           dst->l * sizeof(tele_data_t));
 }
 
 /////////////////////////////////////////////////////////////////
