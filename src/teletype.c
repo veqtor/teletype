@@ -55,7 +55,6 @@ uint8_t mutes[8];
 
 tele_pattern_t tele_patterns[4];
 
-const char *to_v(int16_t);
 
 /////////////////////////////////////////////////////////////////
 // STATE ////////////////////////////////////////////////////////
@@ -473,77 +472,4 @@ void tele_init() {
     }
 
     for (i = 0; i < 8; i++) mutes[i] = 1;
-}
-
-
-const char *to_v(int16_t i) {
-    static char n[3], v[7];
-    int16_t a = 0, b = 0;
-
-    if (i > table_v[8]) {
-        i -= table_v[8];
-        a += 8;
-    }
-
-    if (i > table_v[4]) {
-        i -= table_v[4];
-        a += 4;
-    }
-
-    if (i > table_v[2]) {
-        i -= table_v[2];
-        a += 2;
-    }
-
-    if (i > table_v[1]) {
-        i -= table_v[1];
-        a += 1;
-    }
-
-    if (i > table_vv[64]) {
-        i -= table_vv[64];
-        b += 64;
-    }
-
-    if (i > table_vv[32]) {
-        i -= table_vv[32];
-        b += 32;
-    }
-
-    if (i > table_vv[16]) {
-        i -= table_vv[16];
-        b += 16;
-    }
-
-    if (i > table_vv[8]) {
-        i -= table_vv[8];
-        b += 8;
-    }
-
-    if (i > table_vv[4]) {
-        i -= table_vv[4];
-        b += 4;
-    }
-
-    if (i > table_vv[2]) {
-        i -= table_vv[2];
-        b++;
-    }
-
-    if (i > table_vv[1]) {
-        i -= table_vv[1];
-        b++;
-    }
-
-    b++;
-
-    itoa(a, n, 10);
-    strcpy(v, n);
-    strcat(v, ".");
-    itoa(b, n, 10);
-    strcat(v, n);
-    strcat(v, "V");
-
-    return v;
-    // printf(" (VV %d %d)",a,b);
 }

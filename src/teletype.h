@@ -65,8 +65,6 @@ void tele_set_param(int16_t value);
 void tele_set_scene(int16_t value);
 
 const char *tele_error(error_t);
-const char *to_v(int16_t);
-
 
 extern void clear_delays(void);
 extern int16_t tr_pulse[4];

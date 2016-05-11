@@ -15,5 +15,6 @@
 
 
 int16_t normalise_value(int16_t min, int16_t max, int16_t wrap, int16_t value);
+const char *to_voltage(int16_t);
 
 #endif

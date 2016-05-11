@@ -1555,7 +1555,7 @@ static void handler_ScreenRefresh(s32 data) {
                 output_new = 0;
                 if (mode == M_LIVE) itoa(output, s, 10);
                 // strcat(s, " ");
-                // strcat(s, to_v(output));
+                // strcat(s, to_voltage(output));
                 else
                     s[0] = 0;
             }
