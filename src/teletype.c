@@ -55,8 +55,6 @@ uint8_t mutes[8];
 
 tele_pattern_t tele_patterns[4];
 
-static char condition;
-
 tele_command_t tele_stack[TELE_STACK_SIZE];
 uint8_t tele_stack_top;
 
@@ -89,7 +87,7 @@ static scene_state_t scene_state = {
                   .tr_pol = { 1, 1, 1, 1 },
                   .tr_time = { 100, 100, 100, 100 } }
 };
-static exec_state_t exec_state;
+static exec_state_t exec_state = {};
 
 /////////////////////////////////////////////////////////////////
 // DELAY ////////////////////////////////////////////////////////
@@ -206,27 +204,27 @@ void mod_S(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
         if (tele_stack_top == 1) tele_s(1);
     }
 }
-void mod_IF(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
-            command_state_t *cs, tele_command_t *sub_command) {
-    condition = false;
+void mod_IF(scene_state_t *NOTUSED(ss), exec_state_t *es, command_state_t *cs,
+            tele_command_t *sub_command) {
+    es->if_else_condition = false;
     if (cs_pop(cs)) {
-        condition = true;
+        es->if_else_condition = true;
         process(sub_command);
     }
 }
-void mod_ELIF(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
-              command_state_t *cs, tele_command_t *sub_command) {
-    if (!condition) {
+void mod_ELIF(scene_state_t *NOTUSED(ss), exec_state_t *es, command_state_t *cs,
+              tele_command_t *sub_command) {
+    if (!es->if_else_condition) {
         if (cs_pop(cs)) {
-            condition = true;
+            es->if_else_condition = true;
             process(sub_command);
         }
     }
 }
-void mod_ELSE(scene_state_t *NOTUSED(ss), exec_state_t *NOTUSED(es),
+void mod_ELSE(scene_state_t *NOTUSED(ss), exec_state_t *es,
               command_state_t *NOTUSED(cs), tele_command_t *sub_command) {
-    if (!condition) {
-        condition = true;
+    if (!es->if_else_condition) {
+        es->if_else_condition = true;
         process(sub_command);
     }
 }
