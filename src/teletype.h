@@ -81,7 +81,12 @@ void tele_set_scene(int16_t value);
 const char *tele_error(error_t);
 const char *to_v(int16_t);
 
+
+extern void clear_delays(void);
+extern int16_t tr_pulse[4];
 extern tele_pattern_t tele_patterns[4];
+extern tele_command_t tele_stack[TELE_STACK_SIZE];
+extern uint8_t tele_stack_top;
 
 extern char error_detail[16];
 
