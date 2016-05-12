@@ -1,5 +1,4 @@
 #include <ctype.h>   // isdigit
-#include <stddef.h>  // offsetof
 #include <stdint.h>  // types
 #include <stdio.h>   // printf
 #include <stdlib.h>  // rand, strtol
@@ -29,6 +28,14 @@
 #define DBG print_dbg(dbg);
 #endif
 
+// static char dbg[32];
+static char pcmd[32];
+char error_detail[16];
+uint8_t mutes[8];
+int16_t tr_pulse[4];
+tele_pattern_t tele_patterns[4];
+
+
 static const char *errordesc[] = { "OK",
                                    WELCOME,
                                    "UNKNOWN WORD",
@@ -44,16 +51,6 @@ static const char *errordesc[] = { "OK",
 const char *tele_error(error_t e) {
     return errordesc[e];
 }
-
-// static char dbg[32];
-static char pcmd[32];
-
-
-char error_detail[16];
-
-uint8_t mutes[8];
-
-tele_pattern_t tele_patterns[4];
 
 
 /////////////////////////////////////////////////////////////////
@@ -85,9 +82,6 @@ static exec_state_t exec_state = {};
 /////////////////////////////////////////////////////////////////
 // DELAY ////////////////////////////////////////////////////////
 
-int16_t tr_pulse[4];
-
-
 void clear_delays(void) {
     for (int16_t i = 0; i < 4; i++) tr_pulse[i] = 0;
 
@@ -103,7 +97,7 @@ void clear_delays(void) {
 
 
 /////////////////////////////////////////////////////////////////
-// MOD //////////////////////////////////////////////////////////
+// MODS /////////////////////////////////////////////////////////
 
 #define MODS 7
 static const tele_mod_t *tele_mods[MODS] = {
@@ -178,12 +172,7 @@ static const tele_op_t *tele_ops[OPS] = {
 
 
 /////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-// PROCESS //////////////////////////////////////////////////////
+// PARSE ////////////////////////////////////////////////////////
 
 error_t parse(char *cmd, tele_command_t *out) {
     char cmd_copy[32];
@@ -247,7 +236,6 @@ error_t parse(char *cmd, tele_command_t *out) {
 
     return E_OK;
 }
-
 
 /////////////////////////////////////////////////////////////////
 // VALIDATE /////////////////////////////////////////////////////
@@ -372,7 +360,6 @@ process_result_t process(tele_command_t *c) {
         return o;
     }
 }
-
 
 char *print_command(const tele_command_t *c) {
     int16_t n = 0;
