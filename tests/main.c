@@ -21,7 +21,9 @@ void tele_pi() {}
 void tele_script(uint8_t a) {}
 void tele_kill() {}
 void tele_mute(uint8_t i, uint8_t s) {}
-bool tele_get_input_state(uint8_t n) { return false; }
+bool tele_get_input_state(uint8_t n) {
+    return false;
+}
 
 GREATEST_MAIN_DEFS();
 

@@ -93,6 +93,7 @@ aout_t aout[4];
 u8 mutes[8];
 
 error_t status;
+char error_msg[ERROR_MSG_LENGTH];
 
 char input[32];
 char input_buffer[32];
@@ -850,10 +851,10 @@ static void handler_HidTimer(s32 data) {
                     case RETURN:
                         if (mode == M_EDIT || mode == M_LIVE) {
                             tele_command_t temp;
-                            status = parse(input, &temp);
+                            status = parse(input, &temp, error_msg);
 
                             if (status == E_OK) {
-                                status = validate(&temp);
+                                status = validate(&temp, error_msg);
 
                                 if (status == E_OK) {
                                     if (mode == M_LIVE) {
@@ -1536,10 +1537,10 @@ static void handler_ScreenRefresh(s32 data) {
         if (r_edit_dirty & R_MESSAGE) {
             if (status) {
                 strcpy(s, tele_error(status));
-                if (error_detail[0]) {
+                if (error_msg[0]) {
                     strcat(s, ": ");
-                    strcat(s, error_detail);
-                    error_detail[0] = 0;
+                    strcat(s, error_msg);
+                    error_msg[0] = 0;
                 }
                 status = E_OK;
             }
@@ -2211,12 +2212,14 @@ static void tele_usb_disk() {
                                     if (c == '\n') {
                                         if (p && l < SCRIPT_MAX_COMMANDS) {
                                             tele_command_t temp;
-                                            status = parse(input, &temp);
+                                            status =
+                                                parse(input, &temp, error_msg);
 
                                             if (status == E_OK) {
                                                 // print_dbg("\r\nparsed: ");
                                                 // print_dbg(input);
-                                                status = validate(&temp);
+                                                status =
+                                                    validate(&temp, error_msg);
 
                                                 if (status == E_OK) {
                                                     memcpy(
@@ -2455,8 +2458,8 @@ int main(void) {
 
     for (int i = 0; i < 8; i++) mutes[i] = 1;
 
-    status = 1;
-    error_detail[0] = 0;
+    status = E_WELCOME;
+    error_msg[0] = 0;
     mode = f.mode;
     edit_line = SCRIPT_MAX_COMMANDS;
     r_edit_dirty = R_MESSAGE | R_INPUT;

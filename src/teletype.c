@@ -19,7 +19,6 @@
 #endif
 
 // static char dbg[32];
-char error_detail[16];
 uint8_t mutes[8];
 int16_t tr_pulse[4];
 tele_pattern_t tele_patterns[4];
@@ -88,7 +87,9 @@ void clear_delays(void) {
 /////////////////////////////////////////////////////////////////
 // PARSE ////////////////////////////////////////////////////////
 
-error_t parse(const char *cmd, tele_command_t *out) {
+error_t parse(const char *cmd, tele_command_t *out,
+              char error_msg[ERROR_MSG_LENGTH]) {
+    error_msg[0] = 0;
     char cmd_copy[32];
     strcpy(cmd_copy, cmd);
     const char *delim = " \n";
@@ -138,7 +139,7 @@ error_t parse(const char *cmd, tele_command_t *out) {
             }
 
             if (i == -1) {
-                strcpy(error_detail, s);
+                strcpy(error_msg, s);
                 return E_PARSE;
             }
         }
@@ -157,7 +158,8 @@ error_t parse(const char *cmd, tele_command_t *out) {
 /////////////////////////////////////////////////////////////////
 // VALIDATE /////////////////////////////////////////////////////
 
-error_t validate(const tele_command_t *c) {
+error_t validate(const tele_command_t *c, char error_msg[ERROR_MSG_LENGTH]) {
+    error_msg[0] = 0;
     int16_t stack_depth = 0;
     uint8_t idx = c->l;
     int8_t sep_count = 0;
@@ -175,14 +177,14 @@ error_t validate(const tele_command_t *c) {
 
             // if we're not a first_cmd we need to return something
             if (!first_cmd && !op->returns) {
-                strcpy(error_detail, op->name);
+                strcpy(error_msg, op->name);
                 return E_NOT_LEFT;
             }
 
             stack_depth -= op->params;
 
             if (stack_depth < 0) {
-                strcpy(error_detail, op->name);
+                strcpy(error_msg, op->name);
                 return E_NEED_PARAMS;
             }
 
@@ -207,7 +209,7 @@ error_t validate(const tele_command_t *c) {
                 mod_error = E_EXTRA_PARAMS;
 
             if (mod_error != E_OK) {
-                strcpy(error_detail, tele_mods[word_value]->name);
+                strcpy(error_msg, tele_mods[word_value]->name);
                 return mod_error;
             }
 

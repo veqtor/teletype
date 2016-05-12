@@ -9,6 +9,7 @@
 
 #define SCRIPT_MAX_COMMANDS 6
 #define SCRIPT_MAX_COMMANDS_ 5
+#define ERROR_MSG_LENGTH 16
 
 #define WELCOME "TELETYPE 1.12"
 
@@ -49,8 +50,9 @@ typedef struct {
 } tele_pattern_t;
 
 
-error_t parse(const char *cmd, tele_command_t *out);
-error_t validate(const tele_command_t *c);
+error_t parse(const char *cmd, tele_command_t *out,
+              char error_msg[ERROR_MSG_LENGTH]);
+error_t validate(const tele_command_t *c, char error_msg[ERROR_MSG_LENGTH]);
 process_result_t process(const tele_command_t *c);
 
 void tele_tick(uint8_t);
@@ -68,7 +70,5 @@ const char *tele_error(error_t);
 extern void clear_delays(void);
 extern int16_t tr_pulse[4];
 extern tele_pattern_t tele_patterns[4];
-
-extern char error_detail[16];
 
 #endif

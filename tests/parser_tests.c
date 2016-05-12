@@ -6,10 +6,11 @@
 
 error_t parse_and_validate_helper(char* text) {
     tele_command_t cmd;
-    error_t result = parse(text, &cmd);
+    char error_msg[ERROR_MSG_LENGTH];
+    error_t result = parse(text, &cmd, error_msg);
     if (result != E_OK) { return result; }
 
-    return validate(&cmd);
+    return validate(&cmd, error_msg);
 }
 
 #define SPV_COMMANDS 140

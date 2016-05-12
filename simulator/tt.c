@@ -119,12 +119,12 @@ int main() {
         }
 
         tele_command_t temp;
-        status = parse(in, &temp);
+        char error_msg[ERROR_MSG_LENGTH];
+        status = parse(in, &temp, error_msg);
         if (status == E_OK) {
-            status = validate(&temp);
+            status = validate(&temp, error_msg);
             printf("validate: %s", tele_error(status));
-            if (error_detail[0]) printf(": %s", error_detail);
-            error_detail[0] = 0;
+            if (error_msg[0]) printf(": %s", error_msg);
             printf("\n");
             if (status == E_OK) {
                 process_result_t output = process(&temp);
@@ -133,8 +133,7 @@ int main() {
         }
         else {
             printf("ERROR: %s", tele_error(status));
-            if (error_detail[0]) printf(": %s", error_detail);
-            error_detail[0] = 0;
+            if (error_msg[0]) printf(": %s", error_msg);
             printf("\n");
         }
 
