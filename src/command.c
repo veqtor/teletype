@@ -2,8 +2,8 @@
 
 #include <string.h>  // memcpy
 
-#include "util.h"
 #include "ops/op.h"
+#include "util.h"
 
 void copy_command(tele_command_t *dst, const tele_command_t *src) {
     // TODO does this need to use memcpy?
@@ -18,35 +18,22 @@ void copy_sub_command(tele_command_t *dst, const tele_command_t *src) {
 }
 
 void print_command(const tele_command_t *c, char *out) {
-    int16_t n = 0;
-    char number[8];
-
     *out = 0;
-
-    while (n < c->l) {
+    for (int n = 0; n < c->l; n++) {
         switch (c->data[n].t) {
-        case OP:
-            strcpy(out, tele_ops[c->data[n].v]->name);
-            out += strlen(tele_ops[c->data[n].v]->name) - 1;
-            break;
-        case NUMBER:
-            itoa(c->data[n].v, number, 10);
-            strcpy(out, number);
-            out += strlen(number) - 1;
-            break;
-        case MOD:
-            strcpy(out, tele_mods[c->data[n].v]->name);
-            out += strlen(tele_mods[c->data[n].v]->name) - 1;
-            break;
-        case SEP: *out = ':'; break;
-        default: break;
+            case OP: strcat(out, tele_ops[c->data[n].v]->name); break;
+            case NUMBER: {
+                char number[8];
+                itoa(c->data[n].v, number, 10);
+                strcat(out, number);
+                break;
+            }
+            case MOD: strcat(out, tele_mods[c->data[n].v]->name); break;
+            case SEP: strcat(out, ":"); break;
+            default: break;
         }
-
-        n++;
-        out++;
-        *out = ' ';
-        out++;
+        strcat(out, " ");
     }
-    out--;
-    *out = 0;
+    size_t out_len = strlen(out);
+    if (out_len > 0) out[out_len - 1] = 0;
 }
