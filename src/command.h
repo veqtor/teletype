@@ -20,5 +20,6 @@ typedef struct {
 
 void copy_command(tele_command_t *dst, const tele_command_t *src);
 void copy_sub_command(tele_command_t *dst, const tele_command_t *src);
+void print_command(const tele_command_t *c, char *out);
 
 #endif

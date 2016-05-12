@@ -275,41 +275,6 @@ process_result_t process(tele_command_t *c) {
     }
 }
 
-void print_command(const tele_command_t *c, char *out) {
-    int16_t n = 0;
-    char number[8];
-
-    *out = 0;
-
-    while (n < c->l) {
-        switch (c->data[n].t) {
-            case OP:
-                strcpy(out, tele_ops[c->data[n].v]->name);
-                out += strlen(tele_ops[c->data[n].v]->name) - 1;
-                break;
-            case NUMBER:
-                itoa(c->data[n].v, number, 10);
-                strcpy(out, number);
-                out += strlen(number) - 1;
-                break;
-            case MOD:
-                strcpy(out, tele_mods[c->data[n].v]->name);
-                out += strlen(tele_mods[c->data[n].v]->name) - 1;
-                break;
-            case SEP: *out = ':'; break;
-            default: break;
-        }
-
-        n++;
-        out++;
-        *out = ' ';
-        out++;
-    }
-    out--;
-    *out = 0;
-}
-
-
 void tele_set_in(int16_t value) {
     scene_state.variables.in = value;
 }
