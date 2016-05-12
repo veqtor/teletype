@@ -27,6 +27,11 @@ typedef struct {
     const char *doc;
 } tele_mod_t;
 
+#define OPS 145
+extern const tele_op_t *tele_ops[OPS];
+
+#define MODS 7
+extern const tele_mod_t *tele_mods[MODS];
 
 // Get only ops
 #define MAKE_GET_OP(n, g, p, r, d)                                    \
