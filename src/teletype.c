@@ -87,35 +87,6 @@ static exec_state_t exec_state = {};
 
 int16_t tr_pulse[4];
 
-static void process_delays(uint8_t);
-
-static void process_delays(uint8_t v) {
-    for (int16_t i = 0; i < DELAY_SIZE; i++) {
-        if (scene_state.delay.time[i]) {
-            scene_state.delay.time[i] -= v;
-            if (scene_state.delay.time[i] <= 0) {
-                // sprintf(dbg,"\r\ndelay %d", i);
-                // DBG
-                process(&scene_state.delay.commands[i]);
-                scene_state.delay.time[i] = 0;
-                scene_state.delay.count--;
-                if (scene_state.delay.count == 0) tele_delay(0);
-            }
-        }
-    }
-
-    for (int16_t i = 0; i < 4; i++) {
-        if (tr_pulse[i]) {
-            tr_pulse[i] -= v;
-            if (tr_pulse[i] <= 0) {
-                tr_pulse[i] = 0;
-                scene_state.variables.tr[i] =
-                    scene_state.variables.tr_pol[i] == 0;
-                tele_tr(i, scene_state.variables.tr[i]);
-            }
-        }
-    }
-}
 
 void clear_delays(void) {
     for (int16_t i = 0; i < 4; i++) tr_pulse[i] = 0;
@@ -453,11 +424,37 @@ void tele_set_scene(int16_t value) {
     scene_state.variables.scene = value;
 }
 
-void tele_tick(uint8_t i) {
-    process_delays(i);
+void tele_tick(uint8_t time) {
+    // process delays
+    for (int16_t i = 0; i < DELAY_SIZE; i++) {
+        if (scene_state.delay.time[i]) {
+            scene_state.delay.time[i] -= time;
+            if (scene_state.delay.time[i] <= 0) {
+                // sprintf(dbg,"\r\ndelay %d", i);
+                // DBG
+                process(&scene_state.delay.commands[i]);
+                scene_state.delay.time[i] = 0;
+                scene_state.delay.count--;
+                if (scene_state.delay.count == 0) tele_delay(0);
+            }
+        }
+    }
+
+    // process tr pulses
+    for (int16_t i = 0; i < 4; i++) {
+        if (tr_pulse[i]) {
+            tr_pulse[i] -= time;
+            if (tr_pulse[i] <= 0) {
+                tr_pulse[i] = 0;
+                scene_state.variables.tr[i] =
+                    scene_state.variables.tr_pol[i] == 0;
+                tele_tr(i, scene_state.variables.tr[i]);
+            }
+        }
+    }
 
     // inc time
-    if (scene_state.variables.time_act) scene_state.variables.time += i;
+    if (scene_state.variables.time_act) scene_state.variables.time += time;
 }
 
 void tele_init() {
