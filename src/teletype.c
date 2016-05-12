@@ -293,6 +293,9 @@ void tele_set_scene(int16_t value) {
 }
 
 void tele_tick(uint8_t time) {
+    // inc time
+    if (scene_state.variables.time_act) scene_state.variables.time += time;
+
     // process delays
     for (int16_t i = 0; i < DELAY_SIZE; i++) {
         if (scene_state.delay.time[i]) {
@@ -320,9 +323,6 @@ void tele_tick(uint8_t time) {
             }
         }
     }
-
-    // inc time
-    if (scene_state.variables.time_act) scene_state.variables.time += time;
 }
 
 void tele_init() {
