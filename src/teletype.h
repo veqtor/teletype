@@ -49,9 +49,9 @@ typedef struct {
 } tele_pattern_t;
 
 
-error_t parse(char *cmd, tele_command_t *out);
-error_t validate(tele_command_t *c);
-process_result_t process(tele_command_t *c);
+error_t parse(const char *cmd, tele_command_t *out);
+error_t validate(const tele_command_t *c);
+process_result_t process(const tele_command_t *c);
 
 void tele_tick(uint8_t);
 

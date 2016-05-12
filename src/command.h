@@ -14,7 +14,7 @@ typedef struct {
 
 typedef struct {
     uint8_t l;
-    signed char separator;
+    int8_t separator;
     tele_data_t data[COMMAND_MAX_LENGTH];
 } tele_command_t;
 

@@ -88,7 +88,7 @@ void clear_delays(void) {
 /////////////////////////////////////////////////////////////////
 // PARSE ////////////////////////////////////////////////////////
 
-error_t parse(char *cmd, tele_command_t *out) {
+error_t parse(const char *cmd, tele_command_t *out) {
     char cmd_copy[32];
     strcpy(cmd_copy, cmd);
     const char *delim = " \n";
@@ -96,6 +96,7 @@ error_t parse(char *cmd, tele_command_t *out) {
 
     uint8_t n = 0;
     out->l = n;
+    out->separator = -1;
 
     while (s) {
         // CHECK IF NUMBER
@@ -103,8 +104,10 @@ error_t parse(char *cmd, tele_command_t *out) {
             out->data[n].t = NUMBER;
             out->data[n].v = strtol(s, NULL, 0);
         }
-        else if (s[0] == ':')
+        else if (s[0] == ':') {
             out->data[n].t = SEP;
+            out->separator = n;
+        }
         else {
             int16_t i = -1;
 
@@ -154,10 +157,10 @@ error_t parse(char *cmd, tele_command_t *out) {
 /////////////////////////////////////////////////////////////////
 // VALIDATE /////////////////////////////////////////////////////
 
-error_t validate(tele_command_t *c) {
+error_t validate(const tele_command_t *c) {
     int16_t stack_depth = 0;
     uint8_t idx = c->l;
-    c->separator = -1;  // i.e. the index ':'
+    int8_t sep_count = 0;
 
     while (idx--) {  // process words right to left
         tele_word_t word_type = c->data[idx].t;
@@ -211,12 +214,12 @@ error_t validate(tele_command_t *c) {
             stack_depth = 0;
         }
         else if (word_type == SEP) {
-            if (c->separator != -1)
+            sep_count++;
+            if (sep_count > 1)
                 return E_MANY_SEP;
             else if (idx == 0)
                 return E_PLACE_SEP;
 
-            c->separator = idx;
             if (stack_depth > 1)
                 return E_EXTRA_PARAMS;
             else
@@ -233,7 +236,7 @@ error_t validate(tele_command_t *c) {
 /////////////////////////////////////////////////////////////////
 // PROCESS //////////////////////////////////////////////////////
 
-process_result_t process(tele_command_t *c) {
+process_result_t process(const tele_command_t *c) {
     command_state_t cs;
     cs_init(&cs);
 
