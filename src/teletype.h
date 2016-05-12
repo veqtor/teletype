@@ -52,7 +52,7 @@ typedef struct {
 error_t parse(char *cmd, tele_command_t *out);
 error_t validate(tele_command_t *c);
 process_result_t process(tele_command_t *c);
-char *print_command(const tele_command_t *c);
+void print_command(const tele_command_t *c, char *out);
 
 void tele_tick(uint8_t);
 

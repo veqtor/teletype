@@ -29,7 +29,6 @@
 #endif
 
 // static char dbg[32];
-static char pcmd[32];
 char error_detail[16];
 uint8_t mutes[8];
 int16_t tr_pulse[4];
@@ -361,41 +360,38 @@ process_result_t process(tele_command_t *c) {
     }
 }
 
-char *print_command(const tele_command_t *c) {
+void print_command(const tele_command_t *c, char *out) {
     int16_t n = 0;
     char number[8];
-    char *p = pcmd;
 
-    *p = 0;
+    *out = 0;
 
     while (n < c->l) {
         switch (c->data[n].t) {
             case OP:
-                strcpy(p, tele_ops[c->data[n].v]->name);
-                p += strlen(tele_ops[c->data[n].v]->name) - 1;
+                strcpy(out, tele_ops[c->data[n].v]->name);
+                out += strlen(tele_ops[c->data[n].v]->name) - 1;
                 break;
             case NUMBER:
                 itoa(c->data[n].v, number, 10);
-                strcpy(p, number);
-                p += strlen(number) - 1;
+                strcpy(out, number);
+                out += strlen(number) - 1;
                 break;
             case MOD:
-                strcpy(p, tele_mods[c->data[n].v]->name);
-                p += strlen(tele_mods[c->data[n].v]->name) - 1;
+                strcpy(out, tele_mods[c->data[n].v]->name);
+                out += strlen(tele_mods[c->data[n].v]->name) - 1;
                 break;
-            case SEP: *p = ':'; break;
+            case SEP: *out = ':'; break;
             default: break;
         }
 
         n++;
-        p++;
-        *p = ' ';
-        p++;
+        out++;
+        *out = ' ';
+        out++;
     }
-    p--;
-    *p = 0;
-
-    return pcmd;
+    out--;
+    *out = 0;
 }
 
 

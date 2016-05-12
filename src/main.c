@@ -634,15 +634,14 @@ static void handler_HidTimer(s32 data) {
                         else if (edit_line < SCRIPT_MAX_COMMANDS_) {
                             if (mode == M_LIVE) {
                                 edit_line++;
-                                strcpy(input,
-                                       print_command(&history.c[edit_line]));
+                                print_command(&history.c[edit_line], input);
                                 pos = strlen(input);
                                 for (n = pos; n < 32; n++) input[n] = 0;
                             }
                             else if (script[edit].l > edit_line) {
                                 edit_line++;
-                                strcpy(input, print_command(
-                                                  &script[edit].c[edit_line]));
+                                print_command(&script[edit].c[edit_line],
+                                              input);
                                 pos = strlen(input);
                                 for (n = pos; n < 32; n++) input[n] = 0;
                                 r_edit_dirty |= R_LIST;
@@ -700,11 +699,10 @@ static void handler_HidTimer(s32 data) {
                         else if (edit_line) {
                             edit_line--;
                             if (mode == M_LIVE)
-                                strcpy(input,
-                                       print_command(&history.c[edit_line]));
+                                print_command(&history.c[edit_line], input);
                             else
-                                strcpy(input, print_command(
-                                                  &script[edit].c[edit_line]));
+                                print_command(&script[edit].c[edit_line],
+                                              input);
 
                             pos = strlen(input);
                             for (n = pos; n < 32; n++) input[n] = 0;
@@ -752,8 +750,7 @@ static void handler_HidTimer(s32 data) {
                             if (edit == 10) edit = 0;
                             if (edit_line > script[edit].l)
                                 edit_line = script[edit].l;
-                            strcpy(input,
-                                   print_command(&script[edit].c[edit_line]));
+                            print_command(&script[edit].c[edit_line], input);
                             pos = strlen(input);
                             for (n = pos; n < 32; n++) input[n] = 0;
 
@@ -789,8 +786,7 @@ static void handler_HidTimer(s32 data) {
                                 edit = 9;
                             if (edit_line > script[edit].l)
                                 edit_line = script[edit].l;
-                            strcpy(input,
-                                   print_command(&script[edit].c[edit_line]));
+                            print_command(&script[edit].c[edit_line], input);
                             pos = strlen(input);
                             for (n = pos; n < 32; n++) input[n] = 0;
                             r_edit_dirty |= R_LIST;
@@ -909,10 +905,9 @@ static void handler_HidTimer(s32 data) {
 
                                                 if (edit_line > script[edit].l)
                                                     edit_line = script[edit].l;
-                                                strcpy(input,
-                                                       print_command(
-                                                           &script[edit]
-                                                                .c[edit_line]));
+                                                print_command(
+                                                    &script[edit].c[edit_line],
+                                                    input);
                                                 pos = strlen(input);
                                                 // print_dbg(" -> ");
                                                 // print_dbg_ulong(script[edit].l);
@@ -938,10 +933,9 @@ static void handler_HidTimer(s32 data) {
                                             if (edit_line <
                                                 SCRIPT_MAX_COMMANDS_) {
                                                 edit_line++;
-                                                strcpy(input,
-                                                       print_command(
-                                                           &script[edit]
-                                                                .c[edit_line]));
+                                                print_command(
+                                                    &script[edit].c[edit_line],
+                                                    input);
                                                 pos = strlen(input);
                                                 for (n = pos; n < 32; n++)
                                                     input[n] = 0;
@@ -958,10 +952,9 @@ static void handler_HidTimer(s32 data) {
                                             if (edit_line <
                                                 SCRIPT_MAX_COMMANDS_) {
                                                 edit_line++;
-                                                strcpy(input,
-                                                       print_command(
-                                                           &script[edit]
-                                                                .c[edit_line]));
+                                                print_command(
+                                                    &script[edit].c[edit_line],
+                                                    input);
                                                 pos = strlen(input);
                                                 for (n = pos; n < 32; n++)
                                                     input[n] = 0;
@@ -1075,10 +1068,9 @@ static void handler_HidTimer(s32 data) {
                                                 0;
                                             if (edit_line > script[edit].l)
                                                 edit_line = script[edit].l;
-                                            strcpy(input,
-                                                   print_command(
-                                                       &script[edit]
-                                                            .c[edit_line]));
+                                            print_command(
+                                                &script[edit].c[edit_line],
+                                                input);
                                             pos = strlen(input);
                                         }
 
@@ -1576,7 +1568,7 @@ static void handler_ScreenRefresh(s32 data) {
                     a = edit_line == i;
                     region_fill(&line[i], a);
                     if (script[edit].l > i) {
-                        strcpy(s, print_command(&script[edit].c[i]));
+                        print_command(&script[edit].c[i], s);
                         region_string(&line[i], s, 2, 0, 0xf, a, 0);
                     }
                 }
@@ -1750,7 +1742,7 @@ void set_mode(uint8_t m) {
         case M_EDIT:
             mode = M_EDIT;
             edit_line = 0;
-            strcpy(input, print_command(&script[edit].c[edit_line]));
+            print_command(&script[edit].c[edit_line], input);
             pos = strlen(input);
             for (int n = pos; n < 32; n++) input[n] = 0;
             r_edit_dirty |= R_ALL;
@@ -2059,7 +2051,7 @@ static void tele_usb_disk() {
 
                         for (int l = 0; l < script[s].l; l++) {
                             file_putc('\n');
-                            strcpy(input, print_command(&script[s].c[l]));
+                            print_command(&script[s].c[l], input);
                             file_write_buf((uint8_t*)input, strlen(input));
                         }
                     }
@@ -2247,8 +2239,10 @@ static void tele_usb_disk() {
                                                 print_dbg("\r\nERROR: ");
                                                 print_dbg(tele_error(status));
                                                 print_dbg(" >> ");
-                                                print_dbg(print_command(
-                                                    &script[s].c[l]));
+                                                char pcmd[32];
+                                                print_command(&script[s].c[l],
+                                                              pcmd);
+                                                print_dbg(pcmd);
                                             }
 
                                             l++;
