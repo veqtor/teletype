@@ -389,7 +389,7 @@ void tele_init() {
         tele_patterns[i].i = 0;
         tele_patterns[i].l = 0;
         tele_patterns[i].wrap = 1;
-        tele_patterns[i].start = 0;
+        tele_set_pattern_start(i, 0);
         tele_patterns[i].end = 63;
     }
 }

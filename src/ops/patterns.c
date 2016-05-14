@@ -148,7 +148,7 @@ static void op_P_NEXT_get(const void *NOTUSED(data), scene_state_t *ss,
     if ((tele_patterns[pn].i == (tele_patterns[pn].l - 1)) ||
         (tele_patterns[pn].i == tele_patterns[pn].end)) {
         if (tele_patterns[pn].wrap)
-            tele_patterns[pn].i = tele_patterns[pn].start;
+            tele_patterns[pn].i = tele_get_pattern_start(pn);
     }
     else
         tele_patterns[pn].i++;
@@ -166,7 +166,7 @@ static void op_P_NEXT_set(const void *NOTUSED(data), scene_state_t *ss,
     if ((tele_patterns[pn].i == (tele_patterns[pn].l - 1)) ||
         (tele_patterns[pn].i == tele_patterns[pn].end)) {
         if (tele_patterns[pn].wrap)
-            tele_patterns[pn].i = tele_patterns[pn].start;
+            tele_patterns[pn].i = tele_get_pattern_start(pn);
     }
     else
         tele_patterns[pn].i++;
@@ -183,7 +183,7 @@ static void op_P_PREV_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
     if ((tele_patterns[pn].i == 0) ||
-        (tele_patterns[pn].i == tele_patterns[pn].start)) {
+        (tele_patterns[pn].i == tele_get_pattern_start(pn))) {
         if (tele_patterns[pn].wrap) {
             if (tele_patterns[pn].end < tele_patterns[pn].l)
                 tele_patterns[pn].i = tele_patterns[pn].end;
@@ -203,7 +203,7 @@ static void op_P_PREV_set(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
     if ((tele_patterns[pn].i == 0) ||
-        (tele_patterns[pn].i == tele_patterns[pn].start)) {
+        (tele_patterns[pn].i == tele_get_pattern_start(pn))) {
         if (tele_patterns[pn].wrap) {
             if (tele_patterns[pn].end < tele_patterns[pn].l)
                 tele_patterns[pn].i = tele_patterns[pn].end;
@@ -241,7 +241,7 @@ static void op_P_WRAP_set(const void *NOTUSED(data), scene_state_t *ss,
 static void op_P_START_get(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
-    cs_push(cs, tele_patterns[pn].start);
+    cs_push(cs, tele_get_pattern_start(pn));
 }
 
 static void op_P_START_set(const void *NOTUSED(data), scene_state_t *ss,
@@ -249,11 +249,11 @@ static void op_P_START_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t pn = ss->variables.p_n;
     int16_t a = cs_pop(cs);
     if (a < 0)
-        tele_patterns[pn].start = 0;
+        tele_set_pattern_start(pn, 0);
     else if (a > 63)
-        tele_patterns[pn].start = 63;
+        tele_set_pattern_start(pn, 63);
     else
-        tele_patterns[pn].start = a;
+        tele_set_pattern_start(pn, a);
 }
 
 static void op_P_END_get(const void *NOTUSED(data), scene_state_t *ss,

@@ -1160,16 +1160,11 @@ static void handler_HidTimer(s32 data) {
                                     r_edit_dirty |= R_ALL;
                                 }
                                 else if (n == 'S') {
-                                    if (tele_patterns[edit_pattern].start) {
-                                        offset_index =
-                                            ((tele_patterns[edit_pattern]
-                                                  .start) >>
-                                             3)
-                                            << 3;
-                                        edit_index =
-                                            (tele_patterns[edit_pattern]
-                                                 .start) &
-                                            0x7;
+                                    int16_t start =
+                                        tele_get_pattern_start(edit_pattern);
+                                    if (start) {
+                                        offset_index = (start >> 3) << 3;
+                                        edit_index = start & 0x7;
 
                                         int8_t delta = edit_index - 3;
 
@@ -1220,8 +1215,8 @@ static void handler_HidTimer(s32 data) {
                                 r_edit_dirty |= R_ALL;
                             }
                             else if (n == 'S') {
-                                tele_patterns[edit_pattern].start =
-                                    offset_index + edit_index;
+                                tele_set_pattern_start(
+                                    edit_pattern, offset_index + edit_index);
                             }
                             else if (n == 'E') {
                                 tele_patterns[edit_pattern].end =
@@ -1388,7 +1383,7 @@ static void handler_ScreenRefresh(s32 data) {
                     font_string_region_clip_right(&line[y], s, (x + 1) * 30 + 4,
                                                   0, a, 0);
 
-                    if (y + offset_index >= tele_patterns[x].start)
+                    if (y + offset_index >= tele_get_pattern_start(x))
                         if (y + offset_index <= tele_patterns[x].end)
                             for (i = 0; i < 8; i += 2)
                                 line[y].data[i * 128 + (x + 1) * 30 + 6] = 1;
@@ -2082,7 +2077,7 @@ static void tele_usb_disk() {
                     }
 
                     for (int b = 0; b < 4; b++) {
-                        itoa(tele_patterns[b].start, input, 10);
+                        itoa(tele_get_pattern_start(b), input, 10);
                         file_write_buf((uint8_t*)input, strlen(input));
                         if (b == 3)
                             file_putc('\n');
@@ -2280,7 +2275,7 @@ static void tele_usb_disk() {
                                                 tele_patterns[b].wrap = num;
                                             }
                                             else if (l == 2) {
-                                                tele_patterns[b].start = num;
+                                                tele_set_pattern_start(b, num);
                                             }
                                             else if (l == 3) {
                                                 tele_patterns[b].end = num;
