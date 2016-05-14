@@ -19,7 +19,6 @@
 #endif
 
 // static char dbg[32];
-int16_t tr_pulse[4];
 tele_pattern_t tele_patterns[4];
 
 
@@ -70,7 +69,9 @@ static exec_state_t exec_state = {};
 // DELAY ////////////////////////////////////////////////////////
 
 void clear_delays(void) {
-    for (int16_t i = 0; i < 4; i++) tr_pulse[i] = 0;
+    for (int16_t i = 0; i < TR_COUNT; i++) {
+        scene_state.tr_pulse_timer[i] = 0;
+    }
 
     for (int16_t i = 0; i < DELAY_SIZE; i++) { scene_state.delay.time[i] = 0; }
 
@@ -311,11 +312,11 @@ void tele_tick(uint8_t time) {
     }
 
     // process tr pulses
-    for (int16_t i = 0; i < 4; i++) {
-        if (tr_pulse[i]) {
-            tr_pulse[i] -= time;
-            if (tr_pulse[i] <= 0) {
-                tr_pulse[i] = 0;
+    for (int16_t i = 0; i < TR_COUNT; i++) {
+        if (scene_state.tr_pulse_timer[i]) {
+            scene_state.tr_pulse_timer[i] -= time;
+            if (scene_state.tr_pulse_timer[i] <= 0) {
+                scene_state.tr_pulse_timer[i] = 0;
                 scene_state.variables.tr[i] =
                     scene_state.variables.tr_pol[i] == 0;
                 tele_tr(i, scene_state.variables.tr[i]);

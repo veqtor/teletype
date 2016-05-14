@@ -70,6 +70,7 @@ typedef struct {
     scene_variables_t variables;
     scene_delay_t delay;
     scene_stack_op_t stack_op;
+    int16_t tr_pulse_timer[TR_COUNT];
 } scene_state_t;
 
 ////////////////////////////////////////////////////////////////////////////////
