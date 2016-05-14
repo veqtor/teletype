@@ -19,7 +19,6 @@
 #endif
 
 // static char dbg[32];
-uint8_t mutes[8];
 int16_t tr_pulse[4];
 tele_pattern_t tele_patterns[4];
 
@@ -335,6 +334,4 @@ void tele_init() {
         tele_patterns[i].start = 0;
         tele_patterns[i].end = 63;
     }
-
-    for (i = 0; i < 8; i++) mutes[i] = 1;
 }
