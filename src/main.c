@@ -134,10 +134,10 @@ typedef const struct {
     tele_script_t script[10];
     tele_pattern_t patterns[4];
     char text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
-} tele_scene_t;
+} nvram_scene_t;
 
 typedef const struct {
-    tele_scene_t s[SCENE_SLOTS];
+    nvram_scene_t s[SCENE_SLOTS];
     uint8_t scene;
     uint8_t mode;
     uint8_t fresh;
