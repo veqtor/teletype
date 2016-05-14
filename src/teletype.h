@@ -2,6 +2,7 @@
 #define _TELETYPE_H_
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #include "command.h"
@@ -64,6 +65,19 @@ void tele_init(void);
 void tele_set_in(int16_t value);
 void tele_set_param(int16_t value);
 void tele_set_scene(int16_t value);
+
+int16_t tele_get_pattern_i(size_t pattern);
+void tele_set_pattern_i(size_t pattern, int16_t i);
+int16_t tele_get_pattern_l(size_t pattern);
+void tele_set_pattern_l(size_t pattern, int16_t l);
+uint16_t tele_get_pattern_wrap(size_t pattern);
+void tele_set_pattern_wrap(size_t pattern, uint16_t wrap);
+int16_t tele_get_pattern_start(size_t pattern);
+void tele_set_pattern_start(size_t pattern, int16_t start);
+int16_t tele_get_pattern_end(size_t pattern);
+void tele_set_pattern_end(size_t pattern, int16_t end);
+int16_t tele_get_pattern_val(size_t pattern, size_t idx);
+void tele_set_pattern_val(size_t pattern, size_t idx, int16_t val);
 
 const char *tele_error(error_t);
 

@@ -280,6 +280,9 @@ process_result_t process(const tele_command_t *c) {
     }
 }
 
+/////////////////////////////////////////////////////////////////
+// GETTERS & SETTERS ////////////////////////////////////////////
+
 void tele_set_in(int16_t value) {
     scene_state.variables.in = value;
 }
@@ -291,6 +294,57 @@ void tele_set_param(int16_t value) {
 void tele_set_scene(int16_t value) {
     scene_state.variables.scene = value;
 }
+
+int16_t tele_get_pattern_i(size_t pattern) {
+    return tele_patterns[pattern].i;
+}
+
+void tele_set_pattern_i(size_t pattern, int16_t i) {
+    tele_patterns[pattern].i = i;
+}
+
+int16_t tele_get_pattern_l(size_t pattern) {
+    return tele_patterns[pattern].l;
+}
+
+void tele_set_pattern_l(size_t pattern, int16_t l) {
+    tele_patterns[pattern].l = l;
+}
+
+uint16_t tele_get_pattern_wrap(size_t pattern) {
+    return tele_patterns[pattern].wrap;
+}
+
+void tele_set_pattern_wrap(size_t pattern, uint16_t wrap) {
+    tele_patterns[pattern].wrap = wrap;
+}
+
+int16_t tele_get_pattern_start(size_t pattern) {
+    return tele_patterns[pattern].start;
+}
+
+void tele_set_pattern_start(size_t pattern, int16_t start) {
+    tele_patterns[pattern].start = start;
+}
+
+int16_t tele_get_pattern_end(size_t pattern) {
+    return tele_patterns[pattern].end;
+}
+
+void tele_set_pattern_end(size_t pattern, int16_t end) {
+    tele_patterns[pattern].end = end;
+}
+
+int16_t tele_get_pattern_val(size_t pattern, size_t idx) {
+    return tele_patterns[pattern].v[idx];
+}
+
+void tele_set_pattern_val(size_t pattern, size_t idx, int16_t val) {
+    tele_patterns[pattern].v[idx] = val;
+}
+
+/////////////////////////////////////////////////////////////////
+// TICK /////////////////////////////////////////////////////////
 
 void tele_tick(uint8_t time) {
     // inc time
@@ -324,6 +378,9 @@ void tele_tick(uint8_t time) {
         }
     }
 }
+
+/////////////////////////////////////////////////////////////////
+// INIT /////////////////////////////////////////////////////////
 
 void tele_init() {
     u8 i;
