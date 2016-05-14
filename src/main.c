@@ -1794,8 +1794,8 @@ void flash_write(void) {
 
     flashc_memcpy((void*)&f.s[preset_select].script, &script, sizeof(script),
                   true);
-    flashc_memcpy((void*)&f.s[preset_select].patterns, &tele_patterns,
-                  sizeof(tele_patterns), true);
+    flashc_memcpy((void*)&f.s[preset_select].patterns, tele_patterns_ptr(),
+                  tele_patterns_size(), true);
     flashc_memcpy((void*)&f.s[preset_select].text, &scene_text,
                   sizeof(scene_text), true);
     flashc_memset8((void*)&(f.scene), preset_select, 1, true);
@@ -1809,7 +1809,8 @@ void flash_read(void) {
     // print_dbg("\r\n:::: read flash ");
     // print_dbg_ulong(preset_select);
     memcpy(&script, &f.s[preset_select].script, sizeof(script));
-    memcpy(&tele_patterns, &f.s[preset_select].patterns, sizeof(tele_patterns));
+    memcpy(tele_patterns_ptr(), &f.s[preset_select].patterns,
+           tele_patterns_size());
     memcpy(&scene_text, &f.s[preset_select].text, sizeof(scene_text));
     flashc_memset8((void*)&(f.scene), preset_select, 1, true);
 }
@@ -1997,8 +1998,8 @@ static void tele_usb_disk() {
                     region_draw(&line[0]);
 
                     memcpy(&script, &f.s[i].script, sizeof(script));
-                    memcpy(&tele_patterns, &f.s[i].patterns,
-                           sizeof(tele_patterns));
+                    memcpy(tele_patterns_ptr(), &f.s[i].patterns,
+                           tele_patterns_size());
                     memcpy(&scene_text, &f.s[i].text, sizeof(scene_text));
 
                     if (!nav_file_create((FS_STRING)filename)) {
@@ -2344,7 +2345,7 @@ static void tele_usb_disk() {
 
 void tele_mem_clear(void) {
     memset(&script, 0, sizeof(script));
-    memset(&tele_patterns, 0, sizeof(tele_patterns));
+    memset(tele_patterns_ptr(), 0, tele_patterns_size());
     memset(&scene_text, 0, sizeof(scene_text));
 }
 

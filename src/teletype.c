@@ -343,6 +343,14 @@ void tele_set_pattern_val(size_t pattern, size_t idx, int16_t val) {
     tele_patterns[pattern].v[idx] = val;
 }
 
+tele_pattern_t *tele_patterns_ptr() {
+    return tele_patterns;
+}
+
+size_t tele_patterns_size() {
+    return sizeof(tele_patterns);
+}
+
 /////////////////////////////////////////////////////////////////
 // TICK /////////////////////////////////////////////////////////
 

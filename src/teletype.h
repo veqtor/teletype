@@ -78,9 +78,10 @@ int16_t tele_get_pattern_end(size_t pattern);
 void tele_set_pattern_end(size_t pattern, int16_t end);
 int16_t tele_get_pattern_val(size_t pattern, size_t idx);
 void tele_set_pattern_val(size_t pattern, size_t idx, int16_t val);
+tele_pattern_t *tele_patterns_ptr(void);
+size_t tele_patterns_size(void);
 
 const char *tele_error(error_t);
 
-extern tele_pattern_t tele_patterns[4];
 
 #endif
