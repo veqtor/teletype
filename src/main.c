@@ -2064,7 +2064,7 @@ static void tele_usb_disk() {
                     }
 
                     for (int b = 0; b < 4; b++) {
-                        itoa(tele_patterns[b].wrap, input, 10);
+                        itoa(tele_get_pattern_wrap(b), input, 10);
                         file_write_buf((uint8_t*)input, strlen(input));
                         if (b == 3)
                             file_putc('\n');
@@ -2268,7 +2268,7 @@ static void tele_usb_disk() {
                                                 tele_patterns[b].l = num;
                                             }
                                             else if (l == 1) {
-                                                tele_patterns[b].wrap = num;
+                                                tele_set_pattern_wrap(b, num);
                                             }
                                             else if (l == 2) {
                                                 tele_set_pattern_start(b, num);

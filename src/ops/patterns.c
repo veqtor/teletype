@@ -147,7 +147,7 @@ static void op_P_NEXT_get(const void *NOTUSED(data), scene_state_t *ss,
     int16_t pn = ss->variables.p_n;
     if ((tele_patterns[pn].i == (tele_patterns[pn].l - 1)) ||
         (tele_patterns[pn].i == tele_get_pattern_end(pn))) {
-        if (tele_patterns[pn].wrap)
+        if (tele_get_pattern_wrap(pn))
             tele_patterns[pn].i = tele_get_pattern_start(pn);
     }
     else
@@ -165,7 +165,7 @@ static void op_P_NEXT_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t pn = ss->variables.p_n;
     if ((tele_patterns[pn].i == (tele_patterns[pn].l - 1)) ||
         (tele_patterns[pn].i == tele_get_pattern_end(pn))) {
-        if (tele_patterns[pn].wrap)
+        if (tele_get_pattern_wrap(pn))
             tele_patterns[pn].i = tele_get_pattern_start(pn);
     }
     else
@@ -184,7 +184,7 @@ static void op_P_PREV_get(const void *NOTUSED(data), scene_state_t *ss,
     int16_t pn = ss->variables.p_n;
     if ((tele_patterns[pn].i == 0) ||
         (tele_patterns[pn].i == tele_get_pattern_start(pn))) {
-        if (tele_patterns[pn].wrap) {
+        if (tele_get_pattern_wrap(pn)) {
             if (tele_get_pattern_end(pn) < tele_patterns[pn].l)
                 tele_patterns[pn].i = tele_get_pattern_end(pn);
             else
@@ -204,7 +204,7 @@ static void op_P_PREV_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t pn = ss->variables.p_n;
     if ((tele_patterns[pn].i == 0) ||
         (tele_patterns[pn].i == tele_get_pattern_start(pn))) {
-        if (tele_patterns[pn].wrap) {
+        if (tele_get_pattern_wrap(pn)) {
             if (tele_get_pattern_end(pn) < tele_patterns[pn].l)
                 tele_patterns[pn].i = tele_get_pattern_end(pn);
             else
@@ -223,7 +223,7 @@ static void op_P_PREV_set(const void *NOTUSED(data), scene_state_t *ss,
 static void op_P_WRAP_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
-    cs_push(cs, tele_patterns[pn].wrap);
+    cs_push(cs, tele_get_pattern_wrap(pn));
 }
 
 static void op_P_WRAP_set(const void *NOTUSED(data), scene_state_t *ss,
@@ -231,11 +231,11 @@ static void op_P_WRAP_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t pn = ss->variables.p_n;
     int16_t a = cs_pop(cs);
     if (a < 0)
-        tele_patterns[pn].wrap = 0;
+        tele_set_pattern_wrap(pn, 0);
     else if (a > 1)
-        tele_patterns[pn].wrap = 1;
+        tele_set_pattern_wrap(pn, 1);
     else
-        tele_patterns[pn].wrap = a;
+        tele_set_pattern_wrap(pn, a);
 }
 
 static void op_P_START_get(const void *NOTUSED(data), scene_state_t *ss,

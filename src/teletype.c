@@ -388,7 +388,7 @@ void tele_init() {
     for (i = 0; i < 4; i++) {
         tele_patterns[i].i = 0;
         tele_patterns[i].l = 0;
-        tele_patterns[i].wrap = 1;
+        tele_set_pattern_wrap(i, 1);
         tele_set_pattern_start(i, 0);
         tele_set_pattern_end(i, 63);
     }
