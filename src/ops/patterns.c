@@ -95,7 +95,7 @@ static void op_P_N_set(const void *NOTUSED(data), scene_state_t *ss,
 static void op_P_L_get(const void *NOTUSED(data), scene_state_t *ss,
                        exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
-    cs_push(cs, tele_patterns[pn].l);
+    cs_push(cs, tele_get_pattern_l(pn));
 }
 
 static void op_P_L_set(const void *NOTUSED(data), scene_state_t *ss,
@@ -103,11 +103,11 @@ static void op_P_L_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t pn = ss->variables.p_n;
     int16_t a = cs_pop(cs);
     if (a < 0)
-        tele_patterns[pn].l = 0;
+        tele_set_pattern_l(pn, 0);
     else if (a > 63)
-        tele_patterns[pn].l = 63;
+        tele_set_pattern_l(pn, 63);
     else
-        tele_patterns[pn].l = a;
+        tele_set_pattern_l(pn, a);
 }
 
 static void op_P_I_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -122,8 +122,8 @@ static void op_P_I_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t a = cs_pop(cs);
     if (a < 0)
         tele_patterns[pn].i = 0;
-    else if (a > tele_patterns[pn].l)
-        tele_patterns[pn].i = tele_patterns[pn].l;
+    else if (a > tele_get_pattern_l(pn))
+        tele_patterns[pn].i = tele_get_pattern_l(pn);
     else
         tele_patterns[pn].i = a;
     tele_pi();
@@ -145,7 +145,7 @@ static void op_P_HERE_set(const void *NOTUSED(data), scene_state_t *ss,
 static void op_P_NEXT_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
-    if ((tele_patterns[pn].i == (tele_patterns[pn].l - 1)) ||
+    if ((tele_patterns[pn].i == (tele_get_pattern_l(pn) - 1)) ||
         (tele_patterns[pn].i == tele_get_pattern_end(pn))) {
         if (tele_get_pattern_wrap(pn))
             tele_patterns[pn].i = tele_get_pattern_start(pn);
@@ -153,7 +153,7 @@ static void op_P_NEXT_get(const void *NOTUSED(data), scene_state_t *ss,
     else
         tele_patterns[pn].i++;
 
-    if (tele_patterns[pn].i > tele_patterns[pn].l) tele_patterns[pn].i = 0;
+    if (tele_patterns[pn].i > tele_get_pattern_l(pn)) tele_patterns[pn].i = 0;
 
     cs_push(cs, tele_patterns[pn].v[tele_patterns[pn].i]);
 
@@ -163,7 +163,7 @@ static void op_P_NEXT_get(const void *NOTUSED(data), scene_state_t *ss,
 static void op_P_NEXT_set(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
-    if ((tele_patterns[pn].i == (tele_patterns[pn].l - 1)) ||
+    if ((tele_patterns[pn].i == (tele_get_pattern_l(pn) - 1)) ||
         (tele_patterns[pn].i == tele_get_pattern_end(pn))) {
         if (tele_get_pattern_wrap(pn))
             tele_patterns[pn].i = tele_get_pattern_start(pn);
@@ -171,7 +171,7 @@ static void op_P_NEXT_set(const void *NOTUSED(data), scene_state_t *ss,
     else
         tele_patterns[pn].i++;
 
-    if (tele_patterns[pn].i > tele_patterns[pn].l) tele_patterns[pn].i = 0;
+    if (tele_patterns[pn].i > tele_get_pattern_l(pn)) tele_patterns[pn].i = 0;
 
     int16_t a = cs_pop(cs);
     tele_patterns[pn].v[tele_patterns[pn].i] = a;
@@ -185,10 +185,10 @@ static void op_P_PREV_get(const void *NOTUSED(data), scene_state_t *ss,
     if ((tele_patterns[pn].i == 0) ||
         (tele_patterns[pn].i == tele_get_pattern_start(pn))) {
         if (tele_get_pattern_wrap(pn)) {
-            if (tele_get_pattern_end(pn) < tele_patterns[pn].l)
+            if (tele_get_pattern_end(pn) < tele_get_pattern_l(pn))
                 tele_patterns[pn].i = tele_get_pattern_end(pn);
             else
-                tele_patterns[pn].i = tele_patterns[pn].l - 1;
+                tele_patterns[pn].i = tele_get_pattern_l(pn) - 1;
         }
     }
     else
@@ -205,10 +205,10 @@ static void op_P_PREV_set(const void *NOTUSED(data), scene_state_t *ss,
     if ((tele_patterns[pn].i == 0) ||
         (tele_patterns[pn].i == tele_get_pattern_start(pn))) {
         if (tele_get_pattern_wrap(pn)) {
-            if (tele_get_pattern_end(pn) < tele_patterns[pn].l)
+            if (tele_get_pattern_end(pn) < tele_get_pattern_l(pn))
                 tele_patterns[pn].i = tele_get_pattern_end(pn);
             else
-                tele_patterns[pn].i = tele_patterns[pn].l - 1;
+                tele_patterns[pn].i = tele_get_pattern_l(pn) - 1;
         }
     }
     else
@@ -279,12 +279,12 @@ static void op_P_get(const void *NOTUSED(data), scene_state_t *ss,
     int16_t pn = ss->variables.p_n;
     int16_t a = cs_pop(cs);
     if (a < 0) {
-        if (tele_patterns[pn].l == 0)
+        if (tele_get_pattern_l(pn) == 0)
             a = 0;
-        else if (a < -tele_patterns[pn].l)
+        else if (a < -tele_get_pattern_l(pn))
             a = 0;
         else
-            a = tele_patterns[pn].l + a;
+            a = tele_get_pattern_l(pn) + a;
     }
     if (a > 63) a = 63;
 
@@ -296,12 +296,12 @@ static void op_P_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
     if (a < 0) {
-        if (tele_patterns[pn].l == 0)
+        if (tele_get_pattern_l(pn) == 0)
             a = 0;
-        else if (a < -tele_patterns[pn].l)
+        else if (a < -tele_get_pattern_l(pn))
             a = 0;
         else
-            a = tele_patterns[pn].l + a;
+            a = tele_get_pattern_l(pn) + a;
     }
     if (a > 63) a = 63;
 
@@ -317,19 +317,21 @@ static void op_P_INS_get(const void *NOTUSED(data), scene_state_t *ss,
     b = cs_pop(cs);
 
     if (a < 0) {
-        if (tele_patterns[pn].l == 0)
+        if (tele_get_pattern_l(pn) == 0)
             a = 0;
-        else if (a < -tele_patterns[pn].l)
+        else if (a < -tele_get_pattern_l(pn))
             a = 0;
         else
-            a = tele_patterns[pn].l + a;
+            a = tele_get_pattern_l(pn) + a;
     }
     if (a > 63) a = 63;
 
-    if (tele_patterns[pn].l >= a) {
-        for (i = tele_patterns[pn].l; i > a; i--)
+    if (tele_get_pattern_l(pn) >= a) {
+        for (i = tele_get_pattern_l(pn); i > a; i--)
             tele_patterns[pn].v[i] = tele_patterns[pn].v[i - 1];
-        if (tele_patterns[pn].l < 63) tele_patterns[pn].l++;
+        if (tele_get_pattern_l(pn) < 63) {
+            tele_set_pattern_l(pn, tele_get_pattern_l(pn) + 1);
+        }
     }
 
     tele_patterns[pn].v[a] = b;
@@ -343,22 +345,22 @@ static void op_P_RM_get(const void *NOTUSED(data), scene_state_t *ss,
     a = cs_pop(cs);
 
     if (a < 0) {
-        if (tele_patterns[pn].l == 0)
+        if (tele_get_pattern_l(pn) == 0)
             a = 0;
-        else if (a < -tele_patterns[pn].l)
+        else if (a < -tele_get_pattern_l(pn))
             a = 0;
         else
-            a = tele_patterns[pn].l + a;
+            a = tele_get_pattern_l(pn) + a;
     }
-    else if (a > tele_patterns[pn].l)
-        a = tele_patterns[pn].l;
+    else if (a > tele_get_pattern_l(pn))
+        a = tele_get_pattern_l(pn);
 
-    if (tele_patterns[pn].l > 0) {
+    if (tele_get_pattern_l(pn) > 0) {
         cs_push(cs, tele_patterns[pn].v[a]);
-        for (i = a; i < tele_patterns[pn].l; i++)
+        for (i = a; i < tele_get_pattern_l(pn); i++)
             tele_patterns[pn].v[i] = tele_patterns[pn].v[i + 1];
 
-        tele_patterns[pn].l--;
+        tele_set_pattern_l(pn, tele_get_pattern_l(pn) - 1);
     }
     else
         cs_push(cs, 0);
@@ -371,9 +373,9 @@ static void op_P_PUSH_get(const void *NOTUSED(data), scene_state_t *ss,
     int16_t a;
     a = cs_pop(cs);
 
-    if (tele_patterns[pn].l < 64) {
-        tele_patterns[pn].v[tele_patterns[pn].l] = a;
-        tele_patterns[pn].l++;
+    if (tele_get_pattern_l(pn) < 64) {
+        tele_patterns[pn].v[tele_get_pattern_l(pn)] = a;
+        tele_set_pattern_l(pn, tele_get_pattern_l(pn) + 1);
         tele_pi();
     }
 }
@@ -381,9 +383,9 @@ static void op_P_PUSH_get(const void *NOTUSED(data), scene_state_t *ss,
 static void op_P_POP_get(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
-    if (tele_patterns[pn].l > 0) {
-        tele_patterns[pn].l--;
-        cs_push(cs, tele_patterns[pn].v[tele_patterns[pn].l]);
+    if (tele_get_pattern_l(pn) > 0) {
+        tele_set_pattern_l(pn, tele_get_pattern_l(pn) - 1);
+        cs_push(cs, tele_patterns[pn].v[tele_get_pattern_l(pn)]);
         tele_pi();
     }
     else
@@ -401,12 +403,12 @@ static void op_PN_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
         a = 3;
 
     if (b < 0) {
-        if (tele_patterns[a].l == 0)
+        if (tele_get_pattern_l(a) == 0)
             b = 0;
-        else if (b < -tele_patterns[a].l)
+        else if (b < -tele_get_pattern_l(a))
             b = 0;
         else
-            b = tele_patterns[a].l + b;
+            b = tele_get_pattern_l(a) + b;
     }
     if (b > 63) b = 63;
 
@@ -425,12 +427,12 @@ static void op_PN_set(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
         a = 3;
 
     if (b < 0) {
-        if (tele_patterns[a].l == 0)
+        if (tele_get_pattern_l(a) == 0)
             b = 0;
-        else if (b < -tele_patterns[a].l)
+        else if (b < -tele_get_pattern_l(a))
             b = 0;
         else
-            b = tele_patterns[a].l + b;
+            b = tele_get_pattern_l(a) + b;
     }
     if (b > 63) b = 63;
 
