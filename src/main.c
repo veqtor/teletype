@@ -1393,7 +1393,7 @@ static void handler_ScreenRefresh(s32 data) {
                             for (i = 0; i < 8; i += 2)
                                 line[y].data[i * 128 + (x + 1) * 30 + 6] = 1;
 
-                    if (y + offset_index == tele_patterns[x].i) {
+                    if (y + offset_index == tele_get_pattern_i(x)) {
                         line[y].data[2 * 128 + (x + 1) * 30 + 6] = 11;
                         line[y].data[3 * 128 + (x + 1) * 30 + 6] = 11;
                         line[y].data[4 * 128 + (x + 1) * 30 + 6] = 11;

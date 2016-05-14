@@ -384,7 +384,7 @@ void tele_tick(uint8_t time) {
 
 void tele_init() {
     for (size_t i = 0; i < 4; i++) {
-        tele_patterns[i].i = 0;
+        tele_set_pattern_i(i, 0);
         tele_set_pattern_l(i, 0);
         tele_set_pattern_wrap(i, 1);
         tele_set_pattern_start(i, 0);

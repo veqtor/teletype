@@ -113,7 +113,7 @@ static void op_P_L_set(const void *NOTUSED(data), scene_state_t *ss,
 static void op_P_I_get(const void *NOTUSED(data), scene_state_t *ss,
                        exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
-    cs_push(cs, tele_patterns[pn].i);
+    cs_push(cs, tele_get_pattern_i(pn));
 }
 
 static void op_P_I_set(const void *NOTUSED(data), scene_state_t *ss,
@@ -121,41 +121,42 @@ static void op_P_I_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t pn = ss->variables.p_n;
     int16_t a = cs_pop(cs);
     if (a < 0)
-        tele_patterns[pn].i = 0;
+        tele_set_pattern_i(pn, 0);
     else if (a > tele_get_pattern_l(pn))
-        tele_patterns[pn].i = tele_get_pattern_l(pn);
+        tele_set_pattern_i(pn, tele_get_pattern_l(pn));
     else
-        tele_patterns[pn].i = a;
+        tele_set_pattern_i(pn, a);
     tele_pi();
 }
 
 static void op_P_HERE_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
-    cs_push(cs, tele_get_pattern_val(pn, tele_patterns[pn].i));
+    cs_push(cs, tele_get_pattern_val(pn, tele_get_pattern_i(pn)));
 }
 
 static void op_P_HERE_set(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
     int16_t a = cs_pop(cs);
-    tele_set_pattern_val(pn, tele_patterns[pn].i, a);
+    tele_set_pattern_val(pn, tele_get_pattern_i(pn), a);
 }
 
 static void op_P_NEXT_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
-    if ((tele_patterns[pn].i == (tele_get_pattern_l(pn) - 1)) ||
-        (tele_patterns[pn].i == tele_get_pattern_end(pn))) {
+    if ((tele_get_pattern_i(pn) == (tele_get_pattern_l(pn) - 1)) ||
+        (tele_get_pattern_i(pn) == tele_get_pattern_end(pn))) {
         if (tele_get_pattern_wrap(pn))
-            tele_patterns[pn].i = tele_get_pattern_start(pn);
+            tele_set_pattern_i(pn, tele_get_pattern_start(pn));
     }
     else
-        tele_patterns[pn].i++;
+        tele_set_pattern_i(pn, tele_get_pattern_i(pn) + 1);
 
-    if (tele_patterns[pn].i > tele_get_pattern_l(pn)) tele_patterns[pn].i = 0;
+    if (tele_get_pattern_i(pn) > tele_get_pattern_l(pn))
+        tele_set_pattern_i(pn, 0);
 
-    cs_push(cs, tele_get_pattern_val(pn, tele_patterns[pn].i));
+    cs_push(cs, tele_get_pattern_val(pn, tele_get_pattern_i(pn)));
 
     tele_pi();
 }
@@ -163,18 +164,19 @@ static void op_P_NEXT_get(const void *NOTUSED(data), scene_state_t *ss,
 static void op_P_NEXT_set(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
-    if ((tele_patterns[pn].i == (tele_get_pattern_l(pn) - 1)) ||
-        (tele_patterns[pn].i == tele_get_pattern_end(pn))) {
+    if ((tele_get_pattern_i(pn) == (tele_get_pattern_l(pn) - 1)) ||
+        (tele_get_pattern_i(pn) == tele_get_pattern_end(pn))) {
         if (tele_get_pattern_wrap(pn))
-            tele_patterns[pn].i = tele_get_pattern_start(pn);
+            tele_set_pattern_i(pn, tele_get_pattern_start(pn));
     }
     else
-        tele_patterns[pn].i++;
+        tele_set_pattern_i(pn, tele_get_pattern_i(pn) + 1);
 
-    if (tele_patterns[pn].i > tele_get_pattern_l(pn)) tele_patterns[pn].i = 0;
+    if (tele_get_pattern_i(pn) > tele_get_pattern_l(pn))
+        tele_set_pattern_i(pn, 0);
 
     int16_t a = cs_pop(cs);
-    tele_set_pattern_val(pn, tele_patterns[pn].i, a);
+    tele_set_pattern_val(pn, tele_get_pattern_i(pn), a);
 
     tele_pi();
 }
@@ -182,19 +184,19 @@ static void op_P_NEXT_set(const void *NOTUSED(data), scene_state_t *ss,
 static void op_P_PREV_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
-    if ((tele_patterns[pn].i == 0) ||
-        (tele_patterns[pn].i == tele_get_pattern_start(pn))) {
+    if ((tele_get_pattern_i(pn) == 0) ||
+        (tele_get_pattern_i(pn) == tele_get_pattern_start(pn))) {
         if (tele_get_pattern_wrap(pn)) {
             if (tele_get_pattern_end(pn) < tele_get_pattern_l(pn))
-                tele_patterns[pn].i = tele_get_pattern_end(pn);
+                tele_set_pattern_i(pn, tele_get_pattern_end(pn));
             else
-                tele_patterns[pn].i = tele_get_pattern_l(pn) - 1;
+                tele_set_pattern_i(pn, tele_get_pattern_l(pn) - 1);
         }
     }
     else
-        tele_patterns[pn].i--;
+        tele_set_pattern_i(pn, tele_get_pattern_i(pn) - 1);
 
-    cs_push(cs, tele_get_pattern_val(pn, tele_patterns[pn].i));
+    cs_push(cs, tele_get_pattern_val(pn, tele_get_pattern_i(pn)));
 
     tele_pi();
 }
@@ -202,20 +204,20 @@ static void op_P_PREV_get(const void *NOTUSED(data), scene_state_t *ss,
 static void op_P_PREV_set(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
-    if ((tele_patterns[pn].i == 0) ||
-        (tele_patterns[pn].i == tele_get_pattern_start(pn))) {
+    if ((tele_get_pattern_i(pn) == 0) ||
+        (tele_get_pattern_i(pn) == tele_get_pattern_start(pn))) {
         if (tele_get_pattern_wrap(pn)) {
             if (tele_get_pattern_end(pn) < tele_get_pattern_l(pn))
-                tele_patterns[pn].i = tele_get_pattern_end(pn);
+                tele_set_pattern_i(pn, tele_get_pattern_end(pn));
             else
-                tele_patterns[pn].i = tele_get_pattern_l(pn) - 1;
+                tele_set_pattern_i(pn, tele_get_pattern_l(pn) - 1);
         }
     }
     else
-        tele_patterns[pn].i--;
+        tele_set_pattern_i(pn, tele_get_pattern_i(pn) - 1);
 
     int16_t a = cs_pop(cs);
-    tele_set_pattern_val(pn, tele_patterns[pn].i, a);
+    tele_set_pattern_val(pn, tele_get_pattern_i(pn), a);
 
     tele_pi();
 }
