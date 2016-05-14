@@ -132,7 +132,7 @@ int16_t output, output_new;
 
 typedef const struct {
     tele_script_t script[10];
-    tele_pattern_t patterns[4];
+    scene_pattern_t patterns[4];
     char text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
 } nvram_scene_t;
 

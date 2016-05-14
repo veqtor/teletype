@@ -12,6 +12,8 @@
 #define TR_COUNT 4
 #define DELAY_SIZE 8
 #define STACK_OP_SIZE 8
+#define PATTERN_COUNT 4
+#define PATTERN_LENGTH 64
 
 ////////////////////////////////////////////////////////////////////////////////
 // SCENE STATE /////////////////////////////////////////////////////////////////
@@ -56,6 +58,15 @@ typedef struct {
 } scene_variables_t;
 
 typedef struct {
+    int16_t i;
+    uint16_t l;
+    uint16_t wrap;
+    int16_t start;
+    int16_t end;
+    int16_t v[PATTERN_LENGTH];
+} scene_pattern_t;
+
+typedef struct {
     tele_command_t commands[DELAY_SIZE];
     int16_t time[DELAY_SIZE];
     uint8_t count;
@@ -68,6 +79,7 @@ typedef struct {
 
 typedef struct {
     scene_variables_t variables;
+    scene_pattern_t patterns[PATTERN_COUNT];
     scene_delay_t delay;
     scene_stack_op_t stack_op;
     int16_t tr_pulse_timer[TR_COUNT];

@@ -41,16 +41,6 @@ typedef struct {
 } tele_script_t;
 
 
-typedef struct {
-    int16_t i;
-    uint16_t l;
-    uint16_t wrap;
-    int16_t start;
-    int16_t end;
-    int16_t v[64];
-} tele_pattern_t;
-
-
 error_t parse(const char *cmd, tele_command_t *out,
               char error_msg[ERROR_MSG_LENGTH]);
 error_t validate(const tele_command_t *c, char error_msg[ERROR_MSG_LENGTH]);
@@ -78,7 +68,7 @@ int16_t tele_get_pattern_end(size_t pattern);
 void tele_set_pattern_end(size_t pattern, int16_t end);
 int16_t tele_get_pattern_val(size_t pattern, size_t idx);
 void tele_set_pattern_val(size_t pattern, size_t idx, int16_t val);
-tele_pattern_t *tele_patterns_ptr(void);
+scene_pattern_t *tele_patterns_ptr(void);
 size_t tele_patterns_size(void);
 
 const char *tele_error(error_t);

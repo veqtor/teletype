@@ -19,8 +19,6 @@
 #endif
 
 // static char dbg[32];
-tele_pattern_t tele_patterns[4];
-
 
 static const char *errordesc[] = { "OK",
                                    WELCOME,
@@ -296,59 +294,59 @@ void tele_set_scene(int16_t value) {
 }
 
 int16_t tele_get_pattern_i(size_t pattern) {
-    return tele_patterns[pattern].i;
+    return scene_state.patterns[pattern].i;
 }
 
 void tele_set_pattern_i(size_t pattern, int16_t i) {
-    tele_patterns[pattern].i = i;
+    scene_state.patterns[pattern].i = i;
 }
 
 int16_t tele_get_pattern_l(size_t pattern) {
-    return tele_patterns[pattern].l;
+    return scene_state.patterns[pattern].l;
 }
 
 void tele_set_pattern_l(size_t pattern, int16_t l) {
-    tele_patterns[pattern].l = l;
+    scene_state.patterns[pattern].l = l;
 }
 
 uint16_t tele_get_pattern_wrap(size_t pattern) {
-    return tele_patterns[pattern].wrap;
+    return scene_state.patterns[pattern].wrap;
 }
 
 void tele_set_pattern_wrap(size_t pattern, uint16_t wrap) {
-    tele_patterns[pattern].wrap = wrap;
+    scene_state.patterns[pattern].wrap = wrap;
 }
 
 int16_t tele_get_pattern_start(size_t pattern) {
-    return tele_patterns[pattern].start;
+    return scene_state.patterns[pattern].start;
 }
 
 void tele_set_pattern_start(size_t pattern, int16_t start) {
-    tele_patterns[pattern].start = start;
+    scene_state.patterns[pattern].start = start;
 }
 
 int16_t tele_get_pattern_end(size_t pattern) {
-    return tele_patterns[pattern].end;
+    return scene_state.patterns[pattern].end;
 }
 
 void tele_set_pattern_end(size_t pattern, int16_t end) {
-    tele_patterns[pattern].end = end;
+    scene_state.patterns[pattern].end = end;
 }
 
 int16_t tele_get_pattern_val(size_t pattern, size_t idx) {
-    return tele_patterns[pattern].v[idx];
+    return scene_state.patterns[pattern].v[idx];
 }
 
 void tele_set_pattern_val(size_t pattern, size_t idx, int16_t val) {
-    tele_patterns[pattern].v[idx] = val;
+    scene_state.patterns[pattern].v[idx] = val;
 }
 
-tele_pattern_t *tele_patterns_ptr() {
-    return tele_patterns;
+scene_pattern_t *tele_patterns_ptr() {
+    return scene_state.patterns;
 }
 
 size_t tele_patterns_size() {
-    return sizeof(tele_patterns);
+    return sizeof(scene_state.patterns);
 }
 
 /////////////////////////////////////////////////////////////////
