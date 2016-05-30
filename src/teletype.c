@@ -19,6 +19,7 @@
 #endif
 
 // static char dbg[32];
+static tele_script_t script[10];
 
 static const char *errordesc[] = { "OK",
                                    WELCOME,
@@ -347,6 +348,31 @@ scene_pattern_t *tele_patterns_ptr() {
 
 size_t tele_patterns_size() {
     return sizeof(scene_state.patterns);
+}
+
+uint8_t tele_get_script_l(size_t idx) {
+    return script[idx].l;
+}
+
+void tele_set_script_l(size_t idx, uint8_t l) {
+    script[idx].l = l;
+}
+
+const tele_command_t *tele_get_script_c(size_t script_idx, size_t c_idx) {
+    return &script[script_idx].c[c_idx];
+}
+
+void tele_set_script_c(size_t script_idx, size_t c_idx,
+                       const tele_command_t *cmd) {
+    memcpy(&script[script_idx].c[c_idx], cmd, sizeof(tele_command_t));
+}
+
+tele_script_t *tele_script_ptr() {
+    return script;
+}
+
+size_t tele_script_size() {
+    return sizeof(script);
 }
 
 /////////////////////////////////////////////////////////////////
