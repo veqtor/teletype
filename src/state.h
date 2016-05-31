@@ -14,6 +14,7 @@
 #define STACK_OP_SIZE 8
 #define PATTERN_COUNT 4
 #define PATTERN_LENGTH 64
+#define SCRIPT_MAX_COMMANDS 6
 
 ////////////////////////////////////////////////////////////////////////////////
 // SCENE STATE /////////////////////////////////////////////////////////////////
@@ -78,11 +79,17 @@ typedef struct {
 } scene_stack_op_t;
 
 typedef struct {
+    uint8_t l;
+    tele_command_t c[SCRIPT_MAX_COMMANDS];
+} scene_script_t;
+
+typedef struct {
     scene_variables_t variables;
     scene_pattern_t patterns[PATTERN_COUNT];
     scene_delay_t delay;
     scene_stack_op_t stack_op;
     int16_t tr_pulse_timer[TR_COUNT];
+    scene_script_t scripts[10];
 } scene_state_t;
 
 ////////////////////////////////////////////////////////////////////////////////

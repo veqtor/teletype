@@ -103,7 +103,7 @@ uint8_t pos;
 uint8_t knob_now;
 uint8_t knob_last;
 
-tele_script_t history;
+scene_script_t history;
 uint8_t edit, edit_line, edit_index, edit_pattern, offset_index;
 char scene_text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
 
@@ -130,7 +130,7 @@ int16_t output, output_new;
 #define FIRSTRUN_KEY 0x22
 
 typedef const struct {
-    tele_script_t script[10];
+    scene_script_t script[10];
     scene_pattern_t patterns[4];
     char text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
 } nvram_scene_t;

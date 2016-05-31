@@ -8,7 +8,6 @@
 #include "command.h"
 #include "state.h"
 
-#define SCRIPT_MAX_COMMANDS 6
 #define SCRIPT_MAX_COMMANDS_ 5
 #define ERROR_MSG_LENGTH 16
 
@@ -33,12 +32,6 @@ typedef struct {
     bool has_value;
     int16_t value;
 } process_result_t;
-
-
-typedef struct {
-    uint8_t l;
-    tele_command_t c[SCRIPT_MAX_COMMANDS];
-} tele_script_t;
 
 
 error_t parse(const char *cmd, tele_command_t *out,
@@ -75,7 +68,7 @@ void tele_set_script_l(size_t idx, uint8_t l);
 const tele_command_t *tele_get_script_c(size_t script_idx, size_t c_idx);
 void tele_set_script_c(size_t script_idx, size_t c_idx,
                        const tele_command_t *cmd);
-tele_script_t *tele_script_ptr(void);
+scene_script_t *tele_script_ptr(void);
 size_t tele_script_size(void);
 
 const char *tele_error(error_t);
