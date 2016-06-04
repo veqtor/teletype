@@ -8,13 +8,15 @@
 // correct
 TEST process_helper(size_t n, char* lines[], int16_t answer) {
     process_result_t result = {.has_value = false, .value = 0 };
+    exec_state_t es;
+    es_init(&es);
     for (size_t i = 0; i < n; i++) {
         tele_command_t cmd;
         char error_msg[ERROR_MSG_LENGTH];
         error_t error = parse(lines[i], &cmd, error_msg);
         if (error != E_OK) { FAIL(); }
         if (validate(&cmd, error_msg) != E_OK) { FAIL(); }
-        result = process(&cmd);
+        result = process(&es, &cmd);
     }
     ASSERT_EQ(result.has_value, true);
     ASSERT_EQ(result.value, answer);

@@ -8,7 +8,6 @@
 #include "command.h"
 #include "state.h"
 
-#define SCRIPT_MAX_COMMANDS_ 5
 #define ERROR_MSG_LENGTH 16
 
 #define WELCOME "TELETYPE 1.12"
@@ -37,7 +36,9 @@ typedef struct {
 error_t parse(const char *cmd, tele_command_t *out,
               char error_msg[ERROR_MSG_LENGTH]);
 error_t validate(const tele_command_t *c, char error_msg[ERROR_MSG_LENGTH]);
-process_result_t process(const tele_command_t *c);
+process_result_t run_script(size_t script_no);
+process_result_t run_command(const tele_command_t *cmd);
+process_result_t process(exec_state_t *es, const tele_command_t *c);
 
 void tele_tick(uint8_t);
 

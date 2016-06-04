@@ -61,7 +61,6 @@ static scene_state_t scene_state = {
                   .tr_pol = { 1, 1, 1, 1 },
                   .tr_time = { 100, 100, 100, 100 } }
 };
-static exec_state_t exec_state = {};
 
 /////////////////////////////////////////////////////////////////
 // DELAY ////////////////////////////////////////////////////////
@@ -234,9 +233,29 @@ error_t validate(const tele_command_t *c, char error_msg[ERROR_MSG_LENGTH]) {
 }
 
 /////////////////////////////////////////////////////////////////
+// RUN //////////////////////////////////////////////////////////
+
+process_result_t run_script(size_t script_no) {
+    process_result_t result = {.has_value = false, .value = 0 };
+    exec_state_t es;
+    es_init(&es);
+    for (size_t i = 0; i < tele_get_script_l(script_no); i++) {
+        result = process(&es, tele_get_script_c(script_no, i));
+    }
+    return result;
+}
+
+process_result_t run_command(const tele_command_t *cmd) {
+    exec_state_t es;
+    es_init(&es);
+    return process(&es, cmd);
+}
+
+
+/////////////////////////////////////////////////////////////////
 // PROCESS //////////////////////////////////////////////////////
 
-process_result_t process(const tele_command_t *c) {
+process_result_t process(exec_state_t *es, const tele_command_t *c) {
     command_state_t cs;
     cs_init(&cs);
 
@@ -256,15 +275,14 @@ process_result_t process(const tele_command_t *c) {
             // pointer and we have enough params, then run set, else run get
             if (idx == 0 && op->set != NULL &&
                 cs_stack_size(&cs) >= op->params + 1)
-                op->set(op->data, &scene_state, &exec_state, &cs);
+                op->set(op->data, &scene_state, es, &cs);
             else
-                op->get(op->data, &scene_state, &exec_state, &cs);
+                op->get(op->data, &scene_state, es, &cs);
         }
         else if (word_type == MOD) {
             tele_command_t sub_command;
             copy_sub_command(&sub_command, c);
-            tele_mods[word_value]->func(&scene_state, &exec_state, &cs,
-                                        &sub_command);
+            tele_mods[word_value]->func(&scene_state, es, &cs, &sub_command);
         }
     }
 
@@ -363,7 +381,8 @@ const tele_command_t *tele_get_script_c(size_t script_idx, size_t c_idx) {
 
 void tele_set_script_c(size_t script_idx, size_t c_idx,
                        const tele_command_t *cmd) {
-    memcpy(&scene_state.scripts[script_idx].c[c_idx], cmd, sizeof(tele_command_t));
+    memcpy(&scene_state.scripts[script_idx].c[c_idx], cmd,
+           sizeof(tele_command_t));
 }
 
 scene_script_t *tele_script_ptr() {
@@ -388,7 +407,7 @@ void tele_tick(uint8_t time) {
             if (scene_state.delay.time[i] <= 0) {
                 // sprintf(dbg,"\r\ndelay %d", i);
                 // DBG
-                process(&scene_state.delay.commands[i]);
+                run_command(&scene_state.delay.commands[i]);
                 scene_state.delay.time[i] = 0;
                 scene_state.delay.count--;
                 if (scene_state.delay.count == 0) tele_delay(0);

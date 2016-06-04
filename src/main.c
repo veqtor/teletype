@@ -60,9 +60,6 @@ http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
 #include "teletype.h"
 #include "teletype_io.h"
 
-#define METRO_SCRIPT 8
-#define INIT_SCRIPT 9
-
 #define RATE_CLOCK 10
 #define RATE_CV 6
 
@@ -335,13 +332,9 @@ static void hidTimer_callback(void* o) {
 }
 
 static void metroTimer_callback(void* o) {
-    // print_dbg("*");
-    uint8_t i;
-
     if (tele_get_script_l(METRO_SCRIPT)) {
         activity |= A_METRO;
-        for (i = 0; i < tele_get_script_l(METRO_SCRIPT); i++)
-            process(tele_get_script_c(METRO_SCRIPT, i));
+        run_script(METRO_SCRIPT);
     }
     else
         activity &= ~A_METRO;
@@ -415,9 +408,7 @@ static void handler_KeyTimer(s32 data) {
         if (front_timer == 1) {
             flash_read();
 
-            for (int i = 0; i < tele_get_script_l(INIT_SCRIPT); i++) {
-                process(tele_get_script_c(INIT_SCRIPT, i));
-            }
+            run_script(INIT_SCRIPT);
 
             set_mode(last_mode);
 
@@ -629,7 +620,7 @@ static void handler_HidTimer(s32 data) {
                                 r_edit_dirty |= R_ALL;
                             }
                         }
-                        else if (edit_line < SCRIPT_MAX_COMMANDS_) {
+                        else if (edit_line < (SCRIPT_MAX_COMMANDS - 1)) {
                             if (mode == M_LIVE) {
                                 edit_line++;
                                 print_command(&history.c[edit_line], input);
@@ -881,7 +872,8 @@ static void handler_HidTimer(s32 data) {
                                             memcpy(&history.c[5], &temp,
                                                    sizeof(tele_command_t));
 
-                                            process_result_t o = process(&temp);
+                                            process_result_t o =
+                                                run_command(&temp);
                                             if (o.has_value) {
                                                 output = o.value;
                                                 output_new++;
@@ -957,7 +949,7 @@ static void handler_HidTimer(s32 data) {
                                                         1);
                                             }
                                             if (edit_line <
-                                                SCRIPT_MAX_COMMANDS_) {
+                                                (SCRIPT_MAX_COMMANDS - 1)) {
                                                 edit_line++;
                                                 print_command(
                                                     tele_get_script_c(
@@ -983,7 +975,7 @@ static void handler_HidTimer(s32 data) {
                                                         1);
                                             }
                                             if (edit_line <
-                                                SCRIPT_MAX_COMMANDS_) {
+                                                (SCRIPT_MAX_COMMANDS - 1)) {
                                                 edit_line++;
                                                 print_command(
                                                     tele_get_script_c(
@@ -1046,9 +1038,7 @@ static void handler_HidTimer(s32 data) {
                             flash_read();
                             tele_set_scene(preset_select);
 
-                            for (int i = 0; i < tele_get_script_l(INIT_SCRIPT);
-                                 i++)
-                                process(tele_get_script_c(INIT_SCRIPT, i));
+                            run_script(INIT_SCRIPT);
 
                             for (size_t n = 0; n < 32; n++) input[n] = 0;
                             pos = 0;
@@ -1286,14 +1276,10 @@ static void handler_HidTimer(s32 data) {
                                     tele_script(n - 0x30);
                             }
                             else if (n == 'M') {
-                                for (int i = 0;
-                                     i < tele_get_script_l(METRO_SCRIPT); i++)
-                                    process(tele_get_script_c(METRO_SCRIPT, i));
+                                run_script(METRO_SCRIPT);
                             }
                             else if (n == 'I') {
-                                for (int i = 0;
-                                     i < tele_get_script_l(INIT_SCRIPT); i++)
-                                    process(tele_get_script_c(INIT_SCRIPT, i));
+                                run_script(INIT_SCRIPT);
                             }
                         }
                         else if (mode == M_TRACK) {
@@ -1389,11 +1375,7 @@ static void handler_HidPacket(s32 data) {
 
 
 static void handler_Trigger(s32 data) {
-    if (mutes[data]) {
-        for (int i = 0; i < tele_get_script_l(data); i++) {
-            process(tele_get_script_c(data, i));
-        }
-    }
+    if (mutes[data]) { run_script(data); }
 }
 
 
@@ -1953,14 +1935,10 @@ int8_t script_caller;
 void tele_script(uint8_t a) {
     if (!script_caller) {
         script_caller = a;
-        for (int i = 0; i < tele_get_script_l(a - 1); i++) {
-            process(tele_get_script_c(a - 1, i));
-        }
+        run_script(a - 1);
     }
     else if (a != script_caller) {
-        for (int i = 0; i < tele_get_script_l(a - 1); i++) {
-            process(tele_get_script_c(a - 1, i));
-        }
+        run_script(a - 1);
     }
 
     script_caller = 0;
@@ -2499,8 +2477,7 @@ int main(void) {
     activity = 0;
     activity_prev = 0xff;
 
-    for (int i = 0; i < tele_get_script_l(INIT_SCRIPT); i++)
-        process(tele_get_script_c(INIT_SCRIPT, i));
+    run_script(INIT_SCRIPT);
 
     while (true) { check_events(); }
 }

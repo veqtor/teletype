@@ -119,6 +119,8 @@ int main() {
         }
 
         tele_command_t temp;
+        exec_state_t es;
+        es_init(&es);
         char error_msg[ERROR_MSG_LENGTH];
         status = parse(in, &temp, error_msg);
         if (status == E_OK) {
@@ -127,7 +129,7 @@ int main() {
             if (error_msg[0]) printf(": %s", error_msg);
             printf("\n");
             if (status == E_OK) {
-                process_result_t output = process(&temp);
+                process_result_t output = process(&es, &temp);
                 if (output.has_value) { printf(">>> %i\n", output.value); }
             }
         }

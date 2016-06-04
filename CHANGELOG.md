@@ -5,6 +5,7 @@
 - **NEW**: `ER` op
 - **IMP**: a `TR.TIME` of 0 will disable the pulse
 - **IMP**: `O.DIR` renamed to `O.INC`, it's the value by which `O` is *incremented* when it is accessed
+- **IMP**: `IF`, `ELIF`, `ELSE` status is reset on each script run
 - **FIX**: `FLIP` won't interfere with the value of `O`
 - **FIX**: the `O` op now returns it's set value *before* updating itself
 - **FIX**: the `DRUNK` op now returns it's set value *before* updating itself
