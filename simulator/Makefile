@@ -1,4 +1,4 @@
-.PHONY: clean format
+.PHONY: clean
 CFLAGS=-std=c99 -g -Wall -DSIM -I. -I../src -I../libavr32/src
 DEPS =
 OBJ = tt.o ../src/teletype.o ../src/command.o ../src/helpers.o \
@@ -18,11 +18,9 @@ tt: $(OBJ)
 
 clean:
 	rm -f tt
+	rm -rf tt.dSYM
 	rm -f *.o
 	rm -f ../src/*.o
 	rm -f ../src/euclidean/*.o
 	rm -f ../src/ops/*.o
 	rm -f ../libavr32/src/*.o
-
-format:
-	clang-format -style=file -i tt.c
