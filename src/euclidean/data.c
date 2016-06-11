@@ -1,3 +1,5 @@
+// clang-format off
+
 const char table_euclidean_1[2][1] = {
 	{0b00000000},
 	{0b10000000}

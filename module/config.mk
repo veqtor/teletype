@@ -61,11 +61,25 @@ TARGET = $(THIS).elf
 
 # List of C source files.
 CSRCS = \
-	../src/main.c						\
+	../module/main.c						\
+	../src/command.c					\
+	../src/helpers.c					\
+	../src/state.c						\
 	../src/table.c						\
 	../src/teletype.c					\
 	../src/euclidean/euclidean.c				\
 	../src/euclidean/data.c					\
+	../src/ops/op.c						\
+	../src/ops/constants.c					\
+	../src/ops/controlflow.c				\
+	../src/ops/delay.c					\
+	../src/ops/hardware.c					\
+	../src/ops/maths.c					\
+	../src/ops/metronome.c					\
+	../src/ops/patterns.c					\
+	../src/ops/queue.c					\
+	../src/ops/stack.c					\
+	../src/ops/variables.c					\
 	../libavr32/src/adc.c					\
 	../libavr32/src/events.c				\
 	../libavr32/src/fix.c					\

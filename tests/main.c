@@ -3,6 +3,7 @@
 #include "greatest/greatest.h"
 
 #include "teletype.h"
+#include "teletype_io.h"
 
 #include "parser_tests.h"
 #include "process_tests.h"
@@ -20,26 +21,13 @@ void tele_pi() {}
 void tele_script(uint8_t a) {}
 void tele_kill() {}
 void tele_mute(uint8_t i, uint8_t s) {}
-void tele_input_state(uint8_t n) {}
+bool tele_get_input_state(uint8_t n) {
+    return false;
+}
 
 GREATEST_MAIN_DEFS();
 
 int main(int argc, char **argv) {
-    update_metro = &tele_metro;
-    update_tr = &tele_tr;
-    update_cv = &tele_cv;
-    update_cv_slew = &tele_cv_slew;
-    update_delay = &tele_delay;
-    update_s = &tele_s;
-    update_cv_off = &tele_cv_off;
-    update_ii = &tele_ii;
-    update_scene = &tele_scene;
-    update_pi = &tele_pi;
-    run_script = &tele_script;
-    update_kill = &tele_kill;
-    update_mute = &tele_mute;
-    update_input = &tele_input_state;
-
     GREATEST_MAIN_BEGIN();
 
     RUN_SUITE(parser_suite);

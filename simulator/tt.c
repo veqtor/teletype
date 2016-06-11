@@ -7,6 +7,7 @@
 #include <time.h>
 
 #include "teletype.h"
+#include "teletype_io.h"
 #include "util.h"
 
 
@@ -75,9 +76,10 @@ void tele_mute(uint8_t i, uint8_t s) {
     printf("\n");
 }
 
-void tele_input_state(uint8_t n) {
+bool tele_get_input_state(uint8_t n) {
     printf("INPUT_STATE  n:%" PRIu8, n);
     printf("\n");
+    return false;
 }
 
 int main() {
@@ -87,21 +89,6 @@ int main() {
     int i;
 
     srand((unsigned)time(&t));
-
-    update_metro = &tele_metro;
-    update_tr = &tele_tr;
-    update_cv = &tele_cv;
-    update_cv_slew = &tele_cv_slew;
-    update_delay = &tele_delay;
-    update_s = &tele_s;
-    update_cv_off = &tele_cv_off;
-    update_ii = &tele_ii;
-    update_scene = &tele_scene;
-    update_pi = &tele_pi;
-    run_script = &tele_script;
-    update_kill = &tele_kill;
-    update_mute = &tele_mute;
-    update_input = &tele_input_state;
 
     // tele_command_t stored;
     // stored.data[0].t = OP;
@@ -132,22 +119,23 @@ int main() {
         }
 
         tele_command_t temp;
-        status = parse(in, &temp);
+        exec_state_t es;
+        es_init(&es);
+        char error_msg[ERROR_MSG_LENGTH];
+        status = parse(in, &temp, error_msg);
         if (status == E_OK) {
-            status = validate(&temp);
+            status = validate(&temp, error_msg);
             printf("validate: %s", tele_error(status));
-            if (error_detail[0]) printf(": %s", error_detail);
-            error_detail[0] = 0;
+            if (error_msg[0]) printf(": %s", error_msg);
             printf("\n");
             if (status == E_OK) {
-                process_result_t output = process(&temp);
+                process_result_t output = process(&es, &temp);
                 if (output.has_value) { printf(">>> %i\n", output.value); }
             }
         }
         else {
             printf("ERROR: %s", tele_error(status));
-            if (error_detail[0]) printf(": %s", error_detail);
-            error_detail[0] = 0;
+            if (error_msg[0]) printf(": %s", error_msg);
             printf("\n");
         }
 

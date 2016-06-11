@@ -1,0 +1,25 @@
+#ifndef _TELETYPE_IO_H_
+#define _TELETYPE_IO_H_
+
+#include <stdbool.h>
+#include <stdint.h>
+
+// These functions are for interacting with the teletype hardware, each target
+// must provide it's own implementation
+
+extern void tele_metro(int16_t, int16_t, uint8_t);
+extern void tele_tr(uint8_t i, int16_t v);
+extern void tele_cv(uint8_t i, int16_t v, uint8_t s);
+extern void tele_cv_slew(uint8_t i, int16_t v);
+extern void tele_delay(uint8_t i);
+extern void tele_s(uint8_t i);
+extern void tele_cv_off(uint8_t i, int16_t v);
+extern void tele_ii(uint8_t i, int16_t d);
+extern void tele_scene(uint8_t i);
+extern void tele_pi(void);
+extern void tele_script(uint8_t a);
+extern void tele_kill(void);
+extern void tele_mute(uint8_t, uint8_t);
+extern bool tele_get_input_state(uint8_t);
+
+#endif

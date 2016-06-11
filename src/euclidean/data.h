@@ -1,3 +1,5 @@
+// clang-format off
+
 #ifndef _EUCLIDEAN_DATA_H_
 #define _EUCLIDEAN_DATA_H_
 extern const char table_euclidean_1[2][1];

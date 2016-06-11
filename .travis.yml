@@ -11,7 +11,7 @@ install:
   - popd
 
 script:
-  - cd src
+  - cd module
   - PATH="$HOME/avr32-tools/bin:$PATH" make
   - cd ../simulator
   - make clean && make

@@ -2,16 +2,13 @@
 #define _TELETYPE_H_
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
+#include "command.h"
 #include "state.h"
 
-#define SCRIPT_MAX_COMMANDS 6
-#define SCRIPT_MAX_COMMANDS_ 5
-#define COMMAND_MAX_LENGTH 12
-#define STACK_SIZE 8
-#define TELE_STACK_SIZE 8
-#define TELE_D_SIZE 8
+#define ERROR_MSG_LENGTH 16
 
 #define WELCOME "TELETYPE 1.12"
 
@@ -35,57 +32,13 @@ typedef struct {
     int16_t value;
 } process_result_t;
 
-typedef enum { NUMBER, MOD, SEP, OP } tele_word_t;
 
-typedef struct {
-    tele_word_t t;
-    int16_t v;
-} tele_data_t;
-
-typedef struct {
-    uint8_t l;
-    signed char separator;
-    tele_data_t data[COMMAND_MAX_LENGTH];
-} tele_command_t;
-
-typedef struct {
-    uint8_t l;
-    tele_command_t c[SCRIPT_MAX_COMMANDS];
-} tele_script_t;
-
-typedef struct {
-    const char *name;
-    void (*func)(tele_command_t *c);
-    char params;
-    const char *doc;
-} tele_mod_t;
-
-typedef struct {
-    const char *name;
-    void (*get)(const void *data, scene_state_t *ss, exec_state_t *es,
-                command_state_t *cs);
-    void (*set)(const void *data, scene_state_t *ss, exec_state_t *es,
-                command_state_t *cs);
-    uint8_t params;
-    bool returns;
-    const void *data;
-    const char *doc;
-} tele_op_t;
-
-typedef struct {
-    int16_t i;
-    uint16_t l;
-    uint16_t wrap;
-    int16_t start;
-    int16_t end;
-    int16_t v[64];
-} tele_pattern_t;
-
-
-error_t parse(char *cmd, tele_command_t *out);
-error_t validate(tele_command_t *c);
-process_result_t process(tele_command_t *c);
-char *print_command(const tele_command_t *c);
+error_t parse(const char *cmd, tele_command_t *out,
+              char error_msg[ERROR_MSG_LENGTH]);
+error_t validate(const tele_command_t *c, char error_msg[ERROR_MSG_LENGTH]);
+process_result_t run_script(size_t script_no);
+process_result_t run_command(const tele_command_t *cmd);
+process_result_t process(exec_state_t *es, const tele_command_t *c);
 
 void tele_tick(uint8_t);
 
@@ -97,55 +50,29 @@ void tele_set_in(int16_t value);
 void tele_set_param(int16_t value);
 void tele_set_scene(int16_t value);
 
+int16_t tele_get_pattern_i(size_t pattern);
+void tele_set_pattern_i(size_t pattern, int16_t i);
+int16_t tele_get_pattern_l(size_t pattern);
+void tele_set_pattern_l(size_t pattern, int16_t l);
+uint16_t tele_get_pattern_wrap(size_t pattern);
+void tele_set_pattern_wrap(size_t pattern, uint16_t wrap);
+int16_t tele_get_pattern_start(size_t pattern);
+void tele_set_pattern_start(size_t pattern, int16_t start);
+int16_t tele_get_pattern_end(size_t pattern);
+void tele_set_pattern_end(size_t pattern, int16_t end);
+int16_t tele_get_pattern_val(size_t pattern, size_t idx);
+void tele_set_pattern_val(size_t pattern, size_t idx, int16_t val);
+scene_pattern_t *tele_patterns_ptr(void);
+size_t tele_patterns_size(void);
+uint8_t tele_get_script_l(size_t idx);
+void tele_set_script_l(size_t idx, uint8_t l);
+const tele_command_t *tele_get_script_c(size_t script_idx, size_t c_idx);
+void tele_set_script_c(size_t script_idx, size_t c_idx,
+                       const tele_command_t *cmd);
+scene_script_t *tele_script_ptr(void);
+size_t tele_script_size(void);
+
 const char *tele_error(error_t);
-const char *to_v(int16_t);
 
-extern tele_pattern_t tele_patterns[4];
-
-typedef void (*update_metro_t)(int16_t, int16_t, uint8_t);
-extern volatile update_metro_t update_metro;
-
-typedef void (*update_tr_t)(uint8_t, int16_t);
-extern volatile update_tr_t update_tr;
-
-typedef void (*update_cv_t)(uint8_t, int16_t, uint8_t);
-extern volatile update_cv_t update_cv;
-
-typedef void (*update_cv_slew_t)(uint8_t, int16_t);
-extern volatile update_cv_slew_t update_cv_slew;
-
-typedef void (*update_delay_t)(uint8_t);
-extern volatile update_delay_t update_delay;
-
-typedef void (*update_s_t)(uint8_t);
-extern volatile update_s_t update_s;
-
-typedef void (*update_cv_off_t)(uint8_t, int16_t v);
-extern volatile update_cv_off_t update_cv_off;
-
-typedef void (*update_ii_t)(uint8_t, int16_t);
-extern volatile update_ii_t update_ii;
-
-typedef void (*update_scene_t)(uint8_t);
-extern volatile update_scene_t update_scene;
-
-typedef void (*update_pi_t)(void);
-extern volatile update_pi_t update_pi;
-
-typedef void (*run_script_t)(uint8_t);
-extern volatile run_script_t run_script;
-
-typedef void (*update_kill_t)(void);
-extern volatile update_kill_t update_kill;
-
-typedef void (*update_mute_t)(uint8_t, uint8_t);
-extern volatile update_mute_t update_mute;
-
-typedef void (*update_input_t)(uint8_t);
-extern volatile update_input_t update_input;
-
-extern char error_detail[16];
-
-extern volatile uint8_t input_states[8];
 
 #endif
