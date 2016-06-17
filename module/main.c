@@ -111,11 +111,9 @@ uint8_t mod_SH;
 uint8_t mod_ALT;
 uint8_t mod_CTRL;
 uint8_t mod_META;
-
-uint16_t hold_up;
-uint16_t hold_down;
-uint16_t hold_right;
-uint16_t hold_left;
+s8 mod_key;
+s8 hold_key;
+uint8_t hold_key_count = 0;
 
 uint8_t help_page;
 uint8_t help_length[8] = { HELP1_LENGTH, HELP2_LENGTH, HELP3_LENGTH,
@@ -197,6 +195,7 @@ static void handler_Trigger(s32 data);
 static void handler_ScreenRefresh(s32 data);
 static void handler_II(s32 data);
 
+static void process_keypress(s8 key);
 
 static u8 flash_is_fresh(void);
 static void flash_unfresh(void);
@@ -418,73 +417,11 @@ static void handler_KeyTimer(s32 data) {
             front_timer--;
     }
 
-#define KEY_REPEAT_HOLD 4
-    if (hold_up) {
-        if (mode == M_TRACK) {
-            if (hold_up > KEY_REPEAT_HOLD) {
-                if (edit_index)
-                    edit_index--;
-                else if (offset_index)
-                    offset_index--;
-                r_edit_dirty |= R_ALL;
-            }
-        }
-        else if (mode == M_PRESET_R) {
-            if (preset_edit_offset) {
-                preset_edit_offset--;
-                r_edit_dirty |= R_ALL;
-            }
-        }
-        else if (mode == M_HELP) {
-            if (offset_view) {
-                offset_view--;
-                r_edit_dirty |= R_ALL;
-            }
-        }
-        hold_up++;
-    }
-    if (hold_down) {
-        if (mode == M_TRACK) {
-            if (hold_down > KEY_REPEAT_HOLD) {
-                edit_index++;
-                if (edit_index == 8) {
-                    edit_index = 7;
-                    if (offset_index < 56) { offset_index++; }
-                }
-                r_edit_dirty |= R_ALL;
-            }
-        }
-        else if (mode == M_PRESET_R) {
-            if (preset_edit_offset < 24) {
-                preset_edit_offset++;
-                r_edit_dirty |= R_ALL;
-            }
-        }
-        else if (mode == M_HELP) {
-            if (offset_view < help_length[help_page] - 8) {
-                offset_view++;
-                r_edit_dirty |= R_ALL;
-            }
-        }
-        hold_down++;
-    }
-    if (hold_left) {
-        if (hold_left > KEY_REPEAT_HOLD) {
-            if (pos) {
-                pos--;
-                r_edit_dirty |= R_INPUT;
-            }
-        }
-        hold_left++;
-    }
-    if (hold_right) {
-        if (hold_right > KEY_REPEAT_HOLD) {
-            if (pos < strlen(input)) {
-                pos++;
-                r_edit_dirty |= R_INPUT;
-            }
-        }
-        hold_right++;
+    if (hold_key) {
+        if (hold_key_count > 4)
+            process_keypress(hold_key);
+        else
+            hold_key_count++;
     }
 }
 
@@ -517,12 +454,12 @@ static void handler_HidTimer(s32 data) {
                 mod_CTRL = frame[0] & CTRL;
                 mod_ALT = frame[0] & ALT;
                 mod_META = frame[0] & META;
+                mod_key = frame[0];
                 if (i == 2) {
-                    hold_up = 0;
-                    hold_down = 0;
-                    hold_right = 0;
-                    hold_left = 0;
+                    hold_key = 0;
+                    hold_key_count = 0;
                 }
+                    
                 break;
             }
 
@@ -536,823 +473,9 @@ static void handler_HidTimer(s32 data) {
                 // print_dbg_hex(frame[i]);
                 // print_dbg("\r\nmod: ");
                 // print_dbg_hex(frame[0]);
-                switch (frame[i]) {
-                    case 0x2B:  // tab
-                        if (mode == M_LIVE)
-                            set_mode(M_EDIT);
-                        else
-                            set_mode(M_LIVE);
-                        break;
-                    case 0x35:  // ~
-                        if (mode == M_TRACK)
-                            set_mode(last_mode);
-                        else {
-                            last_mode = mode;
-                            set_mode(M_TRACK);
-                        }
-                        break;
-                    case 0x29:  // ESC
-                        if (mod_ALT) {
-                            last_mode = mode;
-                            set_mode(M_PRESET_W);
-                        }
-                        else if (mod_META) {
-                            clear_delays();
-                            for (int i = 0; i < 4; i++) { aout[i].step = 1; }
-                        }
-                        else if (mode == M_PRESET_R)
-                            set_mode(last_mode);
-                        else {
-                            last_mode = mode;
-                            set_mode(M_PRESET_R);
-                        }
-
-                        break;
-                    case 0x3A:  // F1
-                        if (mode == M_HELP)
-                            set_mode(last_mode);
-                        else {
-                            last_mode = mode;
-                            set_mode(M_HELP);
-                        }
-                        break;
-                    case 0x51:  // down
-                        hold_down = 1;
-                        if (mode == M_TRACK) {
-                            if (mod_ALT) {
-                                if (offset_index < 48)
-                                    offset_index += 8;
-                                else {
-                                    offset_index = 56;
-                                    edit_index = 7;
-                                }
-                            }
-                            else {
-                                edit_index++;
-                                if (edit_index == 8) {
-                                    edit_index = 7;
-                                    if (offset_index < 56) { offset_index++; }
-                                }
-                            }
-                            r_edit_dirty |= R_ALL;
-                        }
-                        else if (mode == M_PRESET_W) {
-                            if ((preset_edit_offset + preset_edit_line) < 31) {
-                                if (preset_edit_line == 5)
-                                    preset_edit_offset++;
-                                else
-                                    preset_edit_line++;
-                                strcpy(input, scene_text[preset_edit_line +
-                                                         preset_edit_offset]);
-                                pos = strlen(input);
-                                r_edit_dirty |= R_ALL;
-                            }
-                        }
-                        else if (mode == M_PRESET_R) {
-                            if (preset_edit_offset < 24) {
-                                preset_edit_offset++;
-                                r_edit_dirty |= R_ALL;
-                            }
-                        }
-                        else if (mode == M_HELP) {
-                            if (offset_view < help_length[help_page] - 8) {
-                                offset_view++;
-                                r_edit_dirty |= R_ALL;
-                            }
-                        }
-                        else if (edit_line < (SCRIPT_MAX_COMMANDS - 1)) {
-                            if (mode == M_LIVE) {
-                                edit_line++;
-                                print_command(&history.c[edit_line], input);
-                                pos = strlen(input);
-                                for (size_t n = pos; n < 32; n++) input[n] = 0;
-                            }
-                            else if (tele_get_script_l(edit) > edit_line) {
-                                edit_line++;
-                                print_command(
-                                    tele_get_script_c(edit, edit_line), input);
-                                pos = strlen(input);
-                                for (size_t n = pos; n < 32; n++) input[n] = 0;
-                                r_edit_dirty |= R_LIST;
-                            }
-                        }
-                        else if (mode == M_LIVE) {
-                            edit_line = SCRIPT_MAX_COMMANDS;
-                            pos = 0;
-                            for (size_t n = 0; n < 32; n++) input[n] = 0;
-                        }
-                        break;
-
-                    case 0x52:  // up
-                        hold_up = 1;
-                        if (mode == M_TRACK) {
-                            if (mod_ALT) {
-                                if (offset_index > 8) { offset_index -= 8; }
-                                else {
-                                    offset_index = 0;
-                                    edit_index = 0;
-                                }
-                            }
-                            else {
-                                if (edit_index)
-                                    edit_index--;
-                                else if (offset_index)
-                                    offset_index--;
-                            }
-                            r_edit_dirty |= R_ALL;
-                        }
-                        else if (mode == M_PRESET_W) {
-                            if (preset_edit_line + preset_edit_offset) {
-                                if (preset_edit_line)
-                                    preset_edit_line--;
-                                else
-                                    preset_edit_offset--;
-                                strcpy(input, scene_text[preset_edit_line +
-                                                         preset_edit_offset]);
-                                pos = strlen(input);
-                                r_edit_dirty |= R_ALL;
-                            }
-                        }
-                        else if (mode == M_PRESET_R) {
-                            if (preset_edit_offset) {
-                                preset_edit_offset--;
-                                r_edit_dirty |= R_ALL;
-                            }
-                        }
-                        else if (mode == M_HELP) {
-                            if (offset_view) {
-                                offset_view--;
-                                r_edit_dirty |= R_ALL;
-                            }
-                        }
-                        else if (edit_line) {
-                            edit_line--;
-                            if (mode == M_LIVE)
-                                print_command(&history.c[edit_line], input);
-                            else
-                                print_command(
-                                    tele_get_script_c(edit, edit_line), input);
-
-                            pos = strlen(input);
-                            for (size_t n = pos; n < 32; n++) input[n] = 0;
-                            if (mode != M_LIVE) r_edit_dirty |= R_LIST;
-                        }
-                        break;
-                    case 0x50:  // back
-                        hold_left = 1;
-                        if (mode == M_TRACK) {
-                            if (mod_ALT) {
-                                edit_index = 0;
-                                offset_index = 0;
-                            }
-                            else {
-                                if (edit_pattern > 0) edit_pattern--;
-                            }
-                            r_edit_dirty |= R_ALL;
-                        }
-                        else if (pos) {
-                            pos--;
-                        }
-                        break;
-
-                    case 0x4f:  // forward
-                        hold_right = 1;
-                        if (mode == M_TRACK) {
-                            if (mod_ALT) {
-                                edit_index = 7;
-                                offset_index = 56;
-                            }
-                            else {
-                                if (edit_pattern < 3) edit_pattern++;
-                            }
-                            r_edit_dirty |= R_ALL;
-                        }
-                        else if (pos < strlen(input)) {
-                            pos++;
-                        }
-
-                        break;
-
-                    case 0x30:  // ]
-                        if (mode == M_EDIT) {
-                            edit++;
-                            if (edit == 10) edit = 0;
-                            if (edit_line > tele_get_script_l(edit))
-                                edit_line = tele_get_script_l(edit);
-                            print_command(tele_get_script_c(edit, edit_line),
-                                          input);
-                            pos = strlen(input);
-                            for (size_t n = pos; n < 32; n++) input[n] = 0;
-
-
-                            r_edit_dirty |= R_LIST;
-                        }
-                        else if (mode == M_PRESET_W || mode == M_PRESET_R) {
-                            if (preset_select < SCENE_SLOTS_) preset_select++;
-                            r_edit_dirty |= R_ALL;
-                        }
-                        else if (mode == M_TRACK) {
-                            int16_t v = tele_get_pattern_val(
-                                edit_pattern, edit_index + offset_index);
-                            if (v < 32766) {
-                                tele_set_pattern_val(edit_pattern,
-                                                     edit_index + offset_index,
-                                                     v++);
-                                r_edit_dirty |= R_ALL;
-                            }
-                        }
-                        else if (mode == M_HELP) {
-                            if (help_page < 7) {
-                                offset_view = 0;
-                                help_page++;
-                                r_edit_dirty |= R_ALL;
-                            }
-                        }
-                        break;
-
-                    case 0x2F:  // [
-                        if (mode == M_EDIT) {
-                            if (edit)
-                                edit--;
-                            else
-                                edit = 9;
-                            if (edit_line > tele_get_script_l(edit))
-                                edit_line = tele_get_script_l(edit);
-                            print_command(tele_get_script_c(edit, edit_line),
-                                          input);
-                            pos = strlen(input);
-                            for (size_t n = pos; n < 32; n++) input[n] = 0;
-                            r_edit_dirty |= R_LIST;
-                        }
-                        else if (mode == M_PRESET_W || mode == M_PRESET_R) {
-                            if (preset_select) preset_select--;
-                            r_edit_dirty |= R_ALL;
-                        }
-                        else if (mode == M_TRACK) {
-                            int16_t v = tele_get_pattern_val(
-                                edit_pattern, edit_index + offset_index);
-                            if (v > -32767) {
-                                tele_set_pattern_val(edit_pattern,
-                                                     edit_index + offset_index,
-                                                     v--);
-                                r_edit_dirty |= R_ALL;
-                            }
-                        }
-                        else if (mode == M_HELP) {
-                            if (help_page) {
-                                offset_view = 0;
-                                help_page--;
-                                r_edit_dirty |= R_ALL;
-                            }
-                        }
-                        break;
-                    case BACKSPACE:
-                        if (mode == M_LIVE || mode == M_EDIT ||
-                            mode == M_PRESET_W) {
-                            if (mod_SH) {
-                                for (size_t n = 0; n < 32; n++) input[n] = 0;
-                                pos = 0;
-                            }
-                            else if (pos) {
-                                pos--;
-                                // input[pos] = ' ';
-                                for (int x = pos; x < 31; x++)
-                                    input[x] = input[x + 1];
-                            }
-                        }
-                        else if (mode == M_TRACK) {
-                            if (mod_SH) {
-                                for (int i = edit_index + offset_index; i < 63;
-                                     i++) {
-                                    int16_t v = tele_get_pattern_val(
-                                        edit_pattern, i + 1);
-                                    tele_set_pattern_val(edit_pattern, i, v);
-                                }
-
-                                uint16_t l = tele_get_pattern_l(edit_pattern);
-                                if (l > edit_index + offset_index)
-                                    tele_set_pattern_l(edit_pattern, l--);
-                            }
-                            else {
-                                int16_t new_v = tele_get_pattern_val(
-                                                    edit_pattern,
-                                                    edit_index + offset_index) /
-                                                10;
-                                tele_set_pattern_val(edit_pattern,
-                                                     edit_index + offset_index,
-                                                     new_v);
-                            }
-                            r_edit_dirty |= R_ALL;
-                        }
-                        break;
-
-                    case RETURN:
-                        if (mode == M_EDIT || mode == M_LIVE) {
-                            tele_command_t temp;
-                            status = parse(input, &temp, error_msg);
-
-                            if (status == E_OK) {
-                                status = validate(&temp, error_msg);
-
-                                if (status == E_OK) {
-                                    if (mode == M_LIVE) {
-                                        edit_line = SCRIPT_MAX_COMMANDS;
-
-                                        if (temp.l) {
-                                            memcpy(&history.c[0], &history.c[1],
-                                                   sizeof(tele_command_t));
-                                            memcpy(&history.c[1], &history.c[2],
-                                                   sizeof(tele_command_t));
-                                            memcpy(&history.c[2], &history.c[3],
-                                                   sizeof(tele_command_t));
-                                            memcpy(&history.c[3], &history.c[4],
-                                                   sizeof(tele_command_t));
-                                            memcpy(&history.c[4], &history.c[5],
-                                                   sizeof(tele_command_t));
-                                            memcpy(&history.c[5], &temp,
-                                                   sizeof(tele_command_t));
-
-                                            process_result_t o =
-                                                run_command(&temp);
-                                            if (o.has_value) {
-                                                output = o.value;
-                                                output_new++;
-                                            }
-                                        }
-
-                                        for (size_t n = 0; n < 32; n++)
-                                            input[n] = 0;
-                                        pos = 0;
-                                    }
-                                    else {
-                                        if (temp.l == 0) {  // BLANK LINE
-                                            uint8_t script_len =
-                                                tele_get_script_l(edit);
-                                            if (script_len &&
-                                                tele_get_script_c(edit,
-                                                                  edit_line)
-                                                    ->l) {
-                                                script_len--;
-                                                tele_set_script_l(edit,
-                                                                  script_len);
-
-                                                for (size_t n = edit_line;
-                                                     n < script_len; n++) {
-                                                    const tele_command_t* cmd =
-                                                        tele_get_script_c(
-                                                            edit, n + 1);
-                                                    tele_set_script_c(edit, n,
-                                                                      cmd);
-                                                }
-
-                                                tele_command_t blank_command;
-                                                blank_command.l = 0;
-                                                tele_set_script_c(
-                                                    edit, script_len,
-                                                    &blank_command);
-
-                                                if (edit_line > script_len)
-                                                    edit_line = script_len;
-                                                print_command(
-                                                    tele_get_script_c(
-                                                        edit, edit_line),
-                                                    input);
-                                                pos = strlen(input);
-                                            }
-                                        }
-                                        else if (mod_SH) {  // SHIFT = INSERT
-                                            for (size_t n =
-                                                     tele_get_script_l(edit);
-                                                 n > edit_line; n--) {
-                                                const tele_command_t* cmd =
-                                                    tele_get_script_c(edit,
-                                                                      n - 1);
-                                                tele_set_script_c(edit, n, cmd);
-                                            }
-
-                                            if (tele_get_script_l(edit) <
-                                                SCRIPT_MAX_COMMANDS) {
-                                                tele_set_script_l(
-                                                    edit,
-                                                    tele_get_script_l(edit) +
-                                                        1);
-                                            }
-
-                                            tele_set_script_c(edit, edit_line,
-                                                              &temp);
-                                            if ((edit_line ==
-                                                 tele_get_script_l(edit)) &&
-                                                (tele_get_script_l(edit) < 4)) {
-                                                tele_set_script_l(
-                                                    edit,
-                                                    tele_get_script_l(edit) +
-                                                        1);
-                                            }
-                                            if (edit_line <
-                                                (SCRIPT_MAX_COMMANDS - 1)) {
-                                                edit_line++;
-                                                print_command(
-                                                    tele_get_script_c(
-                                                        edit, edit_line),
-                                                    input);
-                                                pos = strlen(input);
-                                                for (size_t n = pos; n < 32;
-                                                     n++) {
-                                                    input[n] = 0;
-                                                }
-                                            }
-                                        }
-                                        else {
-                                            tele_set_script_c(edit, edit_line,
-                                                              &temp);
-                                            if ((edit_line ==
-                                                 tele_get_script_l(edit)) &&
-                                                (tele_get_script_l(edit) <
-                                                 SCRIPT_MAX_COMMANDS)) {
-                                                tele_set_script_l(
-                                                    edit,
-                                                    tele_get_script_l(edit) +
-                                                        1);
-                                            }
-                                            if (edit_line <
-                                                (SCRIPT_MAX_COMMANDS - 1)) {
-                                                edit_line++;
-                                                print_command(
-                                                    tele_get_script_c(
-                                                        edit, edit_line),
-                                                    input);
-                                                pos = strlen(input);
-                                                for (size_t n = pos; n < 32;
-                                                     n++) {
-                                                    input[n] = 0;
-                                                }
-                                            }
-                                        }
-
-                                        r_edit_dirty |= R_MESSAGE;
-                                    }
-                                    if (mode == M_EDIT) r_edit_dirty |= R_LIST;
-                                }
-                                else {
-                                    // print_dbg("\r\nvalidate: ");
-                                    // print_dbg(tele_error(status));
-                                }
-                            }
-                            else {
-                                // print_dbg("\r\nERROR: ");
-                                // print_dbg(tele_error(status));
-                            }
-
-                            // print_dbg("\r\n\n> ");
-
-                            r_edit_dirty |= R_MESSAGE;
-                        }
-                        else if (mode == M_PRESET_W) {
-                            if (mod_ALT) {
-                                strcpy(scene_text[preset_edit_line +
-                                                  preset_edit_offset],
-                                       input);
-                                flash_write();
-                                for (size_t n = 0; n < 32; n++) input[n] = 0;
-                                pos = 0;
-                                set_mode(last_mode);
-                            }
-                            else {
-                                strcpy(scene_text[preset_edit_line +
-                                                  preset_edit_offset],
-                                       input);
-                                if (preset_edit_line + preset_edit_offset <
-                                    31) {
-                                    if (preset_edit_line == 5)
-                                        preset_edit_offset++;
-                                    else
-                                        preset_edit_line++;
-                                }
-                                strcpy(input, scene_text[preset_edit_line +
-                                                         preset_edit_offset]);
-                                pos = strlen(input);
-                                r_edit_dirty |= R_ALL;
-                            }
-                        }
-                        else if (mode == M_PRESET_R) {
-                            flash_read();
-                            tele_set_scene(preset_select);
-
-                            run_script(INIT_SCRIPT);
-
-                            for (size_t n = 0; n < 32; n++) input[n] = 0;
-                            pos = 0;
-                            set_mode(last_mode);
-                        }
-                        else if (mode == M_TRACK) {
-                            if (mod_SH) {
-                                for (int i = 63; i > edit_index + offset_index;
-                                     i--) {
-                                    int16_t v = tele_get_pattern_val(
-                                        edit_pattern, i - 1);
-                                    tele_set_pattern_val(edit_pattern, i, v);
-                                }
-                                uint16_t l = tele_get_pattern_l(edit_pattern);
-                                if (l < 63) {
-                                    tele_set_pattern_l(edit_pattern, l++);
-                                }
-                                r_edit_dirty |= R_ALL;
-                            }
-                            else {
-                                uint16_t l = tele_get_pattern_l(edit_pattern);
-                                if (edit_index + offset_index == l && l < 64) {
-                                    tele_set_pattern_l(edit_pattern, l++);
-                                    edit_index++;
-                                    if (edit_index == 8) {
-                                        edit_index = 7;
-                                        if (offset_index < 56) {
-                                            offset_index++;
-                                        }
-                                    }
-                                    r_edit_dirty |= R_ALL;
-                                }
-                            }
-                        }
-                        break;
-
-                    default:
-                        if (mod_ALT) {               // ALT
-                            if (frame[i] == 0x1b) {  // x CUT
-                                if (mode == M_EDIT || mode == M_LIVE) {
-                                    memcpy(&input_buffer, &input,
-                                           sizeof(input));
-                                    if (mode == M_LIVE) {
-                                        for (size_t n = 0; n < 32; n++)
-                                            input[n] = 0;
-                                        pos = 0;
-                                    }
-                                    else {
-                                        if (tele_get_script_l(edit)) {
-                                            tele_set_script_l(
-                                                edit,
-                                                tele_get_script_l(edit) - 1);
-                                            for (size_t n = edit_line;
-                                                 n < tele_get_script_l(edit);
-                                                 n++) {
-                                                tele_set_script_c(
-                                                    edit, n, tele_get_script_c(
-                                                                 edit, n + 1));
-                                            }
-
-                                            tele_command_t blank_command;
-                                            blank_command.l = 0;
-                                            tele_set_script_c(
-                                                edit, tele_get_script_l(edit),
-                                                &blank_command);
-                                            if (edit_line >
-                                                tele_get_script_l(edit)) {
-                                                edit_line =
-                                                    tele_get_script_l(edit);
-                                            }
-                                            print_command(tele_get_script_c(
-                                                              edit, edit_line),
-                                                          input);
-                                            pos = strlen(input);
-                                        }
-
-                                        r_edit_dirty |= R_LIST;
-                                    }
-                                }
-                                else if (mode == M_TRACK) {
-                                    num_buffer = tele_get_pattern_val(
-                                        edit_pattern,
-                                        edit_index + offset_index);
-                                    for (int i = edit_index + offset_index;
-                                         i < 63; i++) {
-                                        int16_t v = tele_get_pattern_val(
-                                            edit_pattern, i + 1);
-                                        tele_set_pattern_val(edit_pattern, i,
-                                                             v);
-                                    }
-
-                                    uint16_t l =
-                                        tele_get_pattern_l(edit_pattern);
-                                    if (l > edit_index + offset_index) {
-                                        tele_set_pattern_l(edit_pattern, l--);
-                                    }
-                                    r_edit_dirty |= R_ALL;
-                                }
-                            }
-                            else if (frame[i] == 0x06) {  // c COPY
-                                if (mode == M_EDIT || mode == M_LIVE) {
-                                    memcpy(&input_buffer, &input,
-                                           sizeof(input));
-                                }
-                                else if (mode == M_TRACK) {
-                                    num_buffer = tele_get_pattern_val(
-                                        edit_pattern,
-                                        edit_index + offset_index);
-                                    r_edit_dirty |= R_ALL;
-                                }
-                            }
-                            else if (frame[i] == 0x19) {  // v PASTE
-                                if (mode == M_EDIT || mode == M_LIVE) {
-                                    memcpy(&input, &input_buffer,
-                                           sizeof(input));
-                                    pos = strlen(input);
-                                }
-                                else if (mode == M_TRACK) {
-                                    if (mod_SH) {
-                                        for (int i = 63;
-                                             i > edit_index + offset_index;
-                                             i--) {
-                                            int16_t v = tele_get_pattern_val(
-                                                edit_pattern, i - 1);
-                                            tele_set_pattern_val(edit_pattern,
-                                                                 i, v);
-                                        }
-                                        uint16_t l =
-                                            tele_get_pattern_l(edit_pattern);
-                                        if (l >= edit_index + offset_index &&
-                                            l < 63) {
-                                            tele_set_pattern_l(edit_pattern,
-                                                               l++);
-                                        }
-                                    }
-                                    tele_set_pattern_val(
-                                        edit_pattern, edit_index + offset_index,
-                                        num_buffer);
-                                    r_edit_dirty |= R_ALL;
-                                }
-                            }
-                            else if (mode == M_TRACK) {
-                                u8 n = hid_to_ascii_raw(frame[i]);
-                                if (n == 'L') {
-                                    uint16_t l =
-                                        tele_get_pattern_l(edit_pattern);
-                                    if (l) {
-                                        offset_index = ((l - 1) >> 3) << 3;
-                                        edit_index = (l - 1) & 0x7;
-
-                                        int8_t delta = edit_index - 3;
-
-                                        if ((offset_index + delta > 0) &&
-                                            (offset_index + delta < 56)) {
-                                            offset_index += delta;
-                                            edit_index = 3;
-                                        }
-                                    }
-                                    else {
-                                        offset_index = 0;
-                                        edit_index = 0;
-                                    }
-                                    r_edit_dirty |= R_ALL;
-                                }
-                                else if (n == 'S') {
-                                    int16_t start =
-                                        tele_get_pattern_start(edit_pattern);
-                                    if (start) {
-                                        offset_index = (start >> 3) << 3;
-                                        edit_index = start & 0x7;
-
-                                        int8_t delta = edit_index - 3;
-
-                                        if ((offset_index + delta > 0) &&
-                                            (offset_index + delta < 56)) {
-                                            offset_index += delta;
-                                            edit_index = 3;
-                                        }
-                                    }
-                                    else {
-                                        offset_index = 0;
-                                        edit_index = 0;
-                                    }
-                                    r_edit_dirty |= R_ALL;
-                                }
-                                else if (n == 'E') {
-                                    int16_t end =
-                                        tele_get_pattern_end(edit_pattern);
-                                    if (end) {
-                                        offset_index = (end >> 3) << 3;
-                                        edit_index = end & 0x7;
-
-                                        int8_t delta = edit_index - 3;
-
-                                        if ((offset_index + delta > 0) &&
-                                            (offset_index + delta < 56)) {
-                                            offset_index += delta;
-                                            edit_index = 3;
-                                        }
-                                    }
-                                    else {
-                                        offset_index = 0;
-                                        edit_index = 0;
-                                    }
-                                    r_edit_dirty |= R_ALL;
-                                }
-                            }
-                        }
-                        else if (mod_SH && mode == M_TRACK) {
-                            u8 n = hid_to_ascii_raw(frame[i]);
-                            if (n == 'L') {
-                                tele_set_pattern_l(
-                                    edit_pattern,
-                                    edit_index + offset_index + 1);
-                                r_edit_dirty |= R_ALL;
-                            }
-                            else if (n == 'S') {
-                                tele_set_pattern_start(
-                                    edit_pattern, offset_index + edit_index);
-                            }
-                            else if (n == 'E') {
-                                tele_set_pattern_end(edit_pattern,
-                                                     offset_index + edit_index);
-                            }
-                        }
-                        else if (mod_META) {
-                            u8 n = hid_to_ascii_raw(frame[i]);
-
-                            if (n > 0x30 && n < 0x039) {
-                                if (mod_SH) {
-                                    mutes[n - 0x31] ^= 1;
-                                    activity |= A_MUTES;
-                                }
-                                else
-                                    tele_script(n - 0x30);
-                            }
-                            else if (n == 'M') {
-                                run_script(METRO_SCRIPT);
-                            }
-                            else if (n == 'I') {
-                                run_script(INIT_SCRIPT);
-                            }
-                        }
-                        else if (mode == M_TRACK) {
-                            u8 n = hid_to_ascii(frame[i], frame[0]);
-
-                            if (n > 0x2F && n < 0x03A) {
-                                int16_t v = tele_get_pattern_val(
-                                    edit_pattern, edit_index + offset_index);
-                                if (v && v < 3276 && v > -3276) {
-                                    v = v * 10;
-                                    if (v > 0)
-                                        tele_set_pattern_val(
-                                            edit_pattern,
-                                            edit_index + offset_index,
-                                            v + n - 0x30);
-                                    else
-                                        tele_set_pattern_val(
-                                            edit_pattern,
-                                            edit_index + offset_index,
-                                            v - n - 0x30);
-                                }
-                                else
-                                    tele_set_pattern_val(
-                                        edit_pattern, edit_index + offset_index,
-                                        n - 0x30);
-                                r_edit_dirty |= R_ALL;
-                            }
-                            else if (n == 0x2D) {  // -
-                                int16_t v = tele_get_pattern_val(
-                                    edit_pattern, edit_index + offset_index);
-                                tele_set_pattern_val(edit_pattern,
-                                                     edit_index + offset_index,
-                                                     -v);
-                                r_edit_dirty |= R_ALL;
-                            }
-                            else if (n == 0x20) {  // space
-                                if (tele_get_pattern_val(
-                                        edit_pattern,
-                                        edit_index + offset_index))
-                                    tele_set_pattern_val(
-                                        edit_pattern, edit_index + offset_index,
-                                        0);
-                                else
-                                    tele_set_pattern_val(
-                                        edit_pattern, edit_index + offset_index,
-                                        1);
-                                r_edit_dirty |= R_ALL;
-                            }
-                        }
-                        else {  /// NORMAL TEXT ENTRY
-                            if (frame[i] > 0x58 && frame[i] < 0x61) {
-                                tele_script(frame[i] - 0x58);
-                            }
-                            if (pos < 29) {
-                                // print_dbg_char(hid_to_ascii(frame[i],
-                                // frame[0]));
-                                u8 n = hid_to_ascii(frame[i], frame[0]);
-                                if (n) {
-                                    for (int x = 31; x > pos; x--)
-                                        input[x] = input[x - 1];
-
-                                    input[pos] = n;
-                                    pos++;
-                                }
-                                // pos++;
-                                // input[pos] = 0;
-                            }
-                        }
-
-                        break;
-                }
-
-                r_edit_dirty |= R_INPUT;
+                hold_key = frame[i];
+                hold_key_count = 0;
+                process_keypress(hold_key);
             }
         }
 
@@ -1795,6 +918,821 @@ void set_mode(uint8_t m) {
     }
 }
 
+void process_keypress(s8 key) {
+    switch (key) {
+        case 0x2B:  // tab
+            if (mode == M_LIVE)
+                set_mode(M_EDIT);
+            else
+                set_mode(M_LIVE);
+            break;
+        case 0x35:  // ~
+            if (mode == M_TRACK)
+                set_mode(last_mode);
+            else {
+                last_mode = mode;
+                set_mode(M_TRACK);
+            }
+            break;
+        case 0x29:  // ESC
+            if (mod_ALT) {
+                last_mode = mode;
+                set_mode(M_PRESET_W);
+            }
+            else if (mod_META) {
+                clear_delays();
+                for (int i = 0; i < 4; i++) { aout[i].step = 1; }
+            }
+            else if (mode == M_PRESET_R)
+                set_mode(last_mode);
+            else {
+                last_mode = mode;
+                set_mode(M_PRESET_R);
+            }
+
+            break;
+        case 0x3A:  // F1
+            if (mode == M_HELP)
+                set_mode(last_mode);
+            else {
+                last_mode = mode;
+                set_mode(M_HELP);
+            }
+            break;
+        case 0x51:  // down
+            if (mode == M_TRACK) {
+                if (mod_ALT) {
+                    if (offset_index < 48)
+                        offset_index += 8;
+                    else {
+                        offset_index = 56;
+                        edit_index = 7;
+                    }
+                }
+                else {
+                    edit_index++;
+                    if (edit_index == 8) {
+                        edit_index = 7;
+                        if (offset_index < 56) { offset_index++; }
+                    }
+                }
+                r_edit_dirty |= R_ALL;
+            }
+            else if (mode == M_PRESET_W) {
+                if ((preset_edit_offset + preset_edit_line) < 31) {
+                    if (preset_edit_line == 5)
+                        preset_edit_offset++;
+                    else
+                        preset_edit_line++;
+                    strcpy(input, scene_text[preset_edit_line +
+                                             preset_edit_offset]);
+                    pos = strlen(input);
+                    r_edit_dirty |= R_ALL;
+                }
+            }
+            else if (mode == M_PRESET_R) {
+                if (preset_edit_offset < 24) {
+                    preset_edit_offset++;
+                    r_edit_dirty |= R_ALL;
+                }
+            }
+            else if (mode == M_HELP) {
+                if (offset_view < help_length[help_page] - 8) {
+                    offset_view++;
+                    r_edit_dirty |= R_ALL;
+                }
+            }
+            else if (edit_line < (SCRIPT_MAX_COMMANDS - 1)) {
+                if (mode == M_LIVE) {
+                    edit_line++;
+                    print_command(&history.c[edit_line], input);
+                    pos = strlen(input);
+                    for (size_t n = pos; n < 32; n++) input[n] = 0;
+                }
+                else if (tele_get_script_l(edit) > edit_line) {
+                    edit_line++;
+                    print_command(
+                        tele_get_script_c(edit, edit_line), input);
+                    pos = strlen(input);
+                    for (size_t n = pos; n < 32; n++) input[n] = 0;
+                    r_edit_dirty |= R_LIST;
+                }
+            }
+            else if (mode == M_LIVE) {
+                edit_line = SCRIPT_MAX_COMMANDS;
+                pos = 0;
+                for (size_t n = 0; n < 32; n++) input[n] = 0;
+            }
+            break;
+
+        case 0x52:  // up
+            if (mode == M_TRACK) {
+                if (mod_ALT) {
+                    if (offset_index > 8) { offset_index -= 8; }
+                    else {
+                        offset_index = 0;
+                        edit_index = 0;
+                    }
+                }
+                else {
+                    if (edit_index)
+                        edit_index--;
+                    else if (offset_index)
+                        offset_index--;
+                }
+                r_edit_dirty |= R_ALL;
+            }
+            else if (mode == M_PRESET_W) {
+                if (preset_edit_line + preset_edit_offset) {
+                    if (preset_edit_line)
+                        preset_edit_line--;
+                    else
+                        preset_edit_offset--;
+                    strcpy(input, scene_text[preset_edit_line +
+                                             preset_edit_offset]);
+                    pos = strlen(input);
+                    r_edit_dirty |= R_ALL;
+                }
+            }
+            else if (mode == M_PRESET_R) {
+                if (preset_edit_offset) {
+                    preset_edit_offset--;
+                    r_edit_dirty |= R_ALL;
+                }
+            }
+            else if (mode == M_HELP) {
+                if (offset_view) {
+                    offset_view--;
+                    r_edit_dirty |= R_ALL;
+                }
+            }
+            else if (edit_line) {
+                edit_line--;
+                if (mode == M_LIVE)
+                    print_command(&history.c[edit_line], input);
+                else
+                    print_command(
+                        tele_get_script_c(edit, edit_line), input);
+
+                pos = strlen(input);
+                for (size_t n = pos; n < 32; n++) input[n] = 0;
+                if (mode != M_LIVE) r_edit_dirty |= R_LIST;
+            }
+            break;
+        case 0x50:  // back
+            if (mode == M_TRACK) {
+                if (mod_ALT) {
+                    edit_index = 0;
+                    offset_index = 0;
+                }
+                else {
+                    if (edit_pattern > 0) edit_pattern--;
+                }
+                r_edit_dirty |= R_ALL;
+            }
+            else if (pos) {
+                pos--;
+            }
+            break;
+
+        case 0x4f:  // forward
+            if (mode == M_TRACK) {
+                if (mod_ALT) {
+                    edit_index = 7;
+                    offset_index = 56;
+                }
+                else {
+                    if (edit_pattern < 3) edit_pattern++;
+                }
+                r_edit_dirty |= R_ALL;
+            }
+            else if (pos < strlen(input)) {
+                pos++;
+            }
+
+            break;
+
+        case 0x30:  // ]
+            if (mode == M_EDIT) {
+                edit++;
+                if (edit == 10) edit = 0;
+                if (edit_line > tele_get_script_l(edit))
+                    edit_line = tele_get_script_l(edit);
+                print_command(tele_get_script_c(edit, edit_line),
+                              input);
+                pos = strlen(input);
+                for (size_t n = pos; n < 32; n++) input[n] = 0;
+
+
+                r_edit_dirty |= R_LIST;
+            }
+            else if (mode == M_PRESET_W || mode == M_PRESET_R) {
+                if (preset_select < SCENE_SLOTS_) preset_select++;
+                r_edit_dirty |= R_ALL;
+            }
+            else if (mode == M_TRACK) {
+                int16_t v = tele_get_pattern_val(
+                    edit_pattern, edit_index + offset_index);
+                if (v < 32766) {
+                    tele_set_pattern_val(edit_pattern,
+                                         edit_index + offset_index,
+                                         v++);
+                    r_edit_dirty |= R_ALL;
+                }
+            }
+            else if (mode == M_HELP) {
+                if (help_page < 7) {
+                    offset_view = 0;
+                    help_page++;
+                    r_edit_dirty |= R_ALL;
+                }
+            }
+            break;
+
+        case 0x2F:  // [
+            if (mode == M_EDIT) {
+                if (edit)
+                    edit--;
+                else
+                    edit = 9;
+                if (edit_line > tele_get_script_l(edit))
+                    edit_line = tele_get_script_l(edit);
+                print_command(tele_get_script_c(edit, edit_line),
+                              input);
+                pos = strlen(input);
+                for (size_t n = pos; n < 32; n++) input[n] = 0;
+                r_edit_dirty |= R_LIST;
+            }
+            else if (mode == M_PRESET_W || mode == M_PRESET_R) {
+                if (preset_select) preset_select--;
+                r_edit_dirty |= R_ALL;
+            }
+            else if (mode == M_TRACK) {
+                int16_t v = tele_get_pattern_val(
+                    edit_pattern, edit_index + offset_index);
+                if (v > -32767) {
+                    tele_set_pattern_val(edit_pattern,
+                                         edit_index + offset_index,
+                                         v--);
+                    r_edit_dirty |= R_ALL;
+                }
+            }
+            else if (mode == M_HELP) {
+                if (help_page) {
+                    offset_view = 0;
+                    help_page--;
+                    r_edit_dirty |= R_ALL;
+                }
+            }
+            break;
+        case BACKSPACE:
+            if (mode == M_LIVE || mode == M_EDIT ||
+                mode == M_PRESET_W) {
+                if (mod_SH) {
+                    for (size_t n = 0; n < 32; n++) input[n] = 0;
+                    pos = 0;
+                }
+                else if (pos) {
+                    pos--;
+                    // input[pos] = ' ';
+                    for (int x = pos; x < 31; x++)
+                        input[x] = input[x + 1];
+                }
+            }
+            else if (mode == M_TRACK) {
+                if (mod_SH) {
+                    for (int i = edit_index + offset_index; i < 63;
+                         i++) {
+                        int16_t v = tele_get_pattern_val(
+                            edit_pattern, i + 1);
+                        tele_set_pattern_val(edit_pattern, i, v);
+                    }
+
+                    uint16_t l = tele_get_pattern_l(edit_pattern);
+                    if (l > edit_index + offset_index)
+                        tele_set_pattern_l(edit_pattern, l--);
+                }
+                else {
+                    int16_t new_v = tele_get_pattern_val(
+                                        edit_pattern,
+                                        edit_index + offset_index) /
+                                    10;
+                    tele_set_pattern_val(edit_pattern,
+                                         edit_index + offset_index,
+                                         new_v);
+                }
+                r_edit_dirty |= R_ALL;
+            }
+            break;
+
+        case RETURN:
+            if (mode == M_EDIT || mode == M_LIVE) {
+                tele_command_t temp;
+                status = parse(input, &temp, error_msg);
+
+                if (status == E_OK) {
+                    status = validate(&temp, error_msg);
+
+                    if (status == E_OK) {
+                        if (mode == M_LIVE) {
+                            edit_line = SCRIPT_MAX_COMMANDS;
+
+                            if (temp.l) {
+                                memcpy(&history.c[0], &history.c[1],
+                                       sizeof(tele_command_t));
+                                memcpy(&history.c[1], &history.c[2],
+                                       sizeof(tele_command_t));
+                                memcpy(&history.c[2], &history.c[3],
+                                       sizeof(tele_command_t));
+                                memcpy(&history.c[3], &history.c[4],
+                                       sizeof(tele_command_t));
+                                memcpy(&history.c[4], &history.c[5],
+                                       sizeof(tele_command_t));
+                                memcpy(&history.c[5], &temp,
+                                       sizeof(tele_command_t));
+
+                                process_result_t o =
+                                    run_command(&temp);
+                                if (o.has_value) {
+                                    output = o.value;
+                                    output_new++;
+                                }
+                            }
+
+                            for (size_t n = 0; n < 32; n++)
+                                input[n] = 0;
+                            pos = 0;
+                        }
+                        else {
+                            if (temp.l == 0) {  // BLANK LINE
+                                uint8_t script_len =
+                                    tele_get_script_l(edit);
+                                if (script_len &&
+                                    tele_get_script_c(edit,
+                                                      edit_line)
+                                        ->l) {
+                                    script_len--;
+                                    tele_set_script_l(edit,
+                                                      script_len);
+
+                                    for (size_t n = edit_line;
+                                         n < script_len; n++) {
+                                        const tele_command_t* cmd =
+                                            tele_get_script_c(
+                                                edit, n + 1);
+                                        tele_set_script_c(edit, n,
+                                                          cmd);
+                                    }
+
+                                    tele_command_t blank_command;
+                                    blank_command.l = 0;
+                                    tele_set_script_c(
+                                        edit, script_len,
+                                        &blank_command);
+
+                                    if (edit_line > script_len)
+                                        edit_line = script_len;
+                                    print_command(
+                                        tele_get_script_c(
+                                            edit, edit_line),
+                                        input);
+                                    pos = strlen(input);
+                                }
+                            }
+                            else if (mod_SH) {  // SHIFT = INSERT
+                                for (size_t n =
+                                         tele_get_script_l(edit);
+                                     n > edit_line; n--) {
+                                    const tele_command_t* cmd =
+                                        tele_get_script_c(edit,
+                                                          n - 1);
+                                    tele_set_script_c(edit, n, cmd);
+                                }
+
+                                if (tele_get_script_l(edit) <
+                                    SCRIPT_MAX_COMMANDS) {
+                                    tele_set_script_l(
+                                        edit,
+                                        tele_get_script_l(edit) +
+                                            1);
+                                }
+
+                                tele_set_script_c(edit, edit_line,
+                                                  &temp);
+                                if ((edit_line ==
+                                     tele_get_script_l(edit)) &&
+                                    (tele_get_script_l(edit) < 4)) {
+                                    tele_set_script_l(
+                                        edit,
+                                        tele_get_script_l(edit) +
+                                            1);
+                                }
+                                if (edit_line <
+                                    (SCRIPT_MAX_COMMANDS - 1)) {
+                                    edit_line++;
+                                    print_command(
+                                        tele_get_script_c(
+                                            edit, edit_line),
+                                        input);
+                                    pos = strlen(input);
+                                    for (size_t n = pos; n < 32;
+                                         n++) {
+                                        input[n] = 0;
+                                    }
+                                }
+                            }
+                            else {
+                                tele_set_script_c(edit, edit_line,
+                                                  &temp);
+                                if ((edit_line ==
+                                     tele_get_script_l(edit)) &&
+                                    (tele_get_script_l(edit) <
+                                     SCRIPT_MAX_COMMANDS)) {
+                                    tele_set_script_l(
+                                        edit,
+                                        tele_get_script_l(edit) +
+                                            1);
+                                }
+                                if (edit_line <
+                                    (SCRIPT_MAX_COMMANDS - 1)) {
+                                    edit_line++;
+                                    print_command(
+                                        tele_get_script_c(
+                                            edit, edit_line),
+                                        input);
+                                    pos = strlen(input);
+                                    for (size_t n = pos; n < 32;
+                                         n++) {
+                                        input[n] = 0;
+                                    }
+                                }
+                            }
+
+                            r_edit_dirty |= R_MESSAGE;
+                        }
+                        if (mode == M_EDIT) r_edit_dirty |= R_LIST;
+                    }
+                    else {
+                        // print_dbg("\r\nvalidate: ");
+                        // print_dbg(tele_error(status));
+                    }
+                }
+                else {
+                    // print_dbg("\r\nERROR: ");
+                    // print_dbg(tele_error(status));
+                }
+
+                // print_dbg("\r\n\n> ");
+
+                r_edit_dirty |= R_MESSAGE;
+            }
+            else if (mode == M_PRESET_W) {
+                if (mod_ALT) {
+                    strcpy(scene_text[preset_edit_line +
+                                      preset_edit_offset],
+                           input);
+                    flash_write();
+                    for (size_t n = 0; n < 32; n++) input[n] = 0;
+                    pos = 0;
+                    set_mode(last_mode);
+                }
+                else {
+                    strcpy(scene_text[preset_edit_line +
+                                      preset_edit_offset],
+                           input);
+                    if (preset_edit_line + preset_edit_offset <
+                        31) {
+                        if (preset_edit_line == 5)
+                            preset_edit_offset++;
+                        else
+                            preset_edit_line++;
+                    }
+                    strcpy(input, scene_text[preset_edit_line +
+                                             preset_edit_offset]);
+                    pos = strlen(input);
+                    r_edit_dirty |= R_ALL;
+                }
+            }
+            else if (mode == M_PRESET_R) {
+                flash_read();
+                tele_set_scene(preset_select);
+
+                run_script(INIT_SCRIPT);
+
+                for (size_t n = 0; n < 32; n++) input[n] = 0;
+                pos = 0;
+                set_mode(last_mode);
+            }
+            else if (mode == M_TRACK) {
+                if (mod_SH) {
+                    for (int i = 63; i > edit_index + offset_index;
+                         i--) {
+                        int16_t v = tele_get_pattern_val(
+                            edit_pattern, i - 1);
+                        tele_set_pattern_val(edit_pattern, i, v);
+                    }
+                    uint16_t l = tele_get_pattern_l(edit_pattern);
+                    if (l < 63) {
+                        tele_set_pattern_l(edit_pattern, l++);
+                    }
+                    r_edit_dirty |= R_ALL;
+                }
+                else {
+                    uint16_t l = tele_get_pattern_l(edit_pattern);
+                    if (edit_index + offset_index == l && l < 64) {
+                        tele_set_pattern_l(edit_pattern, l++);
+                        edit_index++;
+                        if (edit_index == 8) {
+                            edit_index = 7;
+                            if (offset_index < 56) {
+                                offset_index++;
+                            }
+                        }
+                        r_edit_dirty |= R_ALL;
+                    }
+                }
+            }
+            break;
+
+        default:
+            if (mod_ALT) {               // ALT
+                if (key == 0x1b) {  // x CUT
+                    if (mode == M_EDIT || mode == M_LIVE) {
+                        memcpy(&input_buffer, &input,
+                               sizeof(input));
+                        if (mode == M_LIVE) {
+                            for (size_t n = 0; n < 32; n++)
+                                input[n] = 0;
+                            pos = 0;
+                        }
+                        else {
+                            if (tele_get_script_l(edit)) {
+                                tele_set_script_l(
+                                    edit,
+                                    tele_get_script_l(edit) - 1);
+                                for (size_t n = edit_line;
+                                     n < tele_get_script_l(edit);
+                                     n++) {
+                                    tele_set_script_c(
+                                        edit, n, tele_get_script_c(
+                                                     edit, n + 1));
+                                }
+
+                                tele_command_t blank_command;
+                                blank_command.l = 0;
+                                tele_set_script_c(
+                                    edit, tele_get_script_l(edit),
+                                    &blank_command);
+                                if (edit_line >
+                                    tele_get_script_l(edit)) {
+                                    edit_line =
+                                        tele_get_script_l(edit);
+                                }
+                                print_command(tele_get_script_c(
+                                                  edit, edit_line),
+                                              input);
+                                pos = strlen(input);
+                            }
+
+                            r_edit_dirty |= R_LIST;
+                        }
+                    }
+                    else if (mode == M_TRACK) {
+                        num_buffer = tele_get_pattern_val(
+                            edit_pattern,
+                            edit_index + offset_index);
+                        for (int i = edit_index + offset_index;
+                             i < 63; i++) {
+                            int16_t v = tele_get_pattern_val(
+                                edit_pattern, i + 1);
+                            tele_set_pattern_val(edit_pattern, i,
+                                                 v);
+                        }
+
+                        uint16_t l =
+                            tele_get_pattern_l(edit_pattern);
+                        if (l > edit_index + offset_index) {
+                            tele_set_pattern_l(edit_pattern, l--);
+                        }
+                        r_edit_dirty |= R_ALL;
+                    }
+                }
+                else if (key == 0x06) {  // c COPY
+                    if (mode == M_EDIT || mode == M_LIVE) {
+                        memcpy(&input_buffer, &input,
+                               sizeof(input));
+                    }
+                    else if (mode == M_TRACK) {
+                        num_buffer = tele_get_pattern_val(
+                            edit_pattern,
+                            edit_index + offset_index);
+                        r_edit_dirty |= R_ALL;
+                    }
+                }
+                else if (key == 0x19) {  // v PASTE
+                    if (mode == M_EDIT || mode == M_LIVE) {
+                        memcpy(&input, &input_buffer,
+                               sizeof(input));
+                        pos = strlen(input);
+                    }
+                    else if (mode == M_TRACK) {
+                        if (mod_SH) {
+                            for (int i = 63;
+                                 i > edit_index + offset_index;
+                                 i--) {
+                                int16_t v = tele_get_pattern_val(
+                                    edit_pattern, i - 1);
+                                tele_set_pattern_val(edit_pattern,
+                                                     i, v);
+                            }
+                            uint16_t l =
+                                tele_get_pattern_l(edit_pattern);
+                            if (l >= edit_index + offset_index &&
+                                l < 63) {
+                                tele_set_pattern_l(edit_pattern,
+                                                   l++);
+                            }
+                        }
+                        tele_set_pattern_val(
+                            edit_pattern, edit_index + offset_index,
+                            num_buffer);
+                        r_edit_dirty |= R_ALL;
+                    }
+                }
+                else if (mode == M_TRACK) {
+                    u8 n = hid_to_ascii_raw(key);
+                    if (n == 'L') {
+                        uint16_t l =
+                            tele_get_pattern_l(edit_pattern);
+                        if (l) {
+                            offset_index = ((l - 1) >> 3) << 3;
+                            edit_index = (l - 1) & 0x7;
+
+                            int8_t delta = edit_index - 3;
+
+                            if ((offset_index + delta > 0) &&
+                                (offset_index + delta < 56)) {
+                                offset_index += delta;
+                                edit_index = 3;
+                            }
+                        }
+                        else {
+                            offset_index = 0;
+                            edit_index = 0;
+                        }
+                        r_edit_dirty |= R_ALL;
+                    }
+                    else if (n == 'S') {
+                        int16_t start =
+                            tele_get_pattern_start(edit_pattern);
+                        if (start) {
+                            offset_index = (start >> 3) << 3;
+                            edit_index = start & 0x7;
+
+                            int8_t delta = edit_index - 3;
+
+                            if ((offset_index + delta > 0) &&
+                                (offset_index + delta < 56)) {
+                                offset_index += delta;
+                                edit_index = 3;
+                            }
+                        }
+                        else {
+                            offset_index = 0;
+                            edit_index = 0;
+                        }
+                        r_edit_dirty |= R_ALL;
+                    }
+                    else if (n == 'E') {
+                        int16_t end =
+                            tele_get_pattern_end(edit_pattern);
+                        if (end) {
+                            offset_index = (end >> 3) << 3;
+                            edit_index = end & 0x7;
+
+                            int8_t delta = edit_index - 3;
+
+                            if ((offset_index + delta > 0) &&
+                                (offset_index + delta < 56)) {
+                                offset_index += delta;
+                                edit_index = 3;
+                            }
+                        }
+                        else {
+                            offset_index = 0;
+                            edit_index = 0;
+                        }
+                        r_edit_dirty |= R_ALL;
+                    }
+                }
+            }
+            else if (mod_SH && mode == M_TRACK) {
+                u8 n = hid_to_ascii_raw(key);
+                if (n == 'L') {
+                    tele_set_pattern_l(
+                        edit_pattern,
+                        edit_index + offset_index + 1);
+                    r_edit_dirty |= R_ALL;
+                }
+                else if (n == 'S') {
+                    tele_set_pattern_start(
+                        edit_pattern, offset_index + edit_index);
+                }
+                else if (n == 'E') {
+                    tele_set_pattern_end(edit_pattern,
+                                         offset_index + edit_index);
+                }
+            }
+            else if (mod_META) {
+                u8 n = hid_to_ascii_raw(key);
+
+                if (n > 0x30 && n < 0x039) {
+                    if (mod_SH) {
+                        mutes[n - 0x31] ^= 1;
+                        activity |= A_MUTES;
+                    }
+                    else
+                        tele_script(n - 0x30);
+                }
+                else if (n == 'M') {
+                    run_script(METRO_SCRIPT);
+                }
+                else if (n == 'I') {
+                    run_script(INIT_SCRIPT);
+                }
+            }
+            else if (mode == M_TRACK) {
+                u8 n = hid_to_ascii(key, mod_key);
+
+                if (n > 0x2F && n < 0x03A) {
+                    int16_t v = tele_get_pattern_val(
+                        edit_pattern, edit_index + offset_index);
+                    if (v && v < 3276 && v > -3276) {
+                        v = v * 10;
+                        if (v > 0)
+                            tele_set_pattern_val(
+                                edit_pattern,
+                                edit_index + offset_index,
+                                v + n - 0x30);
+                        else
+                            tele_set_pattern_val(
+                                edit_pattern,
+                                edit_index + offset_index,
+                                v - n - 0x30);
+                    }
+                    else
+                        tele_set_pattern_val(
+                            edit_pattern, edit_index + offset_index,
+                            n - 0x30);
+                    r_edit_dirty |= R_ALL;
+                }
+                else if (n == 0x2D) {  // -
+                    int16_t v = tele_get_pattern_val(
+                        edit_pattern, edit_index + offset_index);
+                    tele_set_pattern_val(edit_pattern,
+                                         edit_index + offset_index,
+                                         -v);
+                    r_edit_dirty |= R_ALL;
+                }
+                else if (n == 0x20) {  // space
+                    if (tele_get_pattern_val(
+                            edit_pattern,
+                            edit_index + offset_index))
+                        tele_set_pattern_val(
+                            edit_pattern, edit_index + offset_index,
+                            0);
+                    else
+                        tele_set_pattern_val(
+                            edit_pattern, edit_index + offset_index,
+                            1);
+                    r_edit_dirty |= R_ALL;
+                }
+            }
+            else {  /// NORMAL TEXT ENTRY
+                if (key > 0x58 && key < 0x61) {
+                    tele_script(key - 0x58);
+                }
+                if (pos < 29) {
+                    // print_dbg_char(hid_to_ascii(frame[i],
+                    // frame[0]));
+                    u8 n = hid_to_ascii(key, mod_key);
+                    if (n) {
+                        for (int x = 31; x > pos; x--)
+                            input[x] = input[x - 1];
+
+                        input[pos] = n;
+                        pos++;
+                    }
+                    // pos++;
+                    // input[pos] = 0;
+                }
+            }
+
+            break;
+    }
+
+    r_edit_dirty |= R_INPUT;
+}
 
 u8 flash_is_fresh(void) {
     return (f.fresh != FIRSTRUN_KEY);
