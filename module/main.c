@@ -107,13 +107,7 @@ char scene_text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
 uint8_t metro_act;
 unsigned int metro_time;
 
-uint8_t mod_SH;
-uint8_t mod_ALT;
-uint8_t mod_CTRL;
-uint8_t mod_META;
-s8 mod_key;
-s8 hold_key;
-uint8_t hold_key_count = 0;
+uint8_t mod_key = 0, hold_key, hold_key_count = 0;
 
 uint8_t help_page;
 uint8_t help_length[8] = { HELP1_LENGTH, HELP2_LENGTH, HELP3_LENGTH,
@@ -195,7 +189,7 @@ static void handler_Trigger(s32 data);
 static void handler_ScreenRefresh(s32 data);
 static void handler_II(s32 data);
 
-static void process_keypress(s8 key);
+static void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key);
 
 static u8 flash_is_fresh(void);
 static void flash_unfresh(void);
@@ -372,8 +366,8 @@ static void handler_PollADC(s32 data) {
 
     tele_set_in(adc[0] << 2);
 
-    if (mode == M_TRACK && mod_CTRL) {
-        if (mod_SH)
+    if (mode == M_TRACK && (mod_key & CTRL)) {
+        if (mod_key & SHIFT)
             tele_set_pattern_val(edit_pattern, edit_index + offset_index,
                                  adc[1] >> 2);
         else
@@ -419,7 +413,7 @@ static void handler_KeyTimer(s32 data) {
 
     if (hold_key) {
         if (hold_key_count > 4)
-            process_keypress(hold_key);
+            process_keypress(hold_key, mod_key, true);
         else
             hold_key_count++;
     }
@@ -450,10 +444,6 @@ static void handler_HidTimer(s32 data) {
 
         for (size_t i = 2; i < 8; i++) {
             if (frame[i] == 0) {
-                mod_SH = frame[0] & SHIFT;
-                mod_CTRL = frame[0] & CTRL;
-                mod_ALT = frame[0] & ALT;
-                mod_META = frame[0] & META;
                 mod_key = frame[0];
                 if (i == 2) {
                     hold_key = 0;
@@ -464,18 +454,13 @@ static void handler_HidTimer(s32 data) {
             }
 
             if (frame_compare(frame[i]) == false) {
-                // CTRL = 1
-                // SHIFT = 2
-                // ALT = 4
-                // META = 8
-
                 // print_dbg("\r\nk: ");
                 // print_dbg_hex(frame[i]);
                 // print_dbg("\r\nmod: ");
                 // print_dbg_hex(frame[0]);
                 hold_key = frame[i];
                 hold_key_count = 0;
-                process_keypress(hold_key);
+                process_keypress(hold_key, mod_key, false);
             }
         }
 
@@ -918,15 +903,19 @@ void set_mode(uint8_t m) {
     }
 }
 
-void process_keypress(s8 key) {
+void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key) {
+    uint8_t mod_SH = mod_key & SHIFT;
+    uint8_t mod_ALT = mod_key & ALT;
+    uint8_t mod_META = mod_key & META;
+    
     switch (key) {
-        case 0x2B:  // tab
+        case TAB:
             if (mode == M_LIVE)
                 set_mode(M_EDIT);
             else
                 set_mode(M_LIVE);
             break;
-        case 0x35:  // ~
+        case TILDE:
             if (mode == M_TRACK)
                 set_mode(last_mode);
             else {
@@ -934,14 +923,16 @@ void process_keypress(s8 key) {
                 set_mode(M_TRACK);
             }
             break;
-        case 0x29:  // ESC
+        case ESCAPE:
             if (mod_ALT) {
                 last_mode = mode;
                 set_mode(M_PRESET_W);
             }
             else if (mod_META) {
-                clear_delays();
-                for (int i = 0; i < 4; i++) { aout[i].step = 1; }
+                if (!is_held_key) {
+                    clear_delays();
+                    for (int i = 0; i < 4; i++) { aout[i].step = 1; }
+                }
             }
             else if (mode == M_PRESET_R)
                 set_mode(last_mode);
@@ -949,7 +940,6 @@ void process_keypress(s8 key) {
                 last_mode = mode;
                 set_mode(M_PRESET_R);
             }
-
             break;
         case 0x3A:  // F1
             if (mode == M_HELP)
@@ -1024,7 +1014,6 @@ void process_keypress(s8 key) {
                 for (size_t n = 0; n < 32; n++) input[n] = 0;
             }
             break;
-
         case 0x52:  // up
             if (mode == M_TRACK) {
                 if (mod_ALT) {
@@ -1136,7 +1125,7 @@ void process_keypress(s8 key) {
                 if (v < 32766) {
                     tele_set_pattern_val(edit_pattern,
                                          edit_index + offset_index,
-                                         v++);
+                                         v + 1);
                     r_edit_dirty |= R_ALL;
                 }
             }
@@ -1173,7 +1162,7 @@ void process_keypress(s8 key) {
                 if (v > -32767) {
                     tele_set_pattern_val(edit_pattern,
                                          edit_index + offset_index,
-                                         v--);
+                                         v - 1);
                     r_edit_dirty |= R_ALL;
                 }
             }
@@ -1210,7 +1199,7 @@ void process_keypress(s8 key) {
 
                     uint16_t l = tele_get_pattern_l(edit_pattern);
                     if (l > edit_index + offset_index)
-                        tele_set_pattern_l(edit_pattern, l--);
+                        tele_set_pattern_l(edit_pattern, l - 1);
                 }
                 else {
                     int16_t new_v = tele_get_pattern_val(
@@ -1388,13 +1377,16 @@ void process_keypress(s8 key) {
             }
             else if (mode == M_PRESET_W) {
                 if (mod_ALT) {
-                    strcpy(scene_text[preset_edit_line +
-                                      preset_edit_offset],
-                           input);
-                    flash_write();
-                    for (size_t n = 0; n < 32; n++) input[n] = 0;
-                    pos = 0;
-                    set_mode(last_mode);
+                    if (!is_held_key)
+                    {
+                        strcpy(scene_text[preset_edit_line +
+                                          preset_edit_offset],
+                               input);
+                        flash_write();
+                        for (size_t n = 0; n < 32; n++) input[n] = 0;
+                        pos = 0;
+                        set_mode(last_mode);
+                    }
                 }
                 else {
                     strcpy(scene_text[preset_edit_line +
@@ -1414,14 +1406,16 @@ void process_keypress(s8 key) {
                 }
             }
             else if (mode == M_PRESET_R) {
-                flash_read();
-                tele_set_scene(preset_select);
+                if (!is_held_key) {
+                    flash_read();
+                    tele_set_scene(preset_select);
 
-                run_script(INIT_SCRIPT);
+                    run_script(INIT_SCRIPT);
 
-                for (size_t n = 0; n < 32; n++) input[n] = 0;
-                pos = 0;
-                set_mode(last_mode);
+                    for (size_t n = 0; n < 32; n++) input[n] = 0;
+                    pos = 0;
+                    set_mode(last_mode);
+                }
             }
             else if (mode == M_TRACK) {
                 if (mod_SH) {
@@ -1439,17 +1433,16 @@ void process_keypress(s8 key) {
                 }
                 else {
                     uint16_t l = tele_get_pattern_l(edit_pattern);
-                    if (edit_index + offset_index == l && l < 64) {
-                        tele_set_pattern_l(edit_pattern, l++);
-                        edit_index++;
-                        if (edit_index == 8) {
-                            edit_index = 7;
-                            if (offset_index < 56) {
-                                offset_index++;
-                            }
+                    if (edit_index + offset_index == l && l < 64)
+                        tele_set_pattern_l(edit_pattern, l + 1);
+                    edit_index++;
+                    if (edit_index == 8) {
+                        edit_index = 7;
+                        if (offset_index < 56) {
+                            offset_index++;
                         }
-                        r_edit_dirty |= R_ALL;
                     }
+                    r_edit_dirty |= R_ALL;
                 }
             }
             break;
@@ -1512,7 +1505,7 @@ void process_keypress(s8 key) {
                         uint16_t l =
                             tele_get_pattern_l(edit_pattern);
                         if (l > edit_index + offset_index) {
-                            tele_set_pattern_l(edit_pattern, l--);
+                            tele_set_pattern_l(edit_pattern, l - 1);
                         }
                         r_edit_dirty |= R_ALL;
                     }
@@ -1550,7 +1543,7 @@ void process_keypress(s8 key) {
                             if (l >= edit_index + offset_index &&
                                 l < 63) {
                                 tele_set_pattern_l(edit_pattern,
-                                                   l++);
+                                                   l + 1);
                             }
                         }
                         tele_set_pattern_val(
@@ -1730,7 +1723,7 @@ void process_keypress(s8 key) {
 
             break;
     }
-
+    
     r_edit_dirty |= R_INPUT;
 }
 
