@@ -1382,7 +1382,7 @@ void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key) {
                         tele_set_pattern_val(edit_pattern, i, v);
                     }
                     uint16_t l = tele_get_pattern_l(edit_pattern);
-                    if (l < 63) { tele_set_pattern_l(edit_pattern, l++); }
+                    if (l < 64) { tele_set_pattern_l(edit_pattern, l + 1); }
                     r_edit_dirty |= R_ALL;
                 }
                 else {
