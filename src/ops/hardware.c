@@ -1,3 +1,5 @@
+#include "print_funcs.h"
+
 #include "ops/hardware.h"
 
 #include "helpers.h"
@@ -112,83 +114,205 @@ static void op_CV_OFF_set(const void *NOTUSED(data), scene_state_t *ss,
     tele_cv(a, ss->variables.cv[a], 1);
 }
 
+#define II_ANSIBLE_ADDR       0xA0
+#define II_GET                128
+#define II_ANSIBLE_TR         1
+#define II_ANSIBLE_TR_TOG     2
+#define II_ANSIBLE_TR_PULSE   3
+#define II_ANSIBLE_TR_TIME    4
+#define II_ANSIBLE_TR_POL     5
+
 static void op_TR_get(const void *NOTUSED(data), scene_state_t *ss,
                       exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
-    a = normalise_value(0, TR_COUNT - 1, 0, a - 1);
-    cs_push(cs, ss->variables.tr[a]);
+    // a = normalise_value(0, TR_COUNT - 1, 0, a - 1);
+    a--;
+    if(a < 0)
+      cs_push(cs, 0);
+    else if(a < 4) 
+      cs_push(cs, ss->variables.tr[a]);
+    else if(a < 20) {
+      uint8_t d[] = {II_ANSIBLE_TR | II_GET, a & 0x3};
+      uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
+      // print_dbg("\r\nii: ");
+      // print_dbg_ulong(addr);
+      // print_dbg(" ");
+      // print_dbg_ulong(d[0]);
+      // print_dbg(" ");
+      // print_dbg_ulong(d[1]);
+      tele_ii_tx(addr, d, 2);
+      d[0] = 0;
+      tele_ii_rx(addr, d, 1);
+      cs_push(cs, d[0]);
+    }
+    else
+      cs_push(cs, 0);
 }
 
 static void op_TR_set(const void *NOTUSED(data), scene_state_t *ss,
                       exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
-    a = normalise_value(0, TR_COUNT - 1, 0, a - 1);
-    ss->variables.tr[a] = b != 0;
-    tele_tr(a, b);
+    // a = normalise_value(0, TR_COUNT - 1, 0, a - 1);
+    a--;
+    if(a < 0)
+      return;
+    else if(a < 4) {
+      ss->variables.tr[a] = b != 0;
+      tele_tr(a, b);
+    }
+    else if(a < 20) {
+      uint8_t d[] = {II_ANSIBLE_TR, a & 0x3, b};
+      uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
+      
+      tele_ii_tx(addr, d, 3);
+    }
 }
 
 static void op_TR_POL_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
-    a = normalise_value(0, TR_COUNT - 1, 0, a - 1);
-    cs_push(cs, ss->variables.tr_pol[a]);
+    // a = normalise_value(0, TR_COUNT - 1, 0, a - 1);
+    // cs_push(cs, ss->variables.tr_pol[a]);
+    a--;
+    if(a < 0)
+      cs_push(cs, 0);
+    else if(a < 4) 
+      cs_push(cs, ss->variables.tr_pol[a]);
+    else if(a < 20) {
+      uint8_t d[] = {II_ANSIBLE_TR_POL | II_GET, a & 0x3};
+      uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
+      tele_ii_tx(addr, d, 2);
+      d[0] = 0;
+      tele_ii_rx(addr, d, 1);
+      cs_push(cs, d[0]);
+    }
+    else
+      cs_push(cs, 0);
 }
 
 static void op_TR_POL_set(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
-    a = normalise_value(0, TR_COUNT - 1, 0, a - 1);
-    ss->variables.tr_pol[a] = b > 0;
+    // a = normalise_value(0, TR_COUNT - 1, 0, a - 1);
+    // ss->variables.tr_pol[a] = b > 0;
+    a--;
+    if(a < 0)
+      return;
+    else if(a < 4) {
+      ss->variables.tr_pol[a] = b > 0;
+    }
+    else if(a < 20) {
+      uint8_t d[] = {II_ANSIBLE_TR_POL, a & 0x3, b > 0};
+      uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
+      
+      tele_ii_tx(addr, d, 3);
+    }
 }
 
 static void op_TR_TIME_get(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
-    a = normalise_value(0, TR_COUNT - 1, 0, a - 1);
-    cs_push(cs, ss->variables.tr_time[a]);
+    // a = normalise_value(0, TR_COUNT - 1, 0, a - 1);
+    // cs_push(cs, ss->variables.tr_time[a]);
+    a--;
+    if(a < 0)
+      cs_push(cs, 0);
+    else if(a < 4) 
+      cs_push(cs, ss->variables.tr_time[a]);
+    else if(a < 20) {
+      uint8_t d[] = {II_ANSIBLE_TR_TIME | II_GET, a & 0x3};
+      uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
+      tele_ii_tx(addr, d, 2);
+      d[0] = 0;
+      tele_ii_rx(addr, d, 2);
+      cs_push(cs, (d[0] << 8) + d[1]);
+    }
+    else
+      cs_push(cs, 0);
 }
 
 static void op_TR_TIME_set(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
-    a = normalise_value(0, TR_COUNT - 1, 0, a - 1);
+    // a = normalise_value(0, TR_COUNT - 1, 0, a - 1);
     if (b < 0) b = 0;
-    ss->variables.tr_time[a] = b;
+    // ss->variables.tr_time[a] = b;
+    a--;
+    if(a < 0)
+      return;
+    else if(a < 4) {
+      ss->variables.tr_time[a] = b;
+    }
+    else if(a < 20) {
+      uint8_t d[] = {II_ANSIBLE_TR_TIME, a & 0x3, b >> 8, b & 0xff};
+      uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
+      
+      tele_ii_tx(addr, d, 4);
+    }
 }
 
 static void op_TR_TOG_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     // saturate and shift
-    if (a < 1)
-        a = 1;
-    else if (a > 4)
-        a = 4;
+    // a--;
+    // if (ss->variables.tr[a])
+    //     ss->variables.tr[a] = 0;
+    // else
+    //     ss->variables.tr[a] = 1;
+    // tele_tr(a, ss->variables.tr[a]);
+
     a--;
-    if (ss->variables.tr[a])
+    if(a < 0)
+      return;
+    else if(a < 4) {
+      if (ss->variables.tr[a])
         ss->variables.tr[a] = 0;
-    else
+      else
         ss->variables.tr[a] = 1;
-    tele_tr(a, ss->variables.tr[a]);
+      tele_tr(a, ss->variables.tr[a]);
+    }
+    else if(a < 20) {
+      uint8_t d[] = {II_ANSIBLE_TR_TOG, a & 0x3};
+      uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
+      
+      tele_ii_tx(addr, d, 2);
+    }
 }
 
 static void op_TR_PULSE_get(const void *NOTUSED(data), scene_state_t *ss,
                             exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     // saturate and shift
-    if (a < 1)
-        a = 1;
-    else if (a > 4)
-        a = 4;
+    // if (a < 1)
+    //     a = 1;
+    // else if (a > 4)
+    //     a = 4;
+    // a--;
+    // int16_t time = ss->variables.tr_time[a];  // pulse time
+    // if (time <= 0) return;                    // if time <= 0 don't do anything
+    // ss->variables.tr[a] = ss->variables.tr_pol[a];
+    // ss->tr_pulse_timer[a] = time;  // set time
+    // tele_tr(a, ss->variables.tr[a]);
+
     a--;
-    int16_t time = ss->variables.tr_time[a];  // pulse time
-    if (time <= 0) return;                    // if time <= 0 don't do anything
-    ss->variables.tr[a] = ss->variables.tr_pol[a];
-    ss->tr_pulse_timer[a] = time;  // set time
-    tele_tr(a, ss->variables.tr[a]);
+    if(a < 0)
+      return;
+    else if(a < 4) {
+      int16_t time = ss->variables.tr_time[a];  // pulse time
+      if (time <= 0) return;                    // if time <= 0 don't do anything
+      ss->variables.tr[a] = ss->variables.tr_pol[a];
+      ss->tr_pulse_timer[a] = time;  // set time
+      tele_tr(a, ss->variables.tr[a]);
+    }
+    else if(a < 20) {
+      uint8_t d[] = {II_ANSIBLE_TR_PULSE, a & 0x3};
+      uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
+      tele_ii_tx(addr, d, 2);
+    }
 }
 
 static void op_II_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
