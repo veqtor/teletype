@@ -5,6 +5,7 @@
 #include "helpers.h"
 #include "teletype.h"
 #include "teletype_io.h"
+#include "ii.h"
 
 static void op_CV_get(const void *data, scene_state_t *ss, exec_state_t *es,
                       command_state_t *cs);
@@ -63,64 +64,151 @@ const tele_op_t op_STATE    = MAKE_GET_OP(STATE   , op_STATE_get   , 1, true , "
 // clang-format on
 
 
+
 static void op_CV_get(const void *NOTUSED(data), scene_state_t *ss,
                       exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
-    a = normalise_value(0, CV_COUNT - 1, 0, a - 1);
-    cs_push(cs, ss->variables.cv[a]);
+    // a = normalise_value(0, CV_COUNT - 1, 0, a - 1);
+    // cs_push(cs, ss->variables.cv[a]);
+
+    a--;
+    if(a < 0)
+      cs_push(cs, 0);
+    else if(a < 4) 
+      cs_push(cs, ss->variables.cv[a]);
+    else if(a < 20) {
+      uint8_t d[] = {II_ANSIBLE_CV | II_GET, a & 0x3};
+      uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
+      tele_ii_tx(addr, d, 2);
+      d[0] = 0;
+      d[1] = 0;
+      tele_ii_rx(addr, d, 2);
+      cs_push(cs, (d[0] << 8) + d[1]);
+    }
+    else
+      cs_push(cs, 0);
 }
 
 static void op_CV_set(const void *NOTUSED(data), scene_state_t *ss,
                       exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
-    a = normalise_value(0, CV_COUNT - 1, 0, a - 1);
+    // a = normalise_value(0, CV_COUNT - 1, 0, a - 1);
     b = normalise_value(0, 16383, 0, b);
-    ss->variables.cv[a] = b;
-    tele_cv(a, b, 1);
+    // ss->variables.cv[a] = b;
+    // tele_cv(a, b, 1);
+
+    a--;
+    if(a < 0)
+      return;
+    else if(a < 4) {
+      ss->variables.cv[a] = b;
+      tele_cv(a, b, 1);
+    }
+    else if(a < 20) {
+      uint8_t d[] = {II_ANSIBLE_CV, a & 0x3, b >> 8, b & 0xff};
+      uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
+      
+      tele_ii_tx(addr, d, 4);
+    }
 }
 
 static void op_CV_SLEW_get(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
-    a = normalise_value(0, CV_COUNT - 1, 0, a - 1);
-    cs_push(cs, ss->variables.cv_slew[a]);
+    // a = normalise_value(0, CV_COUNT - 1, 0, a - 1);
+    // cs_push(cs, ss->variables.cv_slew[a]);
+
+    a--;
+    if(a < 0)
+      cs_push(cs, 0);
+    else if(a < 4) 
+      cs_push(cs, ss->variables.cv_slew[a]);
+    else if(a < 20) {
+      uint8_t d[] = {II_ANSIBLE_CV_SLEW | II_GET, a & 0x3};
+      uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
+      tele_ii_tx(addr, d, 2);
+      d[0] = 0;
+      d[1] = 0;
+      tele_ii_rx(addr, d, 2);
+      cs_push(cs, (d[0] << 8) + d[1]);
+    }
+    else
+      cs_push(cs, 0);
 }
 
 static void op_CV_SLEW_set(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
-    a = normalise_value(0, CV_COUNT - 1, 0, a - 1);
+    // a = normalise_value(0, CV_COUNT - 1, 0, a - 1);
     b = normalise_value(1, 32767, 0, b);  // min slew = 1
-    ss->variables.cv_slew[a] = b;
-    tele_cv_slew(a, b);
+    // ss->variables.cv_slew[a] = b;
+    // tele_cv_slew(a, b);
+
+    a--;
+    if(a < 0)
+      return;
+    else if(a < 4) {
+      ss->variables.cv_slew[a] = b;
+      tele_cv_slew(a, b);
+    }
+    else if(a < 20) {
+      uint8_t d[] = {II_ANSIBLE_CV_SLEW, a & 0x3, b >> 8, b & 0xff};
+      uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
+      
+      tele_ii_tx(addr, d, 4);
+    }
 }
 
 static void op_CV_OFF_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
-    a = normalise_value(0, CV_COUNT - 1, 0, a - 1);
-    cs_push(cs, ss->variables.cv_off[a]);
+    // a = normalise_value(0, CV_COUNT - 1, 0, a - 1);
+    // cs_push(cs, ss->variables.cv_off[a]);
+
+    a--;
+    if(a < 0)
+      cs_push(cs, 0);
+    else if(a < 4) 
+      cs_push(cs, ss->variables.cv_off[a]);
+    else if(a < 20) {
+      uint8_t d[] = {II_ANSIBLE_CV_OFF | II_GET, a & 0x3};
+      uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
+      tele_ii_tx(addr, d, 2);
+      d[0] = 0;
+      d[1] = 0;
+      tele_ii_rx(addr, d, 2);
+      cs_push(cs, (d[0] << 8) + d[1]);
+    }
+    else
+      cs_push(cs, 0);
 }
 
 static void op_CV_OFF_set(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
-    a = normalise_value(0, CV_COUNT - 1, 0, a - 1);
+    // a = normalise_value(0, CV_COUNT - 1, 0, a - 1);
     ss->variables.cv_off[a] = b;
-    tele_cv_off(a, b);
-    tele_cv(a, ss->variables.cv[a], 1);
-}
+    // tele_cv_off(a, b);
+    // tele_cv(a, ss->variables.cv[a], 1);
 
-#define II_ANSIBLE_ADDR       0xA0
-#define II_GET                128
-#define II_ANSIBLE_TR         1
-#define II_ANSIBLE_TR_TOG     2
-#define II_ANSIBLE_TR_PULSE   3
-#define II_ANSIBLE_TR_TIME    4
-#define II_ANSIBLE_TR_POL     5
+    a--;
+    if(a < 0)
+      return;
+    else if(a < 4) {
+      ss->variables.cv_off[a] = b;
+      tele_cv_off(a, b);
+      tele_cv(a, ss->variables.cv[a], 1);
+    }
+    else if(a < 20) {
+      uint8_t d[] = {II_ANSIBLE_CV_OFF, a & 0x3, b >> 8, b & 0xff};
+      uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
+      
+      tele_ii_tx(addr, d, 4);
+    }
+}
 
 static void op_TR_get(const void *NOTUSED(data), scene_state_t *ss,
                       exec_state_t *NOTUSED(es), command_state_t *cs) {
@@ -134,12 +222,6 @@ static void op_TR_get(const void *NOTUSED(data), scene_state_t *ss,
     else if(a < 20) {
       uint8_t d[] = {II_ANSIBLE_TR | II_GET, a & 0x3};
       uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
-      // print_dbg("\r\nii: ");
-      // print_dbg_ulong(addr);
-      // print_dbg(" ");
-      // print_dbg_ulong(d[0]);
-      // print_dbg(" ");
-      // print_dbg_ulong(d[1]);
       tele_ii_tx(addr, d, 2);
       d[0] = 0;
       tele_ii_rx(addr, d, 1);
@@ -226,6 +308,7 @@ static void op_TR_TIME_get(const void *NOTUSED(data), scene_state_t *ss,
       uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
       tele_ii_tx(addr, d, 2);
       d[0] = 0;
+      d[1] = 0;
       tele_ii_rx(addr, d, 2);
       cs_push(cs, (d[0] << 8) + d[1]);
     }
@@ -327,17 +410,31 @@ static void op_CV_SET_get(const void *NOTUSED(data), scene_state_t *ss,
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
     // saturate and shift
-    if (a < 1)
-        a = 1;
-    else if (a > 4)
-        a = 4;
-    a--;
+    // if (a < 1)
+    //     a = 1;
+    // else if (a > 4)
+    //     a = 4;
+    // a--;
     if (b < 0)
         b = 0;
     else if (b > 16383)
         b = 16383;
-    ss->variables.cv[a] = b;
-    tele_cv(a, b, 0);
+    // ss->variables.cv[a] = b;
+    // tele_cv(a, b, 0);
+
+    a--;
+    if(a < 0)
+      return;
+    else if(a < 4) {
+      ss->variables.cv[a] = b;
+      tele_cv(a, b, 0);
+    }
+    else if(a < 20) {
+      uint8_t d[] = {II_ANSIBLE_CV_SET, a & 0x3, b >> 8, b & 0xff};
+      uint8_t addr = II_ANSIBLE_ADDR + (((a-4) >> 2) << 1);
+      
+      tele_ii_tx(addr, d, 4);
+    }
 }
 
 static void op_MUTE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
@@ -359,11 +456,27 @@ static void op_UNMUTE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
 static void op_STATE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
-    a--;
-    if (a < 0)
-        a = 0;
-    else if (a > 7)
-        a = 7;
+    // a--;
+    // if (a < 0)
+    //     a = 0;
+    // else if (a > 7)
+    //     a = 7;
 
-    cs_push(cs, tele_get_input_state(a));
+    // cs_push(cs, tele_get_input_state(a));
+
+    a--;
+    if(a < 0)
+      cs_push(cs, 0);
+    else if(a < 8) 
+      cs_push(cs, tele_get_input_state(a));
+    else if(a < 24) {
+      uint8_t d[] = {II_ANSIBLE_INPUT | II_GET, a & 0x3};
+      uint8_t addr = II_ANSIBLE_ADDR + (((a-8) >> 2) << 1);
+      tele_ii_tx(addr, d, 2);
+      d[0] = 0;
+      tele_ii_rx(addr, d, 1);
+      cs_push(cs, d[0]);
+    }
+    else
+      cs_push(cs, 0);
 }
