@@ -510,7 +510,6 @@ static void op_STATE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
     }
     else
         cs_push(cs, 0);
-<<<<<<< HEAD
 }
 
 
@@ -597,6 +596,4 @@ static void op_JF_GOD_get(const void *data, scene_state_t *ss, exec_state_t *es,
 
     uint8_t d[] = { JF_TICK, a };
     tele_ii_tx(JF_ADDR, d, 2);
-=======
->>>>>>> 7d46f79be217391dafa7cf99de0e134565a17288
 }
