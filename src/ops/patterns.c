@@ -104,8 +104,8 @@ static void op_P_L_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t a = cs_pop(cs);
     if (a < 0)
         tele_set_pattern_l(pn, 0);
-    else if (a > 63)
-        tele_set_pattern_l(pn, 63);
+    else if (a > 64)
+        tele_set_pattern_l(pn, 64);
     else
         tele_set_pattern_l(pn, a);
 }

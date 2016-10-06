@@ -40,7 +40,8 @@ const tele_op_t *tele_ops[OPS] = {
     // hardware
     &op_CV, &op_CV_OFF, &op_CV_SLEW, &op_TR, &op_TR_POL, &op_TR_TIME,
     &op_TR_TOG, &op_TR_PULSE, &op_II, &op_CV_SET, &op_MUTE, &op_UNMUTE,
-    &op_STATE,
+    &op_STATE, &op_JF_TR, &op_JF_RMODE, &op_JF_RUN, &op_JF_SHIFT, &op_JF_VTR,
+    &op_JF_MODE, &op_JF_TICK, &op_JF_VOX, &op_JF_NOTE, &op_JF_GOD,
 
     // maths
     &op_ADD, &op_SUB, &op_MUL, &op_DIV, &op_MOD, &op_RAND, &op_RRAND, &op_TOSS,

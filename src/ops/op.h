@@ -27,7 +27,7 @@ typedef struct {
     const char *doc;
 } tele_mod_t;
 
-#define OPS 145
+#define OPS 155
 extern const tele_op_t *tele_ops[OPS];
 
 #define MODS 7

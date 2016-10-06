@@ -116,6 +116,18 @@ uint8_t help_length[8] = { HELP1_LENGTH, HELP2_LENGTH, HELP3_LENGTH,
 
 int16_t output, output_new;
 
+#define I2C_DATA_LENGTH_MAX 8
+#define I2C_QUEUE_SIZE 16
+
+struct {
+    bool waiting;
+    uint8_t addr;
+    uint8_t l;
+    uint8_t d[I2C_DATA_LENGTH_MAX];
+} i2c_queue[I2C_QUEUE_SIZE];
+
+uint8_t i2c_waiting_count;
+
 #define FIRSTRUN_KEY 0x22
 
 typedef const struct {
@@ -827,6 +839,12 @@ static void handler_II(s32 data) {
     // print_dbg_ulong(d);
 }
 
+static void handler_IItx(s32 data) {
+    i2c_queue[data].waiting = false;
+    i2c_waiting_count--;
+    i2c_master_tx(i2c_queue[data].addr, i2c_queue[data].d, i2c_queue[data].l);
+}
+
 
 // assign event handlers
 static inline void assign_main_event_handlers(void) {
@@ -841,6 +859,7 @@ static inline void assign_main_event_handlers(void) {
     app_event_handlers[kEventTrigger] = &handler_Trigger;
     app_event_handlers[kEventScreenRefresh] = &handler_ScreenRefresh;
     app_event_handlers[kEventII] = &handler_II;
+    app_event_handlers[kEventIItx] = &handler_IItx;
 }
 
 // app event loop
@@ -1771,11 +1790,31 @@ void tele_ii(uint8_t i, int16_t d) {
     event_post(&e);
 }
 
-void tele_ii_tx(uint8_t addr, uint8_t *data, uint8_t l) {
-    i2c_master_tx(addr, data, l);
+void tele_ii_tx(uint8_t addr, uint8_t* data, uint8_t l) {
+    int i = 0, n;
+
+    if (i2c_waiting_count < I2C_QUEUE_SIZE) {
+        while (i2c_queue[i].waiting == true) i++;
+
+        i2c_queue[i].waiting = true;
+        i2c_queue[i].addr = addr;
+        i2c_queue[i].l = l;
+
+        for (n = 0; n < l; n++) i2c_queue[i].d[n] = data[n];
+
+        i2c_waiting_count++;
+
+        static event_t e;
+        e.type = kEventIItx;
+        e.data = i;
+        event_post(&e);
+    }
+    else {
+        print_dbg("\r\ni2c queue full");
+    }
 }
 
-void tele_ii_rx(uint8_t addr, uint8_t *data, uint8_t l) {
+void tele_ii_rx(uint8_t addr, uint8_t* data, uint8_t l) {
     i2c_master_rx(addr, data, l);
 }
 
