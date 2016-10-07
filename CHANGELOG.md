@@ -1,16 +1,25 @@
 # Changelog
 
 ## vNext
+
+## v1.21
+- **NEW**: Just Friends ops: `JF.GOD`, `JF.MODE`, `JF.NOTE`, `JF.RMODE`, `JF.RUN`, `JF.SHIFT`, `JF.TICK`, `JF.TR`, `JF.VOX`, `JF.VTR`
+
+## v1.2
+- **NEW**: Ansible support added to ops: `CV`, `CV.OFF`, `CV.SET`, `CV.SLEW`, `STATE`, `TR`, `TR.POL`, `TR.PULSE`, `TR.TIME`, `TR.TOG`
 - **NEW**: `P.RM` will also return the value removed
 - **NEW**: `ER` op
 - **IMP**: a `TR.TIME` of 0 will disable the pulse
 - **IMP**: `O.DIR` renamed to `O.INC`, it's the value by which `O` is *incremented* when it is accessed
 - **IMP**: `IF`, `ELIF`, `ELSE` status is reset on each script run
+- **IMP**: key repeat now works for all keypresses
 - **FIX**: `FLIP` won't interfere with the value of `O`
 - **FIX**: the `O` op now returns it's set value *before* updating itself
 - **FIX**: the `DRUNK` op now returns it's set value *before* updating itself
 - **FIX**: `P.START` and `P.END` were set to 1 when set with too large values, now are set to 63
 - **FIX**: `CV.SLEW` is correctly initialised to 1 for all outputs
+- **FIX**: several bugs where pattern length wasn't updated in track mode
+- **FIX**: fixed `[` and `]` not updating values in track mode
 
 ## v1.1
 - **NEW**: USB flash drive read/write
