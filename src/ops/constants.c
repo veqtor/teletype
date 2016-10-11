@@ -20,6 +20,7 @@ const tele_op_t op_WW_MUTE3 = MAKE_CONSTANT_OP(WW.MUTE3, WW_MUTE3, "WW.MUTE3");
 const tele_op_t op_WW_MUTE4 = MAKE_CONSTANT_OP(WW.MUTE4, WW_MUTE4, "WW.MUTE4");
 const tele_op_t op_WW_MUTEA = MAKE_CONSTANT_OP(WW.MUTEA, WW_MUTEA, "WW.MUTEA");
 const tele_op_t op_WW_MUTEB = MAKE_CONSTANT_OP(WW.MUTEB, WW_MUTEB, "WW.MUTEB");
+
 const tele_op_t op_MP_PRESET =
     MAKE_CONSTANT_OP(MP.PRESET, MP_PRESET, "MP.PRESET");
 const tele_op_t op_MP_RESET = MAKE_CONSTANT_OP(MP.RESET, MP_RESET, "MP.RESET");
@@ -32,6 +33,7 @@ const tele_op_t op_MP_FREEZE =
 const tele_op_t op_MP_UNFREEZE =
     MAKE_CONSTANT_OP(MP.UNFREEZE, MP_UNFREEZE, "MP.UNFREEZE");
 const tele_op_t op_MP_STOP = MAKE_CONSTANT_OP(MP.STOP, MP_STOP, "MP.STOP");
+
 const tele_op_t op_ES_PRESET =
     MAKE_CONSTANT_OP(ES.PRESET, ES_PRESET, "ES.PRESET");
 const tele_op_t op_ES_MODE = MAKE_CONSTANT_OP(ES.MODE, ES_MODE, "ES.MODE");
@@ -44,15 +46,14 @@ const tele_op_t op_ES_STOP = MAKE_CONSTANT_OP(ES.STOP, ES_STOP, "ES.STOP");
 const tele_op_t op_ES_TRIPLE =
     MAKE_CONSTANT_OP(ES.TRIPLE, ES_TRIPLE, "ES.TRIPLE");
 const tele_op_t op_ES_MAGIC = MAKE_CONSTANT_OP(ES.MAGIC, ES_MAGIC, "ES.MAGIC");
-const tele_op_t op_ORCA_TRACK = MAKE_CONSTANT_OP(OR.TRK, ORCA_TRACK, "OR.TRK");
-const tele_op_t op_ORCA_CLOCK = MAKE_CONSTANT_OP(OR.CLK, ORCA_CLOCK, "OR.CLK");
-const tele_op_t op_ORCA_DIVISOR =
-    MAKE_CONSTANT_OP(OR.DIV, ORCA_DIVISOR, "OR.DIV");
+
+const tele_op_t op_ORCA_TRK = MAKE_CONSTANT_OP(OR.TRK, ORCA_TRACK, "OR.TRK");
+const tele_op_t op_ORCA_CLK = MAKE_CONSTANT_OP(OR.CLK, ORCA_CLOCK, "OR.CLK");
+const tele_op_t op_ORCA_DIV = MAKE_CONSTANT_OP(OR.DIV, ORCA_DIVISOR, "OR.DIV");
 const tele_op_t op_ORCA_PHASE =
     MAKE_CONSTANT_OP(OR.PHASE, ORCA_PHASE, "OR.PHASE");
-const tele_op_t op_ORCA_RESET = MAKE_CONSTANT_OP(OR.RST, ORCA_RESET, "OR.RST");
-const tele_op_t op_ORCA_WEIGHT =
-    MAKE_CONSTANT_OP(OR.WGT, ORCA_WEIGHT, "OR.WGT");
+const tele_op_t op_ORCA_RST = MAKE_CONSTANT_OP(OR.RST, ORCA_RESET, "OR.RST");
+const tele_op_t op_ORCA_WGT = MAKE_CONSTANT_OP(OR.WGT, ORCA_WEIGHT, "OR.WGT");
 const tele_op_t op_ORCA_MUTE = MAKE_CONSTANT_OP(OR.MUTE, ORCA_MUTE, "OR.MUTE");
 const tele_op_t op_ORCA_SCALE =
     MAKE_CONSTANT_OP(OR.SCALE, ORCA_SCALE, "OR.SCALE");
@@ -61,11 +62,11 @@ const tele_op_t op_ORCA_PRESET =
     MAKE_CONSTANT_OP(OR.PRESET, ORCA_PRESET, "OR.PRESET");
 const tele_op_t op_ORCA_RELOAD =
     MAKE_CONSTANT_OP(OR.RELOAD, ORCA_RELOAD, "OR.RELOAD");
-const tele_op_t op_ORCA_ROTATES =
+const tele_op_t op_ORCA_ROTS =
     MAKE_CONSTANT_OP(OR.ROTS, ORCA_ROTATES, "OR.ROTS");
-const tele_op_t op_ORCA_ROTATEW =
+const tele_op_t op_ORCA_ROTW =
     MAKE_CONSTANT_OP(OR.ROTW, ORCA_ROTATEW, "OR.ROTW");
-const tele_op_t op_ORCA_GRESET =
+const tele_op_t op_ORCA_GRST =
     MAKE_CONSTANT_OP(OR.GRST, ORCA_GRESET, "OR.GRST");
 const tele_op_t op_ORCA_CVA = MAKE_CONSTANT_OP(OR.CVA, ORCA_CVA, "OR.CVA");
 const tele_op_t op_ORCA_CVB = MAKE_CONSTANT_OP(OR.CVB, ORCA_CVB, "OR.CVB");

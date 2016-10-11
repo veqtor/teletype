@@ -513,8 +513,8 @@ static void op_STATE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
 }
 
 
-static void op_JF_TR_get(const void *data, scene_state_t *ss, exec_state_t *es,
-                         command_state_t *cs) {
+static void op_JF_TR_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+                         exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
 
@@ -522,32 +522,34 @@ static void op_JF_TR_get(const void *data, scene_state_t *ss, exec_state_t *es,
     tele_ii_tx(JF_ADDR, d, 3);
 }
 
-static void op_JF_RMODE_get(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs) {
+static void op_JF_RMODE_get(const void *NOTUSED(data),
+                            scene_state_t *NOTUSED(ss),
+                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
 
     uint8_t d[] = { JF_RMODE, a };
     tele_ii_tx(JF_ADDR, d, 2);
 }
 
-static void op_JF_RUN_get(const void *data, scene_state_t *ss, exec_state_t *es,
-                          command_state_t *cs) {
+static void op_JF_RUN_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
 
     uint8_t d[] = { JF_RUN, a >> 8, a & 0xff };
     tele_ii_tx(JF_ADDR, d, 3);
 }
 
-static void op_JF_SHIFT_get(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs) {
+static void op_JF_SHIFT_get(const void *NOTUSED(data),
+                            scene_state_t *NOTUSED(ss),
+                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
 
     uint8_t d[] = { JF_SHIFT, a >> 8, a & 0xff };
     tele_ii_tx(JF_ADDR, d, 3);
 }
 
-static void op_JF_VTR_get(const void *data, scene_state_t *ss, exec_state_t *es,
-                          command_state_t *cs) {
+static void op_JF_VTR_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
 
@@ -555,24 +557,26 @@ static void op_JF_VTR_get(const void *data, scene_state_t *ss, exec_state_t *es,
     tele_ii_tx(JF_ADDR, d, 4);
 }
 
-static void op_JF_MODE_get(const void *data, scene_state_t *ss,
-                           exec_state_t *es, command_state_t *cs) {
+static void op_JF_MODE_get(const void *NOTUSED(data),
+                           scene_state_t *NOTUSED(ss),
+                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
 
     uint8_t d[] = { JF_MODE, a };
     tele_ii_tx(JF_ADDR, d, 2);
 }
 
-static void op_JF_TICK_get(const void *data, scene_state_t *ss,
-                           exec_state_t *es, command_state_t *cs) {
+static void op_JF_TICK_get(const void *NOTUSED(data),
+                           scene_state_t *NOTUSED(ss),
+                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
 
     uint8_t d[] = { JF_TICK, a };
     tele_ii_tx(JF_ADDR, d, 2);
 }
 
-static void op_JF_VOX_get(const void *data, scene_state_t *ss, exec_state_t *es,
-                          command_state_t *cs) {
+static void op_JF_VOX_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
     int16_t c = cs_pop(cs);
@@ -581,8 +585,9 @@ static void op_JF_VOX_get(const void *data, scene_state_t *ss, exec_state_t *es,
     tele_ii_tx(JF_ADDR, d, 6);
 }
 
-static void op_JF_NOTE_get(const void *data, scene_state_t *ss,
-                           exec_state_t *es, command_state_t *cs) {
+static void op_JF_NOTE_get(const void *NOTUSED(data),
+                           scene_state_t *NOTUSED(ss),
+                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
 
@@ -590,8 +595,8 @@ static void op_JF_NOTE_get(const void *data, scene_state_t *ss,
     tele_ii_tx(JF_ADDR, d, 5);
 }
 
-static void op_JF_GOD_get(const void *data, scene_state_t *ss, exec_state_t *es,
-                          command_state_t *cs) {
+static void op_JF_GOD_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
 
     uint8_t d[] = { JF_TICK, a };
