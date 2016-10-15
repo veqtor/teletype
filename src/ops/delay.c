@@ -11,9 +11,8 @@ static void op_DEL_CLR_get(const void *data, scene_state_t *ss,
                            exec_state_t *es, command_state_t *cs);
 
 
-const tele_mod_t mod_DEL = MAKE_MOD(DEL, mod_DEL_func, 1, "DELAY THIS COMMAND");
-const tele_op_t op_DEL_CLR =
-    MAKE_GET_OP(DEL.CLR, op_DEL_CLR_get, 0, false, "DELAY: FLUSH");
+const tele_mod_t mod_DEL = MAKE_MOD(DEL, mod_DEL_func, 1);
+const tele_op_t op_DEL_CLR = MAKE_GET_OP(DEL.CLR, op_DEL_CLR_get, 0, false);
 
 static void mod_DEL_func(scene_state_t *ss, exec_state_t *NOTUSED(es),
                          command_state_t *cs, tele_command_t *sub_command) {
