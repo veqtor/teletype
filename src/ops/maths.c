@@ -75,39 +75,39 @@ static void op_ER_get(const void *data, scene_state_t *ss, exec_state_t *es,
 
 
 // clang-format off
-const tele_op_t op_ADD   = MAKE_GET_OP(ADD     , op_ADD_get     , 2, true , "[A B] ADD A TO B"                          );
-const tele_op_t op_SUB   = MAKE_GET_OP(SUB     , op_SUB_get     , 2, true , "[A B] SUBTRACT B FROM A"                   );
-const tele_op_t op_MUL   = MAKE_GET_OP(MUL     , op_MUL_get     , 2, true , "[A B] MULTIPLY TWO VALUES"                 );
-const tele_op_t op_DIV   = MAKE_GET_OP(DIV     , op_DIV_get     , 2, true , "[A B] DIVIDE FIRST BY SECOND"              );
-const tele_op_t op_MOD   = MAKE_GET_OP(MOD     , op_MOD_get     , 2, true , "[A B] MOD FIRST BY SECOND"                 );
-const tele_op_t op_RAND  = MAKE_GET_OP(RAND    , op_RAND_get    , 1, true , "[A] RETURN RANDOM NUMBER UP TO A"          );
-const tele_op_t op_RRAND = MAKE_GET_OP(RRAND   , op_RRAND_get   , 2, true , "[A B] RETURN RANDOM NUMBER BETWEEN A AND B");
-const tele_op_t op_TOSS  = MAKE_GET_OP(TOSS    , op_TOSS_get    , 0, true , "RETURN RANDOM STATE"                       );
-const tele_op_t op_MIN   = MAKE_GET_OP(MIN     , op_MIN_get     , 2, true , "RETURN LESSER OF TWO VALUES"               );
-const tele_op_t op_MAX   = MAKE_GET_OP(MAX     , op_MAX_get     , 2, true , "RETURN GREATER OF TWO VALUES"              );
-const tele_op_t op_LIM   = MAKE_GET_OP(LIM     , op_LIM_get     , 3, true , "[A B C] LIMIT C TO RANGE A TO B"           );
-const tele_op_t op_WRAP  = MAKE_GET_OP(WRAP    , op_WRAP_get    , 3, true , "[A B C] WRAP C WITHIN RANGE A TO B"        );
-const tele_op_t op_QT    = MAKE_GET_OP(QT      , op_QT_get      , 2, true , "[A B] QUANTIZE A TO STEP SIZE B"           );
-const tele_op_t op_AVG   = MAKE_GET_OP(AVG     , op_AVG_get     , 2, true , "AVERAGE TWO VALUES"                        );
-const tele_op_t op_EQ    = MAKE_GET_OP(EQ      , op_EQ_get      , 2, true , "LOGIC: EQUAL"                              );
-const tele_op_t op_NE    = MAKE_GET_OP(NE      , op_NE_get      , 2, true , "LOGIC: NOT EQUAL"                          );
-const tele_op_t op_LT    = MAKE_GET_OP(LT      , op_LT_get      , 2, true , "LOGIC: LESS THAN"                          );
-const tele_op_t op_GT    = MAKE_GET_OP(GT      , op_GT_get      , 2, true , "LOGIC: GREATER THAN"                       );
-const tele_op_t op_NZ    = MAKE_GET_OP(NZ      , op_NZ_get      , 1, true , "LOGIC: NOT ZERO"                           );
-const tele_op_t op_EZ    = MAKE_GET_OP(EZ      , op_EZ_get      , 1, true , "LOGIC: EQUALS ZERO"                        );
-const tele_op_t op_RSH   = MAKE_GET_OP(RSH     , op_RSH_get     , 2, true , "RIGHT SHIFT"                               );
-const tele_op_t op_LSH   = MAKE_GET_OP(LSH     , op_LSH_get     , 2, true , "LEFT SHIFT"                                );
-const tele_op_t op_EXP   = MAKE_GET_OP(EXP     , op_EXP_get     , 1, true , "EXPONENTIATE"                              );
-const tele_op_t op_ABS   = MAKE_GET_OP(ABS     , op_ABS_get     , 1, true , "ABSOLUTE VALUE"                            );
-const tele_op_t op_AND   = MAKE_GET_OP(AND     , op_AND_get     , 2, true , "LOGIC: AND"                                );
-const tele_op_t op_OR    = MAKE_GET_OP(OR      , op_OR_get      , 2, true , "LOGIC: OR"                                 );
-const tele_op_t op_XOR   = MAKE_GET_OP(XOR     , op_XOR_get     , 2, true , "LOGIC: XOR"                                );
-const tele_op_t op_JI    = MAKE_GET_OP(JI      , op_JI_get      , 2, true , "JUST INTONE DIVISON"                       );
-const tele_op_t op_SCALE = MAKE_GET_OP(SCALE   , op_SCALE_get   , 5, true , "SCALE NUMBER RANGES"                       );
-const tele_op_t op_N     = MAKE_GET_OP(N       , op_N_get       , 1, true , "TABLE FOR NOTE VALUES"                     );
-const tele_op_t op_V     = MAKE_GET_OP(V       , op_V_get       , 1, true , "TO VOLT"                                   );
-const tele_op_t op_VV    = MAKE_GET_OP(VV      , op_VV_get      , 1, true , "TO VOLT WITH PRECISION"                    );
-const tele_op_t op_ER    = MAKE_GET_OP(ER      , op_ER_get      , 3, true , "EUCLIDEAN RHYTHMS"                         );
+const tele_op_t op_ADD   = MAKE_GET_OP(ADD     , op_ADD_get     , 2, true);
+const tele_op_t op_SUB   = MAKE_GET_OP(SUB     , op_SUB_get     , 2, true);
+const tele_op_t op_MUL   = MAKE_GET_OP(MUL     , op_MUL_get     , 2, true);
+const tele_op_t op_DIV   = MAKE_GET_OP(DIV     , op_DIV_get     , 2, true);
+const tele_op_t op_MOD   = MAKE_GET_OP(MOD     , op_MOD_get     , 2, true);
+const tele_op_t op_RAND  = MAKE_GET_OP(RAND    , op_RAND_get    , 1, true);
+const tele_op_t op_RRAND = MAKE_GET_OP(RRAND   , op_RRAND_get   , 2, true);
+const tele_op_t op_TOSS  = MAKE_GET_OP(TOSS    , op_TOSS_get    , 0, true);
+const tele_op_t op_MIN   = MAKE_GET_OP(MIN     , op_MIN_get     , 2, true);
+const tele_op_t op_MAX   = MAKE_GET_OP(MAX     , op_MAX_get     , 2, true);
+const tele_op_t op_LIM   = MAKE_GET_OP(LIM     , op_LIM_get     , 3, true);
+const tele_op_t op_WRAP  = MAKE_GET_OP(WRAP    , op_WRAP_get    , 3, true);
+const tele_op_t op_QT    = MAKE_GET_OP(QT      , op_QT_get      , 2, true);
+const tele_op_t op_AVG   = MAKE_GET_OP(AVG     , op_AVG_get     , 2, true);
+const tele_op_t op_EQ    = MAKE_GET_OP(EQ      , op_EQ_get      , 2, true);
+const tele_op_t op_NE    = MAKE_GET_OP(NE      , op_NE_get      , 2, true);
+const tele_op_t op_LT    = MAKE_GET_OP(LT      , op_LT_get      , 2, true);
+const tele_op_t op_GT    = MAKE_GET_OP(GT      , op_GT_get      , 2, true);
+const tele_op_t op_NZ    = MAKE_GET_OP(NZ      , op_NZ_get      , 1, true);
+const tele_op_t op_EZ    = MAKE_GET_OP(EZ      , op_EZ_get      , 1, true);
+const tele_op_t op_RSH   = MAKE_GET_OP(RSH     , op_RSH_get     , 2, true);
+const tele_op_t op_LSH   = MAKE_GET_OP(LSH     , op_LSH_get     , 2, true);
+const tele_op_t op_EXP   = MAKE_GET_OP(EXP     , op_EXP_get     , 1, true);
+const tele_op_t op_ABS   = MAKE_GET_OP(ABS     , op_ABS_get     , 1, true);
+const tele_op_t op_AND   = MAKE_GET_OP(AND     , op_AND_get     , 2, true);
+const tele_op_t op_OR    = MAKE_GET_OP(OR      , op_OR_get      , 2, true);
+const tele_op_t op_XOR   = MAKE_GET_OP(XOR     , op_XOR_get     , 2, true);
+const tele_op_t op_JI    = MAKE_GET_OP(JI      , op_JI_get      , 2, true);
+const tele_op_t op_SCALE = MAKE_GET_OP(SCALE   , op_SCALE_get   , 5, true);
+const tele_op_t op_N     = MAKE_GET_OP(N       , op_N_get       , 1, true);
+const tele_op_t op_V     = MAKE_GET_OP(V       , op_V_get       , 1, true);
+const tele_op_t op_VV    = MAKE_GET_OP(VV      , op_VV_get      , 1, true);
+const tele_op_t op_ER    = MAKE_GET_OP(ER      , op_ER_get      , 3, true);
 // clang-format on
 
 

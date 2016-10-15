@@ -14,7 +14,7 @@ static void op_M_ACT_set(const void *data, scene_state_t *ss, exec_state_t *es,
 static void op_M_RESET_get(const void *data, scene_state_t *ss,
                            exec_state_t *es, command_state_t *cs);
 
-const tele_op_t op_M = MAKE_GET_SET_OP(M, op_M_get, op_M_set, 0, true, "M");
+const tele_op_t op_M = MAKE_GET_SET_OP(M, op_M_get, op_M_set, 0, true);
 
 static void op_M_get(const void *NOTUSED(data), scene_state_t *ss,
                      exec_state_t *NOTUSED(es), command_state_t *cs) {
@@ -30,7 +30,7 @@ static void op_M_set(const void *NOTUSED(data), scene_state_t *ss,
 }
 
 const tele_op_t op_M_ACT =
-    MAKE_GET_SET_OP(M.ACT, op_M_ACT_get, op_M_ACT_set, 0, true, "M.ACT");
+    MAKE_GET_SET_OP(M.ACT, op_M_ACT_get, op_M_ACT_set, 0, true);
 
 
 static void op_M_ACT_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -46,8 +46,7 @@ static void op_M_ACT_set(const void *NOTUSED(data), scene_state_t *ss,
     tele_metro(ss->variables.m, m_act, 0);
 }
 
-const tele_op_t op_M_RESET =
-    MAKE_GET_OP(M.RESET, op_M_RESET_get, 0, false, "METRO: RESET");
+const tele_op_t op_M_RESET = MAKE_GET_OP(M.RESET, op_M_RESET_get, 0, false);
 
 static void op_M_RESET_get(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es),

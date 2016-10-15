@@ -20,30 +20,30 @@ static void op_O_set(const void *data, scene_state_t *ss, exec_state_t *es,
                      command_state_t *cs);
 
 // clang-format off
-const tele_op_t op_A          = MAKE_SIMPLE_VARIABLE_OP(A         , variables.a         , "A");
-const tele_op_t op_B          = MAKE_SIMPLE_VARIABLE_OP(B         , variables.b         , "B");
-const tele_op_t op_C          = MAKE_SIMPLE_VARIABLE_OP(C         , variables.c         , "C");
-const tele_op_t op_D          = MAKE_SIMPLE_VARIABLE_OP(D         , variables.d         , "D");
-const tele_op_t op_DRUNK_MAX  = MAKE_SIMPLE_VARIABLE_OP(DRUNK.MAX , variables.drunk_max , "DRUNK.MAX");
-const tele_op_t op_DRUNK_MIN  = MAKE_SIMPLE_VARIABLE_OP(DRUNK.MIN , variables.drunk_min , "DRUNK.MIN");
-const tele_op_t op_DRUNK_WRAP = MAKE_SIMPLE_VARIABLE_OP(DRUNK.WRAP, variables.drunk_wrap, "DRUNK.WRAP");
-const tele_op_t op_I          = MAKE_SIMPLE_VARIABLE_OP(I         , variables.i         , "I: GETS OVERWRITTEN BY L");
-const tele_op_t op_IN         = MAKE_SIMPLE_VARIABLE_OP(IN        , variables.in        , "IN");
-const tele_op_t op_O_INC      = MAKE_SIMPLE_VARIABLE_OP(O.INC     , variables.o_inc     , "O.DIR");
-const tele_op_t op_O_MAX      = MAKE_SIMPLE_VARIABLE_OP(O.MAX     , variables.o_max     , "O.MAX");
-const tele_op_t op_O_MIN      = MAKE_SIMPLE_VARIABLE_OP(O.MIN     , variables.o_min     , "O.MIN");
-const tele_op_t op_O_WRAP     = MAKE_SIMPLE_VARIABLE_OP(O.WRAP    , variables.o_wrap    , "O.WRAP");
-const tele_op_t op_PARAM      = MAKE_SIMPLE_VARIABLE_OP(PARAM     , variables.param     , "PARAM");
-const tele_op_t op_T          = MAKE_SIMPLE_VARIABLE_OP(T         , variables.t         , "T");
-const tele_op_t op_TIME       = MAKE_SIMPLE_VARIABLE_OP(TIME      , variables.time      , "TIME");
-const tele_op_t op_TIME_ACT   = MAKE_SIMPLE_VARIABLE_OP(TIME.ACT  , variables.time_act  , "TIME.ACT");
-const tele_op_t op_X          = MAKE_SIMPLE_VARIABLE_OP(X         , variables.x         , "X");
-const tele_op_t op_Y          = MAKE_SIMPLE_VARIABLE_OP(Y         , variables.y         , "Y");
-const tele_op_t op_Z          = MAKE_SIMPLE_VARIABLE_OP(Z         , variables.z         , "Z");
+const tele_op_t op_A          = MAKE_SIMPLE_VARIABLE_OP(A         , variables.a         );
+const tele_op_t op_B          = MAKE_SIMPLE_VARIABLE_OP(B         , variables.b         );
+const tele_op_t op_C          = MAKE_SIMPLE_VARIABLE_OP(C         , variables.c         );
+const tele_op_t op_D          = MAKE_SIMPLE_VARIABLE_OP(D         , variables.d         );
+const tele_op_t op_DRUNK_MAX  = MAKE_SIMPLE_VARIABLE_OP(DRUNK.MAX , variables.drunk_max );
+const tele_op_t op_DRUNK_MIN  = MAKE_SIMPLE_VARIABLE_OP(DRUNK.MIN , variables.drunk_min );
+const tele_op_t op_DRUNK_WRAP = MAKE_SIMPLE_VARIABLE_OP(DRUNK.WRAP, variables.drunk_wrap);
+const tele_op_t op_I          = MAKE_SIMPLE_VARIABLE_OP(I         , variables.i         );
+const tele_op_t op_IN         = MAKE_SIMPLE_VARIABLE_OP(IN        , variables.in        );
+const tele_op_t op_O_INC      = MAKE_SIMPLE_VARIABLE_OP(O.INC     , variables.o_inc     );
+const tele_op_t op_O_MAX      = MAKE_SIMPLE_VARIABLE_OP(O.MAX     , variables.o_max     );
+const tele_op_t op_O_MIN      = MAKE_SIMPLE_VARIABLE_OP(O.MIN     , variables.o_min     );
+const tele_op_t op_O_WRAP     = MAKE_SIMPLE_VARIABLE_OP(O.WRAP    , variables.o_wrap    );
+const tele_op_t op_PARAM      = MAKE_SIMPLE_VARIABLE_OP(PARAM     , variables.param     );
+const tele_op_t op_T          = MAKE_SIMPLE_VARIABLE_OP(T         , variables.t         );
+const tele_op_t op_TIME       = MAKE_SIMPLE_VARIABLE_OP(TIME      , variables.time      );
+const tele_op_t op_TIME_ACT   = MAKE_SIMPLE_VARIABLE_OP(TIME.ACT  , variables.time_act  );
+const tele_op_t op_X          = MAKE_SIMPLE_VARIABLE_OP(X         , variables.x         );
+const tele_op_t op_Y          = MAKE_SIMPLE_VARIABLE_OP(Y         , variables.y         );
+const tele_op_t op_Z          = MAKE_SIMPLE_VARIABLE_OP(Z         , variables.z         );
 
-const tele_op_t op_DRUNK = MAKE_GET_SET_OP(DRUNK, op_DRUNK_get, op_DRUNK_set, 0, true, "DRUNK");
-const tele_op_t op_FLIP  = MAKE_GET_SET_OP(FLIP , op_FLIP_get , op_FLIP_set , 0, true, "FLIP");
-const tele_op_t op_O     = MAKE_GET_SET_OP(O    , op_O_get    , op_O_set    , 0, true, "O");
+const tele_op_t op_DRUNK = MAKE_GET_SET_OP(DRUNK, op_DRUNK_get, op_DRUNK_set, 0, true);
+const tele_op_t op_FLIP  = MAKE_GET_SET_OP(FLIP , op_FLIP_get , op_FLIP_set , 0, true);
+const tele_op_t op_O     = MAKE_GET_SET_OP(O    , op_O_get    , op_O_set    , 0, true);
 // clang-format on
 
 

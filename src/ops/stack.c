@@ -15,15 +15,12 @@ static void op_S_CLR_get(const void *data, scene_state_t *ss, exec_state_t *es,
 static void op_S_L_get(const void *data, scene_state_t *ss, exec_state_t *es,
                        command_state_t *cs);
 
-const tele_mod_t mod_S = MAKE_MOD(S, mod_S_func, 0, "ADD COMMAND TO STACK");
+const tele_mod_t mod_S = MAKE_MOD(S, mod_S_func, 0);
 
-const tele_op_t op_S_ALL =
-    MAKE_GET_OP(S.ALL, op_S_ALL_get, 0, false, "S: EXECUTE ALL");
-const tele_op_t op_S_POP =
-    MAKE_GET_OP(S.POP, op_S_POP_get, 0, false, "S: POP LAST");
-const tele_op_t op_S_CLR =
-    MAKE_GET_OP(S.CLR, op_S_CLR_get, 0, false, "S: FLUSH");
-const tele_op_t op_S_L = MAKE_GET_OP(S.L, op_S_L_get, 0, true, "STACK LENGTH");
+const tele_op_t op_S_ALL = MAKE_GET_OP(S.ALL, op_S_ALL_get, 0, false);
+const tele_op_t op_S_POP = MAKE_GET_OP(S.POP, op_S_POP_get, 0, false);
+const tele_op_t op_S_CLR = MAKE_GET_OP(S.CLR, op_S_CLR_get, 0, false);
+const tele_op_t op_S_L = MAKE_GET_OP(S.L, op_S_L_get, 0, true);
 
 static void mod_S_func(scene_state_t *ss, exec_state_t *NOTUSED(es),
                        command_state_t *NOTUSED(cs),

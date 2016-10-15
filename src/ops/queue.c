@@ -15,11 +15,10 @@ static void op_Q_N_get(const void *data, scene_state_t *ss, exec_state_t *es,
 static void op_Q_N_set(const void *data, scene_state_t *ss, exec_state_t *es,
                        command_state_t *cs);
 
-const tele_op_t op_Q = MAKE_GET_SET_OP(Q, op_Q_get, op_Q_set, 0, true, "Q");
+const tele_op_t op_Q = MAKE_GET_SET_OP(Q, op_Q_get, op_Q_set, 0, true);
 const tele_op_t op_Q_AVG =
-    MAKE_GET_SET_OP(Q.AVG, op_Q_AVG_get, op_Q_AVG_set, 0, true, "Q.AVG");
-const tele_op_t op_Q_N =
-    MAKE_GET_SET_OP(Q.N, op_Q_N_get, op_Q_N_set, 0, true, "Q.N");
+    MAKE_GET_SET_OP(Q.AVG, op_Q_AVG_get, op_Q_AVG_set, 0, true);
+const tele_op_t op_Q_N = MAKE_GET_SET_OP(Q.N, op_Q_N_get, op_Q_N_set, 0, true);
 
 static void op_Q_get(const void *NOTUSED(data), scene_state_t *ss,
                      exec_state_t *NOTUSED(es), command_state_t *cs) {
