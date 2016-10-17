@@ -58,22 +58,22 @@ static void op_PN_set(const void *data, scene_state_t *ss, exec_state_t *es,
                       command_state_t *cs);
 
 // clang-format off
-const tele_op_t op_P       = MAKE_GET_SET_OP(P      , op_P_get      , op_P_set      , 1, true, "PATTERN: GET/SET"  );
-const tele_op_t op_P_HERE  = MAKE_GET_SET_OP(P.HERE , op_P_HERE_get , op_P_HERE_set , 0, true, "P.HERE"            );
-const tele_op_t op_P_END   = MAKE_GET_SET_OP(P.END  , op_P_END_get  , op_P_END_set  , 0, true, "P.END"             );
-const tele_op_t op_P_I     = MAKE_GET_SET_OP(P.I    , op_P_I_get    , op_P_I_set    , 0, true, "P.I"               );
-const tele_op_t op_P_L     = MAKE_GET_SET_OP(P.L    , op_P_L_get    , op_P_L_set    , 0, true, "P.L"               );
-const tele_op_t op_P_N     = MAKE_GET_SET_OP(P.N    , op_P_N_get    , op_P_N_set    , 0, true, "P.N"               );
-const tele_op_t op_P_NEXT  = MAKE_GET_SET_OP(P.NEXT , op_P_NEXT_get , op_P_NEXT_set , 0, true, "P.NEXT"            );
-const tele_op_t op_P_PREV  = MAKE_GET_SET_OP(P.PREV , op_P_PREV_get , op_P_PREV_set , 0, true, "P.PREV"            );
-const tele_op_t op_P_START = MAKE_GET_SET_OP(P.START, op_P_START_get, op_P_START_set, 0, true, "P.START"           );
-const tele_op_t op_P_WRAP  = MAKE_GET_SET_OP(P.WRAP , op_P_WRAP_get , op_P_WRAP_set , 0, true, "P.WRAP"            );
-const tele_op_t op_PN      = MAKE_GET_SET_OP(PN     , op_PN_get     , op_PN_set     , 2, true, "PATTERN: GET/SET N");
+const tele_op_t op_P       = MAKE_GET_SET_OP(P      , op_P_get      , op_P_set      , 1, true);
+const tele_op_t op_P_HERE  = MAKE_GET_SET_OP(P.HERE , op_P_HERE_get , op_P_HERE_set , 0, true);
+const tele_op_t op_P_END   = MAKE_GET_SET_OP(P.END  , op_P_END_get  , op_P_END_set  , 0, true);
+const tele_op_t op_P_I     = MAKE_GET_SET_OP(P.I    , op_P_I_get    , op_P_I_set    , 0, true);
+const tele_op_t op_P_L     = MAKE_GET_SET_OP(P.L    , op_P_L_get    , op_P_L_set    , 0, true);
+const tele_op_t op_P_N     = MAKE_GET_SET_OP(P.N    , op_P_N_get    , op_P_N_set    , 0, true);
+const tele_op_t op_P_NEXT  = MAKE_GET_SET_OP(P.NEXT , op_P_NEXT_get , op_P_NEXT_set , 0, true);
+const tele_op_t op_P_PREV  = MAKE_GET_SET_OP(P.PREV , op_P_PREV_get , op_P_PREV_set , 0, true);
+const tele_op_t op_P_START = MAKE_GET_SET_OP(P.START, op_P_START_get, op_P_START_set, 0, true);
+const tele_op_t op_P_WRAP  = MAKE_GET_SET_OP(P.WRAP , op_P_WRAP_get , op_P_WRAP_set , 0, true);
+const tele_op_t op_PN      = MAKE_GET_SET_OP(PN     , op_PN_get     , op_PN_set     , 2, true);
 
-const tele_op_t op_P_INS  = MAKE_GET_OP(P.INS  , op_P_INS_get  , 2, false, "PATTERN: INSERT");
-const tele_op_t op_P_RM   = MAKE_GET_OP(P.RM   , op_P_RM_get   , 1, true , "PATTERN: REMOVE");
-const tele_op_t op_P_PUSH = MAKE_GET_OP(P.PUSH , op_P_PUSH_get , 1, false, "PATTERN: PUSH"  );
-const tele_op_t op_P_POP  = MAKE_GET_OP(P.POP  , op_P_POP_get  , 0, true , "PATTERN: POP"   );
+const tele_op_t op_P_INS  = MAKE_GET_OP(P.INS  , op_P_INS_get  , 2, false);
+const tele_op_t op_P_RM   = MAKE_GET_OP(P.RM   , op_P_RM_get   , 1, true );
+const tele_op_t op_P_PUSH = MAKE_GET_OP(P.PUSH , op_P_PUSH_get , 1, false);
+const tele_op_t op_P_POP  = MAKE_GET_OP(P.POP  , op_P_POP_get  , 0, true );
 // clang-format on
 
 

@@ -69,30 +69,30 @@ static void op_JF_GOD_get(const void *data, scene_state_t *ss, exec_state_t *es,
 
 
 // clang-format off
-const tele_op_t op_CV       = MAKE_GET_SET_OP(CV     , op_CV_get     , op_CV_set     , 1, true, "CV"     );
-const tele_op_t op_CV_OFF   = MAKE_GET_SET_OP(CV.OFF , op_CV_OFF_get , op_CV_OFF_set , 1, true, "CV.OFF" );
-const tele_op_t op_CV_SLEW  = MAKE_GET_SET_OP(CV.SLEW, op_CV_SLEW_get, op_CV_SLEW_set, 1, true, "CV.SLEW");
-const tele_op_t op_TR       = MAKE_GET_SET_OP(TR     , op_TR_get     , op_TR_set     , 1, true, "TR"     );
-const tele_op_t op_TR_POL   = MAKE_GET_SET_OP(TR.POL , op_TR_POL_get , op_TR_POL_set , 1, true, "TR.POL" );
-const tele_op_t op_TR_TIME  = MAKE_GET_SET_OP(TR.TIME, op_TR_TIME_get, op_TR_TIME_set, 1, true, "TR.TIME");
-const tele_op_t op_TR_TOG   = MAKE_GET_OP(TR.TOG  , op_TR_TOG_get  , 1, false, "[A] TOGGLE TRIGGER A");
-const tele_op_t op_TR_PULSE = MAKE_GET_OP(TR.PULSE, op_TR_PULSE_get, 1, false, "PULSE TRIGGER"       );
-const tele_op_t op_II       = MAKE_GET_OP(II      , op_II_get      , 2, false, "II"                  );
-const tele_op_t op_CV_SET   = MAKE_GET_OP(CV.SET  , op_CV_SET_get  , 2, false, "CV SET"              );
-const tele_op_t op_MUTE     = MAKE_GET_OP(MUTE    , op_MUTE_get    , 1, false, "MUTE INPUT"          );
-const tele_op_t op_UNMUTE   = MAKE_GET_OP(UNMUTE  , op_UNMUTE_get  , 1, false, "UNMUTE INPUT"        );
-const tele_op_t op_STATE    = MAKE_GET_OP(STATE   , op_STATE_get   , 1, true , "GET INPUT STATE"     );
+const tele_op_t op_CV       = MAKE_GET_SET_OP(CV     , op_CV_get     , op_CV_set     , 1, true);
+const tele_op_t op_CV_OFF   = MAKE_GET_SET_OP(CV.OFF , op_CV_OFF_get , op_CV_OFF_set , 1, true);
+const tele_op_t op_CV_SLEW  = MAKE_GET_SET_OP(CV.SLEW, op_CV_SLEW_get, op_CV_SLEW_set, 1, true);
+const tele_op_t op_TR       = MAKE_GET_SET_OP(TR     , op_TR_get     , op_TR_set     , 1, true);
+const tele_op_t op_TR_POL   = MAKE_GET_SET_OP(TR.POL , op_TR_POL_get , op_TR_POL_set , 1, true);
+const tele_op_t op_TR_TIME  = MAKE_GET_SET_OP(TR.TIME, op_TR_TIME_get, op_TR_TIME_set, 1, true);
+const tele_op_t op_TR_TOG   = MAKE_GET_OP(TR.TOG  , op_TR_TOG_get  , 1, false);
+const tele_op_t op_TR_PULSE = MAKE_GET_OP(TR.PULSE, op_TR_PULSE_get, 1, false);
+const tele_op_t op_II       = MAKE_GET_OP(II      , op_II_get      , 2, false);
+const tele_op_t op_CV_SET   = MAKE_GET_OP(CV.SET  , op_CV_SET_get  , 2, false);
+const tele_op_t op_MUTE     = MAKE_GET_OP(MUTE    , op_MUTE_get    , 1, false);
+const tele_op_t op_UNMUTE   = MAKE_GET_OP(UNMUTE  , op_UNMUTE_get  , 1, false);
+const tele_op_t op_STATE    = MAKE_GET_OP(STATE   , op_STATE_get   , 1, true );
 
-const tele_op_t op_JF_TR    = MAKE_GET_OP(JF.TR    , op_JF_TR_get    , 2, false , "JF: TR"     );
-const tele_op_t op_JF_RMODE = MAKE_GET_OP(JF.RMODE , op_JF_RMODE_get , 1, false , "JF: RMODE"  );
-const tele_op_t op_JF_RUN   = MAKE_GET_OP(JF.RUN   , op_JF_RUN_get   , 1, false , "JF: RUN"    );
-const tele_op_t op_JF_SHIFT = MAKE_GET_OP(JF.SHIFT , op_JF_SHIFT_get , 1, false , "JF: SHIFT"  );
-const tele_op_t op_JF_VTR   = MAKE_GET_OP(JF.VTR   , op_JF_VTR_get   , 2, false , "JF: VTR"    );
-const tele_op_t op_JF_MODE  = MAKE_GET_OP(JF.MODE  , op_JF_MODE_get  , 1, false , "JF: MODE"   );
-const tele_op_t op_JF_TICK  = MAKE_GET_OP(JF.TICK  , op_JF_TICK_get  , 1, false , "JF: TICK"   );
-const tele_op_t op_JF_VOX   = MAKE_GET_OP(JF.VOX   , op_JF_VOX_get   , 3, false , "JF: VOX"    );
-const tele_op_t op_JF_NOTE  = MAKE_GET_OP(JF.NOTE  , op_JF_NOTE_get  , 2, false , "JF: NOTE"   );
-const tele_op_t op_JF_GOD   = MAKE_GET_OP(JF.GOD   , op_JF_GOD_get   , 1, false , "JF: GOD"    );
+const tele_op_t op_JF_TR    = MAKE_GET_OP(JF.TR    , op_JF_TR_get    , 2, false);
+const tele_op_t op_JF_RMODE = MAKE_GET_OP(JF.RMODE , op_JF_RMODE_get , 1, false);
+const tele_op_t op_JF_RUN   = MAKE_GET_OP(JF.RUN   , op_JF_RUN_get   , 1, false);
+const tele_op_t op_JF_SHIFT = MAKE_GET_OP(JF.SHIFT , op_JF_SHIFT_get , 1, false);
+const tele_op_t op_JF_VTR   = MAKE_GET_OP(JF.VTR   , op_JF_VTR_get   , 2, false);
+const tele_op_t op_JF_MODE  = MAKE_GET_OP(JF.MODE  , op_JF_MODE_get  , 1, false);
+const tele_op_t op_JF_TICK  = MAKE_GET_OP(JF.TICK  , op_JF_TICK_get  , 1, false);
+const tele_op_t op_JF_VOX   = MAKE_GET_OP(JF.VOX   , op_JF_VOX_get   , 3, false);
+const tele_op_t op_JF_NOTE  = MAKE_GET_OP(JF.NOTE  , op_JF_NOTE_get  , 2, false);
+const tele_op_t op_JF_GOD   = MAKE_GET_OP(JF.GOD   , op_JF_GOD_get   , 1, false);
 // clang-format on
 
 static void op_CV_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -513,8 +513,8 @@ static void op_STATE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
 }
 
 
-static void op_JF_TR_get(const void *data, scene_state_t *ss, exec_state_t *es,
-                         command_state_t *cs) {
+static void op_JF_TR_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+                         exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
 
@@ -522,32 +522,34 @@ static void op_JF_TR_get(const void *data, scene_state_t *ss, exec_state_t *es,
     tele_ii_tx(JF_ADDR, d, 3);
 }
 
-static void op_JF_RMODE_get(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs) {
+static void op_JF_RMODE_get(const void *NOTUSED(data),
+                            scene_state_t *NOTUSED(ss),
+                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
 
     uint8_t d[] = { JF_RMODE, a };
     tele_ii_tx(JF_ADDR, d, 2);
 }
 
-static void op_JF_RUN_get(const void *data, scene_state_t *ss, exec_state_t *es,
-                          command_state_t *cs) {
+static void op_JF_RUN_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
 
     uint8_t d[] = { JF_RUN, a >> 8, a & 0xff };
     tele_ii_tx(JF_ADDR, d, 3);
 }
 
-static void op_JF_SHIFT_get(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs) {
+static void op_JF_SHIFT_get(const void *NOTUSED(data),
+                            scene_state_t *NOTUSED(ss),
+                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
 
     uint8_t d[] = { JF_SHIFT, a >> 8, a & 0xff };
     tele_ii_tx(JF_ADDR, d, 3);
 }
 
-static void op_JF_VTR_get(const void *data, scene_state_t *ss, exec_state_t *es,
-                          command_state_t *cs) {
+static void op_JF_VTR_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
 
@@ -555,24 +557,26 @@ static void op_JF_VTR_get(const void *data, scene_state_t *ss, exec_state_t *es,
     tele_ii_tx(JF_ADDR, d, 4);
 }
 
-static void op_JF_MODE_get(const void *data, scene_state_t *ss,
-                           exec_state_t *es, command_state_t *cs) {
+static void op_JF_MODE_get(const void *NOTUSED(data),
+                           scene_state_t *NOTUSED(ss),
+                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
 
     uint8_t d[] = { JF_MODE, a };
     tele_ii_tx(JF_ADDR, d, 2);
 }
 
-static void op_JF_TICK_get(const void *data, scene_state_t *ss,
-                           exec_state_t *es, command_state_t *cs) {
+static void op_JF_TICK_get(const void *NOTUSED(data),
+                           scene_state_t *NOTUSED(ss),
+                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
 
     uint8_t d[] = { JF_TICK, a };
     tele_ii_tx(JF_ADDR, d, 2);
 }
 
-static void op_JF_VOX_get(const void *data, scene_state_t *ss, exec_state_t *es,
-                          command_state_t *cs) {
+static void op_JF_VOX_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
     int16_t c = cs_pop(cs);
@@ -581,8 +585,9 @@ static void op_JF_VOX_get(const void *data, scene_state_t *ss, exec_state_t *es,
     tele_ii_tx(JF_ADDR, d, 6);
 }
 
-static void op_JF_NOTE_get(const void *data, scene_state_t *ss,
-                           exec_state_t *es, command_state_t *cs) {
+static void op_JF_NOTE_get(const void *NOTUSED(data),
+                           scene_state_t *NOTUSED(ss),
+                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
 
@@ -590,8 +595,8 @@ static void op_JF_NOTE_get(const void *data, scene_state_t *ss,
     tele_ii_tx(JF_ADDR, d, 5);
 }
 
-static void op_JF_GOD_get(const void *data, scene_state_t *ss, exec_state_t *es,
-                          command_state_t *cs) {
+static void op_JF_GOD_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
 
     uint8_t d[] = { JF_GOD, a };
