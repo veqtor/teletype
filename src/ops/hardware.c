@@ -551,7 +551,7 @@ static void op_JF_VTR_get(const void *data, scene_state_t *ss, exec_state_t *es,
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
 
-    uint8_t d[] = { JF_VTR, a >> 8, a & 0xff, b };
+    uint8_t d[] = { JF_VTR, a, b >> 8, b & 0xff };
     tele_ii_tx(JF_ADDR, d, 4);
 }
 
@@ -594,6 +594,6 @@ static void op_JF_GOD_get(const void *data, scene_state_t *ss, exec_state_t *es,
                           command_state_t *cs) {
     int16_t a = cs_pop(cs);
 
-    uint8_t d[] = { JF_TICK, a };
+    uint8_t d[] = { JF_GOD, a };
     tele_ii_tx(JF_ADDR, d, 2);
 }
