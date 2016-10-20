@@ -68,6 +68,8 @@ static void op_JF_GOD_get(const void *data, scene_state_t *ss, exec_state_t *es,
                           command_state_t *cs);
 static void op_JF_TUNE_get(const void *data, scene_state_t *ss, exec_state_t *es,
                           command_state_t *cs);
+static void op_JF_QT_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs);
 
 // clang-format off
 const tele_op_t op_CV       = MAKE_GET_SET_OP(CV     , op_CV_get     , op_CV_set     , 1, true);
@@ -95,6 +97,7 @@ const tele_op_t op_JF_VOX   = MAKE_GET_OP(JF.VOX   , op_JF_VOX_get   , 3, false)
 const tele_op_t op_JF_NOTE  = MAKE_GET_OP(JF.NOTE  , op_JF_NOTE_get  , 2, false);
 const tele_op_t op_JF_GOD   = MAKE_GET_OP(JF.GOD   , op_JF_GOD_get   , 1, false);
 const tele_op_t op_JF_TUNE  = MAKE_GET_OP(JF.TUNE  , op_JF_TUNE_get  , 1, false);
+const tele_op_t op_JF_QT    = MAKE_GET_OP(JF.QT    , op_JF_QT_get    , 1, false);
 // clang-format on
 
 static void op_CV_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -613,4 +616,13 @@ static void op_JF_TUNE_get(const void *data, scene_state_t *ss, exec_state_t *es
 
   uint8_t d[] = {JF_TUNE, a, b, c};
   tele_ii_tx(JF_ADDR, d, 4);
+}
+
+static void op_JF_QT_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                         command_state_t *cs) {
+  int16_t a = cs_pop(cs);
+
+  uint8_t d[] = {JF_QT, a};
+  tele_ii_tx(JF_ADDR, d, 2);
+
 }
