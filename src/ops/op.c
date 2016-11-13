@@ -19,7 +19,7 @@
 /////////////////////////////////////////////////////////////////
 // OPS //////////////////////////////////////////////////////////
 
-const tele_op_t *tele_ops[OPS] = {
+const tele_op_t *tele_ops[TELE_NUM_OPS] = {
     // variables
     &op_A, &op_B, &op_C, &op_D, &op_DRUNK, &op_DRUNK_MAX, &op_DRUNK_MIN,
     &op_DRUNK_WRAP, &op_FLIP, &op_I, &op_IN, &op_O, &op_O_INC, &op_O_MAX,
@@ -75,7 +75,7 @@ const tele_op_t *tele_ops[OPS] = {
 /////////////////////////////////////////////////////////////////
 // MODS /////////////////////////////////////////////////////////
 
-const tele_mod_t *tele_mods[MODS] = {
+const tele_mod_t *tele_mods[TELE_NUM_MODS] = {
     // controlflow
     &mod_IF, &mod_ELIF, &mod_ELSE, &mod_L, &mod_PROB,
 

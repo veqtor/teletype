@@ -25,11 +25,11 @@ typedef struct {
     const uint8_t params;
 } tele_mod_t;
 
-#define OPS 157
-extern const tele_op_t *tele_ops[OPS];
+#define TELE_NUM_OPS 157
+extern const tele_op_t *tele_ops[TELE_NUM_OPS];
 
-#define MODS 7
-extern const tele_mod_t *tele_mods[MODS];
+#define TELE_NUM_MODS 7
+extern const tele_mod_t *tele_mods[TELE_NUM_MODS];
 
 // Get only ops
 #define MAKE_GET_OP(n, g, p, r)                                       \

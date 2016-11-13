@@ -111,7 +111,7 @@ error_t parse(const char *cmd, tele_command_t *out,
 
             if (i == -1) {
                 // CHECK AGAINST OPS
-                i = OPS;
+                i = TELE_NUM_OPS;
 
                 while (i--) {
                     if (!strcmp(s, tele_ops[i]->name)) {
@@ -124,7 +124,7 @@ error_t parse(const char *cmd, tele_command_t *out,
 
             if (i == -1) {
                 // CHECK AGAINST MOD
-                i = MODS;
+                i = TELE_NUM_MODS;
 
                 while (i--) {
                     if (!strcmp(s, tele_mods[i]->name)) {
