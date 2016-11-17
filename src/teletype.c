@@ -90,66 +90,66 @@ error_t parse(const char *cmd, tele_command_t *out,
     char cmd_copy[32];
     strcpy(cmd_copy, cmd);
     const char *delim = " \n";
-    const char *s = strtok(cmd_copy, delim);
+    const char *token = strtok(cmd_copy, delim);
 
     uint8_t n = 0;
     out->l = n;
     out->separator = -1;
 
-    while (s) {
-        // CHECK IF NUMBER
-        if (isdigit(s[0]) || s[0] == '-') {
-            out->data[n].t = NUMBER;
-            out->data[n].v = strtol(s, NULL, 0);
-        }
-        else if (s[0] == ':') {
-            out->data[n].t = SEP;
-            out->separator = n;
+    while (token) {
+        tele_data_t data;
+        if (match_token(token, &data)) {
+            out->data[n] = data;
+            if (data.t == SEP) out->separator = n;
         }
         else {
-            int16_t i = -1;
-
-            if (i == -1) {
-                // CHECK AGAINST OPS
-                i = TELE_NUM_OPS;
-
-                while (i--) {
-                    if (!strcmp(s, tele_ops[i]->name)) {
-                        out->data[n].t = OP;
-                        out->data[n].v = i;
-                        break;
-                    }
-                }
-            }
-
-            if (i == -1) {
-                // CHECK AGAINST MOD
-                i = TELE_NUM_MODS;
-
-                while (i--) {
-                    if (!strcmp(s, tele_mods[i]->name)) {
-                        out->data[n].t = MOD;
-                        out->data[n].v = i;
-                        break;
-                    }
-                }
-            }
-
-            if (i == -1) {
-                strcpy(error_msg, s);
-                return E_PARSE;
-            }
+            strcpy(error_msg, token);
+            return E_PARSE;
         }
 
-        s = strtok(NULL, delim);
+        token = strtok(NULL, delim);
 
         n++;
         out->l = n;
 
-        if (n == COMMAND_MAX_LENGTH) return E_LENGTH;
+        if (n >= COMMAND_MAX_LENGTH) return E_LENGTH;
     }
 
     return E_OK;
+}
+
+// matches a single token, out contains the token, return value indicates
+// success
+bool match_token(const char *token, tele_data_t *out) {
+    if (isdigit(token[0]) || token[0] == '-') {
+        out->t = NUMBER;
+        out->v = strtol(token, NULL, 0);
+        return true;
+    }
+
+    if (token[0] == ':') {
+        out->t = SEP;
+        out->v = 0;
+        return true;
+    }
+
+    for (int16_t i = 0; i < TELE_NUM_OPS; i++) {
+        if (!strcmp(token, tele_ops[i]->name)) {
+            out->t = OP;
+            out->v = i;
+            return true;
+        }
+    }
+
+    for (int16_t i = 0; i < TELE_NUM_MODS; i++) {
+        if (!strcmp(token, tele_mods[i]->name)) {
+            out->t = MOD;
+            out->v = i;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /////////////////////////////////////////////////////////////////
