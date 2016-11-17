@@ -93,7 +93,7 @@ error_t parse(const char *cmd, tele_command_t *out,
     const char *token = strtok(cmd_copy, delim);
 
     uint8_t n = 0;
-    out->l = n;
+    out->length = n;
     out->separator = -1;
 
     while (token) {
@@ -110,7 +110,7 @@ error_t parse(const char *cmd, tele_command_t *out,
         token = strtok(NULL, delim);
 
         n++;
-        out->l = n;
+        out->length = n;
 
         if (n >= COMMAND_MAX_LENGTH) return E_LENGTH;
     }
@@ -158,7 +158,7 @@ bool match_token(const char *token, tele_data_t *out) {
 error_t validate(const tele_command_t *c, char error_msg[ERROR_MSG_LENGTH]) {
     error_msg[0] = 0;
     int16_t stack_depth = 0;
-    uint8_t idx = c->l;
+    uint8_t idx = c->length;
     int8_t sep_count = 0;
 
     while (idx--) {  // process words right to left
@@ -261,7 +261,7 @@ process_result_t process(exec_state_t *es, const tele_command_t *c) {
 
     // if the command has a MOD, only process it
     // allow the MOD to deal with processing the remainder
-    int16_t idx = c->separator == -1 ? c->l : c->separator;
+    int16_t idx = c->separator == -1 ? c->length : c->separator;
 
     while (idx--) {  // process from right to left
         tele_word_t word_type = c->data[idx].t;

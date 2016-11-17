@@ -11,15 +11,15 @@ void copy_command(tele_command_t *dst, const tele_command_t *src) {
 }
 
 void copy_sub_command(tele_command_t *dst, const tele_command_t *src) {
-    dst->l = src->l - src->separator - 1;
+    dst->length = src->length - src->separator - 1;
     dst->separator = -1;
     memcpy(dst->data, &src->data[src->separator + 1],
-           dst->l * sizeof(tele_data_t));
+           dst->length * sizeof(tele_data_t));
 }
 
 void print_command(const tele_command_t *c, char *out) {
     *out = 0;
-    for (int n = 0; n < c->l; n++) {
+    for (int n = 0; n < c->length; n++) {
         switch (c->data[n].t) {
             case OP: strcat(out, tele_ops[c->data[n].v]->name); break;
             case NUMBER: {

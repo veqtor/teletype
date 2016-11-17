@@ -178,7 +178,7 @@ TEST parser_should_return_op() {
         char error_msg[ERROR_MSG_LENGTH];
         error_t result = parse(text, &cmd, error_msg);
         ASSERT_EQ(result, E_OK);
-        ASSERT_EQ(cmd.l, 1);
+        ASSERT_EQ(cmd.length, 1);
         ASSERT_EQ(cmd.data[0].t, OP);
         ASSERT_EQ(cmd.data[0].v, (int16_t)i);
     }
@@ -194,7 +194,7 @@ TEST parser_should_return_mod() {
         char error_msg[ERROR_MSG_LENGTH];
         error_t result = parse(text, &cmd, error_msg);
         ASSERT_EQ(result, E_OK);
-        ASSERT_EQ(cmd.l, 1);
+        ASSERT_EQ(cmd.length, 1);
         ASSERT_EQ(cmd.data[0].t, MOD);
         ASSERT_EQ(cmd.data[0].v, (int16_t)i);
     }

@@ -1237,7 +1237,7 @@ void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key) {
                         if (mode == M_LIVE) {
                             edit_line = SCRIPT_MAX_COMMANDS;
 
-                            if (temp.l) {
+                            if (temp.length) {
                                 memcpy(&history.c[0], &history.c[1],
                                        sizeof(tele_command_t));
                                 memcpy(&history.c[1], &history.c[2],
@@ -1262,10 +1262,11 @@ void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key) {
                             pos = 0;
                         }
                         else {
-                            if (temp.l == 0) {  // BLANK LINE
+                            if (temp.length == 0) {  // BLANK LINE
                                 uint8_t script_len = tele_get_script_l(edit);
                                 if (script_len &&
-                                    tele_get_script_c(edit, edit_line)->l) {
+                                    tele_get_script_c(edit, edit_line)
+                                        ->length) {
                                     script_len--;
                                     tele_set_script_l(edit, script_len);
 
@@ -1277,7 +1278,7 @@ void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key) {
                                     }
 
                                     tele_command_t blank_command;
-                                    blank_command.l = 0;
+                                    blank_command.length = 0;
                                     tele_set_script_c(edit, script_len,
                                                       &blank_command);
 
@@ -1442,7 +1443,7 @@ void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key) {
                                 }
 
                                 tele_command_t blank_command;
-                                blank_command.l = 0;
+                                blank_command.length = 0;
                                 tele_set_script_c(edit, tele_get_script_l(edit),
                                                   &blank_command);
                                 if (edit_line > tele_get_script_l(edit)) {
