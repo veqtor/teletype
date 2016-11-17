@@ -2,6 +2,7 @@
 
 #include "greatest/greatest.h"
 
+#include "ops/op.h"
 #include "teletype.h"
 
 error_t parse_and_validate_helper(char* text) {
@@ -165,6 +166,43 @@ TEST should_parse_and_validate() {
     PASS();
 }
 
+// This test asserts that the parser always returns the correct op, it does this
+// by starting with the op in question, extracting the name and running that
+// through the parser. Then asserting that only 1 op is returned in
+// tele_command_t and that it's value matches the op.
+TEST parser_should_return_op() {
+    for (size_t i = 0; i < TELE_NUM_OPS; i++) {
+        const tele_op_t* op = tele_ops[i];
+        const char* text = op->name;
+        tele_command_t cmd;
+        char error_msg[ERROR_MSG_LENGTH];
+        error_t result = parse(text, &cmd, error_msg);
+        ASSERT_EQ(result, E_OK);
+        ASSERT_EQ(cmd.l, 1);
+        ASSERT_EQ(cmd.data[0].t, OP);
+        ASSERT_EQ(cmd.data[0].v, (int16_t)i);
+    }
+    PASS();
+}
+
+// As parser_should_return_op, but for mods.
+TEST parser_should_return_mod() {
+    for (size_t i = 0; i < TELE_NUM_MODS; i++) {
+        const tele_mod_t* mod = tele_mods[i];
+        const char* text = mod->name;
+        tele_command_t cmd;
+        char error_msg[ERROR_MSG_LENGTH];
+        error_t result = parse(text, &cmd, error_msg);
+        ASSERT_EQ(result, E_OK);
+        ASSERT_EQ(cmd.l, 1);
+        ASSERT_EQ(cmd.data[0].t, MOD);
+        ASSERT_EQ(cmd.data[0].v, (int16_t)i);
+    }
+    PASS();
+}
+
 SUITE(parser_suite) {
     RUN_TEST(should_parse_and_validate);
+    RUN_TEST(parser_should_return_op);
+    RUN_TEST(parser_should_return_mod);
 }
