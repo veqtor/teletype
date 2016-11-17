@@ -92,15 +92,25 @@ error_t parse(const char *cmd, tele_command_t *out,
     const char *delim = " \n";
     const char *token = strtok(cmd_copy, delim);
 
-    uint8_t n = 0;
-    out->length = n;
+    out->length = 0;
     out->separator = -1;
 
     while (token) {
         tele_data_t data;
+
         if (match_token(token, &data)) {
-            out->data[n] = data;
-            if (data.t == SEP) out->separator = n;
+            // if we have a match, copy data to the the command
+            out->data[out->length] = data;
+
+            // if it's a SEP, we need to record it's position
+            // (validate checks for too many SEP tokens)
+            if (data.t == SEP) out->separator = out->length;
+
+            // increase the command length
+            out->length++;
+
+            // if the command length is now too long, abort
+            if (out->length >= COMMAND_MAX_LENGTH) return E_LENGTH;
         }
         else {
             strcpy(error_msg, token);
@@ -108,11 +118,6 @@ error_t parse(const char *cmd, tele_command_t *out,
         }
 
         token = strtok(NULL, delim);
-
-        n++;
-        out->length = n;
-
-        if (n >= COMMAND_MAX_LENGTH) return E_LENGTH;
     }
 
     return E_OK;
