@@ -42,5 +42,6 @@
 *.dSYM/
 
 # Build outputs
+/src/scanner.c
 /simulator/tt
 /tests/tests

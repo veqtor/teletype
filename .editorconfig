@@ -15,8 +15,8 @@ indent_style = tab
 indent_size = 8
 trim_trailing_whitespace = true
 
-# C & Cpp
-[*.{h,hpp,c,cpp}]
+# C & Cpp & Ragel
+[*.{h,hpp,c,cpp,rl}]
 indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true

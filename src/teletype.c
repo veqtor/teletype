@@ -6,6 +6,7 @@
 
 #include "helpers.h"
 #include "ops/op.h"
+#include "scanner.h"
 #include "table.h"
 #include "teletype.h"
 #include "teletype_io.h"
@@ -86,58 +87,21 @@ void clear_delays(void) {
 
 error_t parse(const char *cmd, tele_command_t *out,
               char error_msg[ERROR_MSG_LENGTH]) {
-    error_msg[0] = 0;
-    char cmd_copy[32];
-    strcpy(cmd_copy, cmd);
-    const char *delim = " \n";
-    const char *token = strtok(cmd_copy, delim);
-
-    out->length = 0;
-    out->separator = -1;
-
-    while (token) {
-        tele_data_t data;
-
-        if (match_token(token, &data)) {
-            // if we have a match, copy data to the the command
-            out->data[out->length] = data;
-
-            // if it's a SEP, we need to record it's position
-            // (validate checks for too many SEP tokens)
-            if (data.t == SEP) out->separator = out->length;
-
-            // increase the command length
-            out->length++;
-
-            // if the command length is now too long, abort
-            if (out->length >= COMMAND_MAX_LENGTH) return E_LENGTH;
-        }
-        else {
-            strcpy(error_msg, token);
-            return E_PARSE;
-        }
-
-        token = strtok(NULL, delim);
-    }
-
-    return E_OK;
+    // call the Ragel generated scanner function
+    return scanner(cmd, out, error_msg);
 }
 
 // matches a single token, out contains the token, return value indicates
 // success
 bool match_token(const char *token, tele_data_t *out) {
+    // try to match a number
     if (isdigit(token[0]) || token[0] == '-') {
         out->t = NUMBER;
         out->v = strtol(token, NULL, 0);
         return true;
     }
 
-    if (token[0] == ':') {
-        out->t = SEP;
-        out->v = 0;
-        return true;
-    }
-
+    // try to match an op
     for (int16_t i = 0; i < TELE_NUM_OPS; i++) {
         if (!strcmp(token, tele_ops[i]->name)) {
             out->t = OP;
@@ -146,6 +110,7 @@ bool match_token(const char *token, tele_data_t *out) {
         }
     }
 
+    // try to match a mod
     for (int16_t i = 0; i < TELE_NUM_MODS; i++) {
         if (!strcmp(token, tele_mods[i]->name)) {
             out->t = MOD;

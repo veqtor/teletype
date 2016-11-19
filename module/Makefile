@@ -60,7 +60,15 @@
 # \asf_license_stop
 #
 
+# Makefile.avr32.in defines an unused variable build, which is used in the clean
+# target, it's probably there to list other build targets
+build += ../src/scanner.c
+
 # Include the common Makefile, which will also include the project specific
 # config.mk file.
 MAKEFILE_PATH = ../libavr32/asf/avr32/utils/make/Makefile.avr32.in
 include $(MAKEFILE_PATH)
+
+# Add a rule to build scanner.c from scanner.rl
+../src/scanner.c: ../src/scanner.rl
+	ragel -C -G2 ../src/scanner.rl -o ../src/scanner.c

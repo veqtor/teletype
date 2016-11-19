@@ -2,6 +2,7 @@
 CFLAGS=-std=c99 -g -Wall -DSIM -I. -I../src -I../libavr32/src
 DEPS =
 OBJ = tt.o ../src/teletype.o ../src/command.o ../src/helpers.o \
+	../src/scanner.o \
 	../src/state.o ../src/table.o \
 	../src/ops/op.o ../src/ops/constants.o ../src/ops/controlflow.o \
 	../src/ops/delay.o ../src/ops/hardware.o ../src/ops/metronome.o \
@@ -16,6 +17,9 @@ OBJ = tt.o ../src/teletype.o ../src/command.o ../src/helpers.o \
 tt: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
 
+../src/scanner.c: ../src/scanner.rl
+	ragel -C -G2 ../src/scanner.rl -o ../src/scanner.c
+
 clean:
 	rm -f tt
 	rm -rf tt.dSYM
@@ -24,3 +28,4 @@ clean:
 	rm -f ../src/euclidean/*.o
 	rm -f ../src/ops/*.o
 	rm -f ../libavr32/src/*.o
+	rm -f ../src/scanner.c

@@ -3,6 +3,7 @@ CFLAGS = -std=c99 -g -Wall -DSIM -I../src -I../libavr32/src
 
 tests: main.o parser_tests.o process_tests.o \
 	../src/teletype.o ../src/command.o ../src/helpers.o \
+	../src/scanner.o \
 	../src/state.o ../src/table.o \
 	../src/ops/op.o ../src/ops/constants.o ../src/ops/controlflow.o \
 	../src/ops/delay.o ../src/ops/hardware.o ../src/ops/metronome.o \
@@ -11,6 +12,9 @@ tests: main.o parser_tests.o process_tests.o \
 	../src/euclidean/data.o ../src/euclidean/euclidean.o \
 	../libavr32/src/util.o
 	$(CC) -o $@ $^ $(CFLAGS)
+
+../src/scanner.c: ../src/scanner.rl
+	ragel -C -G2 ../src/scanner.rl -o ../src/scanner.c
 
 test: tests
 	@./tests | greatest/greenest
@@ -23,3 +27,4 @@ clean:
 	rm -f ../src/euclidean/*.o
 	rm -f ../src/ops/*.o
 	rm -f ../libavr32/src/*.o
+	rm -f ../src/scanner.c
