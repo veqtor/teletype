@@ -96,16 +96,16 @@ error_t parse(const char *cmd, tele_command_t *out,
 bool match_token(const char *token, tele_data_t *out) {
     // try to match a number
     if (isdigit(token[0]) || token[0] == '-') {
-        out->t = NUMBER;
-        out->v = strtol(token, NULL, 0);
+        out->tag = NUMBER;
+        out->value = strtol(token, NULL, 0);
         return true;
     }
 
     // try to match an op
     for (int16_t i = 0; i < TELE_NUM_OPS; i++) {
         if (!strcmp(token, tele_ops[i]->name)) {
-            out->t = OP;
-            out->v = i;
+            out->tag = OP;
+            out->value = i;
             return true;
         }
     }
@@ -113,8 +113,8 @@ bool match_token(const char *token, tele_data_t *out) {
     // try to match a mod
     for (int16_t i = 0; i < TELE_NUM_MODS; i++) {
         if (!strcmp(token, tele_mods[i]->name)) {
-            out->t = MOD;
-            out->v = i;
+            out->tag = MOD;
+            out->value = i;
             return true;
         }
     }
@@ -132,11 +132,11 @@ error_t validate(const tele_command_t *c, char error_msg[ERROR_MSG_LENGTH]) {
     int8_t sep_count = 0;
 
     while (idx--) {  // process words right to left
-        tele_word_t word_type = c->data[idx].t;
-        int16_t word_value = c->data[idx].v;
+        tele_word_t word_type = c->data[idx].tag;
+        int16_t word_value = c->data[idx].value;
         // A first_cmd is either at the beginning of the command or immediately
         // after the SEP
-        bool first_cmd = idx == 0 || c->data[idx - 1].t == SEP;
+        bool first_cmd = idx == 0 || c->data[idx - 1].tag == SEP;
 
         if (word_type == NUMBER) { stack_depth++; }
         else if (word_type == OP) {
@@ -234,8 +234,8 @@ process_result_t process(exec_state_t *es, const tele_command_t *c) {
     int16_t idx = c->separator == -1 ? c->length : c->separator;
 
     while (idx--) {  // process from right to left
-        tele_word_t word_type = c->data[idx].t;
-        int16_t word_value = c->data[idx].v;
+        tele_word_t word_type = c->data[idx].tag;
+        int16_t word_value = c->data[idx].value;
 
         if (word_type == NUMBER) { cs_push(&cs, word_value); }
         else if (word_type == OP) {

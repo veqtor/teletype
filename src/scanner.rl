@@ -57,7 +57,7 @@ error_t scanner(const char *data, tele_command_t *out,
 
                 // if it's a SEP, we need to record it's position
                 // (validate checks for too many SEP tokens)
-                if (tele_data.t == SEP) out->separator = out->length;
+                if (tele_data.tag == SEP) out->separator = out->length;
 
                 // increase the command length
                 out->length++;
@@ -77,8 +77,8 @@ error_t scanner(const char *data, tele_command_t *out,
 
             // it's a SEP, we need to record it's position
             // (validate checks for too many SEP tokens)
-            out->data[out->length].t = SEP;
-            out->data[out->length].v = 0;
+            out->data[out->length].tag = SEP;
+            out->data[out->length].value = 0;
             out->separator = out->length;
 
             // increase the command length

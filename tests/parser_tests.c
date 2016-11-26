@@ -179,8 +179,8 @@ TEST parser_should_return_op() {
         error_t result = parse(text, &cmd, error_msg);
         ASSERT_EQ(result, E_OK);
         ASSERT_EQ(cmd.length, 1);
-        ASSERT_EQ(cmd.data[0].t, OP);
-        ASSERT_EQ(cmd.data[0].v, (int16_t)i);
+        ASSERT_EQ(cmd.data[0].tag, OP);
+        ASSERT_EQ(cmd.data[0].value, (int16_t)i);
     }
     PASS();
 }
@@ -195,8 +195,8 @@ TEST parser_should_return_mod() {
         error_t result = parse(text, &cmd, error_msg);
         ASSERT_EQ(result, E_OK);
         ASSERT_EQ(cmd.length, 1);
-        ASSERT_EQ(cmd.data[0].t, MOD);
-        ASSERT_EQ(cmd.data[0].v, (int16_t)i);
+        ASSERT_EQ(cmd.data[0].tag, MOD);
+        ASSERT_EQ(cmd.data[0].value, (int16_t)i);
     }
     PASS();
 }

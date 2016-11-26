@@ -20,15 +20,15 @@ void copy_sub_command(tele_command_t *dst, const tele_command_t *src) {
 void print_command(const tele_command_t *c, char *out) {
     *out = 0;
     for (int n = 0; n < c->length; n++) {
-        switch (c->data[n].t) {
-            case OP: strcat(out, tele_ops[c->data[n].v]->name); break;
+        switch (c->data[n].tag) {
+            case OP: strcat(out, tele_ops[c->data[n].value]->name); break;
             case NUMBER: {
                 char number[8];
-                itoa(c->data[n].v, number, 10);
+                itoa(c->data[n].value, number, 10);
                 strcat(out, number);
                 break;
             }
-            case MOD: strcat(out, tele_mods[c->data[n].v]->name); break;
+            case MOD: strcat(out, tele_mods[c->data[n].value]->name); break;
             case SEP: strcat(out, ":"); break;
             default: break;
         }

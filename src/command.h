@@ -8,8 +8,8 @@
 typedef enum { NUMBER, MOD, SEP, OP } tele_word_t;
 
 typedef struct {
-    tele_word_t t;
-    int16_t v;
+    tele_word_t tag;
+    int16_t value;
 } tele_data_t;
 
 typedef struct {
