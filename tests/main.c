@@ -5,6 +5,7 @@
 #include "teletype.h"
 #include "teletype_io.h"
 
+#include "match_token_tests.h"
 #include "parser_tests.h"
 #include "process_tests.h"
 
@@ -32,6 +33,7 @@ GREATEST_MAIN_DEFS();
 int main(int argc, char **argv) {
     GREATEST_MAIN_BEGIN();
 
+    RUN_SUITE(match_token_suite);
     RUN_SUITE(parser_suite);
     RUN_SUITE(process_suite);
 
