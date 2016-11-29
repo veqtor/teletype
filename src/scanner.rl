@@ -67,7 +67,7 @@ error_t scanner(const char *data, tele_command_t *out,
             }
             else {
                 // can't match the token, fail
-                strcpy(error_msg, data);
+                strcpy(error_msg, buf);
                 return E_PARSE;
             }
         }
