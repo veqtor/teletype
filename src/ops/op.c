@@ -66,10 +66,10 @@ const tele_op_t *tele_ops[TELE_NUM_OPS] = {
     &op_MP_RESET, &op_MP_SYNC, &op_MP_MUTE, &op_MP_UNMUTE, &op_MP_FREEZE,
     &op_MP_UNFREEZE, &op_MP_STOP, &op_ES_PRESET, &op_ES_MODE, &op_ES_CLOCK,
     &op_ES_RESET, &op_ES_PATTERN, &op_ES_TRANS, &op_ES_STOP, &op_ES_TRIPLE,
-    &op_ES_MAGIC, &op_ORCA_TRK, &op_ORCA_CLK, &op_ORCA_DIV, &op_ORCA_PHASE,
-    &op_ORCA_RST, &op_ORCA_WGT, &op_ORCA_MUTE, &op_ORCA_SCALE, &op_ORCA_BANK,
-    &op_ORCA_PRESET, &op_ORCA_RELOAD, &op_ORCA_ROTS, &op_ORCA_ROTW,
-    &op_ORCA_GRST, &op_ORCA_CVA, &op_ORCA_CVB,
+    &op_ES_MAGIC, &op_OR_TRK, &op_OR_CLK, &op_OR_DIV, &op_OR_PHASE, &op_OR_RST,
+    &op_OR_WGT, &op_OR_MUTE, &op_OR_SCALE, &op_OR_BANK, &op_OR_PRESET,
+    &op_OR_RELOAD, &op_OR_ROTS, &op_OR_ROTW, &op_OR_GRST, &op_OR_CVA,
+    &op_OR_CVB,
 };
 
 /////////////////////////////////////////////////////////////////
