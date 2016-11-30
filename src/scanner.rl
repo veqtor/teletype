@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "command.h"
+#include "match_token.h"
 #include "teletype.h"
 
 const size_t kMaxTokenLength = 32;
@@ -51,7 +52,7 @@ error_t scanner(const char *data, tele_command_t *out,
             buf[len] = '\0';
 
             tele_data_t tele_data;
-            if (match_token(buf, &tele_data)) {
+            if (match_token(buf, len, &tele_data)) {
                 // if we have a match, copy data to the the command
                 out->data[out->length] = tele_data;
 

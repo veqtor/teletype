@@ -1,7 +1,5 @@
-#include <ctype.h>   // isdigit
 #include <stdint.h>  // types
 #include <stdio.h>   // printf
-#include <stdlib.h>  // rand, strtol
 #include <string.h>
 
 #include "helpers.h"
@@ -89,37 +87,6 @@ error_t parse(const char *cmd, tele_command_t *out,
               char error_msg[ERROR_MSG_LENGTH]) {
     // call the Ragel generated scanner function
     return scanner(cmd, out, error_msg);
-}
-
-// matches a single token, out contains the token, return value indicates
-// success
-bool match_token(const char *token, tele_data_t *out) {
-    // try to match a number
-    if (isdigit(token[0]) || token[0] == '-') {
-        out->tag = NUMBER;
-        out->value = strtol(token, NULL, 0);
-        return true;
-    }
-
-    // try to match an op
-    for (int16_t i = 0; i < TELE_NUM_OPS; i++) {
-        if (!strcmp(token, tele_ops[i]->name)) {
-            out->tag = OP;
-            out->value = i;
-            return true;
-        }
-    }
-
-    // try to match a mod
-    for (int16_t i = 0; i < TELE_NUM_MODS; i++) {
-        if (!strcmp(token, tele_mods[i]->name)) {
-            out->tag = MOD;
-            out->value = i;
-            return true;
-        }
-    }
-
-    return false;
 }
 
 /////////////////////////////////////////////////////////////////

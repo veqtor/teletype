@@ -35,7 +35,6 @@ typedef struct {
 
 error_t parse(const char *cmd, tele_command_t *out,
               char error_msg[ERROR_MSG_LENGTH]);
-bool match_token(const char *token, tele_data_t *out);
 error_t validate(const tele_command_t *c, char error_msg[ERROR_MSG_LENGTH]);
 process_result_t run_script(size_t script_no);
 process_result_t run_command(const tele_command_t *cmd);

@@ -1,9 +1,11 @@
 #include "match_token_tests.h"
 
+#include <string.h>
+
 #include "greatest/greatest.h"
 
+#include "match_token.h"
 #include "ops/op.h"
-#include "teletype.h"
 
 // This test asserts that match_token always returns the correct op, it does
 // this by starting with the op in question, extracting the name and running
@@ -13,7 +15,7 @@ TEST match_token_should_return_op() {
         const tele_op_t* op = tele_ops[i];
         const char* text = op->name;
         tele_data_t data;
-        bool result = match_token(text, &data);
+        bool result = match_token(text, strlen(text), &data);
         ASSERT_EQ(result, true);
         ASSERT_EQ(data.tag, OP);
         ASSERT_EQ(data.value, (int16_t)i);
@@ -27,7 +29,7 @@ TEST match_token_should_return_mod() {
         const tele_mod_t* mod = tele_mods[i];
         const char* text = mod->name;
         tele_data_t data;
-        bool result = match_token(text, &data);
+        bool result = match_token(text, strlen(text), &data);
         ASSERT_EQ(result, true);
         ASSERT_EQ(data.tag, MOD);
         ASSERT_EQ(data.value, (int16_t)i);

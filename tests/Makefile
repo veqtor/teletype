@@ -3,7 +3,7 @@ CFLAGS = -std=c99 -g -Wall -DSIM -I../src -I../libavr32/src
 
 tests: main.o match_token_tests.o parser_tests.o process_tests.o \
 	../src/teletype.o ../src/command.o ../src/helpers.o \
-	../src/scanner.o \
+	../src/match_token.o ../src/scanner.o \
 	../src/state.o ../src/table.o \
 	../src/ops/op.o ../src/ops/constants.o ../src/ops/controlflow.o \
 	../src/ops/delay.o ../src/ops/hardware.o ../src/ops/metronome.o \
@@ -12,6 +12,9 @@ tests: main.o match_token_tests.o parser_tests.o process_tests.o \
 	../src/euclidean/data.o ../src/euclidean/euclidean.o \
 	../libavr32/src/util.o
 	$(CC) -o $@ $^ $(CFLAGS)
+
+../src/match_token.c: ../src/match_token.rl
+	ragel -C -G2 ../src/match_token.rl -o ../src/match_token.c
 
 ../src/scanner.c: ../src/scanner.rl
 	ragel -C -G2 ../src/scanner.rl -o ../src/scanner.c
@@ -27,4 +30,5 @@ clean:
 	rm -f ../src/euclidean/*.o
 	rm -f ../src/ops/*.o
 	rm -f ../libavr32/src/*.o
+	rm -f ../src/match_token.c
 	rm -f ../src/scanner.c

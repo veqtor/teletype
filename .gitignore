@@ -42,6 +42,7 @@
 *.dSYM/
 
 # Build outputs
+/src/match_token.c
 /src/scanner.c
 /simulator/tt
 /tests/tests

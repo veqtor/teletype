@@ -26,6 +26,16 @@ make
 ./flash.sh
 ```
 
+## Tests
+
+To run the tests:
+
+```bash
+cd tests
+make clean  # only needed if you've built the module code
+make test
+```
+
 ## Ragel
 
 The [Ragel state machine compiler][ragel] is required to build the firmware. It needs to be installed and on the path:
@@ -39,6 +49,17 @@ pacman -Sy ragel    # Arch Linux / MSYS2 (Windows)
 Version 6.9 is known to work.
 
 See section 6.3 in the Ragel manual for information on the `=>` scanner constructor used.
+
+## Adding a new `OP` or `MOD` (a.k.a. `PRE`)
+
+If you want to add a new `OP` or `MOD`, please create the relevant `tele_op_t` or `tele_mod_t` in the `src/ops` directory. You will then need to reference it in the following places:
+
+- `src/ops/op.c`: add a reference to your struct to the relevant table, `tele_ops` or `tele_mods`. Ideally grouped with other ops from the same file.
+- `src/ops/op.h`: increase `TELE_NUM_OPS` or `TELE_NUM_MODS`.
+- `src/ops/op_enum.h`: please run `utils/op_enums.py` to generate this file.
+- `src/match_token.rl`: add an entry to the Ragel list to match the token to the struct. Again, please try to keep the order in the list sensible.
+
+There is a test that checks to see if the above have all been entered correctly. (See above to run tests.)
 
 ## Code Formatting
 
