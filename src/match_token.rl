@@ -36,6 +36,7 @@
         "O.MIN"       => { MATCH_OP(E_OP_O_MIN); };
         "O.WRAP"      => { MATCH_OP(E_OP_O_WRAP); };
         "PARAM"       => { MATCH_OP(E_OP_PARAM); };
+        "PRM"         => { MATCH_OP(E_OP_PRM); };
         "T"           => { MATCH_OP(E_OP_T); };
         "TIME"        => { MATCH_OP(E_OP_TIME); };
         "TIME.ACT"    => { MATCH_OP(E_OP_TIME_ACT); };
@@ -79,6 +80,7 @@
         "TR.TIME"     => { MATCH_OP(E_OP_TR_TIME); };
         "TR.TOG"      => { MATCH_OP(E_OP_TR_TOG); };
         "TR.PULSE"    => { MATCH_OP(E_OP_TR_PULSE); };
+        "TR.P"        => { MATCH_OP(E_OP_TR_P); };
         "II"          => { MATCH_OP(E_OP_II); };
         "CV.SET"      => { MATCH_OP(E_OP_CV_SET); };
         "MUTE"        => { MATCH_OP(E_OP_MUTE); };
@@ -131,6 +133,22 @@
         "V"           => { MATCH_OP(E_OP_V); };
         "VV"          => { MATCH_OP(E_OP_VV); };
         "ER"          => { MATCH_OP(E_OP_ER); };
+        "+"           => { MATCH_OP(E_OP_SYM_PLUS); };
+        "-"           => { MATCH_OP(E_OP_SYM_DASH); };
+        "*"           => { MATCH_OP(E_OP_SYM_STAR); };
+        "/"           => { MATCH_OP(E_OP_SYM_FORWARD_SLASH); };
+        "%"           => { MATCH_OP(E_OP_SYM_PERCENTAGE); };
+        "=="          => { MATCH_OP(E_OP_SYM_EQUAL_x2); };
+        "!="          => { MATCH_OP(E_OP_SYM_EXCLAMATION_EQUAL); };
+        "<"           => { MATCH_OP(E_OP_SYM_LEFT_ANGLED); };
+        ">"           => { MATCH_OP(E_OP_SYM_RIGHT_ANGLED); };
+        "<="          => { MATCH_OP(E_OP_SYM_LEFT_ANGLED_EQUAL); };
+        ">="          => { MATCH_OP(E_OP_SYM_RIGHT_ANGLED_EQUAL); };
+        "<<"          => { MATCH_OP(E_OP_SYM_LEFT_ANGLED_x2); };
+        ">>"          => { MATCH_OP(E_OP_SYM_RIGHT_ANGLED_x2); };
+        "!"           => { MATCH_OP(E_OP_SYM_EXCLAMATION); };
+        "&&"          => { MATCH_OP(E_OP_AMPERSAND_x2); };
+        "||"          => { MATCH_OP(E_OP_PIPE_x2); };
 
         # stack
         "S.ALL"       => { MATCH_OP(E_OP_S_ALL); };

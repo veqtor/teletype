@@ -25,8 +25,8 @@ const tele_op_t *tele_ops[TELE_NUM_OPS] = {
     // variables
     &op_A, &op_B, &op_C, &op_D, &op_DRUNK, &op_DRUNK_MAX, &op_DRUNK_MIN,
     &op_DRUNK_WRAP, &op_FLIP, &op_I, &op_IN, &op_O, &op_O_INC, &op_O_MAX,
-    &op_O_MIN, &op_O_WRAP, &op_PARAM, &op_T, &op_TIME, &op_TIME_ACT, &op_X,
-    &op_Y, &op_Z,
+    &op_O_MIN, &op_O_WRAP, &op_PARAM, &op_PRM, &op_T, &op_TIME, &op_TIME_ACT,
+    &op_X, &op_Y, &op_Z,
 
     // metronome
     &op_M, &op_M_ACT, &op_M_RESET,
@@ -41,16 +41,21 @@ const tele_op_t *tele_ops[TELE_NUM_OPS] = {
 
     // hardware
     &op_CV, &op_CV_OFF, &op_CV_SLEW, &op_TR, &op_TR_POL, &op_TR_TIME,
-    &op_TR_TOG, &op_TR_PULSE, &op_II, &op_CV_SET, &op_MUTE, &op_UNMUTE,
-    &op_STATE, &op_JF_TR, &op_JF_RMODE, &op_JF_RUN, &op_JF_SHIFT, &op_JF_VTR,
-    &op_JF_MODE, &op_JF_TICK, &op_JF_VOX, &op_JF_NOTE, &op_JF_GOD, &op_JF_TUNE,
-    &op_JF_QT,
+    &op_TR_TOG, &op_TR_PULSE, &op_TR_P, &op_II, &op_CV_SET, &op_MUTE,
+    &op_UNMUTE, &op_STATE, &op_JF_TR, &op_JF_RMODE, &op_JF_RUN, &op_JF_SHIFT,
+    &op_JF_VTR, &op_JF_MODE, &op_JF_TICK, &op_JF_VOX, &op_JF_NOTE, &op_JF_GOD,
+    &op_JF_TUNE, &op_JF_QT,
 
     // maths
     &op_ADD, &op_SUB, &op_MUL, &op_DIV, &op_MOD, &op_RAND, &op_RRAND, &op_TOSS,
     &op_MIN, &op_MAX, &op_LIM, &op_WRAP, &op_QT, &op_AVG, &op_EQ, &op_NE,
     &op_LT, &op_GT, &op_NZ, &op_EZ, &op_RSH, &op_LSH, &op_EXP, &op_ABS, &op_AND,
     &op_OR, &op_XOR, &op_JI, &op_SCALE, &op_N, &op_V, &op_VV, &op_ER,
+    &op_SYM_PLUS, &op_SYM_DASH, &op_SYM_STAR, &op_SYM_FORWARD_SLASH,
+    &op_SYM_PERCENTAGE, &op_SYM_EQUAL_x2, &op_SYM_EXCLAMATION_EQUAL,
+    &op_SYM_LEFT_ANGLED, &op_SYM_RIGHT_ANGLED, &op_SYM_LEFT_ANGLED_EQUAL,
+    &op_SYM_RIGHT_ANGLED_EQUAL, &op_SYM_EXCLAMATION, &op_SYM_LEFT_ANGLED_x2,
+    &op_SYM_RIGHT_ANGLED_x2, &op_AMPERSAND_x2, &op_PIPE_x2,
 
     // stack
     &op_S_ALL, &op_S_POP, &op_S_CLR, &op_S_L,

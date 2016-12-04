@@ -25,7 +25,7 @@ typedef struct {
     const uint8_t params;
 } tele_mod_t;
 
-#define TELE_NUM_OPS 157
+#define TELE_NUM_OPS 175
 extern const tele_op_t *tele_ops[TELE_NUM_OPS];
 
 #define TELE_NUM_MODS 7
@@ -66,6 +66,9 @@ void op_peek_i16(const void *data, scene_state_t *ss, exec_state_t *es,
                  command_state_t *cs);
 void op_poke_i16(const void *data, scene_state_t *ss, exec_state_t *es,
                  command_state_t *cs);
+
+#define MAKE_ALIAS_OP(n, g, s, p, r) \
+    { .name = #n, .get = g, .set = s, .params = p, .returns = r, .data = NULL }
 
 // Mods
 #define MAKE_MOD(n, f, p) \
