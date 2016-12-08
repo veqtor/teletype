@@ -11,6 +11,9 @@ execution?
 serial framing:
 http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
 
+msgpack:
+http://msgpack.org
+
 */
 
 #include <ctype.h>   // toupper
