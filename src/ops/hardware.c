@@ -195,30 +195,30 @@ const tele_op_t op_JF_GOD   = MAKE_GET_OP(JF.GOD   , op_JF_GOD_get   , 1, false)
 const tele_op_t op_JF_TUNE  = MAKE_GET_OP(JF.TUNE  , op_JF_TUNE_get  , 3, false);
 const tele_op_t op_JF_QT    = MAKE_GET_OP(JF.QT    , op_JF_QT_get    , 1, false);
 
-const tele_op_t op_KR_PRESET   = MAKE_GET_SET_OP(KR.PRESET  , op_KR_PRESET_get   , op_KR_PRESET_set   , 0, true);
-const tele_op_t op_KR_PATTERN  = MAKE_GET_SET_OP(KR.PATTERN , op_KR_PATTERN_get  , op_KR_PATTERN_set  , 0, true);
+const tele_op_t op_KR_PRESET   = MAKE_GET_SET_OP(KR.PRE     , op_KR_PRESET_get   , op_KR_PRESET_set   , 0, true);
+const tele_op_t op_KR_PATTERN  = MAKE_GET_SET_OP(KR.PAT     , op_KR_PATTERN_get  , op_KR_PATTERN_set  , 0, true);
 const tele_op_t op_KR_SCALE    = MAKE_GET_SET_OP(KR.SCALE   , op_KR_SCALE_get    , op_KR_SCALE_set    , 0, true);
 const tele_op_t op_KR_PERIOD   = MAKE_GET_SET_OP(KR.PERIOD  , op_KR_PERIOD_get   , op_KR_PERIOD_set   , 0, true);
 const tele_op_t op_KR_POS      = MAKE_GET_SET_OP(KR.POS     , op_KR_POS_get      , op_KR_POS_set      , 2, true);
 const tele_op_t op_KR_LOOP_ST  = MAKE_GET_SET_OP(KR.L.ST    , op_KR_LOOP_ST_get  , op_KR_LOOP_ST_set  , 2, true);
 const tele_op_t op_KR_LOOP_LEN = MAKE_GET_SET_OP(KR.L.LEN   , op_KR_LOOP_LEN_get , op_KR_LOOP_LEN_set , 2, true);
-const tele_op_t op_KR_RESET    = MAKE_GET_OP(KR.RESET       , op_KR_RESET_get    , 2, false);
+const tele_op_t op_KR_RESET    = MAKE_GET_OP(KR.RES         , op_KR_RESET_get    , 2, false);
 
-const tele_op_t op_MP_PRESET1  = MAKE_GET_SET_OP(MP.PRESET  , op_MP_PRESET_get   , op_MP_PRESET_set   , 0, true);
-const tele_op_t op_MP_RESET1   = MAKE_GET_OP(MP.RESET       , op_MP_RESET_get    , 1, false);
-const tele_op_t op_MP_STOP1    = MAKE_GET_OP(MP.STOP        , op_MP_STOP_get     , 1, false);
+const tele_op_t op_MP_PRESET1  = MAKE_GET_SET_OP(MP.PRE     , op_MP_PRESET_get   , op_MP_PRESET_set   , 0, true);
+const tele_op_t op_MP_RESET1   = MAKE_GET_OP(MP.RES         , op_MP_RESET_get    , 1, false);
+const tele_op_t op_MP_STOP1    = MAKE_GET_OP(MP.OFF         , op_MP_STOP_get     , 1, false);
 const tele_op_t op_MP_SCALE    = MAKE_GET_SET_OP(MP.SCALE   , op_MP_SCALE_get    , op_MP_SCALE_set    , 0, true);
 const tele_op_t op_MP_PERIOD   = MAKE_GET_SET_OP(MP.PERIOD  , op_MP_PERIOD_get   , op_MP_PERIOD_set   , 0, true);
 
-const tele_op_t op_LV_PRESET   = MAKE_GET_SET_OP(LV.PRESET  , op_LV_PRESET_get   , op_LV_PRESET_set   , 0, true);
-const tele_op_t op_LV_RESET    = MAKE_GET_OP(LV.RESET       , op_LV_RESET_get    , 0, false);
-const tele_op_t op_LV_PATTERN  = MAKE_GET_SET_OP(LV.PATTERN , op_LV_PATTERN_get  , op_LV_PATTERN_set  , 0, true);
+const tele_op_t op_LV_PRESET   = MAKE_GET_SET_OP(LV.PRE     , op_LV_PRESET_get   , op_LV_PRESET_set   , 0, true);
+const tele_op_t op_LV_RESET    = MAKE_GET_OP(LV.RES         , op_LV_RESET_get    , 0, false);
+const tele_op_t op_LV_PATTERN  = MAKE_GET_SET_OP(LV.PAT     , op_LV_PATTERN_get  , op_LV_PATTERN_set  , 0, true);
 const tele_op_t op_LV_LOOP_ST  = MAKE_GET_SET_OP(LV.L.ST    , op_LV_LOOP_ST_get  , op_LV_LOOP_ST_set  , 0, true);
 const tele_op_t op_LV_LOOP_LEN = MAKE_GET_SET_OP(LV.L.LEN   , op_LV_LOOP_LEN_get , op_LV_LOOP_LEN_set , 0, true);
 const tele_op_t op_LV_POS      = MAKE_GET_SET_OP(LV.POS     , op_LV_POS_get      , op_LV_POS_set      , 0, true);
 
-const tele_op_t op_CY_PRESET   = MAKE_GET_SET_OP(CY.PRESET  , op_CY_PRESET_get   , op_CY_PRESET_set   , 0, true);
-const tele_op_t op_CY_RESET    = MAKE_GET_OP(CY.RESET       , op_CY_RESET_get    , 1, false);
+const tele_op_t op_CY_PRESET   = MAKE_GET_SET_OP(CY.PRE     , op_CY_PRESET_get   , op_CY_PRESET_set   , 0, true);
+const tele_op_t op_CY_RESET    = MAKE_GET_OP(CY.RES         , op_CY_RESET_get    , 1, false);
 const tele_op_t op_CY_POS      = MAKE_GET_SET_OP(CY.POS     , op_CY_POS_get      , op_CY_POS_set      , 1, true);
 const tele_op_t op_CY_REV      = MAKE_GET_OP(CY.REV         , op_CY_REV_get      , 1, false);
 const tele_op_t op_CY_BRAKE    = MAKE_GET_SET_OP(CY.BRAKE   , op_CY_BRAKE_get    , op_CY_BRAKE_set    , 1, true);
@@ -869,8 +869,9 @@ static void op_KR_LOOP_LEN_get(const void *data, scene_state_t *ss, exec_state_t
 static void op_KR_RESET_get(const void *data, scene_state_t *ss, exec_state_t *es,
                          command_state_t *cs) {
     int16_t a = cs_pop(cs);
-    uint8_t d[] = { II_KR_RESET, a };
-    tele_ii_tx(II_KR_ADDR, d, 2);
+    int16_t b = cs_pop(cs);
+    uint8_t d[] = { II_KR_RESET, a, b };
+    tele_ii_tx(II_KR_ADDR, d, 3);
 }
 
 static void op_MP_PRESET_set(const void *data, scene_state_t *ss, exec_state_t *es,
