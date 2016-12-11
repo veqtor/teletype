@@ -5,7 +5,7 @@
 #include "teletype_io.h"
 
 static void mod_S_func(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
-                       tele_command_t *sub_command);
+                       const tele_command_t *sub_command);
 static void op_S_ALL_get(const void *data, scene_state_t *ss, exec_state_t *es,
                          command_state_t *cs);
 static void op_S_POP_get(const void *data, scene_state_t *ss, exec_state_t *es,
@@ -24,7 +24,7 @@ const tele_op_t op_S_L = MAKE_GET_OP(S.L, op_S_L_get, 0, true);
 
 static void mod_S_func(scene_state_t *ss, exec_state_t *NOTUSED(es),
                        command_state_t *NOTUSED(cs),
-                       tele_command_t *sub_command) {
+                       const tele_command_t *sub_command) {
     if (ss->stack_op.top < STACK_OP_SIZE) {
         copy_command(&ss->stack_op.commands[ss->stack_op.top], sub_command);
         ss->stack_op.top++;

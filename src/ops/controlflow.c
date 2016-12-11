@@ -7,15 +7,18 @@
 #include "teletype_io.h"
 
 static void mod_PROB_func(scene_state_t *ss, exec_state_t *es,
-                          command_state_t *cs, tele_command_t *sub_command);
+                          command_state_t *cs,
+                          const tele_command_t *sub_command);
 static void mod_IF_func(scene_state_t *ss, exec_state_t *es,
-                        command_state_t *cs, tele_command_t *sub_command);
+                        command_state_t *cs, const tele_command_t *sub_command);
 static void mod_ELIF_func(scene_state_t *ss, exec_state_t *es,
-                          command_state_t *cs, tele_command_t *sub_command);
+                          command_state_t *cs,
+                          const tele_command_t *sub_command);
 static void mod_ELSE_func(scene_state_t *ss, exec_state_t *es,
-                          command_state_t *cs, tele_command_t *sub_command);
+                          command_state_t *cs,
+                          const tele_command_t *sub_command);
 static void mod_L_func(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
-                       tele_command_t *sub_command);
+                       const tele_command_t *sub_command);
 
 static void op_SCENE_get(const void *data, scene_state_t *ss, exec_state_t *es,
                          command_state_t *cs);
@@ -40,14 +43,16 @@ const tele_op_t op_SCENE =
 
 
 static void mod_PROB_func(scene_state_t *NOTUSED(ss), exec_state_t *es,
-                          command_state_t *cs, tele_command_t *sub_command) {
+                          command_state_t *cs,
+                          const tele_command_t *sub_command) {
     int16_t a = cs_pop(cs);
 
     if (rand() % 101 < a) { process(es, sub_command); }
 }
 
 static void mod_IF_func(scene_state_t *NOTUSED(ss), exec_state_t *es,
-                        command_state_t *cs, tele_command_t *sub_command) {
+                        command_state_t *cs,
+                        const tele_command_t *sub_command) {
     es->if_else_condition = false;
     if (cs_pop(cs)) {
         es->if_else_condition = true;
@@ -56,7 +61,8 @@ static void mod_IF_func(scene_state_t *NOTUSED(ss), exec_state_t *es,
 }
 
 static void mod_ELIF_func(scene_state_t *NOTUSED(ss), exec_state_t *es,
-                          command_state_t *cs, tele_command_t *sub_command) {
+                          command_state_t *cs,
+                          const tele_command_t *sub_command) {
     if (!es->if_else_condition) {
         if (cs_pop(cs)) {
             es->if_else_condition = true;
@@ -67,7 +73,7 @@ static void mod_ELIF_func(scene_state_t *NOTUSED(ss), exec_state_t *es,
 
 static void mod_ELSE_func(scene_state_t *NOTUSED(ss), exec_state_t *es,
                           command_state_t *NOTUSED(cs),
-                          tele_command_t *sub_command) {
+                          const tele_command_t *sub_command) {
     if (!es->if_else_condition) {
         es->if_else_condition = true;
         process(es, sub_command);
@@ -75,7 +81,7 @@ static void mod_ELSE_func(scene_state_t *NOTUSED(ss), exec_state_t *es,
 }
 
 static void mod_L_func(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
-                       tele_command_t *sub_command) {
+                       const tele_command_t *sub_command) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
     int16_t loop_size = a < b ? b - a : a - b;
