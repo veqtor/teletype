@@ -6,6 +6,7 @@
 #include "teletype_io.h"
 
 #include "match_token_tests.h"
+#include "op_mod_tests.h"
 #include "parser_tests.h"
 #include "process_tests.h"
 
@@ -34,6 +35,7 @@ int main(int argc, char **argv) {
     GREATEST_MAIN_BEGIN();
 
     RUN_SUITE(match_token_suite);
+    RUN_SUITE(op_mod_suite);
     RUN_SUITE(parser_suite);
     RUN_SUITE(process_suite);
 
