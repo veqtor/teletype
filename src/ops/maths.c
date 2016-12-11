@@ -151,12 +151,18 @@ static void op_MUL_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
 
 static void op_DIV_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                        exec_state_t *NOTUSED(es), command_state_t *cs) {
-    cs_push(cs, cs_pop(cs) / cs_pop(cs));
+    int16_t a = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+    int16_t out = b != 0 ? a / b : 0;
+    cs_push(cs, out);
 }
 
 static void op_MOD_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                        exec_state_t *NOTUSED(es), command_state_t *cs) {
-    cs_push(cs, cs_pop(cs) % cs_pop(cs));
+    int16_t a = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+    int16_t out = b != 0 ? a % b : 0;
+    cs_push(cs, out);
 }
 
 static void op_RAND_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
@@ -254,6 +260,11 @@ static void op_QT_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
     int16_t a, b, c, d, e;
     b = cs_pop(cs);
     a = cs_pop(cs);
+
+    if (a == 0) {
+        cs_push(cs, 0);
+        return;
+    }
 
     c = b / a;
     d = c * a;
@@ -365,7 +376,15 @@ static void op_XOR_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
 
 static void op_JI_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                       exec_state_t *NOTUSED(es), command_state_t *cs) {
-    uint32_t ji = (((cs_pop(cs) << 8) / cs_pop(cs)) * 1684) >> 8;
+    int16_t a = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+
+    if (a == 0) {
+        cs_push(cs, 0);
+        return;
+    }
+
+    uint32_t ji = (((a << 8) / b) * 1684) >> 8;
     while (ji > 1683) ji >>= 1;
     cs_push(cs, ji);
 }
@@ -378,6 +397,11 @@ static void op_SCALE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
     x = cs_pop(cs);
     y = cs_pop(cs);
     i = cs_pop(cs);
+
+    if ((b - a) == 0) {
+        cs_push(cs, 0);
+        return;
+    }
 
     cs_push(cs, (i - a) * (y - x) / (b - a) + x);
 }
