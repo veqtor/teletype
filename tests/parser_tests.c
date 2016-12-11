@@ -3,6 +3,7 @@
 #include "greatest/greatest.h"
 
 #include "ops/op.h"
+#include "ops/op_enum.h"
 #include "teletype.h"
 
 error_t parse_and_validate_helper(char* text) {
@@ -171,7 +172,7 @@ TEST should_parse_and_validate() {
 // through the parser. Then asserting that only 1 op is returned in
 // tele_command_t and that it's value matches the op.
 TEST parser_should_return_op() {
-    for (size_t i = 0; i < TELE_NUM_OPS; i++) {
+    for (size_t i = 0; i < E_OP__LENGTH; i++) {
         const tele_op_t* op = tele_ops[i];
         const char* text = op->name;
         tele_command_t cmd;
@@ -187,7 +188,7 @@ TEST parser_should_return_op() {
 
 // As parser_should_return_op, but for mods.
 TEST parser_should_return_mod() {
-    for (size_t i = 0; i < TELE_NUM_MODS; i++) {
+    for (size_t i = 0; i < E_MOD__LENGTH; i++) {
         const tele_mod_t* mod = tele_mods[i];
         const char* text = mod->name;
         tele_command_t cmd;

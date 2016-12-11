@@ -5,6 +5,7 @@
 #include <stddef.h>
 
 #include "command.h"
+#include "op_enum.h"
 #include "state.h"
 
 typedef struct {
@@ -25,11 +26,8 @@ typedef struct {
     const uint8_t params;
 } tele_mod_t;
 
-#define TELE_NUM_OPS 175
-extern const tele_op_t *tele_ops[TELE_NUM_OPS];
-
-#define TELE_NUM_MODS 7
-extern const tele_mod_t *tele_mods[TELE_NUM_MODS];
+extern const tele_op_t *tele_ops[E_OP__LENGTH];
+extern const tele_mod_t *tele_mods[E_MOD__LENGTH];
 
 // Get only ops
 #define MAKE_GET_OP(n, g, p, r)                                       \

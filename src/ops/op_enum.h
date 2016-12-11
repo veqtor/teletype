@@ -181,16 +181,18 @@ typedef enum {
     E_OP_OR_GRST                = 172,
     E_OP_OR_CVA                 = 173,
     E_OP_OR_CVB                 = 174,
+    E_OP__LENGTH                = 175,
 } tele_op_idx_t;
 
 typedef enum {
-    E_MOD_IF   =   0,
-    E_MOD_ELIF =   1,
-    E_MOD_ELSE =   2,
-    E_MOD_L    =   3,
-    E_MOD_PROB =   4,
-    E_MOD_DEL  =   5,
-    E_MOD_S    =   6,
+    E_MOD_IF      =   0,
+    E_MOD_ELIF    =   1,
+    E_MOD_ELSE    =   2,
+    E_MOD_L       =   3,
+    E_MOD_PROB    =   4,
+    E_MOD_DEL     =   5,
+    E_MOD_S       =   6,
+    E_MOD__LENGTH =   7,
 } tele_mod_idx_t;
 
 #endif
