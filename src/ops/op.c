@@ -32,9 +32,11 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_M, &op_M_ACT, &op_M_RESET,
 
     // patterns
-    &op_P, &op_P_HERE, &op_P_END, &op_P_I, &op_P_L, &op_P_N, &op_P_NEXT,
-    &op_P_PREV, &op_P_START, &op_P_WRAP, &op_P_INS, &op_P_RM, &op_P_PUSH,
-    &op_P_POP, &op_PN,
+    &op_P_N, &op_P, &op_PN, &op_P_L, &op_PN_L, &op_P_WRAP, &op_PN_WRAP,
+    &op_P_START, &op_PN_START, &op_P_END, &op_PN_END, &op_P_I, &op_PN_I,
+    &op_P_HERE, &op_PN_HERE, &op_P_NEXT, &op_PN_NEXT, &op_P_PREV, &op_PN_PREV,
+    &op_P_INS, &op_PN_INS, &op_P_RM, &op_PN_RM, &op_P_PUSH, &op_PN_PUSH,
+    &op_P_POP, &op_PN_POP,
 
     // queue
     &op_Q, &op_Q_AVG, &op_Q_N,

@@ -50,21 +50,33 @@
         "M.RESET"     => { MATCH_OP(E_OP_M_RESET); };
 
         # patterns
-        "P"           => { MATCH_OP(E_OP_P); };
-        "P.HERE"      => { MATCH_OP(E_OP_P_HERE); };
-        "P.END"       => { MATCH_OP(E_OP_P_END); };
-        "P.I"         => { MATCH_OP(E_OP_P_I); };
-        "P.L"         => { MATCH_OP(E_OP_P_L); };
         "P.N"         => { MATCH_OP(E_OP_P_N); };
-        "P.NEXT"      => { MATCH_OP(E_OP_P_NEXT); };
-        "P.PREV"      => { MATCH_OP(E_OP_P_PREV); };
-        "P.START"     => { MATCH_OP(E_OP_P_START); };
-        "P.WRAP"      => { MATCH_OP(E_OP_P_WRAP); };
-        "P.INS"       => { MATCH_OP(E_OP_P_INS); };
-        "P.RM"        => { MATCH_OP(E_OP_P_RM); };
-        "P.PUSH"      => { MATCH_OP(E_OP_P_PUSH); };
-        "P.POP"       => { MATCH_OP(E_OP_P_POP); };
+        "P"           => { MATCH_OP(E_OP_P); };
         "PN"          => { MATCH_OP(E_OP_PN); };
+        "P.L"         => { MATCH_OP(E_OP_P_L); };
+        "PN.L"        => { MATCH_OP(E_OP_PN_L); };
+        "P.WRAP"      => { MATCH_OP(E_OP_P_WRAP); };
+        "PN.WRAP"     => { MATCH_OP(E_OP_PN_WRAP); };
+        "P.START"     => { MATCH_OP(E_OP_P_START); };
+        "PN.START"    => { MATCH_OP(E_OP_PN_START); };
+        "P.END"       => { MATCH_OP(E_OP_P_END); };
+        "PN.END"      => { MATCH_OP(E_OP_PN_END); };
+        "P.I"         => { MATCH_OP(E_OP_P_I); };
+        "PN.I"        => { MATCH_OP(E_OP_PN_I); };
+        "P.HERE"      => { MATCH_OP(E_OP_P_HERE); };
+        "PN.HERE"     => { MATCH_OP(E_OP_PN_HERE); };
+        "P.NEXT"      => { MATCH_OP(E_OP_P_NEXT); };
+        "PN.NEXT"     => { MATCH_OP(E_OP_PN_NEXT); };
+        "P.PREV"      => { MATCH_OP(E_OP_P_PREV); };
+        "PN.PREV"     => { MATCH_OP(E_OP_PN_PREV); };
+        "P.INS"       => { MATCH_OP(E_OP_P_INS); };
+        "PN.INS"      => { MATCH_OP(E_OP_PN_INS); };
+        "P.RM"        => { MATCH_OP(E_OP_P_RM); };
+        "PN.RM"       => { MATCH_OP(E_OP_PN_RM); };
+        "P.PUSH"      => { MATCH_OP(E_OP_P_PUSH); };
+        "PN.PUSH"     => { MATCH_OP(E_OP_PN_PUSH); };
+        "P.POP"       => { MATCH_OP(E_OP_P_POP); };
+        "PN.POP"      => { MATCH_OP(E_OP_PN_POP); };
 
         # queue
         "Q"           => { MATCH_OP(E_OP_Q); };
