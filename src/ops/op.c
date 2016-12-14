@@ -42,13 +42,13 @@ const tele_op_t *tele_ops[OPS] = {
     &op_TR_TOG, &op_TR_PULSE, &op_II, &op_CV_SET, &op_MUTE, &op_UNMUTE,
     &op_STATE, &op_JF_TR, &op_JF_RMODE, &op_JF_RUN, &op_JF_SHIFT, &op_JF_VTR,
     &op_JF_MODE, &op_JF_TICK, &op_JF_VOX, &op_JF_NOTE, &op_JF_GOD, &op_JF_TUNE,
-    &op_JF_QT, &op_KR_PRESET, &op_KR_PATTERN, &op_KR_SCALE, &op_KR_PERIOD, 
-    &op_KR_POS, &op_KR_LOOP_ST, &op_KR_LOOP_LEN, &op_KR_RESET, &op_MP_PRESET1, 
-    &op_MP_RESET1, &op_MP_STOP1, &op_MP_SCALE, &op_MP_PERIOD, &op_LV_PRESET, 
-    &op_LV_RESET, &op_LV_PATTERN, &op_LV_LOOP_ST, &op_LV_LOOP_LEN, &op_LV_POS, 
-    &op_CY_PRESET, &op_CY_RESET, &op_CY_POS, &op_CY_REV, &op_CY_BRAKE, &op_CY_ACCEL, 
-    &op_CY_RANGE,
-    
+    &op_JF_QT, &op_KR_PRESET, &op_KR_PATTERN, &op_KR_SCALE, &op_KR_PERIOD,
+    &op_KR_POS, &op_KR_LOOP_ST, &op_KR_LOOP_LEN, &op_KR_RESET, &op_MP_PRESET1,
+    &op_MP_RESET1, &op_MP_STOP1, &op_MP_SCALE, &op_MP_PERIOD, &op_LV_PRESET,
+    &op_LV_RESET, &op_LV_PATTERN, &op_LV_LOOP_ST, &op_LV_LOOP_LEN, &op_LV_POS,
+    &op_CY_PRESET, &op_CY_RESET, &op_CY_POS, &op_CY_REV, &op_CY_BRAKE,
+    &op_CY_ACCEL, &op_CY_RANGE,
+
     // maths
     &op_ADD, &op_SUB, &op_MUL, &op_DIV, &op_MOD, &op_RAND, &op_RRAND, &op_TOSS,
     &op_MIN, &op_MAX, &op_LIM, &op_WRAP, &op_QT, &op_AVG, &op_EQ, &op_NE,
