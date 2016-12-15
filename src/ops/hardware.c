@@ -1,5 +1,3 @@
-// #include "print_funcs.h"
-
 #include "ops/hardware.h"
 
 #include "helpers.h"
@@ -71,6 +69,103 @@ static void op_JF_TUNE_get(const void *data, scene_state_t *ss,
 static void op_JF_QT_get(const void *data, scene_state_t *ss, exec_state_t *es,
                          command_state_t *cs);
 
+static void op_KR_PRESET_get(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs);
+static void op_KR_PRESET_set(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs);
+static void op_KR_PATTERN_get(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs);
+static void op_KR_PATTERN_set(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs);
+static void op_KR_SCALE_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs);
+static void op_KR_SCALE_set(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs);
+static void op_KR_PERIOD_get(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs);
+static void op_KR_PERIOD_set(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs);
+static void op_KR_POS_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs);
+static void op_KR_POS_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs);
+static void op_KR_LOOP_ST_get(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs);
+static void op_KR_LOOP_ST_set(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs);
+static void op_KR_LOOP_LEN_get(const void *data, scene_state_t *ss,
+                               exec_state_t *es, command_state_t *cs);
+static void op_KR_LOOP_LEN_set(const void *data, scene_state_t *ss,
+                               exec_state_t *es, command_state_t *cs);
+static void op_KR_RESET_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs);
+
+static void op_MP_PRESET_get(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs);
+static void op_MP_PRESET_set(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs);
+static void op_MP_RESET_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs);
+static void op_MP_STOP_get(const void *data, scene_state_t *ss,
+                           exec_state_t *es, command_state_t *cs);
+static void op_MP_SCALE_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs);
+static void op_MP_SCALE_set(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs);
+static void op_MP_PERIOD_get(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs);
+static void op_MP_PERIOD_set(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs);
+
+static void op_LV_PRESET_get(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs);
+static void op_LV_PRESET_set(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs);
+static void op_LV_RESET_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs);
+static void op_LV_PATTERN_get(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs);
+static void op_LV_PATTERN_set(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs);
+static void op_LV_LOOP_ST_get(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs);
+static void op_LV_LOOP_ST_set(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs);
+static void op_LV_LOOP_LEN_get(const void *data, scene_state_t *ss,
+                               exec_state_t *es, command_state_t *cs);
+static void op_LV_LOOP_LEN_set(const void *data, scene_state_t *ss,
+                               exec_state_t *es, command_state_t *cs);
+static void op_LV_POS_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs);
+static void op_LV_POS_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs);
+
+static void op_CY_PRESET_get(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs);
+static void op_CY_PRESET_set(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs);
+static void op_CY_RESET_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs);
+static void op_CY_POS_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs);
+static void op_CY_POS_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs);
+static void op_CY_REV_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs);
+static void op_CY_BRAKE_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs);
+static void op_CY_BRAKE_set(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs);
+static void op_CY_ACCEL_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs);
+static void op_CY_ACCEL_set(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs);
+static void op_CY_RANGE_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs);
+static void op_CY_RANGE_set(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs);
+
+
 // clang-format off
 const tele_op_t op_CV       = MAKE_GET_SET_OP(CV     , op_CV_get     , op_CV_set     , 1, true);
 const tele_op_t op_CV_OFF   = MAKE_GET_SET_OP(CV.OFF , op_CV_OFF_get , op_CV_OFF_set , 1, true);
@@ -98,6 +193,38 @@ const tele_op_t op_JF_NOTE  = MAKE_GET_OP(JF.NOTE  , op_JF_NOTE_get  , 2, false)
 const tele_op_t op_JF_GOD   = MAKE_GET_OP(JF.GOD   , op_JF_GOD_get   , 1, false);
 const tele_op_t op_JF_TUNE  = MAKE_GET_OP(JF.TUNE  , op_JF_TUNE_get  , 3, false);
 const tele_op_t op_JF_QT    = MAKE_GET_OP(JF.QT    , op_JF_QT_get    , 1, false);
+
+const tele_op_t op_KR_PRESET   = MAKE_GET_SET_OP(KR.PRE     , op_KR_PRESET_get   , op_KR_PRESET_set   , 0, true);
+const tele_op_t op_KR_PATTERN  = MAKE_GET_SET_OP(KR.PAT     , op_KR_PATTERN_get  , op_KR_PATTERN_set  , 0, true);
+const tele_op_t op_KR_SCALE    = MAKE_GET_SET_OP(KR.SCALE   , op_KR_SCALE_get    , op_KR_SCALE_set    , 0, true);
+const tele_op_t op_KR_PERIOD   = MAKE_GET_SET_OP(KR.PERIOD  , op_KR_PERIOD_get   , op_KR_PERIOD_set   , 0, true);
+const tele_op_t op_KR_POS      = MAKE_GET_SET_OP(KR.POS     , op_KR_POS_get      , op_KR_POS_set      , 2, true);
+const tele_op_t op_KR_LOOP_ST  = MAKE_GET_SET_OP(KR.L.ST    , op_KR_LOOP_ST_get  , op_KR_LOOP_ST_set  , 2, true);
+const tele_op_t op_KR_LOOP_LEN = MAKE_GET_SET_OP(KR.L.LEN   , op_KR_LOOP_LEN_get , op_KR_LOOP_LEN_set , 2, true);
+const tele_op_t op_KR_RESET    = MAKE_GET_OP(KR.RES         , op_KR_RESET_get    , 2, false);
+
+const tele_op_t op_MP_PRESET1  = MAKE_GET_SET_OP(MP.PRE     , op_MP_PRESET_get   , op_MP_PRESET_set   , 0, true);
+const tele_op_t op_MP_RESET1   = MAKE_GET_OP(MP.RES         , op_MP_RESET_get    , 1, false);
+const tele_op_t op_MP_STOP1    = MAKE_GET_OP(MP.OFF         , op_MP_STOP_get     , 1, false);
+const tele_op_t op_MP_SCALE    = MAKE_GET_SET_OP(MP.SCALE   , op_MP_SCALE_get    , op_MP_SCALE_set    , 0, true);
+const tele_op_t op_MP_PERIOD   = MAKE_GET_SET_OP(MP.PERIOD  , op_MP_PERIOD_get   , op_MP_PERIOD_set   , 0, true);
+
+const tele_op_t op_LV_PRESET   = MAKE_GET_SET_OP(LV.PRE     , op_LV_PRESET_get   , op_LV_PRESET_set   , 0, true);
+const tele_op_t op_LV_RESET    = MAKE_GET_OP(LV.RES         , op_LV_RESET_get    , 1, false);
+const tele_op_t op_LV_PATTERN  = MAKE_GET_SET_OP(LV.PAT     , op_LV_PATTERN_get  , op_LV_PATTERN_set  , 0, true);
+const tele_op_t op_LV_LOOP_ST  = MAKE_GET_SET_OP(LV.L.ST    , op_LV_LOOP_ST_get  , op_LV_LOOP_ST_set  , 0, true);
+const tele_op_t op_LV_LOOP_LEN = MAKE_GET_SET_OP(LV.L.LEN   , op_LV_LOOP_LEN_get , op_LV_LOOP_LEN_set , 0, true);
+const tele_op_t op_LV_POS      = MAKE_GET_SET_OP(LV.POS     , op_LV_POS_get      , op_LV_POS_set      , 0, true);
+
+const tele_op_t op_CY_PRESET   = MAKE_GET_SET_OP(CY.PRE     , op_CY_PRESET_get   , op_CY_PRESET_set   , 0, true);
+const tele_op_t op_CY_RESET    = MAKE_GET_OP(CY.RES         , op_CY_RESET_get    , 1, false);
+const tele_op_t op_CY_POS      = MAKE_GET_SET_OP(CY.POS     , op_CY_POS_get      , op_CY_POS_set      , 1, true);
+const tele_op_t op_CY_REV      = MAKE_GET_OP(CY.REV         , op_CY_REV_get      , 1, false);
+const tele_op_t op_CY_BRAKE    = MAKE_GET_SET_OP(CY.BRAKE   , op_CY_BRAKE_get    , op_CY_BRAKE_set    , 1, true);
+const tele_op_t op_CY_ACCEL    = MAKE_GET_SET_OP(CY.ACCEL   , op_CY_ACCEL_get    , op_CY_ACCEL_set    , 1, true);
+const tele_op_t op_CY_RANGE    = MAKE_GET_SET_OP(CY.RANGE   , op_CY_RANGE_get    , op_CY_RANGE_set    , 1, true);
+
+
 // clang-format on
 
 static void op_CV_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -114,7 +241,7 @@ static void op_CV_get(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_CV | II_GET, a & 0x3 };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-        tele_ii_tx(addr, d, 2);
+        tele_ii_tx_now(addr, d, 2);
         d[0] = 0;
         d[1] = 0;
         tele_ii_rx(addr, d, 2);
@@ -162,7 +289,7 @@ static void op_CV_SLEW_get(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_CV_SLEW | II_GET, a & 0x3 };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-        tele_ii_tx(addr, d, 2);
+        tele_ii_tx_now(addr, d, 2);
         d[0] = 0;
         d[1] = 0;
         tele_ii_rx(addr, d, 2);
@@ -191,7 +318,6 @@ static void op_CV_SLEW_set(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_CV_SLEW, a & 0x3, b >> 8, b & 0xff };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-
         tele_ii_tx(addr, d, 4);
     }
 }
@@ -210,7 +336,7 @@ static void op_CV_OFF_get(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_CV_OFF | II_GET, a & 0x3 };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-        tele_ii_tx(addr, d, 2);
+        tele_ii_tx_now(addr, d, 2);
         d[0] = 0;
         d[1] = 0;
         tele_ii_rx(addr, d, 2);
@@ -240,7 +366,6 @@ static void op_CV_OFF_set(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_CV_OFF, a & 0x3, b >> 8, b & 0xff };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-
         tele_ii_tx(addr, d, 4);
     }
 }
@@ -257,7 +382,7 @@ static void op_TR_get(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_TR | II_GET, a & 0x3 };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-        tele_ii_tx(addr, d, 2);
+        tele_ii_tx_now(addr, d, 2);
         d[0] = 0;
         tele_ii_rx(addr, d, 1);
         cs_push(cs, d[0]);
@@ -281,7 +406,6 @@ static void op_TR_set(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_TR, a & 0x3, b };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-
         tele_ii_tx(addr, d, 3);
     }
 }
@@ -299,7 +423,7 @@ static void op_TR_POL_get(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_TR_POL | II_GET, a & 0x3 };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-        tele_ii_tx(addr, d, 2);
+        tele_ii_tx_now(addr, d, 2);
         d[0] = 0;
         tele_ii_rx(addr, d, 1);
         cs_push(cs, d[0]);
@@ -323,7 +447,6 @@ static void op_TR_POL_set(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_TR_POL, a & 0x3, b > 0 };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-
         tele_ii_tx(addr, d, 3);
     }
 }
@@ -341,7 +464,7 @@ static void op_TR_TIME_get(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_TR_TIME | II_GET, a & 0x3 };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-        tele_ii_tx(addr, d, 2);
+        tele_ii_tx_now(addr, d, 2);
         d[0] = 0;
         d[1] = 0;
         tele_ii_rx(addr, d, 2);
@@ -367,7 +490,6 @@ static void op_TR_TIME_set(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_TR_TIME, a & 0x3, b >> 8, b & 0xff };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-
         tele_ii_tx(addr, d, 4);
     }
 }
@@ -396,7 +518,6 @@ static void op_TR_TOG_get(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_TR_TOG, a & 0x3 };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-
         tele_ii_tx(addr, d, 2);
     }
 }
@@ -468,7 +589,6 @@ static void op_CV_SET_get(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_CV_SET, a & 0x3, b >> 8, b & 0xff };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-
         tele_ii_tx(addr, d, 4);
     }
 }
@@ -477,7 +597,6 @@ static void op_MUTE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                         exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a;
     a = cs_pop(cs);
-
     if (a > 0 && a < 9) { tele_mute(a - 1, 0); }
 }
 
@@ -485,7 +604,6 @@ static void op_UNMUTE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a;
     a = cs_pop(cs);
-
     if (a > 0 && a < 9) { tele_mute(a - 1, 1); }
 }
 
@@ -508,7 +626,7 @@ static void op_STATE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
     else if (a < 24) {
         uint8_t d[] = { II_ANSIBLE_INPUT | II_GET, a & 0x3 };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 8) >> 2) << 1);
-        tele_ii_tx(addr, d, 2);
+        tele_ii_tx_now(addr, d, 2);
         d[0] = 0;
         tele_ii_rx(addr, d, 1);
         cs_push(cs, d[0]);
@@ -522,7 +640,6 @@ static void op_JF_TR_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
-
     uint8_t d[] = { JF_TR, a, b };
     tele_ii_tx(JF_ADDR, d, 3);
 }
@@ -531,7 +648,6 @@ static void op_JF_RMODE_get(const void *NOTUSED(data),
                             scene_state_t *NOTUSED(ss),
                             exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
-
     uint8_t d[] = { JF_RMODE, a };
     tele_ii_tx(JF_ADDR, d, 2);
 }
@@ -539,7 +655,6 @@ static void op_JF_RMODE_get(const void *NOTUSED(data),
 static void op_JF_RUN_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
-
     uint8_t d[] = { JF_RUN, a >> 8, a & 0xff };
     tele_ii_tx(JF_ADDR, d, 3);
 }
@@ -548,7 +663,6 @@ static void op_JF_SHIFT_get(const void *NOTUSED(data),
                             scene_state_t *NOTUSED(ss),
                             exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
-
     uint8_t d[] = { JF_SHIFT, a >> 8, a & 0xff };
     tele_ii_tx(JF_ADDR, d, 3);
 }
@@ -557,7 +671,6 @@ static void op_JF_VTR_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
-
     uint8_t d[] = { JF_VTR, a, b >> 8, b & 0xff };
     tele_ii_tx(JF_ADDR, d, 4);
 }
@@ -566,7 +679,6 @@ static void op_JF_MODE_get(const void *NOTUSED(data),
                            scene_state_t *NOTUSED(ss),
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
-
     uint8_t d[] = { JF_MODE, a };
     tele_ii_tx(JF_ADDR, d, 2);
 }
@@ -575,7 +687,6 @@ static void op_JF_TICK_get(const void *NOTUSED(data),
                            scene_state_t *NOTUSED(ss),
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
-
     uint8_t d[] = { JF_TICK, a };
     tele_ii_tx(JF_ADDR, d, 2);
 }
@@ -585,7 +696,6 @@ static void op_JF_VOX_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
     int16_t c = cs_pop(cs);
-
     uint8_t d[] = { JF_VOX, a, b >> 8, b & 0xff, c >> 8, c & 0xff };
     tele_ii_tx(JF_ADDR, d, 6);
 }
@@ -595,7 +705,6 @@ static void op_JF_NOTE_get(const void *NOTUSED(data),
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
-
     uint8_t d[] = { JF_NOTE, a >> 8, a & 0xff, b >> 8, b & 0xff };
     tele_ii_tx(JF_ADDR, d, 5);
 }
@@ -603,7 +712,6 @@ static void op_JF_NOTE_get(const void *NOTUSED(data),
 static void op_JF_GOD_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
-
     uint8_t d[] = { JF_GOD, a };
     tele_ii_tx(JF_ADDR, d, 2);
 }
@@ -613,7 +721,6 @@ static void op_JF_TUNE_get(const void *data, scene_state_t *ss,
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
     int16_t c = cs_pop(cs);
-
     uint8_t d[] = { JF_TUNE, a, b, c };
     tele_ii_tx(JF_ADDR, d, 4);
 }
@@ -621,7 +728,413 @@ static void op_JF_TUNE_get(const void *data, scene_state_t *ss,
 static void op_JF_QT_get(const void *data, scene_state_t *ss, exec_state_t *es,
                          command_state_t *cs) {
     int16_t a = cs_pop(cs);
-
     uint8_t d[] = { JF_QT, a };
     tele_ii_tx(JF_ADDR, d, 2);
+}
+
+
+static void op_KR_PRESET_set(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_KR_PRESET, a };
+    tele_ii_tx(II_KR_ADDR, d, 2);
+}
+
+static void op_KR_PRESET_get(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs) {
+    uint8_t d[] = { II_KR_PRESET | II_GET };
+    uint8_t addr = II_KR_ADDR;
+    tele_ii_tx_now(addr, d, 1);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_KR_PATTERN_set(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_KR_PATTERN, a };
+    tele_ii_tx(II_KR_ADDR, d, 2);
+}
+
+static void op_KR_PATTERN_get(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs) {
+    uint8_t d[] = { II_KR_PATTERN | II_GET };
+    uint8_t addr = II_KR_ADDR;
+    tele_ii_tx_now(addr, d, 1);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_KR_SCALE_set(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_KR_SCALE, a };
+    tele_ii_tx(II_KR_ADDR, d, 2);
+}
+
+static void op_KR_SCALE_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs) {
+    uint8_t d[] = { II_KR_SCALE | II_GET };
+    uint8_t addr = II_KR_ADDR;
+    tele_ii_tx_now(addr, d, 1);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_KR_PERIOD_set(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_KR_PERIOD, a >> 8, a & 0xff };
+    tele_ii_tx(II_KR_ADDR, d, 3);
+}
+
+static void op_KR_PERIOD_get(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs) {
+    uint8_t d[] = { II_KR_PERIOD | II_GET, 0 };
+    uint8_t addr = II_KR_ADDR;
+    tele_ii_tx_now(addr, d, 1);
+    d[0] = 0;
+    d[1] = 0;
+    tele_ii_rx(addr, d, 2);
+    cs_push(cs, (d[0] << 8) + d[1]);
+}
+
+static void op_KR_POS_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+    int16_t c = cs_pop(cs);
+    uint8_t d[] = { II_KR_POS, a, b, c };
+    tele_ii_tx(II_KR_ADDR, d, 4);
+}
+
+static void op_KR_POS_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+    uint8_t d[] = { II_KR_POS | II_GET, a, b };
+    uint8_t addr = II_KR_ADDR;
+    tele_ii_tx_now(addr, d, 3);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_KR_LOOP_ST_set(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+    int16_t c = cs_pop(cs);
+    uint8_t d[] = { II_KR_LOOP_ST, a, b, c };
+    tele_ii_tx(II_KR_ADDR, d, 4);
+}
+
+static void op_KR_LOOP_ST_get(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+    uint8_t d[] = { II_KR_LOOP_ST | II_GET, a, b };
+    uint8_t addr = II_KR_ADDR;
+    tele_ii_tx_now(addr, d, 3);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_KR_LOOP_LEN_set(const void *data, scene_state_t *ss,
+                               exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+    int16_t c = cs_pop(cs);
+    uint8_t d[] = { II_KR_LOOP_LEN, a, b, c };
+    tele_ii_tx(II_KR_ADDR, d, 4);
+}
+
+static void op_KR_LOOP_LEN_get(const void *data, scene_state_t *ss,
+                               exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+    uint8_t d[] = { II_KR_LOOP_LEN | II_GET, a, b };
+    uint8_t addr = II_KR_ADDR;
+    tele_ii_tx_now(addr, d, 3);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_KR_RESET_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+    uint8_t d[] = { II_KR_RESET, a, b };
+    tele_ii_tx(II_KR_ADDR, d, 3);
+}
+
+static void op_MP_PRESET_set(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_MP_PRESET, a };
+    tele_ii_tx(II_MP_ADDR, d, 2);
+}
+
+static void op_MP_PRESET_get(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs) {
+    uint8_t d[] = { II_MP_PRESET | II_GET };
+    uint8_t addr = II_MP_ADDR;
+    tele_ii_tx_now(addr, d, 1);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_MP_RESET_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_MP_RESET, a };
+    tele_ii_tx(II_MP_ADDR, d, 2);
+}
+
+static void op_MP_STOP_get(const void *data, scene_state_t *ss,
+                           exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_MP_STOP, a };
+    tele_ii_tx(II_MP_ADDR, d, 2);
+}
+
+static void op_MP_SCALE_set(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_MP_SCALE, a };
+    tele_ii_tx(II_MP_ADDR, d, 2);
+}
+
+static void op_MP_SCALE_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs) {
+    uint8_t d[] = { II_MP_SCALE | II_GET };
+    uint8_t addr = II_MP_ADDR;
+    tele_ii_tx_now(addr, d, 1);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_MP_PERIOD_set(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_MP_PERIOD, a >> 8, a & 0xff };
+    tele_ii_tx(II_MP_ADDR, d, 3);
+}
+
+static void op_MP_PERIOD_get(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs) {
+    uint8_t d[] = { II_MP_PERIOD | II_GET, 0 };
+    uint8_t addr = II_MP_ADDR;
+    tele_ii_tx_now(addr, d, 1);
+    d[0] = 0;
+    d[1] = 0;
+    tele_ii_rx(addr, d, 2);
+    cs_push(cs, (d[0] << 8) + d[1]);
+}
+
+static void op_LV_PRESET_set(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_LV_PRESET, a };
+    tele_ii_tx(II_LV_ADDR, d, 2);
+}
+
+static void op_LV_PRESET_get(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs) {
+    uint8_t d[] = { II_LV_PRESET | II_GET };
+    uint8_t addr = II_LV_ADDR;
+    tele_ii_tx_now(addr, d, 1);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_LV_RESET_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_LV_RESET, a };
+    tele_ii_tx(II_LV_ADDR, d, 2);
+}
+
+static void op_LV_PATTERN_set(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_LV_PATTERN, a };
+    tele_ii_tx(II_LV_ADDR, d, 2);
+}
+
+static void op_LV_PATTERN_get(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs) {
+    uint8_t d[] = { II_LV_PATTERN | II_GET };
+    uint8_t addr = II_LV_ADDR;
+    tele_ii_tx_now(addr, d, 1);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_LV_LOOP_ST_set(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_LV_LOOP_ST, a };
+    tele_ii_tx(II_LV_ADDR, d, 2);
+}
+
+static void op_LV_LOOP_ST_get(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs) {
+    uint8_t d[] = { II_LV_LOOP_ST | II_GET };
+    uint8_t addr = II_LV_ADDR;
+    tele_ii_tx_now(addr, d, 1);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_LV_LOOP_LEN_set(const void *data, scene_state_t *ss,
+                               exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_LV_LOOP_LEN, a };
+    tele_ii_tx(II_LV_ADDR, d, 2);
+}
+
+static void op_LV_LOOP_LEN_get(const void *data, scene_state_t *ss,
+                               exec_state_t *es, command_state_t *cs) {
+    uint8_t d[] = { II_LV_LOOP_LEN | II_GET };
+    uint8_t addr = II_LV_ADDR;
+    tele_ii_tx_now(addr, d, 1);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_LV_POS_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_LV_POS, a };
+    tele_ii_tx(II_LV_ADDR, d, 2);
+}
+
+static void op_LV_POS_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs) {
+    uint8_t d[] = { II_LV_POS | II_GET };
+    uint8_t addr = II_LV_ADDR;
+    tele_ii_tx_now(addr, d, 1);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_CY_PRESET_set(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_CY_PRESET, a };
+    tele_ii_tx(II_CY_ADDR, d, 2);
+}
+
+static void op_CY_PRESET_get(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs) {
+    uint8_t d[] = { II_CY_PRESET | II_GET };
+    uint8_t addr = II_CY_ADDR;
+    tele_ii_tx_now(addr, d, 1);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_CY_RESET_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_CY_RESET, a };
+    tele_ii_tx(II_CY_ADDR, d, 2);
+}
+
+static void op_CY_POS_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+    uint8_t d[] = { II_CY_POS, a, b };
+    tele_ii_tx(II_CY_ADDR, d, 3);
+}
+
+static void op_CY_POS_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_CY_POS | II_GET, a };
+    uint8_t addr = II_CY_ADDR;
+    tele_ii_tx_now(addr, d, 2);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_CY_REV_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_CY_REV, a };
+    tele_ii_tx(II_CY_ADDR, d, 2);
+}
+
+static void op_CY_BRAKE_set(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+    uint8_t d[] = { II_CY_BRAKE, a, b };
+    tele_ii_tx(II_CY_ADDR, d, 3);
+}
+
+static void op_CY_BRAKE_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_CY_BRAKE | II_GET, a };
+    uint8_t addr = II_CY_ADDR;
+    tele_ii_tx_now(addr, d, 2);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_CY_ACCEL_set(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+    uint8_t d[] = { II_CY_ACCEL, a, b };
+    tele_ii_tx(II_CY_ADDR, d, 3);
+}
+
+static void op_CY_ACCEL_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_CY_ACCEL | II_GET, a };
+    uint8_t addr = II_CY_ADDR;
+    tele_ii_tx_now(addr, d, 2);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_CY_RANGE_set(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+    uint8_t d[] = { II_CY_RANGE, a, b >> 8, b & 0xff };
+    tele_ii_tx(II_CY_ADDR, d, 4);
+}
+
+static void op_CY_RANGE_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_CY_RANGE | II_GET, a };
+    uint8_t addr = II_CY_ADDR;
+    tele_ii_tx_now(addr, d, 2);
+    d[0] = 0;
+    d[1] = 0;
+    tele_ii_rx(addr, d, 2);
+    cs_push(cs, (d[0] << 8) + d[1]);
 }

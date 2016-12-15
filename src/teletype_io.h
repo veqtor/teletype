@@ -16,6 +16,7 @@ extern void tele_s(uint8_t i);
 extern void tele_cv_off(uint8_t i, int16_t v);
 extern void tele_ii(uint8_t i, int16_t d);
 extern void tele_ii_tx(uint8_t addr, uint8_t *data, uint8_t l);
+extern void tele_ii_tx_now(uint8_t addr, uint8_t *data, uint8_t l);
 extern void tele_ii_rx(uint8_t addr, uint8_t *data, uint8_t l);
 extern void tele_scene(uint8_t i);
 extern void tele_pi(void);
