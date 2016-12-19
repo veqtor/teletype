@@ -31,4 +31,34 @@ extern const tele_op_t op_JF_GOD;
 extern const tele_op_t op_JF_TUNE;
 extern const tele_op_t op_JF_QT;
 
+extern const tele_op_t op_KR_PRESET;
+extern const tele_op_t op_KR_PATTERN;
+extern const tele_op_t op_KR_SCALE;
+extern const tele_op_t op_KR_PERIOD;
+extern const tele_op_t op_KR_POS;
+extern const tele_op_t op_KR_LOOP_ST;
+extern const tele_op_t op_KR_LOOP_LEN;
+extern const tele_op_t op_KR_RESET;
+
+extern const tele_op_t op_MP_PRESET1;
+extern const tele_op_t op_MP_RESET1;
+extern const tele_op_t op_MP_STOP1;
+extern const tele_op_t op_MP_SCALE;
+extern const tele_op_t op_MP_PERIOD;
+
+extern const tele_op_t op_LV_PRESET;
+extern const tele_op_t op_LV_RESET;
+extern const tele_op_t op_LV_PATTERN;
+extern const tele_op_t op_LV_LOOP_ST;
+extern const tele_op_t op_LV_LOOP_LEN;
+extern const tele_op_t op_LV_POS;
+
+extern const tele_op_t op_CY_PRESET;
+extern const tele_op_t op_CY_RESET;
+extern const tele_op_t op_CY_POS;
+extern const tele_op_t op_CY_REV;
+extern const tele_op_t op_CY_BRAKE;
+extern const tele_op_t op_CY_ACCEL;
+extern const tele_op_t op_CY_RANGE;
+
 #endif

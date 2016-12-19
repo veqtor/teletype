@@ -110,6 +110,32 @@
         "JF.GOD"      => { MATCH_OP(E_OP_JF_GOD); };
         "JF.TUNE"     => { MATCH_OP(E_OP_JF_TUNE); };
         "JF.QT"       => { MATCH_OP(E_OP_JF_QT); };
+        "KR.PRE"      => { MATCH_OP(E_OP_KR_PRESET); };
+        "KR.PAT"      => { MATCH_OP(E_OP_KR_PATTERN); };
+        "KR.SCALE"    => { MATCH_OP(E_OP_KR_SCALE); };
+        "KR.PERIOD"   => { MATCH_OP(E_OP_KR_PERIOD); };
+        "KR.POS"      => { MATCH_OP(E_OP_KR_POS); };
+        "KR.L.ST"     => { MATCH_OP(E_OP_KR_LOOP_ST); };
+        "KR.L.LEN"    => { MATCH_OP(E_OP_KR_LOOP_LEN); };
+        "KR.RES"      => { MATCH_OP(E_OP_KR_RESET); };
+        "MP.PRE"      => { MATCH_OP(E_OP_MP_PRESET1); };
+        "MP.RES"      => { MATCH_OP(E_OP_MP_RESET1); };
+        "MP.OFF"      => { MATCH_OP(E_OP_MP_STOP1); };
+        "MP.SCALE"    => { MATCH_OP(E_OP_MP_SCALE); };
+        "MP.PERIOD"   => { MATCH_OP(E_OP_MP_PERIOD); };
+        "LV.PRE"      => { MATCH_OP(E_OP_LV_PRESET); };
+        "LV.RES"      => { MATCH_OP(E_OP_LV_RESET); };
+        "LV.PAT"      => { MATCH_OP(E_OP_LV_PATTERN); };
+        "LV.L.ST"     => { MATCH_OP(E_OP_LV_LOOP_ST); };
+        "LV.L.LEN"    => { MATCH_OP(E_OP_LV_LOOP_LEN); };
+        "LV.POS"      => { MATCH_OP(E_OP_LV_POS); };
+        "CY.PRE"      => { MATCH_OP(E_OP_CY_PRESET); };
+        "CY.RES"      => { MATCH_OP(E_OP_CY_RESET); };
+        "CY.POS"      => { MATCH_OP(E_OP_CY_POS); };
+        "CY.REV"      => { MATCH_OP(E_OP_CY_REV); };
+        "CY.BRAKE"    => { MATCH_OP(E_OP_CY_BRAKE); };
+        "CY.ACCEL"    => { MATCH_OP(E_OP_CY_ACCEL); };
+        "CY.RANGE"    => { MATCH_OP(E_OP_CY_RANGE); };
 
         # maths
         "ADD"         => { MATCH_OP(E_OP_ADD); };
