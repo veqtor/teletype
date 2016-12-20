@@ -24,8 +24,8 @@
 const tele_op_t *tele_ops[E_OP__LENGTH] = {
     // variables
     &op_A, &op_B, &op_C, &op_D, &op_DRUNK, &op_DRUNK_MAX, &op_DRUNK_MIN,
-    &op_DRUNK_WRAP, &op_FLIP, &op_I, &op_IN, &op_O, &op_O_INC, &op_O_MAX,
-    &op_O_MIN, &op_O_WRAP, &op_T, &op_TIME, &op_TIME_ACT, &op_X, &op_Y, &op_Z,
+    &op_DRUNK_WRAP, &op_FLIP, &op_I, &op_O, &op_O_INC, &op_O_MAX, &op_O_MIN,
+    &op_O_WRAP, &op_T, &op_TIME, &op_TIME_ACT, &op_X, &op_Y, &op_Z,
 
     // metronome
     &op_M, &op_M_ACT, &op_M_RESET,
@@ -41,16 +41,16 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_Q, &op_Q_AVG, &op_Q_N,
 
     // hardware
-    &op_CV, &op_CV_OFF, &op_CV_SLEW, &op_PARAM, &op_PRM, &op_TR, &op_TR_POL,
-    &op_TR_TIME, &op_TR_TOG, &op_TR_PULSE, &op_TR_P, &op_II, &op_CV_SET,
-    &op_MUTE, &op_UNMUTE, &op_STATE, &op_JF_TR, &op_JF_RMODE, &op_JF_RUN,
-    &op_JF_SHIFT, &op_JF_VTR, &op_JF_MODE, &op_JF_TICK, &op_JF_VOX, &op_JF_NOTE,
-    &op_JF_GOD, &op_JF_TUNE, &op_JF_QT, &op_KR_PRESET, &op_KR_PATTERN,
-    &op_KR_SCALE, &op_KR_PERIOD, &op_KR_POS, &op_KR_LOOP_ST, &op_KR_LOOP_LEN,
-    &op_KR_RESET, &op_MP_PRESET1, &op_MP_RESET1, &op_MP_STOP1, &op_MP_SCALE,
-    &op_MP_PERIOD, &op_LV_PRESET, &op_LV_RESET, &op_LV_PATTERN, &op_LV_LOOP_ST,
-    &op_LV_LOOP_LEN, &op_LV_POS, &op_CY_PRESET, &op_CY_RESET, &op_CY_POS,
-    &op_CY_REV, &op_CY_BRAKE, &op_CY_ACCEL, &op_CY_RANGE,
+    &op_CV, &op_CV_OFF, &op_CV_SLEW, &op_IN, &op_PARAM, &op_PRM, &op_TR,
+    &op_TR_POL, &op_TR_TIME, &op_TR_TOG, &op_TR_PULSE, &op_TR_P, &op_II,
+    &op_CV_SET, &op_MUTE, &op_UNMUTE, &op_STATE, &op_JF_TR, &op_JF_RMODE,
+    &op_JF_RUN, &op_JF_SHIFT, &op_JF_VTR, &op_JF_MODE, &op_JF_TICK, &op_JF_VOX,
+    &op_JF_NOTE, &op_JF_GOD, &op_JF_TUNE, &op_JF_QT, &op_KR_PRESET,
+    &op_KR_PATTERN, &op_KR_SCALE, &op_KR_PERIOD, &op_KR_POS, &op_KR_LOOP_ST,
+    &op_KR_LOOP_LEN, &op_KR_RESET, &op_MP_PRESET1, &op_MP_RESET1, &op_MP_STOP1,
+    &op_MP_SCALE, &op_MP_PERIOD, &op_LV_PRESET, &op_LV_RESET, &op_LV_PATTERN,
+    &op_LV_LOOP_ST, &op_LV_LOOP_LEN, &op_LV_POS, &op_CY_PRESET, &op_CY_RESET,
+    &op_CY_POS, &op_CY_REV, &op_CY_BRAKE, &op_CY_ACCEL, &op_CY_RANGE,
 
     // maths
     &op_ADD, &op_SUB, &op_MUL, &op_DIV, &op_MOD, &op_RAND, &op_RRAND, &op_TOSS,

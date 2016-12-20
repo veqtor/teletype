@@ -17,6 +17,8 @@ static void op_CV_OFF_get(const void *data, scene_state_t *ss, exec_state_t *es,
                           command_state_t *cs);
 static void op_CV_OFF_set(const void *data, scene_state_t *ss, exec_state_t *es,
                           command_state_t *cs);
+static void op_IN_get(const void *NOTUSED(data), scene_state_t *ss,
+                      exec_state_t *NOTUSED(es), command_state_t *cs);
 static void op_PARAM_get(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *NOTUSED(es), command_state_t *cs);
 static void op_TR_get(const void *data, scene_state_t *ss, exec_state_t *es,
@@ -172,6 +174,7 @@ static void op_CY_RANGE_set(const void *data, scene_state_t *ss,
 const tele_op_t op_CV       = MAKE_GET_SET_OP(CV      , op_CV_get      , op_CV_set     , 1, true);
 const tele_op_t op_CV_OFF   = MAKE_GET_SET_OP(CV.OFF  , op_CV_OFF_get  , op_CV_OFF_set , 1, true);
 const tele_op_t op_CV_SLEW  = MAKE_GET_SET_OP(CV.SLEW , op_CV_SLEW_get , op_CV_SLEW_set, 1, true);
+const tele_op_t op_IN       = MAKE_GET_OP    (IN      , op_IN_get      , 0, true);
 const tele_op_t op_PARAM    = MAKE_GET_OP    (PARAM   , op_PARAM_get   , 0, true);
 const tele_op_t op_PRM      = MAKE_ALIAS_OP  (PRM     , op_PARAM_get   , NULL,           0, true);
 const tele_op_t op_TR       = MAKE_GET_SET_OP(TR      , op_TR_get      , op_TR_set     , 1, true);
@@ -374,6 +377,10 @@ static void op_CV_OFF_set(const void *NOTUSED(data), scene_state_t *ss,
     }
 }
 
+static void op_IN_get(const void *NOTUSED(data), scene_state_t *ss,
+                      exec_state_t *NOTUSED(es), command_state_t *cs) {
+    cs_push(cs, ss->variables.in);
+}
 
 static void op_PARAM_get(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *NOTUSED(es), command_state_t *cs) {
