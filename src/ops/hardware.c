@@ -123,21 +123,21 @@ static void op_LV_PRESET_set(const void *data, scene_state_t *ss,
                              exec_state_t *es, command_state_t *cs);
 static void op_LV_RESET_get(const void *data, scene_state_t *ss,
                             exec_state_t *es, command_state_t *cs);
-static void op_LV_PATTERN_get(const void *data, scene_state_t *ss,
+static void op_LV_POS_get(const void *data, scene_state_t *ss,
                               exec_state_t *es, command_state_t *cs);
-static void op_LV_PATTERN_set(const void *data, scene_state_t *ss,
+static void op_LV_POS_set(const void *data, scene_state_t *ss,
                               exec_state_t *es, command_state_t *cs);
-static void op_LV_LOOP_ST_get(const void *data, scene_state_t *ss,
+static void op_LV_L_ST_get(const void *data, scene_state_t *ss,
                               exec_state_t *es, command_state_t *cs);
-static void op_LV_LOOP_ST_set(const void *data, scene_state_t *ss,
+static void op_LV_L_ST_set(const void *data, scene_state_t *ss,
                               exec_state_t *es, command_state_t *cs);
-static void op_LV_LOOP_LEN_get(const void *data, scene_state_t *ss,
+static void op_LV_L_LEN_get(const void *data, scene_state_t *ss,
                                exec_state_t *es, command_state_t *cs);
-static void op_LV_LOOP_LEN_set(const void *data, scene_state_t *ss,
+static void op_LV_L_LEN_set(const void *data, scene_state_t *ss,
                                exec_state_t *es, command_state_t *cs);
-static void op_LV_POS_get(const void *data, scene_state_t *ss, exec_state_t *es,
+static void op_LV_L_DIR_get(const void *data, scene_state_t *ss, exec_state_t *es,
                           command_state_t *cs);
-static void op_LV_POS_set(const void *data, scene_state_t *ss, exec_state_t *es,
+static void op_LV_L_DIR_set(const void *data, scene_state_t *ss, exec_state_t *es,
                           command_state_t *cs);
 
 static void op_CY_PRESET_get(const void *data, scene_state_t *ss,
@@ -211,10 +211,10 @@ const tele_op_t op_MP_PERIOD   = MAKE_GET_SET_OP(MP.PERIOD  , op_MP_PERIOD_get  
 
 const tele_op_t op_LV_PRESET   = MAKE_GET_SET_OP(LV.PRE     , op_LV_PRESET_get   , op_LV_PRESET_set   , 0, true);
 const tele_op_t op_LV_RESET    = MAKE_GET_OP(LV.RES         , op_LV_RESET_get    , 1, false);
-const tele_op_t op_LV_PATTERN  = MAKE_GET_SET_OP(LV.PAT     , op_LV_PATTERN_get  , op_LV_PATTERN_set  , 0, true);
-const tele_op_t op_LV_LOOP_ST  = MAKE_GET_SET_OP(LV.L.ST    , op_LV_LOOP_ST_get  , op_LV_LOOP_ST_set  , 0, true);
-const tele_op_t op_LV_LOOP_LEN = MAKE_GET_SET_OP(LV.L.LEN   , op_LV_LOOP_LEN_get , op_LV_LOOP_LEN_set , 0, true);
 const tele_op_t op_LV_POS      = MAKE_GET_SET_OP(LV.POS     , op_LV_POS_get      , op_LV_POS_set      , 0, true);
+const tele_op_t op_LV_L_ST     = MAKE_GET_SET_OP(LV.L.ST    , op_LV_L_ST_get     , op_LV_L_ST_set     , 0, true);
+const tele_op_t op_LV_L_LEN    = MAKE_GET_SET_OP(LV.L.LEN   , op_LV_L_LEN_get    , op_LV_L_LEN_set    , 0, true);
+const tele_op_t op_LV_L_DIR    = MAKE_GET_SET_OP(LV.L.DIR   , op_LV_L_DIR_get    , op_LV_L_DIR_set    , 0, true);
 
 const tele_op_t op_CY_PRESET   = MAKE_GET_SET_OP(CY.PRE     , op_CY_PRESET_get   , op_CY_PRESET_set   , 0, true);
 const tele_op_t op_CY_RESET    = MAKE_GET_OP(CY.RES         , op_CY_RESET_get    , 1, false);
@@ -963,67 +963,67 @@ static void op_LV_RESET_get(const void *data, scene_state_t *ss,
     tele_ii_tx(II_LV_ADDR, d, 2);
 }
 
-static void op_LV_PATTERN_set(const void *data, scene_state_t *ss,
+static void op_LV_POS_set(const void *data, scene_state_t *ss,
                               exec_state_t *es, command_state_t *cs) {
-    int16_t a = cs_pop(cs);
-    uint8_t d[] = { II_LV_PATTERN, a };
-    tele_ii_tx(II_LV_ADDR, d, 2);
-}
-
-static void op_LV_PATTERN_get(const void *data, scene_state_t *ss,
-                              exec_state_t *es, command_state_t *cs) {
-    uint8_t d[] = { II_LV_PATTERN | II_GET };
-    uint8_t addr = II_LV_ADDR;
-    tele_ii_tx_now(addr, d, 1);
-    d[0] = 0;
-    tele_ii_rx(addr, d, 1);
-    cs_push(cs, d[0]);
-}
-
-static void op_LV_LOOP_ST_set(const void *data, scene_state_t *ss,
-                              exec_state_t *es, command_state_t *cs) {
-    int16_t a = cs_pop(cs);
-    uint8_t d[] = { II_LV_LOOP_ST, a };
-    tele_ii_tx(II_LV_ADDR, d, 2);
-}
-
-static void op_LV_LOOP_ST_get(const void *data, scene_state_t *ss,
-                              exec_state_t *es, command_state_t *cs) {
-    uint8_t d[] = { II_LV_LOOP_ST | II_GET };
-    uint8_t addr = II_LV_ADDR;
-    tele_ii_tx_now(addr, d, 1);
-    d[0] = 0;
-    tele_ii_rx(addr, d, 1);
-    cs_push(cs, d[0]);
-}
-
-static void op_LV_LOOP_LEN_set(const void *data, scene_state_t *ss,
-                               exec_state_t *es, command_state_t *cs) {
-    int16_t a = cs_pop(cs);
-    uint8_t d[] = { II_LV_LOOP_LEN, a };
-    tele_ii_tx(II_LV_ADDR, d, 2);
-}
-
-static void op_LV_LOOP_LEN_get(const void *data, scene_state_t *ss,
-                               exec_state_t *es, command_state_t *cs) {
-    uint8_t d[] = { II_LV_LOOP_LEN | II_GET };
-    uint8_t addr = II_LV_ADDR;
-    tele_ii_tx_now(addr, d, 1);
-    d[0] = 0;
-    tele_ii_rx(addr, d, 1);
-    cs_push(cs, d[0]);
-}
-
-static void op_LV_POS_set(const void *data, scene_state_t *ss, exec_state_t *es,
-                          command_state_t *cs) {
     int16_t a = cs_pop(cs);
     uint8_t d[] = { II_LV_POS, a };
     tele_ii_tx(II_LV_ADDR, d, 2);
 }
 
-static void op_LV_POS_get(const void *data, scene_state_t *ss, exec_state_t *es,
-                          command_state_t *cs) {
+static void op_LV_POS_get(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs) {
     uint8_t d[] = { II_LV_POS | II_GET };
+    uint8_t addr = II_LV_ADDR;
+    tele_ii_tx_now(addr, d, 1);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_LV_L_ST_set(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_LV_L_ST, a };
+    tele_ii_tx(II_LV_ADDR, d, 2);
+}
+
+static void op_LV_L_ST_get(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs) {
+    uint8_t d[] = { II_LV_L_ST | II_GET };
+    uint8_t addr = II_LV_ADDR;
+    tele_ii_tx_now(addr, d, 1);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_LV_L_LEN_set(const void *data, scene_state_t *ss,
+                               exec_state_t *es, command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_LV_L_LEN, a };
+    tele_ii_tx(II_LV_ADDR, d, 2);
+}
+
+static void op_LV_L_LEN_get(const void *data, scene_state_t *ss,
+                               exec_state_t *es, command_state_t *cs) {
+    uint8_t d[] = { II_LV_L_LEN | II_GET };
+    uint8_t addr = II_LV_ADDR;
+    tele_ii_tx_now(addr, d, 1);
+    d[0] = 0;
+    tele_ii_rx(addr, d, 1);
+    cs_push(cs, d[0]);
+}
+
+static void op_LV_L_DIR_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs) {
+    int16_t a = cs_pop(cs);
+    uint8_t d[] = { II_LV_L_DIR, a };
+    tele_ii_tx(II_LV_ADDR, d, 2);
+}
+
+static void op_LV_L_DIR_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs) {
+    uint8_t d[] = { II_LV_L_DIR | II_GET };
     uint8_t addr = II_LV_ADDR;
     tele_ii_tx_now(addr, d, 1);
     d[0] = 0;
