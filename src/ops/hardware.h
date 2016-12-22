@@ -56,8 +56,5 @@ extern const tele_op_t op_CY_PRESET;
 extern const tele_op_t op_CY_RESET;
 extern const tele_op_t op_CY_POS;
 extern const tele_op_t op_CY_REV;
-extern const tele_op_t op_CY_BRAKE;
-extern const tele_op_t op_CY_ACCEL;
-extern const tele_op_t op_CY_RANGE;
 
 #endif

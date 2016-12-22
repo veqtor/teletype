@@ -152,18 +152,6 @@ static void op_CY_POS_set(const void *data, scene_state_t *ss, exec_state_t *es,
                           command_state_t *cs);
 static void op_CY_REV_get(const void *data, scene_state_t *ss, exec_state_t *es,
                           command_state_t *cs);
-static void op_CY_BRAKE_get(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs);
-static void op_CY_BRAKE_set(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs);
-static void op_CY_ACCEL_get(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs);
-static void op_CY_ACCEL_set(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs);
-static void op_CY_RANGE_get(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs);
-static void op_CY_RANGE_set(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs);
 
 
 // clang-format off
@@ -220,9 +208,6 @@ const tele_op_t op_CY_PRESET   = MAKE_GET_SET_OP(CY.PRE     , op_CY_PRESET_get  
 const tele_op_t op_CY_RESET    = MAKE_GET_OP(CY.RES         , op_CY_RESET_get    , 1, false);
 const tele_op_t op_CY_POS      = MAKE_GET_SET_OP(CY.POS     , op_CY_POS_get      , op_CY_POS_set      , 1, true);
 const tele_op_t op_CY_REV      = MAKE_GET_OP(CY.REV         , op_CY_REV_get      , 1, false);
-const tele_op_t op_CY_BRAKE    = MAKE_GET_SET_OP(CY.BRAKE   , op_CY_BRAKE_get    , op_CY_BRAKE_set    , 1, true);
-const tele_op_t op_CY_ACCEL    = MAKE_GET_SET_OP(CY.ACCEL   , op_CY_ACCEL_get    , op_CY_ACCEL_set    , 1, true);
-const tele_op_t op_CY_RANGE    = MAKE_GET_SET_OP(CY.RANGE   , op_CY_RANGE_get    , op_CY_RANGE_set    , 1, true);
 
 
 // clang-format on
@@ -1079,62 +1064,4 @@ static void op_CY_REV_get(const void *data, scene_state_t *ss, exec_state_t *es,
     int16_t a = cs_pop(cs);
     uint8_t d[] = { II_CY_REV, a };
     tele_ii_tx(II_CY_ADDR, d, 2);
-}
-
-static void op_CY_BRAKE_set(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs) {
-    int16_t a = cs_pop(cs);
-    int16_t b = cs_pop(cs);
-    uint8_t d[] = { II_CY_BRAKE, a, b };
-    tele_ii_tx(II_CY_ADDR, d, 3);
-}
-
-static void op_CY_BRAKE_get(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs) {
-    int16_t a = cs_pop(cs);
-    uint8_t d[] = { II_CY_BRAKE | II_GET, a };
-    uint8_t addr = II_CY_ADDR;
-    tele_ii_tx_now(addr, d, 2);
-    d[0] = 0;
-    tele_ii_rx(addr, d, 1);
-    cs_push(cs, d[0]);
-}
-
-static void op_CY_ACCEL_set(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs) {
-    int16_t a = cs_pop(cs);
-    int16_t b = cs_pop(cs);
-    uint8_t d[] = { II_CY_ACCEL, a, b };
-    tele_ii_tx(II_CY_ADDR, d, 3);
-}
-
-static void op_CY_ACCEL_get(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs) {
-    int16_t a = cs_pop(cs);
-    uint8_t d[] = { II_CY_ACCEL | II_GET, a };
-    uint8_t addr = II_CY_ADDR;
-    tele_ii_tx_now(addr, d, 2);
-    d[0] = 0;
-    tele_ii_rx(addr, d, 1);
-    cs_push(cs, d[0]);
-}
-
-static void op_CY_RANGE_set(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs) {
-    int16_t a = cs_pop(cs);
-    int16_t b = cs_pop(cs);
-    uint8_t d[] = { II_CY_RANGE, a, b >> 8, b & 0xff };
-    tele_ii_tx(II_CY_ADDR, d, 4);
-}
-
-static void op_CY_RANGE_get(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs) {
-    int16_t a = cs_pop(cs);
-    uint8_t d[] = { II_CY_RANGE | II_GET, a };
-    uint8_t addr = II_CY_ADDR;
-    tele_ii_tx_now(addr, d, 2);
-    d[0] = 0;
-    d[1] = 0;
-    tele_ii_rx(addr, d, 2);
-    cs_push(cs, (d[0] << 8) + d[1]);
 }
