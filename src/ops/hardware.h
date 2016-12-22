@@ -47,17 +47,14 @@ extern const tele_op_t op_MP_PERIOD;
 
 extern const tele_op_t op_LV_PRESET;
 extern const tele_op_t op_LV_RESET;
-extern const tele_op_t op_LV_PATTERN;
-extern const tele_op_t op_LV_LOOP_ST;
-extern const tele_op_t op_LV_LOOP_LEN;
 extern const tele_op_t op_LV_POS;
+extern const tele_op_t op_LV_L_ST;
+extern const tele_op_t op_LV_L_LEN;
+extern const tele_op_t op_LV_L_DIR;
 
 extern const tele_op_t op_CY_PRESET;
 extern const tele_op_t op_CY_RESET;
 extern const tele_op_t op_CY_POS;
 extern const tele_op_t op_CY_REV;
-extern const tele_op_t op_CY_BRAKE;
-extern const tele_op_t op_CY_ACCEL;
-extern const tele_op_t op_CY_RANGE;
 
 #endif

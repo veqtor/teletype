@@ -45,9 +45,8 @@ const tele_op_t *tele_ops[OPS] = {
     &op_JF_QT, &op_KR_PRESET, &op_KR_PATTERN, &op_KR_SCALE, &op_KR_PERIOD,
     &op_KR_POS, &op_KR_LOOP_ST, &op_KR_LOOP_LEN, &op_KR_RESET, &op_MP_PRESET1,
     &op_MP_RESET1, &op_MP_STOP1, &op_MP_SCALE, &op_MP_PERIOD, &op_LV_PRESET,
-    &op_LV_RESET, &op_LV_PATTERN, &op_LV_LOOP_ST, &op_LV_LOOP_LEN, &op_LV_POS,
-    &op_CY_PRESET, &op_CY_RESET, &op_CY_POS, &op_CY_REV, &op_CY_BRAKE,
-    &op_CY_ACCEL, &op_CY_RANGE,
+    &op_LV_RESET, &op_LV_POS, &op_LV_L_ST, &op_LV_L_LEN, &op_LV_L_DIR,
+    &op_CY_PRESET, &op_CY_RESET, &op_CY_POS, &op_CY_REV,
 
     // maths
     &op_ADD, &op_SUB, &op_MUL, &op_DIV, &op_MOD, &op_RAND, &op_RRAND, &op_TOSS,
