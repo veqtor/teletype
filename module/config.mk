@@ -79,6 +79,7 @@ CSRCS = \
 	../src/ops/patterns.c					\
 	../src/ops/queue.c					\
 	../src/ops/stack.c					\
+	../src/ops/telex.c					\
 	../src/ops/variables.c					\
 	../libavr32/src/adc.c					\
 	../libavr32/src/events.c				\

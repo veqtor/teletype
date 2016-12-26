@@ -13,6 +13,7 @@
 #include "ops/patterns.h"
 #include "ops/queue.h"
 #include "ops/stack.h"
+#include "ops/telex.h"
 #include "ops/variables.h"
 
 
@@ -74,6 +75,9 @@ const tele_op_t *tele_ops[OPS] = {
     &op_ORCA_RST, &op_ORCA_WGT, &op_ORCA_MUTE, &op_ORCA_SCALE, &op_ORCA_BANK,
     &op_ORCA_PRESET, &op_ORCA_RELOAD, &op_ORCA_ROTS, &op_ORCA_ROTW,
     &op_ORCA_GRST, &op_ORCA_CVA, &op_ORCA_CVB,
+
+    // telex
+    &op_TO_TR, &op_TO_TR_PULSE,
 };
 
 /////////////////////////////////////////////////////////////////
