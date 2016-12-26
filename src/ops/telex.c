@@ -240,7 +240,7 @@ void TXReceive(uint8_t model, command_state_t *cs, uint8_t mode, bool shift) {
     // tell the device what value you are going to query
     uint8_t buffer[2];
     buffer[0] = port;
-    tele_ii_tx(address, buffer, 1);
+    tele_ii_tx_now(address, buffer, 1);
     // now read the vaule
     buffer[0] = 0;
     buffer[1] = 0;
