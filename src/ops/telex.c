@@ -133,11 +133,11 @@ static void op_TI_RESET_get(const void *data, scene_state_t *ss,
 // TXo Operators
 const tele_op_t op_TO_TR              = MAKE_GET_OP(TO.TR               , op_TO_TR_get              , 2, false);
 const tele_op_t op_TO_TR_TOG          = MAKE_GET_OP(TO.TR.TOG           , op_TO_TR_TOG_get          , 1, false);
-const tele_op_t op_TO_TR_PULSE 	      = MAKE_GET_OP(TO.TR.PULSE         , op_TO_TR_PULSE_get	    , 1, false);
-const tele_op_t op_TO_TR_TIME 	      = MAKE_GET_OP(TO.TR.TIME          , op_TO_TR_TIME_get		    , 2, false);
-const tele_op_t op_TO_TR_TIMES 	      = MAKE_GET_OP(TO.TR.TIMES         , op_TO_TR_TIMES_get	    , 2, false);
-const tele_op_t op_TO_TR_TIMEM	      = MAKE_GET_OP(TO.TR.TIMEM         , op_TO_TR_TIMEM_get	    , 2, false);
-const tele_op_t op_TO_TR_POL 	      = MAKE_GET_OP(TO.TR.POL           , op_TO_TR_POL_get	 		, 2, false);
+const tele_op_t op_TO_TR_PULSE 	      = MAKE_GET_OP(TO.TR.PULSE         , op_TO_TR_PULSE_get	      , 1, false);
+const tele_op_t op_TO_TR_TIME 	      = MAKE_GET_OP(TO.TR.TIME          , op_TO_TR_TIME_get		      , 2, false);
+const tele_op_t op_TO_TR_TIMES 	      = MAKE_GET_OP(TO.TR.TIMES         , op_TO_TR_TIMES_get	      , 2, false);
+const tele_op_t op_TO_TR_TIMEM	      = MAKE_GET_OP(TO.TR.TIMEM         , op_TO_TR_TIMEM_get	      , 2, false);
+const tele_op_t op_TO_TR_POL 	        = MAKE_GET_OP(TO.TR.POL           , op_TO_TR_POL_get	 		    , 2, false);
 
 const tele_op_t op_TO_KILL            = MAKE_GET_OP(TO.KILL             , op_TO_KILL_get            , 1, false);
 const tele_op_t op_TO_CV              = MAKE_GET_OP(TO.CV               , op_TO_CV_get              , 2, false);
