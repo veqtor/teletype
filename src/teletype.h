@@ -10,7 +10,7 @@
 
 #define ERROR_MSG_LENGTH 16
 
-#define WELCOME "TELETYPE 1.3.1"
+#define WELCOME "TELETYPE 1.3.2"
 
 
 typedef enum {
