@@ -9,15 +9,22 @@ extern const tele_op_t op_TO_TR;
 extern const tele_op_t op_TO_TR_TOG;
 extern const tele_op_t op_TO_TR_PULSE;
 extern const tele_op_t op_TO_TR_TIME;
-extern const tele_op_t op_TO_TR_TIMES;
-extern const tele_op_t op_TO_TR_TIMEM;
+extern const tele_op_t op_TO_TR_TIME_S;
+extern const tele_op_t op_TO_TR_TIME_M;
 extern const tele_op_t op_TO_TR_POL;
+
+extern const tele_op_t op_TO_TR_PULSE_DIV;
+extern const tele_op_t op_TO_TR_M;
+extern const tele_op_t op_TO_TR_M_S;
+extern const tele_op_t op_TO_TR_M_M;
+extern const tele_op_t op_TO_TR_M_ACT;
+extern const tele_op_t op_TO_TR_SYNC;
 
 extern const tele_op_t op_TO_KILL;
 extern const tele_op_t op_TO_CV;
 extern const tele_op_t op_TO_CV_SLEW;
-extern const tele_op_t op_TO_CV_SLEWS;
-extern const tele_op_t op_TO_CV_SLEWM;
+extern const tele_op_t op_TO_CV_SLEW_S;
+extern const tele_op_t op_TO_CV_SLEW_M;
 extern const tele_op_t op_TO_CV_SET;
 extern const tele_op_t op_TO_CV_OFF;
 extern const tele_op_t op_TO_CV_QT;
@@ -42,17 +49,17 @@ extern const tele_op_t op_TO_OSC_SYNC;
 extern const tele_op_t op_TO_OSC_WIDTH;
 extern const tele_op_t op_TO_OSC_RECT;
 extern const tele_op_t op_TO_OSC_SLEW;
-extern const tele_op_t op_TO_OSC_SLEWS;
-extern const tele_op_t op_TO_OSC_SLEWM;
+extern const tele_op_t op_TO_OSC_SLEW_S;
+extern const tele_op_t op_TO_OSC_SLEW_M;
 extern const tele_op_t op_TO_OSC_SCALE;
 
 extern const tele_op_t op_TO_ENV_ACT;
 extern const tele_op_t op_TO_ENV_ATT;
-extern const tele_op_t op_TO_ENV_ATTS;
-extern const tele_op_t op_TO_ENV_ATTM;
+extern const tele_op_t op_TO_ENV_ATT_S;
+extern const tele_op_t op_TO_ENV_ATT_M;
 extern const tele_op_t op_TO_ENV_DEC;
-extern const tele_op_t op_TO_ENV_DECS;
-extern const tele_op_t op_TO_ENV_DECM;
+extern const tele_op_t op_TO_ENV_DEC_S;
+extern const tele_op_t op_TO_ENV_DEC_M;
 extern const tele_op_t op_TO_ENV_TRIG;
 
 // TXi Operators
@@ -64,8 +71,8 @@ extern const tele_op_t op_TI_PARAM_N;
 extern const tele_op_t op_TI_IN_N;
 extern const tele_op_t op_TI_PARAM_SCALE;
 extern const tele_op_t op_TI_IN_SCALE;
-extern const tele_op_t op_TI_PARAM_CALIBRATE;
-extern const tele_op_t op_TI_IN_CALIBRATE;
+extern const tele_op_t op_TI_PARAM_CALIB;
+extern const tele_op_t op_TI_IN_CALIB;
 extern const tele_op_t op_TI_STORE;
 extern const tele_op_t op_TI_RESET;
 
@@ -95,18 +102,23 @@ void TXReceive(uint8_t model, command_state_t *cs, uint8_t mode, bool shift);
 #define TO_TR 0x00
 #define TO_TR_TOG 0x01
 #define TO_TR_TIME 0x02
-#define TO_TR_TIMES 0x03
-#define TO_TR_TIMEM 0x04
+#define TO_TR_TIME_S 0x03
+#define TO_TR_TIME_M 0x04
 #define TO_TR_PULSE 0x05
 #define TO_TR_POL 0x06
-#define TO_TR_M 0x07
-#define TO_TR_M_ACT 0x08
+
+#define TO_TR_PULSE_DIV 0x07
+#define TO_TR_M 0x08
+#define TO_TR_M_S 0x09
+#define TO_TR_M_M 0x0A
+#define TO_TR_M_ACT 0x0B
+#define TO_TR_SYNC 0x0C
 
 #define TO_CV 0x10
 #define TO_CV_SET 0x11
 #define TO_CV_SLEW 0x12
-#define TO_CV_SLEWS 0x13
-#define TO_CV_SLEWM 0x14
+#define TO_CV_SLEW_S 0x13
+#define TO_CV_SLEW_M 0x14
 #define TO_CV_OFF 0x15
 
 #define TO_KILL 0x20
@@ -134,17 +146,17 @@ void TXReceive(uint8_t model, command_state_t *cs, uint8_t mode, bool shift);
 #define TO_OSC_RECT 0x4D
 #define TO_OSC_SCALE 0x4E
 #define TO_OSC_SLEW 0x4F
-#define TO_OSC_SLEWS 0x50
-#define TO_OSC_SLEWM 0x51
+#define TO_OSC_SLEW_S 0x50
+#define TO_OSC_SLEW_M 0x51
 #define TO_OSC_TR_ACT 0x52
 
 #define TO_ENV_ACT 0x60
 #define TO_ENV_ATT 0x61
-#define TO_ENV_ATTS 0x62
-#define TO_ENV_ATTM 0x63
+#define TO_ENV_ATT_S 0x62
+#define TO_ENV_ATT_M 0x63
 #define TO_ENV_DEC 0x64
-#define TO_ENV_DECS 0x65
-#define TO_ENV_DECM 0x66
+#define TO_ENV_DEC_S 0x65
+#define TO_ENV_DEC_M 0x66
 #define TO_ENV_TRIG 0x67
 #define TO_ENV_CYC 0x68
 #define TO_ENV_BPOL 0x69
@@ -173,8 +185,8 @@ void TXReceive(uint8_t model, command_state_t *cs, uint8_t mode, bool shift);
 #define TI_PARAM_N 0x12
 #define TI_PARAM_SCALE 0x13
 
-#define TI_IN_CALIBRATE 0x20
-#define TI_PARAM_CALIBRATE 0x21
+#define TI_IN_CALIB 0x20
+#define TI_PARAM_CALIB 0x21
 #define TI_STORE 0x22
 #define TI_RESET 0x23
 

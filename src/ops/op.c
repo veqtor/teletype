@@ -77,25 +77,27 @@ const tele_op_t *tele_ops[OPS] = {
     &op_ORCA_GRST, &op_ORCA_CVA, &op_ORCA_CVB,
 
     // telex
-    &op_TO_TR, &op_TO_TR_TOG, &op_TO_TR_PULSE, &op_TO_TR_TIME, &op_TO_TR_TIMES,
-    &op_TO_TR_TIMEM, &op_TO_TR_POL, &op_TO_KILL,
+    &op_TO_TR, &op_TO_TR_TOG, &op_TO_TR_PULSE, &op_TO_TR_TIME, &op_TO_TR_TIME_S,
+    &op_TO_TR_TIME_M, &op_TO_TR_POL, &op_TO_KILL,
 
-    &op_TO_CV, &op_TO_CV_SLEW, &op_TO_CV_SLEWS, &op_TO_CV_SLEWM, &op_TO_CV_SET,
+    &op_TO_TR_PULSE_DIV, &op_TO_TR_M, &op_TO_TR_M_S, &op_TO_TR_M_M, &op_TO_TR_M_ACT, &op_TO_TR_SYNC,
+
+    &op_TO_CV, &op_TO_CV_SLEW, &op_TO_CV_SLEW_S, &op_TO_CV_SLEW_M, &op_TO_CV_SET,
     &op_TO_CV_OFF, &op_TO_CV_QT, &op_TO_CV_QT_SET, &op_TO_CV_N, &op_TO_CV_N_SET,
     &op_TO_CV_SCALE,
 
     &op_TO_OSC, &op_TO_OSC_SET, &op_TO_OSC_QT, &op_TO_OSC_QT_SET, &op_TO_OSC_FQ,
     &op_TO_OSC_FQ_SET, &op_TO_OSC_N, &op_TO_OSC_N_SET, &op_TO_OSC_LFO,
     &op_TO_OSC_LFO_SET, &op_TO_OSC_WAVE, &op_TO_OSC_SYNC, &op_TO_OSC_WIDTH,
-    &op_TO_OSC_RECT, &op_TO_OSC_SLEW, &op_TO_OSC_SLEWS, &op_TO_OSC_SLEWM,
+    &op_TO_OSC_RECT, &op_TO_OSC_SLEW, &op_TO_OSC_SLEW_S, &op_TO_OSC_SLEW_M,
     &op_TO_OSC_SCALE,
 
-    &op_TO_ENV_ACT, &op_TO_ENV_ATT, &op_TO_ENV_ATTS, &op_TO_ENV_ATTM,
-    &op_TO_ENV_DEC, &op_TO_ENV_DECS, &op_TO_ENV_DECM, &op_TO_ENV_TRIG,
+    &op_TO_ENV_ACT, &op_TO_ENV_ATT, &op_TO_ENV_ATT_S, &op_TO_ENV_ATT_M,
+    &op_TO_ENV_DEC, &op_TO_ENV_DEC_S, &op_TO_ENV_DEC_M, &op_TO_ENV_TRIG,
     &op_TI_PARAM, &op_TI_IN, &op_TI_PARAM_QT, &op_TI_IN_QT, &op_TI_PARAM_N,
 
-    &op_TI_IN_N, &op_TI_PARAM_SCALE, &op_TI_IN_SCALE, &op_TI_PARAM_CALIBRATE,
-    &op_TI_IN_CALIBRATE, &op_TI_STORE, &op_TI_RESET,
+    &op_TI_IN_N, &op_TI_PARAM_SCALE, &op_TI_IN_SCALE, &op_TI_PARAM_CALIB,
+    &op_TI_IN_CALIB, &op_TI_STORE, &op_TI_RESET,
 };
 
 /////////////////////////////////////////////////////////////////
