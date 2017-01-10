@@ -5,7 +5,7 @@
 
 #define COMMAND_MAX_LENGTH 12
 
-typedef enum { NUMBER, MOD, SEP, OP } tele_word_t;
+typedef enum { NUMBER, OP, MOD, PRE_SEP, SUB_SEP } tele_word_t;
 
 typedef struct {
     tele_word_t tag;
@@ -19,7 +19,7 @@ typedef struct {
 } tele_command_t;
 
 void copy_command(tele_command_t *dst, const tele_command_t *src);
-void copy_sub_command(tele_command_t *dst, const tele_command_t *src);
+void copy_post_command(tele_command_t *dst, const tele_command_t *src);
 void print_command(const tele_command_t *c, char *out);
 
 #endif

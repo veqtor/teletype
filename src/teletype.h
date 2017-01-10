@@ -21,9 +21,10 @@ typedef enum {
     E_NEED_PARAMS,
     E_EXTRA_PARAMS,
     E_NO_MOD_HERE,
-    E_MANY_SEP,
-    E_NEED_SEP,
-    E_PLACE_SEP,
+    E_MANY_PRE_SEP,
+    E_NEED_PRE_SEP,
+    E_PLACE_PRE_SEP,
+    E_NO_SUB_SEP_IN_PRE,
     E_NOT_LEFT
 } error_t;
 
@@ -38,7 +39,7 @@ error_t parse(const char *cmd, tele_command_t *out,
 error_t validate(const tele_command_t *c, char error_msg[ERROR_MSG_LENGTH]);
 process_result_t run_script(size_t script_no);
 process_result_t run_command(const tele_command_t *cmd);
-process_result_t process(exec_state_t *es, const tele_command_t *c);
+process_result_t process_command(exec_state_t *es, const tele_command_t *c);
 
 void tele_tick(uint8_t);
 

@@ -58,7 +58,7 @@ void tele_ii_tx(uint8_t addr, uint8_t *data, uint8_t l) {
 }
 
 void tele_ii_tx_now(uint8_t addr, uint8_t *data, uint8_t l) {
-    printf("II_tx  addr:%" PRIu8 " l:%" PRId16, addr, l);
+    printf("II_tx  addr:%" PRIu8 " l:%" PRIu8, addr, l);
     printf("\n");
 }
 
@@ -144,7 +144,7 @@ int main() {
             if (error_msg[0]) printf(": %s", error_msg);
             printf("\n");
             if (status == E_OK) {
-                process_result_t output = process(&es, &temp);
+                process_result_t output = process_command(&es, &temp);
                 if (output.has_value) { printf(">>> %i\n", output.value); }
             }
         }

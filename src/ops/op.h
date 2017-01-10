@@ -22,7 +22,7 @@ typedef struct {
 typedef struct {
     const char *name;
     void (*const func)(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
-                       const tele_command_t *sub_command);
+                       const tele_command_t *post_command);
     const uint8_t params;
 } tele_mod_t;
 

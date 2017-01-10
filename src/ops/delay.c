@@ -6,7 +6,7 @@
 
 static void mod_DEL_func(scene_state_t *ss, exec_state_t *es,
                          command_state_t *cs,
-                         const tele_command_t *sub_command);
+                         const tele_command_t *post_command);
 
 static void op_DEL_CLR_get(const void *data, scene_state_t *ss,
                            exec_state_t *es, command_state_t *cs);
@@ -17,7 +17,7 @@ const tele_op_t op_DEL_CLR = MAKE_GET_OP(DEL.CLR, op_DEL_CLR_get, 0, false);
 
 static void mod_DEL_func(scene_state_t *ss, exec_state_t *NOTUSED(es),
                          command_state_t *cs,
-                         const tele_command_t *sub_command) {
+                         const tele_command_t *post_command) {
     int16_t i = 0;
     int16_t a = cs_pop(cs);
 
@@ -30,7 +30,7 @@ static void mod_DEL_func(scene_state_t *ss, exec_state_t *NOTUSED(es),
         if (ss->delay.count == 1) tele_delay(1);
         ss->delay.time[i] = a;
 
-        copy_command(&ss->delay.commands[i], sub_command);
+        copy_command(&ss->delay.commands[i], post_command);
     }
 }
 

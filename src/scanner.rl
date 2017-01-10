@@ -37,9 +37,10 @@ error_t scanner(const char *data, tele_command_t *out,
 
     %%{
         separator = [ \n\t];
-        mod_separator = ' : ';
+        pre_separator = ' : ';
+        sub_seperator = ' ; ';
 
-        token = any+ -- (separator | mod_separator);
+        token = any+ -- (separator | pre_separator | sub_seperator);
 
         action token {
             // token matched
@@ -56,10 +57,6 @@ error_t scanner(const char *data, tele_command_t *out,
                 // if we have a match, copy data to the the command
                 out->data[out->length] = tele_data;
 
-                // if it's a SEP, we need to record it's position
-                // (validate checks for too many SEP tokens)
-                if (tele_data.tag == SEP) out->separator = out->length;
-
                 // increase the command length
                 out->length++;
 
@@ -73,12 +70,12 @@ error_t scanner(const char *data, tele_command_t *out,
             }
         }
 
-        action mod_separator {
-            // ':' mod separator matched
+        action pre_separator {
+            // ';' pre separator matched
 
-            // it's a SEP, we need to record it's position
-            // (validate checks for too many SEP tokens)
-            out->data[out->length].tag = SEP;
+            // it's a PRE_SEP, we need to record it's position
+            // (validate checks for too many PRE_SEP tokens)
+            out->data[out->length].tag = PRE_SEP;
             out->data[out->length].value = 0;
             out->separator = out->length;
 
@@ -89,9 +86,22 @@ error_t scanner(const char *data, tele_command_t *out,
             if (out->length >= COMMAND_MAX_LENGTH) return E_LENGTH;
         }
 
+        action sub_separator {
+            // ':' mod separator matched
+            out->data[out->length].tag = SUB_SEP;
+            out->data[out->length].value = 0;
+
+            // increase the command length
+            out->length++;
+
+            // if the command length is now too long, abort
+            if (out->length >= COMMAND_MAX_LENGTH) return E_LENGTH;
+        }
+
         main := |*
             separator;
-            mod_separator => mod_separator;
+            pre_separator => pre_separator;
+            sub_seperator => sub_separator;
             token => token;
         *|;
 

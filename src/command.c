@@ -10,7 +10,7 @@ void copy_command(tele_command_t *dst, const tele_command_t *src) {
     memcpy(dst, src, sizeof(tele_command_t));
 }
 
-void copy_sub_command(tele_command_t *dst, const tele_command_t *src) {
+void copy_post_command(tele_command_t *dst, const tele_command_t *src) {
     dst->length = src->length - src->separator - 1;
     dst->separator = -1;
     memcpy(dst->data, &src->data[src->separator + 1],
@@ -29,7 +29,8 @@ void print_command(const tele_command_t *c, char *out) {
                 break;
             }
             case MOD: strcat(out, tele_mods[c->data[n].value]->name); break;
-            case SEP: strcat(out, ":"); break;
+            case PRE_SEP: strcat(out, ":"); break;
+            case SUB_SEP: strcat(out, ";"); break;
             default: break;
         }
         strcat(out, " ");

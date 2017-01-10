@@ -167,6 +167,20 @@ TEST should_parse_and_validate() {
     PASS();
 }
 
+TEST parser_test_sub_commands() {
+    ASSERT_EQ(parse_and_validate_helper("X 1 ; Y 2"), E_OK);
+    ASSERT_EQ(parse_and_validate_helper("X 1 ; Y 2 ;  ; "), E_OK);
+    ASSERT_EQ(parse_and_validate_helper("IF 1 : X 1 ; Y 2"), E_OK);
+    ASSERT_EQ(parse_and_validate_helper("IF 1 ; Z 1 : X 1"),
+              E_NO_SUB_SEP_IN_PRE);
+    ASSERT_EQ(parse_and_validate_helper("IF 1 ; Z 1 : X 1 ; Y 2"),
+              E_NO_SUB_SEP_IN_PRE);
+    // possibly the following should return E_NO_SUB_SEP_IN_PRE one day
+    ASSERT_EQ(parse_and_validate_helper("Z 1 ; IF 1 : X 1"), E_NO_MOD_HERE);
+
+    PASS();
+}
+
 // This test asserts that the parser always returns the correct op, it does this
 // by starting with the op in question, extracting the name and running that
 // through the parser. Then asserting that only 1 op is returned in
@@ -204,6 +218,7 @@ TEST parser_should_return_mod() {
 
 SUITE(parser_suite) {
     RUN_TEST(should_parse_and_validate);
+    RUN_TEST(parser_test_sub_commands);
     RUN_TEST(parser_should_return_op);
     RUN_TEST(parser_should_return_mod);
 }

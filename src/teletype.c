@@ -1,6 +1,7 @@
 #include <stdint.h>  // types
 #include <stdio.h>   // printf
 #include <string.h>
+#include <unistd.h>  // ssize_t
 
 #include "helpers.h"
 #include "ops/op.h"
@@ -26,9 +27,10 @@ static const char *errordesc[] = { "OK",
                                    "NOT ENOUGH PARAMS",
                                    "TOO MANY PARAMS",
                                    "MOD NOT ALLOWED HERE",
-                                   "EXTRA SEPARATOR",
-                                   "NEED SEPARATOR",
-                                   "BAD SEPARATOR",
+                                   "EXTRA PRE SEPARATOR",
+                                   "NEED PRE SEPARATOR",
+                                   "BAD PRE SEPARATOR",
+                                   "NO SUB SEP IN PRE",
                                    "MOVE LEFT" };
 
 const char *tele_error(error_t e) {
@@ -102,8 +104,9 @@ error_t validate(const tele_command_t *c, char error_msg[ERROR_MSG_LENGTH]) {
         tele_word_t word_type = c->data[idx].tag;
         int16_t word_value = c->data[idx].value;
         // A first_cmd is either at the beginning of the command or immediately
-        // after the SEP
-        bool first_cmd = idx == 0 || c->data[idx - 1].tag == SEP;
+        // after the PRE_SEP or COMMAND_SEP
+        bool first_cmd = idx == 0 || c->data[idx - 1].tag == PRE_SEP ||
+                         c->data[idx - 1].tag == SUB_SEP;
 
         if (word_type == NUMBER) { stack_depth++; }
         else if (word_type == OP) {
@@ -136,7 +139,7 @@ error_t validate(const tele_command_t *c, char error_msg[ERROR_MSG_LENGTH]) {
             if (idx != 0)
                 mod_error = E_NO_MOD_HERE;
             else if (c->separator == -1)
-                mod_error = E_NEED_SEP;
+                mod_error = E_NEED_PRE_SEP;
             else if (stack_depth < tele_mods[word_value]->params)
                 mod_error = E_NEED_PARAMS;
             else if (stack_depth > tele_mods[word_value]->params)
@@ -149,17 +152,24 @@ error_t validate(const tele_command_t *c, char error_msg[ERROR_MSG_LENGTH]) {
 
             stack_depth = 0;
         }
-        else if (word_type == SEP) {
+        else if (word_type == PRE_SEP) {
             sep_count++;
-            if (sep_count > 1)
-                return E_MANY_SEP;
-            else if (idx == 0)
-                return E_PLACE_SEP;
+            if (sep_count > 1) return E_MANY_PRE_SEP;
 
-            if (stack_depth > 1)
-                return E_EXTRA_PARAMS;
-            else
-                stack_depth = 0;
+            if (idx == 0) return E_PLACE_PRE_SEP;
+
+            if (stack_depth > 1) return E_EXTRA_PARAMS;
+
+            // reset the stack depth
+            stack_depth = 0;
+        }
+        else if (word_type == SUB_SEP) {
+            if (sep_count > 0) return E_NO_SUB_SEP_IN_PRE;
+
+            if (stack_depth > 1) return E_EXTRA_PARAMS;
+
+            // reset the stack depth
+            stack_depth = 0;
         }
     }
 
@@ -177,7 +187,7 @@ process_result_t run_script(size_t script_no) {
     exec_state_t es;
     es_init(&es);
     for (size_t i = 0; i < tele_get_script_l(script_no); i++) {
-        result = process(&es, tele_get_script_c(script_no, i));
+        result = process_command(&es, tele_get_script_c(script_no, i));
     }
     return result;
 }
@@ -185,44 +195,91 @@ process_result_t run_script(size_t script_no) {
 process_result_t run_command(const tele_command_t *cmd) {
     exec_state_t es;
     es_init(&es);
-    return process(&es, cmd);
+    return process_command(&es, cmd);
 }
 
 
 /////////////////////////////////////////////////////////////////
 // PROCESS //////////////////////////////////////////////////////
 
-process_result_t process(exec_state_t *es, const tele_command_t *c) {
+// run a single command inside a given exec_state
+process_result_t process_command(exec_state_t *es, const tele_command_t *c) {
     command_state_t cs;
     cs_init(&cs);
 
-    // if the command has a MOD, only process it
-    // allow the MOD to deal with processing the remainder
-    int16_t idx = c->separator == -1 ? c->length : c->separator;
+    // 1. Do we have a PRE seperator?
+    // ------------------------------
+    // if we do then only process the PRE part, the MOD will determine if the
+    // POST should be run and take care of running it
+    ssize_t start_idx = 0;
+    ssize_t end_idx = c->separator == -1 ? c->length : c->separator;
 
-    while (idx--) {  // process from right to left
+    // 2. Determine the location of all the SUB commands
+    // -------------------------------------------------
+    // an array of structs to hold the start and end of each sub command
+    struct sub_idx {
+        ssize_t start;
+        ssize_t end;
+    } subs[COMMAND_MAX_LENGTH];
+
+    ssize_t sub_len = 0;
+    ssize_t sub_start = 0;
+
+    // iterate through c->data to find all the SUB_SEPs and add to the array
+    for (ssize_t idx = start_idx; idx < end_idx; idx++) {
         tele_word_t word_type = c->data[idx].tag;
-        int16_t word_value = c->data[idx].value;
-
-        if (word_type == NUMBER) { cs_push(&cs, word_value); }
-        else if (word_type == OP) {
-            const tele_op_t *op = tele_ops[word_value];
-
-            // if we're in the first command position, and there is a set fn
-            // pointer and we have enough params, then run set, else run get
-            if (idx == 0 && op->set != NULL &&
-                cs_stack_size(&cs) >= op->params + 1)
-                op->set(op->data, &scene_state, es, &cs);
-            else
-                op->get(op->data, &scene_state, es, &cs);
-        }
-        else if (word_type == MOD) {
-            tele_command_t sub_command;
-            copy_sub_command(&sub_command, c);
-            tele_mods[word_value]->func(&scene_state, es, &cs, &sub_command);
+        if (word_type == SUB_SEP && idx > sub_start) {
+            subs[sub_len].start = sub_start;
+            subs[sub_len].end = idx - 1;
+            sub_len++;
+            sub_start = idx + 1;
         }
     }
 
+    // the last sub command won't have been added, manually add it here
+    if (end_idx > sub_start) {
+        subs[sub_len].start = sub_start;
+        subs[sub_len].end = end_idx - 1;
+        sub_len++;
+    }
+
+    // 3. Loop through each sub command and execute it
+    // -----------------------------------------------
+    // iterate through sub commands from left to right
+    for (ssize_t sub_idx = 0; sub_idx < sub_len; sub_idx++) {
+        const ssize_t sub_start = subs[sub_idx].start;
+        const ssize_t sub_end = subs[sub_idx].end;
+
+        // as we are using a stack based language, we must process commands from
+        // right to left
+        for (ssize_t idx = sub_end; idx >= sub_start; idx--) {
+            const tele_word_t word_type = c->data[idx].tag;
+            const int16_t word_value = c->data[idx].value;
+
+            if (word_type == NUMBER) { cs_push(&cs, word_value); }
+            else if (word_type == OP) {
+                const tele_op_t *op = tele_ops[word_value];
+
+                // if we're in the first command position, and there is a set fn
+                // pointer and we have enough params, then run set, else run get
+                if (idx == sub_start && op->set != NULL &&
+                    cs_stack_size(&cs) >= op->params + 1)
+                    op->set(op->data, &scene_state, es, &cs);
+                else
+                    op->get(op->data, &scene_state, es, &cs);
+            }
+            else if (word_type == MOD) {
+                tele_command_t post_command;
+                copy_post_command(&post_command, c);
+                tele_mods[word_value]->func(&scene_state, es, &cs,
+                                            &post_command);
+            }
+        }
+    }
+
+    // 4. Return
+    // ---------
+    // sometimes we have single value left of the stack, if so return it
     if (cs_stack_size(&cs)) {
         process_result_t o = {.has_value = true, .value = cs_pop(&cs) };
         return o;

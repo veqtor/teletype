@@ -16,7 +16,7 @@ TEST process_helper(size_t n, char* lines[], int16_t answer) {
         error_t error = parse(lines[i], &cmd, error_msg);
         if (error != E_OK) { FAIL(); }
         if (validate(&cmd, error_msg) != E_OK) { FAIL(); }
-        result = process(&es, &cmd);
+        result = process_command(&es, &cmd);
     }
     ASSERT_EQ(result.has_value, true);
     ASSERT_EQ(result.value, answer);
@@ -217,6 +217,20 @@ TEST test_X() {
     PASS();
 }
 
+TEST test_sub_commands() {
+    char* test1[2] = { "X 10 ; Y 20 ; Z 30", "ADD X ADD Y Z" };
+    CHECK_CALL(process_helper(2, test1, 60));
+
+    char* test2[2] = { "IF 1 : X 1 ; Y 2 ; Z 3", "ADD X ADD Y Z" };
+    CHECK_CALL(process_helper(2, test2, 6));
+
+    char* test3[3] = { "X 0 ; Y 0 ; Z 0", "IF 0 : X 1 ; Y 2 ; Z 3",
+                       "ADD X ADD Y Z" };
+    CHECK_CALL(process_helper(3, test3, 0));
+
+    PASS();
+}
+
 SUITE(process_suite) {
     RUN_TEST(test_numbers);
     RUN_TEST(test_ADD);
@@ -228,4 +242,5 @@ SUITE(process_suite) {
     RUN_TEST(test_Q);
     RUN_TEST(test_PN);
     RUN_TEST(test_X);
+    RUN_TEST(test_sub_commands);
 }
