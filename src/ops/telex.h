@@ -17,8 +17,9 @@ extern const tele_op_t op_TO_TR_PULSE_DIV;
 extern const tele_op_t op_TO_TR_M;
 extern const tele_op_t op_TO_TR_M_S;
 extern const tele_op_t op_TO_TR_M_M;
+extern const tele_op_t op_TO_TR_M_BPM;
 extern const tele_op_t op_TO_TR_M_ACT;
-extern const tele_op_t op_TO_TR_SYNC;
+extern const tele_op_t op_TO_TR_M_SYNC;
 
 extern const tele_op_t op_TO_KILL;
 extern const tele_op_t op_TO_CV;
@@ -111,8 +112,9 @@ void TXReceive(uint8_t model, command_state_t *cs, uint8_t mode, bool shift);
 #define TO_TR_M 0x08
 #define TO_TR_M_S 0x09
 #define TO_TR_M_M 0x0A
-#define TO_TR_M_ACT 0x0B
-#define TO_TR_SYNC 0x0C
+#define TO_TR_M_BPM 0x0B
+#define TO_TR_M_ACT 0x0C
+#define TO_TR_M_SYNC 0x0D
 
 #define TO_CV 0x10
 #define TO_CV_SET 0x11

@@ -80,7 +80,8 @@ const tele_op_t *tele_ops[OPS] = {
     &op_TO_TR, &op_TO_TR_TOG, &op_TO_TR_PULSE, &op_TO_TR_TIME, &op_TO_TR_TIME_S,
     &op_TO_TR_TIME_M, &op_TO_TR_POL, &op_TO_KILL,
 
-    &op_TO_TR_PULSE_DIV, &op_TO_TR_M, &op_TO_TR_M_S, &op_TO_TR_M_M, &op_TO_TR_M_ACT, &op_TO_TR_SYNC,
+    &op_TO_TR_PULSE_DIV, &op_TO_TR_M, &op_TO_TR_M_S, &op_TO_TR_M_M, 
+    &op_TO_TR_M_BPM, &op_TO_TR_M_ACT, &op_TO_TR_M_SYNC,
 
     &op_TO_CV, &op_TO_CV_SLEW, &op_TO_CV_SLEW_S, &op_TO_CV_SLEW_M, &op_TO_CV_SET,
     &op_TO_CV_OFF, &op_TO_CV_QT, &op_TO_CV_QT_SET, &op_TO_CV_N, &op_TO_CV_N_SET,
