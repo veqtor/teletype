@@ -25,7 +25,7 @@ typedef struct {
     const uint8_t params;
 } tele_mod_t;
 
-#define OPS 191
+#define OPS 193
 extern const tele_op_t *tele_ops[OPS];
 
 #define MODS 7
