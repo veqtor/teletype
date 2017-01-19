@@ -57,4 +57,20 @@ extern const tele_op_t op_CY_RESET;
 extern const tele_op_t op_CY_POS;
 extern const tele_op_t op_CY_REV;
 
+extern const tele_op_t op_MID_SHIFT;
+extern const tele_op_t op_MID_SLEW;
+
+extern const tele_op_t op_ARP_STYLE;
+extern const tele_op_t op_ARP_HOLD;
+extern const tele_op_t op_ARP_RPT;
+extern const tele_op_t op_ARP_GATE;
+extern const tele_op_t op_ARP_DIV;
+extern const tele_op_t op_ARP_RESET;
+extern const tele_op_t op_ARP_SHIFT;
+extern const tele_op_t op_ARP_SLEW;
+extern const tele_op_t op_ARP_FILL;
+extern const tele_op_t op_ARP_ROT;
+extern const tele_op_t op_ARP_ER;
+
+
 #endif
