@@ -87,6 +87,8 @@ static void op_TO_OSC_WAVE_get(const void *data, scene_state_t *ss,
                                exec_state_t *es, command_state_t *cs);
 static void op_TO_OSC_SYNC_get(const void *data, scene_state_t *ss,
                                exec_state_t *es, command_state_t *cs);
+static void op_TO_OSC_PHASE_get(const void *data, scene_state_t *ss,
+                                exec_state_t *es, command_state_t *cs);
 static void op_TO_OSC_WIDTH_get(const void *data, scene_state_t *ss,
                                 exec_state_t *es, command_state_t *cs);
 static void op_TO_OSC_RECT_get(const void *data, scene_state_t *ss,
@@ -188,6 +190,7 @@ const tele_op_t op_TO_OSC_LFO         = MAKE_GET_OP(TO.OSC.LFO          , op_TO_
 const tele_op_t op_TO_OSC_LFO_SET     = MAKE_GET_OP(TO.OSC.LFO.SET      , op_TO_OSC_LFO_SET_get     , 2, false);
 const tele_op_t op_TO_OSC_WAVE        = MAKE_GET_OP(TO.OSC.WAVE         , op_TO_OSC_WAVE_get        , 2, false);
 const tele_op_t op_TO_OSC_SYNC        = MAKE_GET_OP(TO.OSC.SYNC         , op_TO_OSC_SYNC_get        , 2, false);
+const tele_op_t op_TO_OSC_PHASE       = MAKE_GET_OP(TO.OSC.PHASE        , op_TO_OSC_PHASE_get       , 2, false);
 const tele_op_t op_TO_OSC_WIDTH       = MAKE_GET_OP(TO.OSC.WIDTH        , op_TO_OSC_WIDTH_get       , 2, false);
 const tele_op_t op_TO_OSC_RECT        = MAKE_GET_OP(TO.OSC.RECT         , op_TO_OSC_RECT_get        , 2, false);
 const tele_op_t op_TO_OSC_SLEW        = MAKE_GET_OP(TO.OSC.SLEW         , op_TO_OSC_SLEW_get        , 2, false);
@@ -430,6 +433,10 @@ static void op_TO_OSC_WAVE_get(const void *NOTUSED(data), scene_state_t *ss,
 static void op_TO_OSC_SYNC_get(const void *NOTUSED(data), scene_state_t *ss,
                                exec_state_t *NOTUSED(es), command_state_t *cs) {
     TXSet(TO, TO_OSC_SYNC, cs);
+}
+static void op_TO_OSC_PHASE_get(const void *NOTUSED(data), scene_state_t *ss,
+                               exec_state_t *NOTUSED(es), command_state_t *cs) {
+    TXSet(TO, TO_OSC_PHASE, cs);
 }
 static void op_TO_OSC_WIDTH_get(const void *NOTUSED(data), scene_state_t *ss,
                                 exec_state_t *NOTUSED(es),

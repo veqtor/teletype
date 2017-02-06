@@ -47,6 +47,7 @@ extern const tele_op_t op_TO_OSC_LFO;
 extern const tele_op_t op_TO_OSC_LFO_SET;
 extern const tele_op_t op_TO_OSC_WAVE;
 extern const tele_op_t op_TO_OSC_SYNC;
+extern const tele_op_t op_TO_OSC_PHASE;
 extern const tele_op_t op_TO_OSC_WIDTH;
 extern const tele_op_t op_TO_OSC_RECT;
 extern const tele_op_t op_TO_OSC_SLEW;
@@ -151,6 +152,7 @@ void TXReceive(uint8_t model, command_state_t *cs, uint8_t mode, bool shift);
 #define TO_OSC_SLEW_S 0x50
 #define TO_OSC_SLEW_M 0x51
 #define TO_OSC_TR_ACT 0x52
+#define TO_OSC_PHASE 0x53
 
 #define TO_ENV_ACT 0x60
 #define TO_ENV_ATT 0x61
