@@ -81,7 +81,8 @@ const tele_op_t *tele_ops[OPS] = {
     &op_TO_TR_TIME_M, &op_TO_TR_POL, &op_TO_KILL,
 
     &op_TO_TR_PULSE_DIV, &op_TO_TR_M, &op_TO_TR_M_S, &op_TO_TR_M_M,
-    &op_TO_TR_M_BPM, &op_TO_TR_M_ACT, &op_TO_TR_M_SYNC, &op_TO_TR_WIDTH,
+    &op_TO_TR_M_BPM, &op_TO_TR_M_ACT, &op_TO_TR_M_SYNC, &op_TO_TR_WIDTH, 
+    &op_TO_TR_M_COUNT,
 
     &op_TO_CV, &op_TO_CV_SLEW, &op_TO_CV_SLEW_S, &op_TO_CV_SLEW_M,
     &op_TO_CV_SET, &op_TO_CV_OFF, &op_TO_CV_QT, &op_TO_CV_QT_SET, &op_TO_CV_N,
@@ -92,7 +93,8 @@ const tele_op_t *tele_ops[OPS] = {
     &op_TO_OSC_LFO_SET, &op_TO_OSC_WAVE, &op_TO_OSC_SYNC, &op_TO_OSC_PHASE,
     &op_TO_OSC_WIDTH, &op_TO_OSC_RECT, &op_TO_OSC_SLEW, &op_TO_OSC_SLEW_S,
     &op_TO_OSC_SLEW_M, &op_TO_OSC_SCALE, &op_TO_OSC_CYC, &op_TO_OSC_CYC_S, 
-    &op_TO_OSC_CYC_M, &op_TO_OSC_CYC_SET, &op_TO_OSC_CYC_S_SET, &op_TO_OSC_CYC_M_SET,
+    &op_TO_OSC_CYC_M, &op_TO_OSC_CYC_SET, &op_TO_OSC_CYC_S_SET, 
+    &op_TO_OSC_CYC_M_SET,
 
     &op_TO_ENV_ACT, &op_TO_ENV_ATT, &op_TO_ENV_ATT_S, &op_TO_ENV_ATT_M,
     &op_TO_ENV_DEC, &op_TO_ENV_DEC_S, &op_TO_ENV_DEC_M, &op_TO_ENV_TRIG,

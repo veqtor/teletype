@@ -40,6 +40,8 @@ static void op_TO_TR_M_SYNC_get(const void *data, scene_state_t *ss,
                                 exec_state_t *es, command_state_t *cs);
 static void op_TO_TR_WIDTH_get(const void *data, scene_state_t *ss,
                                 exec_state_t *es, command_state_t *cs);
+static void op_TO_TR_M_COUNT_get(const void *data, scene_state_t *ss,
+                                exec_state_t *es, command_state_t *cs);
 
 static void op_TO_CV_get(const void *data, scene_state_t *ss, exec_state_t *es,
                          command_state_t *cs);
@@ -185,6 +187,7 @@ const tele_op_t op_TO_TR_M_BPM        = MAKE_GET_OP(TO.TR.M.BPM         , op_TO_
 const tele_op_t op_TO_TR_M_ACT        = MAKE_GET_OP(TO.TR.M.ACT         , op_TO_TR_M_ACT_get        , 2, false);
 const tele_op_t op_TO_TR_M_SYNC       = MAKE_GET_OP(TO.TR.M.SYNC        , op_TO_TR_M_SYNC_get       , 1, false);
 const tele_op_t op_TO_TR_WIDTH        = MAKE_GET_OP(TO.TR.WIDTH         , op_TO_TR_WIDTH_get        , 2, false);
+const tele_op_t op_TO_TR_M_COUNT      = MAKE_GET_OP(TO.TR.M.COUNT       , op_TO_TR_M_COUNT_get      , 2, false);
 
 const tele_op_t op_TO_CV              = MAKE_GET_OP(TO.CV               , op_TO_CV_get              , 2, false);
 const tele_op_t op_TO_CV_SLEW         = MAKE_GET_OP(TO.CV.SLEW          , op_TO_CV_SLEW_get         , 2, false);
@@ -375,6 +378,10 @@ static void op_TO_TR_M_SYNC_get(const void *NOTUSED(data), scene_state_t *ss,
 static void op_TO_TR_WIDTH_get(const void *NOTUSED(data), scene_state_t *ss,
                                exec_state_t *NOTUSED(es), command_state_t *cs) {
     TXSet(TO, TO_TR_WIDTH, cs);
+}
+static void op_TO_TR_M_COUNT_get(const void *NOTUSED(data), scene_state_t *ss,
+                               exec_state_t *NOTUSED(es), command_state_t *cs) {
+    TXSet(TO, TO_TR_M_COUNT, cs);
 }
 static void op_TO_CV_get(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *NOTUSED(es), command_state_t *cs) {

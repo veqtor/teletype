@@ -22,6 +22,7 @@ extern const tele_op_t op_TO_TR_M_ACT;
 extern const tele_op_t op_TO_TR_M_SYNC;
 extern const tele_op_t op_TO_TR_M_SYNC;
 extern const tele_op_t op_TO_TR_WIDTH;
+extern const tele_op_t op_TO_TR_M_COUNT;
 
 extern const tele_op_t op_TO_KILL;
 extern const tele_op_t op_TO_CV;
@@ -129,6 +130,7 @@ void TXReceive(uint8_t model, command_state_t *cs, uint8_t mode, bool shift);
 #define TO_TR_M_ACT 0x0C
 #define TO_TR_M_SYNC 0x0D
 #define TO_TR_WIDTH 0x0E
+#define TO_TR_M_COUNT 0x0F
 
 #define TO_CV 0x10
 #define TO_CV_SET 0x11
