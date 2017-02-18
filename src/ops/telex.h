@@ -20,6 +20,8 @@ extern const tele_op_t op_TO_TR_M_M;
 extern const tele_op_t op_TO_TR_M_BPM;
 extern const tele_op_t op_TO_TR_M_ACT;
 extern const tele_op_t op_TO_TR_M_SYNC;
+extern const tele_op_t op_TO_TR_M_SYNC;
+extern const tele_op_t op_TO_TR_WIDTH;
 
 extern const tele_op_t op_TO_KILL;
 extern const tele_op_t op_TO_CV;
@@ -54,6 +56,12 @@ extern const tele_op_t op_TO_OSC_SLEW;
 extern const tele_op_t op_TO_OSC_SLEW_S;
 extern const tele_op_t op_TO_OSC_SLEW_M;
 extern const tele_op_t op_TO_OSC_SCALE;
+extern const tele_op_t op_TO_OSC_CYC;
+extern const tele_op_t op_TO_OSC_CYC_S;
+extern const tele_op_t op_TO_OSC_CYC_M;
+extern const tele_op_t op_TO_OSC_CYC_SET;
+extern const tele_op_t op_TO_OSC_CYC_S_SET;
+extern const tele_op_t op_TO_OSC_CYC_M_SET;
 
 extern const tele_op_t op_TO_ENV_ACT;
 extern const tele_op_t op_TO_ENV_ATT;
@@ -66,13 +74,17 @@ extern const tele_op_t op_TO_ENV_TRIG;
 
 // TXi Operators
 extern const tele_op_t op_TI_PARAM;
-extern const tele_op_t op_TI_IN;
 extern const tele_op_t op_TI_PARAM_QT;
-extern const tele_op_t op_TI_IN_QT;
 extern const tele_op_t op_TI_PARAM_N;
-extern const tele_op_t op_TI_IN_N;
 extern const tele_op_t op_TI_PARAM_SCALE;
+extern const tele_op_t op_TI_PARAM_MAP;
+
+extern const tele_op_t op_TI_IN;
+extern const tele_op_t op_TI_IN_QT;
+extern const tele_op_t op_TI_IN_N;
 extern const tele_op_t op_TI_IN_SCALE;
+extern const tele_op_t op_TI_IN_MAP;
+
 extern const tele_op_t op_TI_PARAM_CALIB;
 extern const tele_op_t op_TI_IN_CALIB;
 extern const tele_op_t op_TI_STORE;
@@ -116,6 +128,7 @@ void TXReceive(uint8_t model, command_state_t *cs, uint8_t mode, bool shift);
 #define TO_TR_M_BPM 0x0B
 #define TO_TR_M_ACT 0x0C
 #define TO_TR_M_SYNC 0x0D
+#define TO_TR_WIDTH 0x0E
 
 #define TO_CV 0x10
 #define TO_CV_SET 0x11
@@ -153,6 +166,12 @@ void TXReceive(uint8_t model, command_state_t *cs, uint8_t mode, bool shift);
 #define TO_OSC_SLEW_M 0x51
 #define TO_OSC_TR_ACT 0x52
 #define TO_OSC_PHASE 0x53
+#define TO_OSC_CYC 0x54
+#define TO_OSC_CYC_S 0x55
+#define TO_OSC_CYC_M 0x56
+#define TO_OSC_CYC_SET 0x57
+#define TO_OSC_CYC_S_SET 0x58
+#define TO_OSC_CYC_M_SET 0x59
 
 #define TO_ENV_ACT 0x60
 #define TO_ENV_ATT 0x61
@@ -183,11 +202,17 @@ void TXReceive(uint8_t model, command_state_t *cs, uint8_t mode, bool shift);
 #define TI_IN_QT 0x01
 #define TI_IN_N 0x02
 #define TI_IN_SCALE 0x03
+#define TI_IN_TOP 0x04
+#define TI_IN_BOT 0x05
+#define TI_IN_MAP 0x06
 
 #define TI_PARAM 0x10
 #define TI_PARAM_QT 0x11
 #define TI_PARAM_N 0x12
 #define TI_PARAM_SCALE 0x13
+#define TI_PARAM_TOP 0x14
+#define TI_PARAM_BOT 0x15
+#define TI_PARAM_MAP 0x16
 
 #define TI_IN_CALIB 0x20
 #define TI_PARAM_CALIB 0x21
