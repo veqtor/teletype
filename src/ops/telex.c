@@ -39,9 +39,9 @@ static void op_TO_TR_M_ACT_get(const void *data, scene_state_t *ss,
 static void op_TO_TR_M_SYNC_get(const void *data, scene_state_t *ss,
                                 exec_state_t *es, command_state_t *cs);
 static void op_TO_TR_WIDTH_get(const void *data, scene_state_t *ss,
-                                exec_state_t *es, command_state_t *cs);
+                               exec_state_t *es, command_state_t *cs);
 static void op_TO_TR_M_COUNT_get(const void *data, scene_state_t *ss,
-                                exec_state_t *es, command_state_t *cs);
+                                 exec_state_t *es, command_state_t *cs);
 
 static void op_TO_CV_get(const void *data, scene_state_t *ss, exec_state_t *es,
                          command_state_t *cs);
@@ -106,17 +106,17 @@ static void op_TO_OSC_SLEW_M_get(const void *data, scene_state_t *ss,
 static void op_TO_OSC_SCALE_get(const void *data, scene_state_t *ss,
                                 exec_state_t *es, command_state_t *cs);
 static void op_TO_OSC_CYC_get(const void *data, scene_state_t *ss,
-                               exec_state_t *es, command_state_t *cs);
+                              exec_state_t *es, command_state_t *cs);
 static void op_TO_OSC_CYC_S_get(const void *data, scene_state_t *ss,
-                                 exec_state_t *es, command_state_t *cs);
+                                exec_state_t *es, command_state_t *cs);
 static void op_TO_OSC_CYC_M_get(const void *data, scene_state_t *ss,
-                                 exec_state_t *es, command_state_t *cs);
+                                exec_state_t *es, command_state_t *cs);
 static void op_TO_OSC_CYC_SET_get(const void *data, scene_state_t *ss,
-                               exec_state_t *es, command_state_t *cs);
+                                  exec_state_t *es, command_state_t *cs);
 static void op_TO_OSC_CYC_S_SET_get(const void *data, scene_state_t *ss,
-                                 exec_state_t *es, command_state_t *cs);
+                                    exec_state_t *es, command_state_t *cs);
 static void op_TO_OSC_CYC_M_SET_get(const void *data, scene_state_t *ss,
-                                 exec_state_t *es, command_state_t *cs);
+                                    exec_state_t *es, command_state_t *cs);
 
 static void op_TO_ENV_ACT_get(const void *data, scene_state_t *ss,
                               exec_state_t *es, command_state_t *cs);
@@ -145,7 +145,7 @@ static void op_TI_PARAM_N_get(const void *data, scene_state_t *ss,
 static void op_TI_PARAM_SCALE_get(const void *data, scene_state_t *ss,
                                   exec_state_t *es, command_state_t *cs);
 static void op_TI_PARAM_MAP_get(const void *data, scene_state_t *ss,
-                                  exec_state_t *es, command_state_t *cs);
+                                exec_state_t *es, command_state_t *cs);
 
 static void op_TI_IN_get(const void *data, scene_state_t *ss, exec_state_t *es,
                          command_state_t *cs);
@@ -156,7 +156,7 @@ static void op_TI_IN_N_get(const void *data, scene_state_t *ss,
 static void op_TI_IN_SCALE_get(const void *data, scene_state_t *ss,
                                exec_state_t *es, command_state_t *cs);
 static void op_TI_IN_MAP_get(const void *data, scene_state_t *ss,
-                               exec_state_t *es, command_state_t *cs);
+                             exec_state_t *es, command_state_t *cs);
 
 static void op_TI_PARAM_CALIB_get(const void *data, scene_state_t *ss,
                                   exec_state_t *es, command_state_t *cs);
@@ -380,7 +380,8 @@ static void op_TO_TR_WIDTH_get(const void *NOTUSED(data), scene_state_t *ss,
     TXSet(TO, TO_TR_WIDTH, cs);
 }
 static void op_TO_TR_M_COUNT_get(const void *NOTUSED(data), scene_state_t *ss,
-                               exec_state_t *NOTUSED(es), command_state_t *cs) {
+                                 exec_state_t *NOTUSED(es),
+                                 command_state_t *cs) {
     TXSet(TO, TO_TR_M_COUNT, cs);
 }
 static void op_TO_CV_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -516,31 +517,34 @@ static void op_TO_OSC_SCALE_get(const void *NOTUSED(data), scene_state_t *ss,
     TXSet(TO, TO_OSC_SCALE, cs);
 }
 static void op_TO_OSC_CYC_get(const void *NOTUSED(data), scene_state_t *ss,
-                               exec_state_t *NOTUSED(es), command_state_t *cs) {
+                              exec_state_t *NOTUSED(es), command_state_t *cs) {
     TXSet(TO, TO_OSC_CYC, cs);
 }
 static void op_TO_OSC_CYC_S_get(const void *NOTUSED(data), scene_state_t *ss,
-                                 exec_state_t *NOTUSED(es),
-                                 command_state_t *cs) {
+                                exec_state_t *NOTUSED(es),
+                                command_state_t *cs) {
     TXSet(TO, TO_OSC_CYC_S, cs);
 }
 static void op_TO_OSC_CYC_M_get(const void *NOTUSED(data), scene_state_t *ss,
-                                 exec_state_t *NOTUSED(es),
-                                 command_state_t *cs) {
+                                exec_state_t *NOTUSED(es),
+                                command_state_t *cs) {
     TXSet(TO, TO_OSC_CYC_M, cs);
 }
 static void op_TO_OSC_CYC_SET_get(const void *NOTUSED(data), scene_state_t *ss,
-                               exec_state_t *NOTUSED(es), command_state_t *cs) {
+                                  exec_state_t *NOTUSED(es),
+                                  command_state_t *cs) {
     TXSet(TO, TO_OSC_CYC_SET, cs);
 }
-static void op_TO_OSC_CYC_S_SET_get(const void *NOTUSED(data), scene_state_t *ss,
-                                 exec_state_t *NOTUSED(es),
-                                 command_state_t *cs) {
+static void op_TO_OSC_CYC_S_SET_get(const void *NOTUSED(data),
+                                    scene_state_t *ss,
+                                    exec_state_t *NOTUSED(es),
+                                    command_state_t *cs) {
     TXSet(TO, TO_OSC_CYC_S_SET, cs);
 }
-static void op_TO_OSC_CYC_M_SET_get(const void *NOTUSED(data), scene_state_t *ss,
-                                 exec_state_t *NOTUSED(es),
-                                 command_state_t *cs) {
+static void op_TO_OSC_CYC_M_SET_get(const void *NOTUSED(data),
+                                    scene_state_t *ss,
+                                    exec_state_t *NOTUSED(es),
+                                    command_state_t *cs) {
     TXSet(TO, TO_OSC_CYC_M_SET, cs);
 }
 static void op_TO_ENV_ACT_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -599,14 +603,13 @@ static void op_TI_PARAM_SCALE_get(const void *NOTUSED(data), scene_state_t *ss,
     TXSet(TI, TI_PARAM_SCALE, cs);
 }
 static void op_TI_PARAM_MAP_get(const void *NOTUSED(data), scene_state_t *ss,
-                                  exec_state_t *NOTUSED(es),
-                                  command_state_t *cs) {
+                                exec_state_t *NOTUSED(es),
+                                command_state_t *cs) {
     uint8_t output = cs_pop(cs);
     int16_t bottom = cs_pop(cs);
     int16_t top = cs_pop(cs);
     TXSend(TI, TI_PARAM_TOP, output, top, true);
     TXSend(TI, TI_PARAM_BOT, output, bottom, true);
-
 }
 static void op_TI_IN_get(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *NOTUSED(es), command_state_t *cs) {
@@ -625,12 +628,12 @@ static void op_TI_IN_SCALE_get(const void *NOTUSED(data), scene_state_t *ss,
     TXSet(TI, TI_IN_SCALE, cs);
 }
 static void op_TI_IN_MAP_get(const void *NOTUSED(data), scene_state_t *ss,
-                               exec_state_t *NOTUSED(es), command_state_t *cs) {
+                             exec_state_t *NOTUSED(es), command_state_t *cs) {
     uint8_t output = cs_pop(cs);
     int16_t bottom = cs_pop(cs);
     int16_t top = cs_pop(cs);
     TXSend(TI, TI_IN_TOP, output, top, true);
-    TXSend(TI, TI_IN_BOT, output, bottom, true);    
+    TXSend(TI, TI_IN_BOT, output, bottom, true);
 }
 static void op_TI_PARAM_CALIB_get(const void *NOTUSED(data), scene_state_t *ss,
                                   exec_state_t *NOTUSED(es),
