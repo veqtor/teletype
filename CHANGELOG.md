@@ -2,6 +2,15 @@
 
 ## vNext
 
+## v1.41
+- **NEW**: Added TELEX Modules Support for the TXi and the TXo
+- **NEW**: 75 New Operators Across the Two Modules
+- **NEW**: Supports all basic Teletype functions (add `TI` and `TO` to the commands you already know)
+- **NEW**: Extended functionality allows for additional capabilities for existing functions
+- **NEW**: Experimental input operators add capabilities such as input range mapping and quantization
+- **NEW**: Experimental output operators add oscillators, envelopes, independent metronomes, pulse dividing, etc.
+- **NEW**: [Full List of Methods Found and Maintained Here](https://github.com/bpcmusic/telex/blob/master/commands.md)
+
 ## v1.21
 - **NEW**: Just Friends ops: `JF.GOD`, `JF.MODE`, `JF.NOTE`, `JF.RMODE`, `JF.RUN`, `JF.SHIFT`, `JF.TICK`, `JF.TR`, `JF.VOX`, `JF.VTR`
 
