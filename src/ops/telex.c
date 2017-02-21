@@ -264,7 +264,7 @@ void TXSend(uint8_t model, uint8_t command, uint8_t output, int16_t value,
     // zero-index the output
     output -= 1;
     // convert the output to the device and the port
-    uint8_t port = output % 4;
+    uint8_t port = output & 3;
     uint8_t device = output >> 2;
     uint8_t address = model + device;
     // init and fill the buffer	(make the buffer smaller if we are not sending a
@@ -291,12 +291,12 @@ void TXReceive(uint8_t model, command_state_t *cs, uint8_t mode, bool shift) {
     // zero-index the output
     uint8_t input = cs_pop(cs) - 1;
     // send the port, device and address
-    uint8_t port = input % 4;
+    uint8_t port = input & 3;
     uint8_t device = input >> 2;
     uint8_t address = model + device;
     // inputs are numbered 0-7 for each device - shift is for the second half
     // mode pushes it up so it can read quantized values and note numbers
-    port += (shift ? 4 : 0) + (mode * 8);
+    port += (shift ? 4 : 0) + (mode << 3);
     // tell the device what value you are going to query
     uint8_t buffer[2];
     buffer[0] = port;
