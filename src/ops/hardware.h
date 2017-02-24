@@ -51,11 +51,13 @@ extern const tele_op_t op_LV_POS;
 extern const tele_op_t op_LV_L_ST;
 extern const tele_op_t op_LV_L_LEN;
 extern const tele_op_t op_LV_L_DIR;
+extern const tele_op_t op_LV_CV;
 
 extern const tele_op_t op_CY_PRESET;
 extern const tele_op_t op_CY_RESET;
 extern const tele_op_t op_CY_POS;
 extern const tele_op_t op_CY_REV;
+extern const tele_op_t op_CY_CV;
 
 extern const tele_op_t op_MID_SHIFT;
 extern const tele_op_t op_MID_SLEW;
