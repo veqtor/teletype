@@ -3,6 +3,7 @@
 ## vNext
 
 ## v1.41
+- **NEW**: added Ansible remote commands `LV.CV` and `CY.CV`
 - **NEW**: Added TELEX Modules Support for the TXi and the TXo
 - **NEW**: 75 New Operators Across the Two Modules
 - **NEW**: Supports all basic Teletype functions (add `TI` and `TO` to the commands you already know)
