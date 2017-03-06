@@ -45,11 +45,10 @@ def find_mods(op_c):
 def make_enum(name, prefix, entries):
     entries = list(entries)    # make a copy
     entries.append("_LENGTH")  # add a final entry for length
-    padding = max([len(s) for s in entries])
     output = ""
     output += "typedef enum {\n"
-    for (i, e) in enumerate(entries):
-        output += "    {}{} = {:3},\n".format(prefix, e.ljust(padding), i)
+    for e in entries:
+        output += f"    {prefix}{e},\n"
     output += "}} {};\n\n".format(name)
     return output
 
