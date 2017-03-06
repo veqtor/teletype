@@ -10,8 +10,8 @@ tests: main.o \
 	../src/ops/op.o ../src/ops/constants.o ../src/ops/controlflow.o \
 	../src/ops/delay.o ../src/ops/hardware.o ../src/ops/metronome.o \
 	../src/ops/maths.o ../src/ops/patterns.o ../src/ops/queue.o \
-	../src/ops/stack.o ../src/ops/variables.o \
-	../src/euclidean/data.o ../src/euclidean/euclidean.o \
+	../src/ops/stack.o ../src/ops/telex.o ../src/ops/variables.o \
+	../libavr32/src/euclidean/data.o ../libavr32/src/euclidean/euclidean.o \
 	../libavr32/src/util.o
 	$(CC) -o $@ $^ $(CFLAGS)
 
@@ -29,8 +29,8 @@ clean:
 	rm -rf tests.dSYM
 	rm -f *.o
 	rm -f ../src/*.o
-	rm -f ../src/euclidean/*.o
 	rm -f ../src/ops/*.o
+	rm -f ../libavr32/src/euclidean/*.o
 	rm -f ../libavr32/src/*.o
 	rm -f ../src/match_token.c
 	rm -f ../src/scanner.c

@@ -13,6 +13,7 @@
 #include "ops/patterns.h"
 #include "ops/queue.h"
 #include "ops/stack.h"
+#include "ops/telex.h"
 #include "ops/variables.h"
 
 
@@ -48,9 +49,12 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_JF_NOTE, &op_JF_GOD, &op_JF_TUNE, &op_JF_QT, &op_KR_PRESET,
     &op_KR_PATTERN, &op_KR_SCALE, &op_KR_PERIOD, &op_KR_POS, &op_KR_LOOP_ST,
     &op_KR_LOOP_LEN, &op_KR_RESET, &op_MP_PRESET1, &op_MP_RESET1, &op_MP_STOP1,
-    &op_MP_SCALE, &op_MP_PERIOD, &op_LV_PRESET, &op_LV_RESET, &op_LV_PATTERN,
-    &op_LV_LOOP_ST, &op_LV_LOOP_LEN, &op_LV_POS, &op_CY_PRESET, &op_CY_RESET,
-    &op_CY_POS, &op_CY_REV, &op_CY_BRAKE, &op_CY_ACCEL, &op_CY_RANGE,
+    &op_MP_SCALE, &op_MP_PERIOD, &op_LV_PRESET, &op_LV_RESET, &op_LV_POS,
+    &op_LV_L_ST, &op_LV_L_LEN, &op_LV_L_DIR, &op_LV_CV, &op_CY_PRESET,
+    &op_CY_RESET, &op_CY_POS, &op_CY_REV, &op_CY_CV, &op_MID_SHIFT,
+    &op_MID_SLEW, &op_ARP_STYLE, &op_ARP_HOLD, &op_ARP_RPT, &op_ARP_GATE,
+    &op_ARP_DIV, &op_ARP_RESET, &op_ARP_SHIFT, &op_ARP_SLEW, &op_ARP_FILL,
+    &op_ARP_ROT, &op_ARP_ER,
 
     // maths
     &op_ADD, &op_SUB, &op_MUL, &op_DIV, &op_MOD, &op_RAND, &op_RRAND, &op_TOSS,
@@ -83,6 +87,34 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_OR_WGT, &op_OR_MUTE, &op_OR_SCALE, &op_OR_BANK, &op_OR_PRESET,
     &op_OR_RELOAD, &op_OR_ROTS, &op_OR_ROTW, &op_OR_GRST, &op_OR_CVA,
     &op_OR_CVB,
+
+    // telex
+    &op_TO_TR, &op_TO_TR_TOG, &op_TO_TR_PULSE, &op_TO_TR_TIME, &op_TO_TR_TIME_S,
+    &op_TO_TR_TIME_M, &op_TO_TR_POL, &op_TO_KILL,
+
+    &op_TO_TR_PULSE_DIV, &op_TO_TR_M, &op_TO_TR_M_S, &op_TO_TR_M_M,
+    &op_TO_TR_M_BPM, &op_TO_TR_M_ACT, &op_TO_TR_M_SYNC, &op_TO_TR_WIDTH,
+    &op_TO_TR_M_COUNT,
+
+    &op_TO_CV, &op_TO_CV_SLEW, &op_TO_CV_SLEW_S, &op_TO_CV_SLEW_M,
+    &op_TO_CV_SET, &op_TO_CV_OFF, &op_TO_CV_QT, &op_TO_CV_QT_SET, &op_TO_CV_N,
+    &op_TO_CV_N_SET, &op_TO_CV_SCALE,
+
+    &op_TO_OSC, &op_TO_OSC_SET, &op_TO_OSC_QT, &op_TO_OSC_QT_SET, &op_TO_OSC_FQ,
+    &op_TO_OSC_FQ_SET, &op_TO_OSC_N, &op_TO_OSC_N_SET, &op_TO_OSC_LFO,
+    &op_TO_OSC_LFO_SET, &op_TO_OSC_WAVE, &op_TO_OSC_SYNC, &op_TO_OSC_PHASE,
+    &op_TO_OSC_WIDTH, &op_TO_OSC_RECT, &op_TO_OSC_SLEW, &op_TO_OSC_SLEW_S,
+    &op_TO_OSC_SLEW_M, &op_TO_OSC_SCALE, &op_TO_OSC_CYC, &op_TO_OSC_CYC_S,
+    &op_TO_OSC_CYC_M, &op_TO_OSC_CYC_SET, &op_TO_OSC_CYC_S_SET,
+    &op_TO_OSC_CYC_M_SET,
+
+    &op_TO_ENV_ACT, &op_TO_ENV_ATT, &op_TO_ENV_ATT_S, &op_TO_ENV_ATT_M,
+    &op_TO_ENV_DEC, &op_TO_ENV_DEC_S, &op_TO_ENV_DEC_M, &op_TO_ENV_TRIG,
+
+    &op_TI_PARAM, &op_TI_PARAM_QT, &op_TI_PARAM_N, &op_TI_PARAM_SCALE,
+    &op_TI_PARAM_MAP, &op_TI_IN, &op_TI_IN_QT, &op_TI_IN_N, &op_TI_IN_SCALE,
+    &op_TI_IN_MAP, &op_TI_PARAM_CALIB, &op_TI_IN_CALIB, &op_TI_STORE,
+    &op_TI_RESET
 };
 
 /////////////////////////////////////////////////////////////////

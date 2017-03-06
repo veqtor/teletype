@@ -69,8 +69,6 @@ CSRCS = \
 	../src/state.c						\
 	../src/table.c						\
 	../src/teletype.c					\
-	../src/euclidean/euclidean.c				\
-	../src/euclidean/data.c					\
 	../src/ops/op.c						\
 	../src/ops/constants.c					\
 	../src/ops/controlflow.c				\
@@ -81,9 +79,12 @@ CSRCS = \
 	../src/ops/patterns.c					\
 	../src/ops/queue.c					\
 	../src/ops/stack.c					\
+	../src/ops/telex.c					\
 	../src/ops/variables.c					\
 	../libavr32/src/adc.c					\
 	../libavr32/src/events.c				\
+	../libavr32/src/euclidean/euclidean.c			\
+	../libavr32/src/euclidean/data.c			\
 	../libavr32/src/fix.c					\
 	../libavr32/src/font.c					\
 	../libavr32/src/i2c.c					\

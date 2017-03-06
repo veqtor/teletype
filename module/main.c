@@ -1795,6 +1795,8 @@ void tele_ii(uint8_t i, int16_t d) {
 }
 
 void tele_ii_tx(uint8_t addr, uint8_t* data, uint8_t l) {
+    i2c_master_tx(addr, data, l);
+    /*
     int i = 0, n;
 
     if (i2c_waiting_count < I2C_QUEUE_SIZE) {
@@ -1816,6 +1818,7 @@ void tele_ii_tx(uint8_t addr, uint8_t* data, uint8_t l) {
     else {
         print_dbg("\r\ni2c queue full");
     }
+    */
 }
 
 void tele_ii_tx_now(uint8_t addr, uint8_t* data, uint8_t l) {
