@@ -19,6 +19,17 @@ HEADER_PRE = """// clang-format off
 HEADER_POST = "#endif\n"
 
 
+def is_not_comment(line):
+    s = line.lstrip()
+    return not (s.startswith("//") or s.startswith("/*"))
+
+
+def remove_comments(op_c):
+    out = op_c.splitlines()
+    out = filter(is_not_comment, out)
+    return "\n".join(out)
+
+
 def find_ops(op_c):
     raw = re.findall("&op_[a-zA-Z0-9_]+", op_c)
     stripped = [s[4:] for s in raw]
@@ -47,7 +58,7 @@ def main():
     print("reading:    {}".format(OP_C))
     print("generating: {}".format(OP_ENUM_H))
     with open(OP_C, "r") as f:
-        op_c = f.read()
+        op_c = remove_comments(f.read())
         ops = find_ops(op_c)
         mods = find_mods(op_c)
         op_enum = make_enum("tele_op_idx_t", "E_OP_", ops)
