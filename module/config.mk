@@ -70,10 +70,12 @@ CSRCS = \
 	../src/table.c						\
 	../src/teletype.c					\
 	../src/ops/op.c						\
+	../src/ops/ansible.c					\
 	../src/ops/constants.c					\
 	../src/ops/controlflow.c				\
 	../src/ops/delay.c					\
 	../src/ops/hardware.c					\
+	../src/ops/justfriends.c				\
 	../src/ops/maths.c					\
 	../src/ops/metronome.c					\
 	../src/ops/patterns.c					\

@@ -4,10 +4,12 @@
 
 #include "helpers.h"
 
+#include "ops/ansible.h"
 #include "ops/constants.h"
 #include "ops/controlflow.h"
 #include "ops/delay.h"
 #include "ops/hardware.h"
+#include "ops/justfriends.h"
 #include "ops/maths.h"
 #include "ops/metronome.h"
 #include "ops/patterns.h"
@@ -44,17 +46,7 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     // hardware
     &op_CV, &op_CV_OFF, &op_CV_SLEW, &op_IN, &op_PARAM, &op_PRM, &op_TR,
     &op_TR_POL, &op_TR_TIME, &op_TR_TOG, &op_TR_PULSE, &op_TR_P, &op_II,
-    &op_CV_SET, &op_MUTE, &op_UNMUTE, &op_STATE, &op_JF_TR, &op_JF_RMODE,
-    &op_JF_RUN, &op_JF_SHIFT, &op_JF_VTR, &op_JF_MODE, &op_JF_TICK, &op_JF_VOX,
-    &op_JF_NOTE, &op_JF_GOD, &op_JF_TUNE, &op_JF_QT, &op_KR_PRESET,
-    &op_KR_PATTERN, &op_KR_SCALE, &op_KR_PERIOD, &op_KR_POS, &op_KR_LOOP_ST,
-    &op_KR_LOOP_LEN, &op_KR_RESET, &op_MP_PRESET1, &op_MP_RESET1, &op_MP_STOP1,
-    &op_MP_SCALE, &op_MP_PERIOD, &op_LV_PRESET, &op_LV_RESET, &op_LV_POS,
-    &op_LV_L_ST, &op_LV_L_LEN, &op_LV_L_DIR, &op_LV_CV, &op_CY_PRESET,
-    &op_CY_RESET, &op_CY_POS, &op_CY_REV, &op_CY_CV, &op_MID_SHIFT,
-    &op_MID_SLEW, &op_ARP_STYLE, &op_ARP_HOLD, &op_ARP_RPT, &op_ARP_GATE,
-    &op_ARP_DIV, &op_ARP_RESET, &op_ARP_SHIFT, &op_ARP_SLEW, &op_ARP_FILL,
-    &op_ARP_ROT, &op_ARP_ER,
+    &op_CV_SET, &op_MUTE, &op_UNMUTE, &op_STATE,
 
     // maths
     &op_ADD, &op_SUB, &op_MUL, &op_DIV, &op_MOD, &op_RAND, &op_RRAND, &op_TOSS,
@@ -87,6 +79,20 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_OR_WGT, &op_OR_MUTE, &op_OR_SCALE, &op_OR_BANK, &op_OR_PRESET,
     &op_OR_RELOAD, &op_OR_ROTS, &op_OR_ROTW, &op_OR_GRST, &op_OR_CVA,
     &op_OR_CVB,
+
+    // ansible
+    &op_KR_PRESET, &op_KR_PATTERN, &op_KR_SCALE, &op_KR_PERIOD, &op_KR_POS,
+    &op_KR_LOOP_ST, &op_KR_LOOP_LEN, &op_KR_RESET, &op_MP_PRESET1,
+    &op_MP_RESET1, &op_MP_STOP1, &op_MP_SCALE, &op_MP_PERIOD, &op_LV_PRESET,
+    &op_LV_RESET, &op_LV_POS, &op_LV_L_ST, &op_LV_L_LEN, &op_LV_L_DIR,
+    &op_LV_CV, &op_CY_PRESET, &op_CY_RESET, &op_CY_POS, &op_CY_REV, &op_CY_CV,
+    &op_MID_SHIFT, &op_MID_SLEW, &op_ARP_STYLE, &op_ARP_HOLD, &op_ARP_RPT,
+    &op_ARP_GATE, &op_ARP_DIV, &op_ARP_RESET, &op_ARP_SHIFT, &op_ARP_SLEW,
+    &op_ARP_FILL, &op_ARP_ROT, &op_ARP_ER,
+
+    // justfriends
+    &op_JF_TR, &op_JF_RMODE, &op_JF_RUN, &op_JF_SHIFT, &op_JF_VTR, &op_JF_MODE,
+    &op_JF_TICK, &op_JF_VOX, &op_JF_NOTE, &op_JF_GOD, &op_JF_TUNE, &op_JF_QT,
 
     // telex
     &op_TO_TR, &op_TO_TR_TOG, &op_TO_TR_PULSE, &op_TO_TR_TIME, &op_TO_TR_TIME_S,
