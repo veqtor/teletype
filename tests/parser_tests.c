@@ -192,10 +192,10 @@ TEST parser_should_return_op() {
         tele_command_t cmd;
         char error_msg[ERROR_MSG_LENGTH];
         error_t result = parse(text, &cmd, error_msg);
-        ASSERT_EQ(result, E_OK);
-        ASSERT_EQ(cmd.length, 1);
-        ASSERT_EQ(cmd.data[0].tag, OP);
-        ASSERT_EQ(cmd.data[0].value, (int16_t)i);
+        ASSERT_EQm(text, result, E_OK);
+        ASSERT_EQm(text, cmd.length, 1);
+        ASSERT_EQm(text, cmd.data[0].tag, OP);
+        ASSERT_EQm(text, cmd.data[0].value, (int16_t)i);
     }
     PASS();
 }
@@ -208,10 +208,10 @@ TEST parser_should_return_mod() {
         tele_command_t cmd;
         char error_msg[ERROR_MSG_LENGTH];
         error_t result = parse(text, &cmd, error_msg);
-        ASSERT_EQ(result, E_OK);
-        ASSERT_EQ(cmd.length, 1);
-        ASSERT_EQ(cmd.data[0].tag, MOD);
-        ASSERT_EQ(cmd.data[0].value, (int16_t)i);
+        ASSERT_EQm(text, result, E_OK);
+        ASSERT_EQm(text, cmd.length, 1);
+        ASSERT_EQm(text, cmd.data[0].tag, MOD);
+        ASSERT_EQm(text, cmd.data[0].value, (int16_t)i);
     }
     PASS();
 }

@@ -17,9 +17,9 @@ TEST match_token_should_return_op() {
         const char* text = op->name;
         tele_data_t data;
         bool result = match_token(text, strlen(text), &data);
-        ASSERT_EQ(result, true);
-        ASSERT_EQ(data.tag, OP);
-        ASSERT_EQ(data.value, (int16_t)i);
+        ASSERT_EQm(text, result, true);
+        ASSERT_EQm(text, data.tag, OP);
+        ASSERT_EQm(text, data.value, (int16_t)i);
     }
     PASS();
 }
@@ -31,9 +31,9 @@ TEST match_token_should_return_mod() {
         const char* text = mod->name;
         tele_data_t data;
         bool result = match_token(text, strlen(text), &data);
-        ASSERT_EQ(result, true);
-        ASSERT_EQ(data.tag, MOD);
-        ASSERT_EQ(data.value, (int16_t)i);
+        ASSERT_EQm(text, result, true);
+        ASSERT_EQm(text, data.tag, MOD);
+        ASSERT_EQm(text, data.value, (int16_t)i);
     }
     PASS();
 }
