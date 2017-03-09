@@ -176,7 +176,7 @@ TEST parser_test_sub_commands() {
     ASSERT_EQ(parse_and_validate_helper("IF 1 ; Z 1 : X 1 ; Y 2"),
               E_NO_SUB_SEP_IN_PRE);
     // possibly the following should return E_NO_SUB_SEP_IN_PRE one day
-    ASSERT_EQ(parse_and_validate_helper("Z 1 ; IF 1 : X 1"), E_NO_MOD_HERE);
+    ASSERT_EQ(parse_and_validate_helper("Z 1 ; IF 1 : X 1"), E_PLACE_PRE_SEP);
 
     PASS();
 }

@@ -158,6 +158,8 @@ error_t validate(const tele_command_t *c, char error_msg[ERROR_MSG_LENGTH]) {
 
             if (idx == 0) return E_PLACE_PRE_SEP;
 
+            if (c->data[0].tag != MOD) return E_PLACE_PRE_SEP;
+
             if (stack_depth > 1) return E_EXTRA_PARAMS;
 
             // reset the stack depth
