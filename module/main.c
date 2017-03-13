@@ -184,7 +184,7 @@ static region line[8] = {
     {.w = 128, .h = 8, .x = 0, .y = 48 }, {.w = 128, .h = 8, .x = 0, .y = 56 }
 };
 
-uint8_t sdirty;
+bool screen_dirty = false;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -311,10 +311,10 @@ static void refreshTimer_callback(void* o) {
     e.data = 0;
     event_post(&e);
 
-    if (sdirty) {
+    if (screen_dirty) {
         for (int i = 0; i < 8; i++) region_draw(&line[i]);
 
-        sdirty = 0;
+        screen_dirty = false;
     }
 }
 
@@ -510,315 +510,318 @@ static void handler_Trigger(s32 data) {
 ///////////////////////////////////////////////////////////////////////////////////////////
 // refresh
 
+static void screen_refresh_track(void);
+static void screen_refresh_preset_w(void);
+static void screen_refresh_preset_r(void);
+static void screen_refresh_help(void);
+static void screen_refresh_live_edit(void);
+
 static void handler_ScreenRefresh(s32 data) {
-    static uint8_t a;
-    static char s[32];
-
-    uint8_t y, x, i;
-
-    if (mode == M_TRACK) {
-        if (r_edit_dirty & R_ALL) {
-            for (y = 0; y < 8; y++) {
-                region_fill(&line[y], 0);
-                itoa(y + offset_index, s, 10);
-                font_string_region_clip_right(&line[y], s, 4, 0, 0x1, 0);
-
-                for (x = 0; x < 4; x++) {
-                    if (tele_get_pattern_l(x) > y + offset_index)
-                        a = 6;
-                    else
-                        a = 1;
-                    itoa(tele_get_pattern_val(x, y + offset_index), s, 10);
-                    font_string_region_clip_right(&line[y], s, (x + 1) * 30 + 4,
-                                                  0, a, 0);
-
-                    if (y + offset_index >= tele_get_pattern_start(x))
-                        if (y + offset_index <= tele_get_pattern_end(x))
-                            for (i = 0; i < 8; i += 2)
-                                line[y].data[i * 128 + (x + 1) * 30 + 6] = 1;
-
-                    if (y + offset_index == tele_get_pattern_i(x)) {
-                        line[y].data[2 * 128 + (x + 1) * 30 + 6] = 11;
-                        line[y].data[3 * 128 + (x + 1) * 30 + 6] = 11;
-                        line[y].data[4 * 128 + (x + 1) * 30 + 6] = 11;
-                    }
-                }
-            }
-
-            itoa(tele_get_pattern_val(edit_pattern, edit_index + offset_index),
-                 s, 10);
-            font_string_region_clip_right(
-                &line[edit_index], s, (edit_pattern + 1) * 30 + 4, 0, 0xf, 0);
-
-            for (y = 0; y < 64; y += 2) {
-                line[y >> 3].data[(y & 0x7) * 128 + 8] = 1;
-            }
-
-            for (y = 0; y < 8; y++) {
-                line[(offset_index + y) >> 3]
-                    .data[((offset_index + y) & 0x7) * 128 + 8] = 6;
-            }
-
-            r_edit_dirty &= ~R_ALL;
-
-            sdirty++;
-        }
-    }
-    else if (mode == M_PRESET_W) {
-        if (r_edit_dirty & R_ALL) {
-            strcpy(s, ">>> ");
-            itoa(preset_select, s + 4, 10);
-            region_fill(&line[0], 1);
-            font_string_region_clip_right(&line[0], s, 126, 0, 0xf, 1);
-            font_string_region_clip(&line[0], "WRITE", 2, 0, 0xf, 1);
-
-
-            for (y = 1; y < 7; y++) {
-                a = preset_edit_line == (y - 1);
-                region_fill(&line[y], a);
-                font_string_region_clip(&line[y],
-                                        scene_text[preset_edit_offset + y - 1],
-                                        2, 0, 0xa + a * 5, a);
-            }
-
-
-            s[0] = '+';
-            s[1] = ' ';
-            s[2] = 0;
-
-            strcat(s, input);
-            strcat(s, " ");
-
-            region_fill(&line[7], 0);
-            // region_string(&line[7], s, 0, 0, 0xf, 0, 0);
-            // font_string_region_clip(&line[7], s, 0, 0, 0xf, 0);
-            font_string_region_clip_hi(&line[7], s, 0, 0, 0xf, 0, pos + 2);
-
-            r_edit_dirty &= ~R_ALL;
-            sdirty++;
-        }
-    }
-    else if (mode == M_PRESET_R) {
-        if (r_edit_dirty & R_ALL) {
-            itoa(preset_select, s, 10);
-            region_fill(&line[0], 1);
-            font_string_region_clip_right(&line[0], s, 126, 0, 0xf, 1);
-            font_string_region_clip(&line[0], f.s[preset_select].text[0], 2, 0,
-                                    0xf, 1);
-
-
-            for (y = 1; y < 8; y++) {
-                region_fill(&line[y], 0);
-                font_string_region_clip(
-                    &line[y], f.s[preset_select].text[preset_edit_offset + y],
-                    2, 0, 0xa, 0);
-            }
-
-            r_edit_dirty &= ~R_ALL;
-            sdirty++;
-        }
-    }
-    else if (mode == M_HELP) {
-        if (r_edit_dirty & R_ALL) {
-            for (y = 0; y < 8; y++) {
-                region_fill(&line[y], 0);
-                /// fixme: make a pointer array
-                if (help_page == 0)
-                    font_string_region_clip_tab(
-                        &line[y], help1[y + offset_view], 2, 0, 0xa, 0);
-                else if (help_page == 1)
-                    font_string_region_clip_tab(
-                        &line[y], help2[y + offset_view], 2, 0, 0xa, 0);
-                else if (help_page == 2)
-                    font_string_region_clip_tab(
-                        &line[y], help3[y + offset_view], 2, 0, 0xa, 0);
-                else if (help_page == 3)
-                    font_string_region_clip_tab(
-                        &line[y], help4[y + offset_view], 2, 0, 0xa, 0);
-                else if (help_page == 4)
-                    font_string_region_clip_tab(
-                        &line[y], help5[y + offset_view], 2, 0, 0xa, 0);
-                else if (help_page == 5)
-                    font_string_region_clip_tab(
-                        &line[y], help6[y + offset_view], 2, 0, 0xa, 0);
-                else if (help_page == 6)
-                    font_string_region_clip_tab(
-                        &line[y], help7[y + offset_view], 2, 0, 0xa, 0);
-                else if (help_page == 7)
-                    font_string_region_clip_tab(
-                        &line[y], help8[y + offset_view], 2, 0, 0xa, 0);
-            }
-
-            r_edit_dirty &= ~R_ALL;
-            sdirty++;
-        }
-    }
-    else if (mode == M_LIVE || mode == M_EDIT) {
-        if (r_edit_dirty & R_INPUT) {
-            s[0] = '>';
-            s[1] = ' ';
-            s[2] = 0;
-
-            if (mode == M_EDIT) {
-                if (edit == 8)
-                    s[0] = 'M';
-                else if (edit == 9)
-                    s[0] = 'I';
-                else
-                    s[0] = edit + 49;
-            }
-
-            strcat(s, input);
-            strcat(s, " ");
-
-            region_fill(&line[7], 0);
-            // region_string(&line[7], s, 0, 0, 0xf, 0, 0);
-            // font_string_region_clip(&line[7], s, 0, 0, 0xf, 0);
-            font_string_region_clip_hi(&line[7], s, 0, 0, 0xf, 0, pos + 2);
-            sdirty++;
-            r_edit_dirty &= ~R_INPUT;
-        }
-        if (r_edit_dirty & R_MESSAGE) {
-            if (status) {
-                strcpy(s, tele_error(status));
-                if (error_msg[0]) {
-                    strcat(s, ": ");
-                    strcat(s, error_msg);
-                    error_msg[0] = 0;
-                }
-                status = E_OK;
-            }
-            else if (output_new) {
-                output_new = 0;
-                if (mode == M_LIVE) itoa(output, s, 10);
-                // strcat(s, " ");
-                // strcat(s, to_voltage(output));
-                else
-                    s[0] = 0;
-            }
-            else {
-                s[0] = 0;
-            }
-            region_fill(&line[6], 0);
-            font_string_region_clip(&line[6], s, 0, 0, 0x4, 0);
-            sdirty++;
-            r_edit_dirty &= ~R_MESSAGE;
-        }
-        if (r_edit_dirty & R_LIST) {
-            if (mode == M_LIVE) {
-                for (int i = 0; i < 6; i++) region_fill(&line[i], 0);
-            }
-            else {
-                for (int i = 0; i < 6; i++) {
-                    a = edit_line == i;
-                    region_fill(&line[i], a);
-                    if (tele_get_script_l(edit) > i) {
-                        print_command(tele_get_script_c(edit, i), s);
-                        region_string(&line[i], s, 2, 0, 0xf, a, 0);
-                    }
-                }
-            }
-
-
-            sdirty++;
-            r_edit_dirty &= ~R_LIST;
-        }
-
-        if ((activity != activity_prev) && (mode == M_LIVE)) {
-            region_fill(&line[0], 0);
-
-            if (activity & A_SLEW)
-                a = 15;
-            else
-                a = 1;
-
-            line[0].data[98 + 0 + 512] = a;
-            line[0].data[98 + 1 + 384] = a;
-            line[0].data[98 + 2 + 256] = a;
-            line[0].data[98 + 3 + 128] = a;
-            line[0].data[98 + 4 + 0] = a;
-
-            if (activity & A_DELAY)
-                a = 15;
-            else
-                a = 1;
-
-            line[0].data[106 + 0 + 0] = a;
-            line[0].data[106 + 1 + 0] = a;
-            line[0].data[106 + 2 + 0] = a;
-            line[0].data[106 + 3 + 0] = a;
-            line[0].data[106 + 4 + 0] = a;
-            line[0].data[106 + 0 + 128] = a;
-            line[0].data[106 + 0 + 256] = a;
-            line[0].data[106 + 0 + 384] = a;
-            line[0].data[106 + 0 + 512] = a;
-            line[0].data[106 + 4 + 128] = a;
-            line[0].data[106 + 4 + 256] = a;
-            line[0].data[106 + 4 + 384] = a;
-            line[0].data[106 + 4 + 512] = a;
-
-            if (activity & A_Q)
-                a = 15;
-            else
-                a = 1;
-
-            line[0].data[114 + 0 + 0] = a;
-            line[0].data[114 + 1 + 0] = a;
-            line[0].data[114 + 2 + 0] = a;
-            line[0].data[114 + 3 + 0] = a;
-            line[0].data[114 + 4 + 0] = a;
-            line[0].data[114 + 0 + 256] = a;
-            line[0].data[114 + 1 + 256] = a;
-            line[0].data[114 + 2 + 256] = a;
-            line[0].data[114 + 3 + 256] = a;
-            line[0].data[114 + 4 + 256] = a;
-            line[0].data[114 + 0 + 512] = a;
-            line[0].data[114 + 1 + 512] = a;
-            line[0].data[114 + 2 + 512] = a;
-            line[0].data[114 + 3 + 512] = a;
-            line[0].data[114 + 4 + 512] = a;
-
-            if (activity & A_METRO)
-                a = 15;
-            else
-                a = 1;
-
-            line[0].data[122 + 0 + 0] = a;
-            line[0].data[122 + 0 + 128] = a;
-            line[0].data[122 + 0 + 256] = a;
-            line[0].data[122 + 0 + 384] = a;
-            line[0].data[122 + 0 + 512] = a;
-            line[0].data[122 + 1 + 128] = a;
-            line[0].data[122 + 2 + 256] = a;
-            line[0].data[122 + 3 + 128] = a;
-            line[0].data[122 + 4 + 0] = a;
-            line[0].data[122 + 4 + 128] = a;
-            line[0].data[122 + 4 + 256] = a;
-            line[0].data[122 + 4 + 384] = a;
-            line[0].data[122 + 4 + 512] = a;
-
-            // mutes
-
-            line[0].data[87 + 0 + 128] = 15 - mutes[0] * 12;
-            line[0].data[87 + 1 + 384] = 15 - mutes[1] * 12;
-            line[0].data[87 + 2 + 128] = 15 - mutes[2] * 12;
-            line[0].data[87 + 3 + 384] = 15 - mutes[3] * 12;
-            line[0].data[87 + 4 + 128] = 15 - mutes[4] * 12;
-            line[0].data[87 + 5 + 384] = 15 - mutes[5] * 12;
-            line[0].data[87 + 6 + 128] = 15 - mutes[6] * 12;
-            line[0].data[87 + 7 + 384] = 15 - mutes[7] * 12;
-
-            activity &= ~A_MUTES;
-            activity &= ~A_REFRESH;
-
-            activity_prev = activity;
-
-            // activity &= ~A_X;
-
-            sdirty++;
-        }
+    switch (mode) {
+        case M_TRACK: screen_refresh_track(); break;
+        case M_PRESET_W: screen_refresh_preset_w(); break;
+        case M_PRESET_R: screen_refresh_preset_r(); break;
+        case M_HELP: screen_refresh_help(); break;
+        case M_LIVE:
+        case M_EDIT: screen_refresh_live_edit(); break;
     }
 }
+
+static void screen_refresh_track() {
+    if (!(r_edit_dirty & R_ALL)) { return; }
+
+    char s[32];
+    for (uint8_t y = 0; y < 8; y++) {
+        region_fill(&line[y], 0);
+        itoa(y + offset_index, s, 10);
+        font_string_region_clip_right(&line[y], s, 4, 0, 0x1, 0);
+
+        for (uint8_t x = 0; x < 4; x++) {
+            uint8_t a = 1;
+            if (tele_get_pattern_l(x) > y + offset_index) a = 6;
+
+            itoa(tele_get_pattern_val(x, y + offset_index), s, 10);
+            font_string_region_clip_right(&line[y], s, (x + 1) * 30 + 4, 0, a,
+                                          0);
+
+            if (y + offset_index >= tele_get_pattern_start(x)) {
+                if (y + offset_index <= tele_get_pattern_end(x)) {
+                    for (uint8_t i = 0; i < 8; i += 2) {
+                        line[y].data[i * 128 + (x + 1) * 30 + 6] = 1;
+                    }
+                }
+            }
+
+            if (y + offset_index == tele_get_pattern_i(x)) {
+                line[y].data[2 * 128 + (x + 1) * 30 + 6] = 11;
+                line[y].data[3 * 128 + (x + 1) * 30 + 6] = 11;
+                line[y].data[4 * 128 + (x + 1) * 30 + 6] = 11;
+            }
+        }
+    }
+
+    itoa(tele_get_pattern_val(edit_pattern, edit_index + offset_index), s, 10);
+    font_string_region_clip_right(&line[edit_index], s,
+                                  (edit_pattern + 1) * 30 + 4, 0, 0xf, 0);
+
+    for (uint8_t y = 0; y < 64; y += 2) {
+        line[y >> 3].data[(y & 0x7) * 128 + 8] = 1;
+    }
+
+    for (uint8_t y = 0; y < 8; y++) {
+        line[(offset_index + y) >> 3]
+            .data[((offset_index + y) & 0x7) * 128 + 8] = 6;
+    }
+
+    r_edit_dirty &= ~R_ALL;
+
+    screen_dirty = true;
+}
+
+static void screen_refresh_preset_w() {
+    if (!(r_edit_dirty & R_ALL)) { return; }
+
+    char s[32];
+    strcpy(s, ">>> ");
+    itoa(preset_select, s + 4, 10);
+    region_fill(&line[0], 1);
+    font_string_region_clip_right(&line[0], s, 126, 0, 0xf, 1);
+    font_string_region_clip(&line[0], "WRITE", 2, 0, 0xf, 1);
+
+    for (uint8_t y = 1; y < 7; y++) {
+        uint8_t a = preset_edit_line == (y - 1);
+        region_fill(&line[y], a);
+        font_string_region_clip(&line[y],
+                                scene_text[preset_edit_offset + y - 1], 2, 0,
+                                0xa + a * 5, a);
+    }
+
+    s[0] = '+';
+    s[1] = ' ';
+    s[2] = 0;
+
+    strcat(s, input);
+    strcat(s, " ");
+
+    region_fill(&line[7], 0);
+    font_string_region_clip_hi(&line[7], s, 0, 0, 0xf, 0, pos + 2);
+
+    r_edit_dirty &= ~R_ALL;
+    screen_dirty = true;
+}
+
+static void screen_refresh_preset_r() {
+    if (!(r_edit_dirty & R_ALL)) { return; }
+
+    char s[32];
+    itoa(preset_select, s, 10);
+    region_fill(&line[0], 1);
+    font_string_region_clip_right(&line[0], s, 126, 0, 0xf, 1);
+    font_string_region_clip(&line[0], f.s[preset_select].text[0], 2, 0, 0xf, 1);
+
+
+    for (uint8_t y = 1; y < 8; y++) {
+        region_fill(&line[y], 0);
+        font_string_region_clip(&line[y],
+                                f.s[preset_select].text[preset_edit_offset + y],
+                                2, 0, 0xa, 0);
+    }
+
+    r_edit_dirty &= ~R_ALL;
+    screen_dirty = true;
+};
+
+static void screen_refresh_help() {
+    if (!(r_edit_dirty & R_ALL)) { return; }
+
+    for (uint8_t y = 0; y < 8; y++) {
+        region_fill(&line[y], 0);
+        /// fixme: make a pointer array
+        if (help_page == 0)
+            font_string_region_clip_tab(&line[y], help1[y + offset_view], 2, 0,
+                                        0xa, 0);
+        else if (help_page == 1)
+            font_string_region_clip_tab(&line[y], help2[y + offset_view], 2, 0,
+                                        0xa, 0);
+        else if (help_page == 2)
+            font_string_region_clip_tab(&line[y], help3[y + offset_view], 2, 0,
+                                        0xa, 0);
+        else if (help_page == 3)
+            font_string_region_clip_tab(&line[y], help4[y + offset_view], 2, 0,
+                                        0xa, 0);
+        else if (help_page == 4)
+            font_string_region_clip_tab(&line[y], help5[y + offset_view], 2, 0,
+                                        0xa, 0);
+        else if (help_page == 5)
+            font_string_region_clip_tab(&line[y], help6[y + offset_view], 2, 0,
+                                        0xa, 0);
+        else if (help_page == 6)
+            font_string_region_clip_tab(&line[y], help7[y + offset_view], 2, 0,
+                                        0xa, 0);
+        else if (help_page == 7)
+            font_string_region_clip_tab(&line[y], help8[y + offset_view], 2, 0,
+                                        0xa, 0);
+    }
+
+    r_edit_dirty &= ~R_ALL;
+    screen_dirty = true;
+};
+
+static void screen_refresh_live_edit() {
+    if (r_edit_dirty & R_INPUT) {
+        char s[32];
+
+        if (mode == M_EDIT) {
+            if (edit == 8)
+                s[0] = 'M';
+            else if (edit == 9)
+                s[0] = 'I';
+            else
+                s[0] = edit + 49;
+        }
+        else {
+            s[0] = '>';
+        }
+        s[1] = ' ';
+        s[2] = 0;
+
+        strcat(s, input);
+        strcat(s, " ");
+
+        region_fill(&line[7], 0);
+        font_string_region_clip_hi(&line[7], s, 0, 0, 0xf, 0, pos + 2);
+
+        screen_dirty = true;
+        r_edit_dirty &= ~R_INPUT;
+    }
+
+    if (r_edit_dirty & R_MESSAGE) {
+        char s[32];
+        if (status != E_OK) {
+            strcpy(s, tele_error(status));
+            if (error_msg[0]) {
+                strcat(s, ": ");
+                strcat(s, error_msg);
+                error_msg[0] = 0;
+            }
+            status = E_OK;
+        }
+        else if (output_new) {
+            output_new = 0;
+            if (mode == M_LIVE)
+                itoa(output, s, 10);
+            else
+                s[0] = 0;
+        }
+        else {
+            s[0] = 0;
+        }
+
+        region_fill(&line[6], 0);
+        font_string_region_clip(&line[6], s, 0, 0, 0x4, 0);
+
+        screen_dirty = true;
+        r_edit_dirty &= ~R_MESSAGE;
+    }
+
+    if (r_edit_dirty & R_LIST) {
+        if (mode == M_LIVE) {
+            for (int i = 0; i < 6; i++) region_fill(&line[i], 0);
+        }
+        else {
+            for (int i = 0; i < 6; i++) {
+                uint8_t a = edit_line == i;
+                region_fill(&line[i], a);
+                if (tele_get_script_l(edit) > i) {
+                    char s[32];
+                    print_command(tele_get_script_c(edit, i), s);
+                    region_string(&line[i], s, 2, 0, 0xf, a, 0);
+                }
+            }
+        }
+
+        screen_dirty = true;
+        r_edit_dirty &= ~R_LIST;
+    }
+
+    if ((activity != activity_prev) && (mode == M_LIVE)) {
+        region_fill(&line[0], 0);
+
+        // slew icon
+        uint8_t slew_fg = activity & A_SLEW ? 15 : 1;
+        line[0].data[98 + 0 + 512] = slew_fg;
+        line[0].data[98 + 1 + 384] = slew_fg;
+        line[0].data[98 + 2 + 256] = slew_fg;
+        line[0].data[98 + 3 + 128] = slew_fg;
+        line[0].data[98 + 4 + 0] = slew_fg;
+
+        // delay icon
+        uint8_t delay_fg = activity & A_DELAY ? 15 : 1;
+        line[0].data[106 + 0 + 0] =   delay_fg;
+        line[0].data[106 + 1 + 0] =   delay_fg;
+        line[0].data[106 + 2 + 0] =   delay_fg;
+        line[0].data[106 + 3 + 0] =   delay_fg;
+        line[0].data[106 + 4 + 0] =   delay_fg;
+        line[0].data[106 + 0 + 128] = delay_fg;
+        line[0].data[106 + 0 + 256] = delay_fg;
+        line[0].data[106 + 0 + 384] = delay_fg;
+        line[0].data[106 + 0 + 512] = delay_fg;
+        line[0].data[106 + 4 + 128] = delay_fg;
+        line[0].data[106 + 4 + 256] = delay_fg;
+        line[0].data[106 + 4 + 384] = delay_fg;
+        line[0].data[106 + 4 + 512] = delay_fg;
+
+        // queue icon
+        uint8_t queue_fg = activity & A_Q ? 15 : 1;
+        line[0].data[114 + 0 + 0] = queue_fg;
+        line[0].data[114 + 1 + 0] = queue_fg;
+        line[0].data[114 + 2 + 0] = queue_fg;
+        line[0].data[114 + 3 + 0] = queue_fg;
+        line[0].data[114 + 4 + 0] = queue_fg;
+        line[0].data[114 + 0 + 256] = queue_fg;
+        line[0].data[114 + 1 + 256] = queue_fg;
+        line[0].data[114 + 2 + 256] = queue_fg;
+        line[0].data[114 + 3 + 256] = queue_fg;
+        line[0].data[114 + 4 + 256] = queue_fg;
+        line[0].data[114 + 0 + 512] = queue_fg;
+        line[0].data[114 + 1 + 512] = queue_fg;
+        line[0].data[114 + 2 + 512] = queue_fg;
+        line[0].data[114 + 3 + 512] = queue_fg;
+        line[0].data[114 + 4 + 512] = queue_fg;
+
+        // metro icon
+        uint8_t metro_fg = activity & A_METRO ? 15 : 1;
+        line[0].data[122 + 0 + 0] =   metro_fg;
+        line[0].data[122 + 0 + 128] = metro_fg;
+        line[0].data[122 + 0 + 256] = metro_fg;
+        line[0].data[122 + 0 + 384] = metro_fg;
+        line[0].data[122 + 0 + 512] = metro_fg;
+        line[0].data[122 + 1 + 128] = metro_fg;
+        line[0].data[122 + 2 + 256] = metro_fg;
+        line[0].data[122 + 3 + 128] = metro_fg;
+        line[0].data[122 + 4 + 0] =   metro_fg;
+        line[0].data[122 + 4 + 128] = metro_fg;
+        line[0].data[122 + 4 + 256] = metro_fg;
+        line[0].data[122 + 4 + 384] = metro_fg;
+        line[0].data[122 + 4 + 512] = metro_fg;
+
+        // mutes
+        line[0].data[87 + 0 + 128] = 15 - mutes[0] * 12;
+        line[0].data[87 + 1 + 384] = 15 - mutes[1] * 12;
+        line[0].data[87 + 2 + 128] = 15 - mutes[2] * 12;
+        line[0].data[87 + 3 + 384] = 15 - mutes[3] * 12;
+        line[0].data[87 + 4 + 128] = 15 - mutes[4] * 12;
+        line[0].data[87 + 5 + 384] = 15 - mutes[5] * 12;
+        line[0].data[87 + 6 + 128] = 15 - mutes[6] * 12;
+        line[0].data[87 + 7 + 384] = 15 - mutes[7] * 12;
+
+        activity_prev = activity;
+        screen_dirty = true;
+        activity &= ~A_MUTES;
+        activity &= ~A_REFRESH;
+    }
+}
+
 
 static void handler_II(s32 data) {
     uint8_t i = data & 0xff;
