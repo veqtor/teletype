@@ -62,7 +62,7 @@
 
 # Makefile.avr32.in defines an unused variable build, which is used in the clean
 # target, it's probably there to list other build targets
-build += ../src/scanner.c ../src/match_token.c
+build += ../src/scanner.c ../src/match_token.c ../module/gitversion.c
 
 # Include the common Makefile, which will also include the project specific
 # config.mk file.
@@ -76,3 +76,7 @@ include $(MAKEFILE_PATH)
 # Add a rule to build scanner.c from scanner.rl
 ../src/scanner.c: ../src/scanner.rl
 	ragel -C -G2 ../src/scanner.rl -o ../src/scanner.c
+
+# Add the git commit id to a file for use when printing out the version
+../module/gitversion.c: ../.git/HEAD ../.git/index
+	echo "const char *git_version = \"$(shell git describe --always --dirty | tr '[a-z]' '[A-Z]')\";" > $@

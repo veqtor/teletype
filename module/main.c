@@ -62,6 +62,7 @@ http://msgpack.org
 #include "help.h"
 #include "teletype.h"
 #include "teletype_io.h"
+#include "gitversion.h"
 
 #define RATE_CLOCK 10
 #define RATE_CV 6
@@ -2380,7 +2381,7 @@ int main(void) {
     for (int i = 0; i < 8; i++) mutes[i] = 1;
 
     status = E_WELCOME;
-    error_msg[0] = 0;
+    strcpy(error_msg, git_version);
     mode = f.mode;
     edit_line = SCRIPT_MAX_COMMANDS;
     r_edit_dirty = R_MESSAGE | R_INPUT;

@@ -62,6 +62,7 @@ TARGET = $(THIS).elf
 # List of C source files.
 CSRCS = \
 	../module/main.c					\
+	../module/gitversion.c					\
 	../src/command.c					\
 	../src/helpers.c					\
 	../src/match_token.c					\
