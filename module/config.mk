@@ -72,18 +72,21 @@ CSRCS = \
 	../src/teletype.c					\
 	../src/ops/op.c						\
 	../src/ops/ansible.c					\
-	../src/ops/constants.c					\
 	../src/ops/controlflow.c				\
 	../src/ops/delay.c					\
+	../src/ops/earthsea.c					\
 	../src/ops/hardware.c					\
 	../src/ops/justfriends.c				\
 	../src/ops/maths.c					\
+	../src/ops/meadowphysics.c				\
 	../src/ops/metronome.c					\
+	../src/ops/orca.c      					\
 	../src/ops/patterns.c					\
 	../src/ops/queue.c					\
 	../src/ops/stack.c					\
 	../src/ops/telex.c					\
 	../src/ops/variables.c					\
+	../src/ops/whitewhale.c					\
 	../libavr32/src/adc.c					\
 	../libavr32/src/events.c				\
 	../libavr32/src/euclidean/euclidean.c			\

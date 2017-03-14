@@ -3,20 +3,24 @@
 #include <stddef.h>  // offsetof
 
 #include "helpers.h"
+#include "teletype_io.h"
 
 #include "ops/ansible.h"
-#include "ops/constants.h"
 #include "ops/controlflow.h"
 #include "ops/delay.h"
+#include "ops/earthsea.h"
 #include "ops/hardware.h"
 #include "ops/justfriends.h"
 #include "ops/maths.h"
+#include "ops/meadowphysics.h"
 #include "ops/metronome.h"
+#include "ops/orca.h"
 #include "ops/patterns.h"
 #include "ops/queue.h"
 #include "ops/stack.h"
 #include "ops/telex.h"
 #include "ops/variables.h"
+#include "ops/whitewhale.h"
 
 
 /////////////////////////////////////////////////////////////////
@@ -68,14 +72,23 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     // delay
     &op_DEL_CLR,
 
-    // constants
+    // whitewhale
     &op_WW_PRESET, &op_WW_POS, &op_WW_SYNC, &op_WW_START, &op_WW_END,
     &op_WW_PMODE, &op_WW_PATTERN, &op_WW_QPATTERN, &op_WW_MUTE1, &op_WW_MUTE2,
-    &op_WW_MUTE3, &op_WW_MUTE4, &op_WW_MUTEA, &op_WW_MUTEB, &op_MP_PRESET,
+    &op_WW_MUTE3, &op_WW_MUTE4, &op_WW_MUTEA, &op_WW_MUTEB,
+
+    // meadowphysics
+    &op_MP_PRESET,
     &op_MP_RESET, &op_MP_SYNC, &op_MP_MUTE, &op_MP_UNMUTE, &op_MP_FREEZE,
-    &op_MP_UNFREEZE, &op_MP_STOP, &op_ES_PRESET, &op_ES_MODE, &op_ES_CLOCK,
+    &op_MP_UNFREEZE, &op_MP_STOP,
+
+    // earthsea
+    &op_ES_PRESET, &op_ES_MODE, &op_ES_CLOCK,
     &op_ES_RESET, &op_ES_PATTERN, &op_ES_TRANS, &op_ES_STOP, &op_ES_TRIPLE,
-    &op_ES_MAGIC, &op_OR_TRK, &op_OR_CLK, &op_OR_DIV, &op_OR_PHASE, &op_OR_RST,
+    &op_ES_MAGIC,
+
+    // orca
+    &op_OR_TRK, &op_OR_CLK, &op_OR_DIV, &op_OR_PHASE, &op_OR_RST,
     &op_OR_WGT, &op_OR_MUTE, &op_OR_SCALE, &op_OR_BANK, &op_OR_PRESET,
     &op_OR_RELOAD, &op_OR_ROTS, &op_OR_ROTW, &op_OR_GRST, &op_OR_CVA,
     &op_OR_CVB,
