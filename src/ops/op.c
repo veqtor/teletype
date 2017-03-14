@@ -49,8 +49,8 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
 
     // hardware
     &op_CV, &op_CV_OFF, &op_CV_SLEW, &op_IN, &op_PARAM, &op_PRM, &op_TR,
-    &op_TR_POL, &op_TR_TIME, &op_TR_TOG, &op_TR_PULSE, &op_TR_P, &op_II,
-    &op_CV_SET, &op_MUTE, &op_UNMUTE, &op_STATE,
+    &op_TR_POL, &op_TR_TIME, &op_TR_TOG, &op_TR_PULSE, &op_TR_P, &op_CV_SET,
+    &op_MUTE, &op_UNMUTE, &op_STATE,
 
     // maths
     &op_ADD, &op_SUB, &op_MUL, &op_DIV, &op_MOD, &op_RAND, &op_RRAND, &op_TOSS,
@@ -78,20 +78,17 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_WW_MUTE3, &op_WW_MUTE4, &op_WW_MUTEA, &op_WW_MUTEB,
 
     // meadowphysics
-    &op_MP_PRESET,
-    &op_MP_RESET, &op_MP_SYNC, &op_MP_MUTE, &op_MP_UNMUTE, &op_MP_FREEZE,
-    &op_MP_UNFREEZE, &op_MP_STOP,
+    &op_MP_PRESET, &op_MP_RESET, &op_MP_SYNC, &op_MP_MUTE, &op_MP_UNMUTE,
+    &op_MP_FREEZE, &op_MP_UNFREEZE, &op_MP_STOP,
 
     // earthsea
-    &op_ES_PRESET, &op_ES_MODE, &op_ES_CLOCK,
-    &op_ES_RESET, &op_ES_PATTERN, &op_ES_TRANS, &op_ES_STOP, &op_ES_TRIPLE,
-    &op_ES_MAGIC,
+    &op_ES_PRESET, &op_ES_MODE, &op_ES_CLOCK, &op_ES_RESET, &op_ES_PATTERN,
+    &op_ES_TRANS, &op_ES_STOP, &op_ES_TRIPLE, &op_ES_MAGIC,
 
     // orca
-    &op_OR_TRK, &op_OR_CLK, &op_OR_DIV, &op_OR_PHASE, &op_OR_RST,
-    &op_OR_WGT, &op_OR_MUTE, &op_OR_SCALE, &op_OR_BANK, &op_OR_PRESET,
-    &op_OR_RELOAD, &op_OR_ROTS, &op_OR_ROTW, &op_OR_GRST, &op_OR_CVA,
-    &op_OR_CVB,
+    &op_OR_TRK, &op_OR_CLK, &op_OR_DIV, &op_OR_PHASE, &op_OR_RST, &op_OR_WGT,
+    &op_OR_MUTE, &op_OR_SCALE, &op_OR_BANK, &op_OR_PRESET, &op_OR_RELOAD,
+    &op_OR_ROTS, &op_OR_ROTW, &op_OR_GRST, &op_OR_CVA, &op_OR_CVB,
 
     // ansible
     &op_KR_PRESET, &op_KR_PATTERN, &op_KR_SCALE, &op_KR_PERIOD, &op_KR_POS,
@@ -154,11 +151,6 @@ const tele_mod_t *tele_mods[E_MOD__LENGTH] = {
 /////////////////////////////////////////////////////////////////
 // HELPERS //////////////////////////////////////////////////////
 
-void op_constant(const void *data, scene_state_t *NOTUSED(ss),
-                 exec_state_t *NOTUSED(es), command_state_t *cs) {
-    cs_push(cs, (intptr_t)data);
-}
-
 void op_peek_i16(const void *data, scene_state_t *ss, exec_state_t *NOTUSED(es),
                  command_state_t *cs) {
     char *base = (char *)ss;
@@ -173,4 +165,11 @@ void op_poke_i16(const void *data, scene_state_t *ss, exec_state_t *NOTUSED(es),
     size_t offset = (size_t)data;
     int16_t *ptr = (int16_t *)(base + offset);
     *ptr = cs_pop(cs);
+}
+
+void op_simple_i2c(const void *data, scene_state_t *NOTUSED(ss),
+                   exec_state_t *NOTUSED(es), command_state_t *cs) {
+    int16_t address = (intptr_t)data;
+    int16_t value = cs_pop(cs);
+    tele_ii(address, value);
 }

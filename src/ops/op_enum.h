@@ -72,7 +72,6 @@ typedef enum {
     E_OP_TR_TOG,
     E_OP_TR_PULSE,
     E_OP_TR_P,
-    E_OP_II,
     E_OP_CV_SET,
     E_OP_MUTE,
     E_OP_UNMUTE,

@@ -15,7 +15,6 @@ extern const tele_op_t op_TR_TIME;
 extern const tele_op_t op_TR_TOG;
 extern const tele_op_t op_TR_PULSE;
 extern const tele_op_t op_TR_P;
-extern const tele_op_t op_II;
 extern const tele_op_t op_CV_SET;
 extern const tele_op_t op_MUTE;
 extern const tele_op_t op_UNMUTE;
