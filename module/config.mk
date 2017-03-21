@@ -63,6 +63,7 @@ TARGET = $(THIS).elf
 CSRCS = \
 	../module/main.c					\
 	../module/gitversion.c					\
+	../module/help_mode.c  					\
 	../src/command.c					\
 	../src/helpers.c					\
 	../src/match_token.c					\

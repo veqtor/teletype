@@ -59,8 +59,9 @@ http://msgpack.org
 
 // this
 #include "conf_board.h"
+#include "fudge.h"
 #include "gitversion.h"
-#include "help.h"
+#include "help_mode.h"
 #include "teletype.h"
 #include "teletype_io.h"
 
@@ -75,7 +76,7 @@ http://msgpack.org
 
 
 uint8_t preset, preset_select, front_timer, preset_edit_line,
-    preset_edit_offset, offset_view, last_mode;
+    preset_edit_offset, last_mode;
 
 u16 adc[4];
 
@@ -112,11 +113,6 @@ uint8_t metro_act;
 unsigned int metro_time;
 
 uint8_t mod_key = 0, hold_key, hold_key_count = 0;
-
-uint8_t help_page;
-uint8_t help_length[8] = { HELP1_LENGTH, HELP2_LENGTH, HELP3_LENGTH,
-                           HELP4_LENGTH, HELP5_LENGTH, HELP6_LENGTH,
-                           HELP7_LENGTH, HELP8_LENGTH };
 
 int16_t output, output_new;
 
@@ -160,11 +156,6 @@ __attribute__((__section__(".flash_nvram"))) static nvram_data_t f;
 
 uint8_t mode;
 
-#define R_PRESET (1 << 0)
-#define R_INPUT (1 << 1)
-#define R_MESSAGE (1 << 2)
-#define R_LIST (1 << 3)
-#define R_ALL 0xf
 uint8_t r_edit_dirty;
 
 #define A_METRO 0x1
@@ -178,13 +169,15 @@ uint8_t r_edit_dirty;
 uint8_t activity;
 uint8_t activity_prev;
 
-static region line[8] = {
+// defined in fudge.h
+region line[8] = {
     {.w = 128, .h = 8, .x = 0, .y = 0 },  {.w = 128, .h = 8, .x = 0, .y = 8 },
     {.w = 128, .h = 8, .x = 0, .y = 16 }, {.w = 128, .h = 8, .x = 0, .y = 24 },
     {.w = 128, .h = 8, .x = 0, .y = 32 }, {.w = 128, .h = 8, .x = 0, .y = 40 },
     {.w = 128, .h = 8, .x = 0, .y = 48 }, {.w = 128, .h = 8, .x = 0, .y = 56 }
 };
 
+// defined in fudge.h
 bool screen_dirty = false;
 
 
@@ -211,7 +204,6 @@ void process_live_edit_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
 void process_tracker_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
 void process_preset_r_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
 void process_preset_w_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
-void process_help_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
 
 static u8 flash_is_fresh(void);
 static void flash_unfresh(void);
@@ -520,7 +512,6 @@ static void handler_Trigger(s32 data) {
 static void screen_refresh_track(void);
 static void screen_refresh_preset_w(void);
 static void screen_refresh_preset_r(void);
-static void screen_refresh_help(void);
 static void screen_refresh_live_edit(void);
 
 static void handler_ScreenRefresh(s32 data) {
@@ -638,41 +629,6 @@ static void screen_refresh_preset_r() {
     screen_dirty = true;
 };
 
-static void screen_refresh_help() {
-    if (!(r_edit_dirty & R_ALL)) { return; }
-
-    for (uint8_t y = 0; y < 8; y++) {
-        region_fill(&line[y], 0);
-        /// fixme: make a pointer array
-        if (help_page == 0)
-            font_string_region_clip_tab(&line[y], help1[y + offset_view], 2, 0,
-                                        0xa, 0);
-        else if (help_page == 1)
-            font_string_region_clip_tab(&line[y], help2[y + offset_view], 2, 0,
-                                        0xa, 0);
-        else if (help_page == 2)
-            font_string_region_clip_tab(&line[y], help3[y + offset_view], 2, 0,
-                                        0xa, 0);
-        else if (help_page == 3)
-            font_string_region_clip_tab(&line[y], help4[y + offset_view], 2, 0,
-                                        0xa, 0);
-        else if (help_page == 4)
-            font_string_region_clip_tab(&line[y], help5[y + offset_view], 2, 0,
-                                        0xa, 0);
-        else if (help_page == 5)
-            font_string_region_clip_tab(&line[y], help6[y + offset_view], 2, 0,
-                                        0xa, 0);
-        else if (help_page == 6)
-            font_string_region_clip_tab(&line[y], help7[y + offset_view], 2, 0,
-                                        0xa, 0);
-        else if (help_page == 7)
-            font_string_region_clip_tab(&line[y], help8[y + offset_view], 2, 0,
-                                        0xa, 0);
-    }
-
-    r_edit_dirty &= ~R_ALL;
-    screen_dirty = true;
-};
 
 static void screen_refresh_live_edit() {
     if (r_edit_dirty & R_INPUT) {
@@ -1743,38 +1699,6 @@ void process_preset_w_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
     }
 }
 
-void process_help_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
-    switch (key) {
-        case 0x51:  // down
-            if (offset_view < help_length[help_page] - 8) {
-                offset_view++;
-                r_edit_dirty |= R_ALL;
-            }
-            break;
-        case 0x52:  // up
-            if (offset_view) {
-                offset_view--;
-                r_edit_dirty |= R_ALL;
-            }
-            break;
-
-        case 0x30:  // ]
-            if (help_page < 7) {
-                offset_view = 0;
-                help_page++;
-                r_edit_dirty |= R_ALL;
-            }
-            break;
-
-        case 0x2F:  // [
-            if (help_page) {
-                offset_view = 0;
-                help_page--;
-                r_edit_dirty |= R_ALL;
-            }
-            break;
-    }
-}
 
 u8 flash_is_fresh(void) {
     return (f.fresh != FIRSTRUN_KEY);
