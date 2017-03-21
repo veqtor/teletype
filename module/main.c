@@ -25,7 +25,6 @@ http://msgpack.org
 #include "delay.h"
 #include "fat.h"
 #include "file.h"
-#include "flashc.h"
 #include "fs_com.h"
 #include "gpio.h"
 #include "intc.h"
@@ -59,24 +58,21 @@ http://msgpack.org
 
 // this
 #include "conf_board.h"
+#include "flash.h"
 #include "fudge.h"
 #include "gitversion.h"
 #include "help_mode.h"
+#include "preset_r_mode.h"
 #include "teletype.h"
 #include "teletype_io.h"
 
 #define RATE_CLOCK 10
 #define RATE_CV 6
 
-#define SCENE_SLOTS 32
-#define SCENE_SLOTS_ 31
+// defined in fudge.h
+uint8_t preset_select;
 
-#define SCENE_TEXT_LINES 32
-#define SCENE_TEXT_CHARS 32
-
-
-uint8_t preset, preset_select, front_timer, preset_edit_line,
-    preset_edit_offset, last_mode;
+uint8_t preset, front_timer, preset_edit_line, preset_edit_offset;
 
 u16 adc[4];
 
@@ -107,7 +103,6 @@ uint8_t knob_last;
 
 scene_script_t history;
 uint8_t edit, edit_line, edit_index, edit_pattern, offset_index;
-char scene_text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
 
 uint8_t metro_act;
 unsigned int metro_time;
@@ -128,33 +123,8 @@ struct {
 
 uint8_t i2c_waiting_count;
 
-#define FIRSTRUN_KEY 0x22
-
-typedef const struct {
-    scene_script_t script[10];
-    scene_pattern_t patterns[4];
-    char text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
-} nvram_scene_t;
-
-typedef const struct {
-    nvram_scene_t s[SCENE_SLOTS];
-    uint8_t scene;
-    uint8_t mode;
-    uint8_t fresh;
-} nvram_data_t;
-
-// NVRAM data structure located in the flash array.
-__attribute__((__section__(".flash_nvram"))) static nvram_data_t f;
-
-
-#define M_LIVE 0
-#define M_EDIT 1
-#define M_TRACK 2
-#define M_PRESET_W 3
-#define M_PRESET_R 4
-#define M_HELP 5
-
-uint8_t mode;
+tele_mode_t mode;
+tele_mode_t last_mode;
 
 uint8_t r_edit_dirty;
 
@@ -202,17 +172,10 @@ static void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key);
 bool process_global_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
 void process_live_edit_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
 void process_tracker_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
-void process_preset_r_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
 void process_preset_w_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
 
-static u8 flash_is_fresh(void);
-static void flash_unfresh(void);
-static void flash_write(void);
-static void flash_read(void);
 
 static void render_init(void);
-
-static void set_mode(uint8_t);
 
 static void tele_usb_disk(void);
 static void tele_mem_clear(void);
@@ -364,6 +327,7 @@ static void handler_Front(s32 data) {
             front_timer = 0;
             knob_last = adc[1] >> 7;
             last_mode = mode;
+            set_preset_r_mode();
             set_mode(M_PRESET_R);
         }
         else
@@ -391,10 +355,7 @@ static void handler_PollADC(s32 data) {
     }
     else if (mode == M_PRESET_R) {
         knob_now = adc[1] >> 7;
-        if (knob_now != knob_last) {
-            preset_select = knob_now;
-            r_edit_dirty = R_ALL;
-        }
+        if (knob_now != knob_last) { process_preset_r_knob(knob_now, mod_key); }
         knob_last = knob_now;
     }
     else
@@ -407,13 +368,13 @@ static void handler_PollADC(s32 data) {
 }
 
 static void handler_SaveFlash(s32 data) {
-    flash_write();
+    flash_write(preset_select);
 }
 
 static void handler_KeyTimer(s32 data) {
     if (front_timer) {
         if (front_timer == 1) {
-            flash_read();
+            flash_read(preset_select);
 
             run_script(INIT_SCRIPT);
 
@@ -511,7 +472,6 @@ static void handler_Trigger(s32 data) {
 
 static void screen_refresh_track(void);
 static void screen_refresh_preset_w(void);
-static void screen_refresh_preset_r(void);
 static void screen_refresh_live_edit(void);
 
 static void handler_ScreenRefresh(s32 data) {
@@ -607,27 +567,6 @@ static void screen_refresh_preset_w() {
     r_edit_dirty &= ~R_ALL;
     screen_dirty = true;
 }
-
-static void screen_refresh_preset_r() {
-    if (!(r_edit_dirty & R_ALL)) { return; }
-
-    char s[32];
-    itoa(preset_select, s, 10);
-    region_fill(&line[0], 1);
-    font_string_region_clip_right(&line[0], s, 126, 0, 0xf, 1);
-    font_string_region_clip(&line[0], f.s[preset_select].text[0], 2, 0, 0xf, 1);
-
-
-    for (uint8_t y = 1; y < 8; y++) {
-        region_fill(&line[y], 0);
-        font_string_region_clip(&line[y],
-                                f.s[preset_select].text[preset_edit_offset + y],
-                                2, 0, 0xa, 0);
-    }
-
-    r_edit_dirty &= ~R_ALL;
-    screen_dirty = true;
-};
 
 
 static void screen_refresh_live_edit() {
@@ -846,13 +785,13 @@ void check_events(void) {
 ////////////////////////////////////////////////////////////////////////////////
 // funcs
 
-void set_mode(uint8_t m) {
+void set_mode(tele_mode_t m) {
     switch (m) {
         case M_LIVE:
             for (int n = 0; n < 32; n++) input[n] = 0;
             pos = 0;
             mode = M_LIVE;
-            flashc_memset8((void*)&(f.mode), mode, 1, true);
+            flash_save_mode(mode);
             edit_line = SCRIPT_MAX_COMMANDS;
             activity |= A_REFRESH;
             r_edit_dirty |= R_ALL;
@@ -867,7 +806,7 @@ void set_mode(uint8_t m) {
             break;
         case M_TRACK:
             mode = M_TRACK;
-            flashc_memset8((void*)&(f.mode), mode, 1, true);
+            flash_save_mode(mode);
             r_edit_dirty = R_ALL;
             break;
         case M_PRESET_W:
@@ -879,7 +818,7 @@ void set_mode(uint8_t m) {
             r_edit_dirty = R_ALL;
             break;
         case M_PRESET_R:
-            preset_edit_offset = 0;
+            set_preset_r_mode();
             knob_last = adc[1] >> 7;
             mode = M_PRESET_R;
             r_edit_dirty = R_ALL;
@@ -1555,43 +1494,6 @@ void process_tracker_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
     }
 }
 
-void process_preset_r_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
-    switch (key) {
-        case 0x51:  // down
-            if (preset_edit_offset < 24) {
-                preset_edit_offset++;
-                r_edit_dirty |= R_ALL;
-            }
-            break;
-        case 0x52:  // up
-            if (preset_edit_offset) {
-                preset_edit_offset--;
-                r_edit_dirty |= R_ALL;
-            }
-            break;
-        case 0x30:  // ]
-            if (preset_select < SCENE_SLOTS_) preset_select++;
-            r_edit_dirty |= R_ALL;
-            break;
-        case 0x2F:  // [
-            if (preset_select) preset_select--;
-            r_edit_dirty |= R_ALL;
-            break;
-        case RETURN:
-            if (!is_held_key) {
-                flash_read();
-                tele_set_scene(preset_select);
-
-                run_script(INIT_SCRIPT);
-
-                for (size_t n = 0; n < 32; n++) input[n] = 0;
-                pos = 0;
-                set_mode(last_mode);
-            }
-            break;
-    }
-}
-
 void process_preset_w_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
     uint8_t mod_SH = mod_key & SHIFT;
     uint8_t mod_ALT = mod_key & ALT;
@@ -1634,7 +1536,7 @@ void process_preset_w_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
             break;
 
         case 0x30:  // ]
-            if (preset_select < SCENE_SLOTS_) preset_select++;
+            if (preset_select < SCENE_SLOTS - 1) preset_select++;
             r_edit_dirty |= R_ALL;
             break;
 
@@ -1660,7 +1562,7 @@ void process_preset_w_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
                 if (!is_held_key) {
                     strcpy(scene_text[preset_edit_line + preset_edit_offset],
                            input);
-                    flash_write();
+                    flash_write(preset_select);
                     for (size_t n = 0; n < 32; n++) input[n] = 0;
                     pos = 0;
                     set_mode(last_mode);
@@ -1697,38 +1599,6 @@ void process_preset_w_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
             }
             break;
     }
-}
-
-
-u8 flash_is_fresh(void) {
-    return (f.fresh != FIRSTRUN_KEY);
-    // return 0;
-    // flashc_memcpy((void *)&flashy.fresh, &i, sizeof(flashy.fresh),   true);
-    // flashc_memset32((void*)&(flashy.fresh), fresh_MAGIC, 4, true);
-    // flashc_memset((void *)nvram_data, 0x00, 8, sizeof(*nvram_data), true);
-}
-
-// write fresh status
-void flash_unfresh(void) {
-    flashc_memset8((void*)&(f.fresh), FIRSTRUN_KEY, 1, true);
-}
-
-void flash_write(void) {
-    flashc_memcpy((void*)&f.s[preset_select].script, tele_script_ptr(),
-                  tele_script_size(), true);
-    flashc_memcpy((void*)&f.s[preset_select].patterns, tele_patterns_ptr(),
-                  tele_patterns_size(), true);
-    flashc_memcpy((void*)&f.s[preset_select].text, &scene_text,
-                  sizeof(scene_text), true);
-    flashc_memset8((void*)&(f.scene), preset_select, 1, true);
-}
-
-void flash_read(void) {
-    memcpy(tele_script_ptr(), &f.s[preset_select].script, tele_script_size());
-    memcpy(tele_patterns_ptr(), &f.s[preset_select].patterns,
-           tele_patterns_size());
-    memcpy(&scene_text, &f.s[preset_select].text, sizeof(scene_text));
-    flashc_memset8((void*)&(f.scene), preset_select, 1, true);
 }
 
 
@@ -1863,7 +1733,7 @@ void tele_ii_rx(uint8_t addr, uint8_t* data, uint8_t l) {
 
 void tele_scene(uint8_t i) {
     preset_select = i;
-    flash_read();
+    flash_read(i);
 }
 
 void tele_pi() {
@@ -2265,7 +2135,7 @@ static void tele_usb_disk() {
                             file_close();
 
                             preset_select = i;
-                            flash_write();
+                            flash_write(preset_select);
                         }
                     }
                     else
@@ -2349,30 +2219,12 @@ int main(void) {
 
     if (flash_is_fresh()) {
         print_dbg("\r\n:::: first run, clearing flash");
-
-        for (preset_select = 0; preset_select < SCENE_SLOTS; preset_select++) {
-            flash_write();
-            print_dbg(".");
-        }
-        preset_select = 0;
-        flashc_memset8((void*)&(f.scene), preset_select, 1, true);
-        flashc_memset8((void*)&(f.mode), M_LIVE, 1, true);
         flash_unfresh();
-
-        // clear out some reasonable defaults
-
-        // save all presets, clear glyphs
-        // for(i1=0;i1<8;i1++) {
-        // 	flashc_memcpy((void *)&flashy.es[i1], &es, sizeof(es), true);
-        // 	glyph[i1] = (1<<i1);
-        // 	flashc_memcpy((void *)&flashy.glyph[i1], &glyph, sizeof(glyph),
-        // true);
-        // }
     }
     else {
         preset_select = f.scene;
         tele_set_scene(preset_select);
-        flash_read();
+        flash_read(preset_select);
         // load from flash at startup
     }
 

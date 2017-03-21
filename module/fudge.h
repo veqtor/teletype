@@ -17,4 +17,19 @@ extern uint8_t r_edit_dirty;
 extern region line[8];
 extern bool screen_dirty;
 
+extern uint8_t preset_select;
+
+typedef enum {
+    M_LIVE,
+    M_EDIT,
+    M_TRACK,
+    M_PRESET_W,
+    M_PRESET_R,
+    M_HELP
+} tele_mode_t;
+
+extern tele_mode_t mode;
+extern tele_mode_t last_mode;
+void set_mode(tele_mode_t mode);
+
 #endif
