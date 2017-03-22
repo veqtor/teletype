@@ -4,12 +4,13 @@
 #include <stdint.h>
 
 #include "fudge.h"
+#include "line_editor.h"
 #include "teletype.h"
 
 #define SCENE_SLOTS 32
 
 #define SCENE_TEXT_LINES 32
-#define SCENE_TEXT_CHARS 32
+#define SCENE_TEXT_CHARS LINE_EDITOR_SIZE
 
 extern char scene_text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
 

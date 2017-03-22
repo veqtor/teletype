@@ -63,6 +63,7 @@ http://msgpack.org
 #include "gitversion.h"
 #include "help_mode.h"
 #include "preset_r_mode.h"
+#include "preset_w_mode.h"
 #include "teletype.h"
 #include "teletype_io.h"
 
@@ -72,7 +73,7 @@ http://msgpack.org
 // defined in fudge.h
 uint8_t preset_select;
 
-uint8_t preset, front_timer, preset_edit_line, preset_edit_offset;
+uint8_t front_timer;
 
 u16 adc[4];
 
@@ -172,7 +173,6 @@ static void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key);
 bool process_global_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
 void process_live_edit_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
 void process_tracker_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
-void process_preset_w_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
 
 
 static void render_init(void);
@@ -471,7 +471,6 @@ static void handler_Trigger(s32 data) {
 // refresh
 
 static void screen_refresh_track(void);
-static void screen_refresh_preset_w(void);
 static void screen_refresh_live_edit(void);
 
 static void handler_ScreenRefresh(s32 data) {
@@ -535,39 +534,6 @@ static void screen_refresh_track() {
 
     screen_dirty = true;
 }
-
-static void screen_refresh_preset_w() {
-    if (!(r_edit_dirty & R_ALL)) { return; }
-
-    char s[32];
-    strcpy(s, ">>> ");
-    itoa(preset_select, s + 4, 10);
-    region_fill(&line[0], 1);
-    font_string_region_clip_right(&line[0], s, 126, 0, 0xf, 1);
-    font_string_region_clip(&line[0], "WRITE", 2, 0, 0xf, 1);
-
-    for (uint8_t y = 1; y < 7; y++) {
-        uint8_t a = preset_edit_line == (y - 1);
-        region_fill(&line[y], a);
-        font_string_region_clip(&line[y],
-                                scene_text[preset_edit_offset + y - 1], 2, 0,
-                                0xa + a * 5, a);
-    }
-
-    s[0] = '+';
-    s[1] = ' ';
-    s[2] = 0;
-
-    strcat(s, input);
-    strcat(s, " ");
-
-    region_fill(&line[7], 0);
-    font_string_region_clip_hi(&line[7], s, 0, 0, 0xf, 0, pos + 2);
-
-    r_edit_dirty &= ~R_ALL;
-    screen_dirty = true;
-}
-
 
 static void screen_refresh_live_edit() {
     if (r_edit_dirty & R_INPUT) {
@@ -810,10 +776,7 @@ void set_mode(tele_mode_t m) {
             r_edit_dirty = R_ALL;
             break;
         case M_PRESET_W:
-            preset_edit_line = 0;
-            preset_edit_offset = 0;
-            strcpy(input, scene_text[preset_edit_line + preset_edit_offset]);
-            pos = strlen(input);
+            set_preset_w_mode();
             mode = M_PRESET_W;
             r_edit_dirty = R_ALL;
             break;
@@ -1491,113 +1454,6 @@ void process_tracker_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
             }
             break;
         }
-    }
-}
-
-void process_preset_w_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
-    uint8_t mod_SH = mod_key & SHIFT;
-    uint8_t mod_ALT = mod_key & ALT;
-
-    switch (key) {
-        case 0x51:  // down
-            if ((preset_edit_offset + preset_edit_line) < 31) {
-                if (preset_edit_line == 5)
-                    preset_edit_offset++;
-                else
-                    preset_edit_line++;
-                strcpy(input,
-                       scene_text[preset_edit_line + preset_edit_offset]);
-                pos = strlen(input);
-                r_edit_dirty |= R_ALL;
-            }
-            break;
-
-        case 0x52:  // up
-            if (preset_edit_line + preset_edit_offset) {
-                if (preset_edit_line)
-                    preset_edit_line--;
-                else
-                    preset_edit_offset--;
-                strcpy(input,
-                       scene_text[preset_edit_line + preset_edit_offset]);
-                pos = strlen(input);
-                r_edit_dirty |= R_ALL;
-            }
-            break;
-
-        case 0x50:  // back
-            if (pos) { pos--; }
-            r_edit_dirty |= R_INPUT;
-            break;
-
-        case 0x4f:  // forward
-            if (pos < strlen(input)) { pos++; }
-            r_edit_dirty |= R_INPUT;
-            break;
-
-        case 0x30:  // ]
-            if (preset_select < SCENE_SLOTS - 1) preset_select++;
-            r_edit_dirty |= R_ALL;
-            break;
-
-        case 0x2F:  // [
-            if (preset_select) preset_select--;
-            r_edit_dirty |= R_ALL;
-            break;
-
-        case BACKSPACE:
-            if (mod_SH) {
-                for (size_t n = 0; n < 32; n++) input[n] = 0;
-                pos = 0;
-            }
-            else if (pos) {
-                pos--;
-                for (int x = pos; x < 31; x++) input[x] = input[x + 1];
-            }
-            r_edit_dirty |= R_INPUT;
-            break;
-
-        case RETURN:
-            if (mod_ALT) {
-                if (!is_held_key) {
-                    strcpy(scene_text[preset_edit_line + preset_edit_offset],
-                           input);
-                    flash_write(preset_select);
-                    for (size_t n = 0; n < 32; n++) input[n] = 0;
-                    pos = 0;
-                    set_mode(last_mode);
-                }
-            }
-            else {
-                strcpy(scene_text[preset_edit_line + preset_edit_offset],
-                       input);
-                if (preset_edit_line + preset_edit_offset < 31) {
-                    if (preset_edit_line == 5)
-                        preset_edit_offset++;
-                    else
-                        preset_edit_line++;
-                }
-                strcpy(input,
-                       scene_text[preset_edit_line + preset_edit_offset]);
-                pos = strlen(input);
-                r_edit_dirty |= R_ALL;
-            }
-            break;
-
-        default:
-            if (!mod_ALT) {
-                if (pos < 29) {
-                    u8 n = hid_to_ascii(key, mod_key);
-                    if (n) {
-                        for (int x = 31; x > pos; x--) input[x] = input[x - 1];
-
-                        input[pos] = n;
-                        pos++;
-                        r_edit_dirty |= R_INPUT;
-                    }
-                }
-            }
-            break;
     }
 }
 
