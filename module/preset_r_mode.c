@@ -15,14 +15,20 @@
 #include "usb_protocol_hid.h"
 
 uint8_t offset;
+uint8_t knob_last;
 
-void set_preset_r_mode() {
+void set_preset_r_mode(uint16_t knob) {
+    knob_last = knob >> 7;
     offset = 0;
 }
 
-void process_preset_r_knob(uint8_t knob, uint8_t mod_key) {
-    preset_select = knob;
-    r_edit_dirty = R_ALL;
+void process_preset_r_knob(uint16_t knob, uint8_t mod_key) {
+    uint8_t knob_now = knob >> 7;
+    if (knob_now != knob_last) {
+        preset_select = knob_now;
+        knob_last = knob_now;
+        r_edit_dirty = R_ALL;
+    }
 }
 
 void process_preset_r_keys(uint8_t k, uint8_t m, bool is_held_key) {

@@ -99,9 +99,6 @@ char input[32];
 char input_buffer[32];
 uint8_t pos;
 
-uint8_t knob_now;
-uint8_t knob_last;
-
 scene_script_t history;
 uint8_t edit, edit_line;
 
@@ -324,9 +321,8 @@ static void handler_Front(s32 data) {
     if (data == 0) {
         if (mode != M_PRESET_R) {
             front_timer = 0;
-            knob_last = adc[1] >> 7;
             last_mode = mode;
-            set_preset_r_mode();
+            set_preset_r_mode(adc[1]);
             set_mode(M_PRESET_R);
         }
         else
@@ -343,12 +339,10 @@ static void handler_PollADC(s32 data) {
 
     tele_set_in(adc[0] << 2);
 
-    if (mode == M_PATTERN) { process_pattern_knob(adc[1], mod_key); }
-    else if (mode == M_PRESET_R) {
-        knob_now = adc[1] >> 7;
-        if (knob_now != knob_last) { process_preset_r_knob(knob_now, mod_key); }
-        knob_last = knob_now;
-    }
+    if (mode == M_PATTERN)
+        process_pattern_knob(adc[1], mod_key);
+    else if (mode == M_PRESET_R)
+        process_preset_r_knob(adc[1], mod_key);
     else
         tele_set_param(adc[1] << 2);
 
@@ -720,8 +714,7 @@ void set_mode(tele_mode_t m) {
             r_edit_dirty = R_ALL;
             break;
         case M_PRESET_R:
-            set_preset_r_mode();
-            knob_last = adc[1] >> 7;
+            set_preset_r_mode(adc[1]);
             mode = M_PRESET_R;
             r_edit_dirty = R_ALL;
             break;
