@@ -22,7 +22,7 @@ extern uint8_t preset_select;
 typedef enum {
     M_LIVE,
     M_EDIT,
-    M_TRACK,
+    M_PATTERN,
     M_PRESET_W,
     M_PRESET_R,
     M_HELP

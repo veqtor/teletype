@@ -66,6 +66,7 @@ CSRCS = \
 	../module/gitversion.c					\
 	../module/help_mode.c  					\
 	../module/line_editor.c					\
+	../module/pattern_mode.c   				\
 	../module/preset_r_mode.c   				\
 	../module/preset_w_mode.c   				\
 	../src/command.c					\

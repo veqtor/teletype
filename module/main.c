@@ -62,6 +62,7 @@ http://msgpack.org
 #include "fudge.h"
 #include "gitversion.h"
 #include "help_mode.h"
+#include "pattern_mode.h"
 #include "preset_r_mode.h"
 #include "preset_w_mode.h"
 #include "teletype.h"
@@ -96,14 +97,13 @@ char error_msg[ERROR_MSG_LENGTH];
 
 char input[32];
 char input_buffer[32];
-int num_buffer;
 uint8_t pos;
 
 uint8_t knob_now;
 uint8_t knob_last;
 
 scene_script_t history;
-uint8_t edit, edit_line, edit_index, edit_pattern, offset_index;
+uint8_t edit, edit_line;
 
 uint8_t metro_act;
 unsigned int metro_time;
@@ -172,7 +172,6 @@ static void handler_II(s32 data);
 static void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key);
 bool process_global_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
 void process_live_edit_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
-void process_tracker_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
 
 
 static void render_init(void);
@@ -344,15 +343,7 @@ static void handler_PollADC(s32 data) {
 
     tele_set_in(adc[0] << 2);
 
-    if (mode == M_TRACK && (mod_key & CTRL)) {
-        if (mod_key & SHIFT)
-            tele_set_pattern_val(edit_pattern, edit_index + offset_index,
-                                 adc[1] >> 2);
-        else
-            tele_set_pattern_val(edit_pattern, edit_index + offset_index,
-                                 adc[1] >> 7);
-        r_edit_dirty |= R_ALL;
-    }
+    if (mode == M_PATTERN) { process_pattern_knob(adc[1], mod_key); }
     else if (mode == M_PRESET_R) {
         knob_now = adc[1] >> 7;
         if (knob_now != knob_last) { process_preset_r_knob(knob_now, mod_key); }
@@ -470,69 +461,17 @@ static void handler_Trigger(s32 data) {
 ////////////////////////////////////////////////////////////////////////////////
 // refresh
 
-static void screen_refresh_track(void);
 static void screen_refresh_live_edit(void);
 
 static void handler_ScreenRefresh(s32 data) {
     switch (mode) {
-        case M_TRACK: screen_refresh_track(); break;
+        case M_PATTERN: screen_refresh_pattern(); break;
         case M_PRESET_W: screen_refresh_preset_w(); break;
         case M_PRESET_R: screen_refresh_preset_r(); break;
         case M_HELP: screen_refresh_help(); break;
         case M_LIVE:
         case M_EDIT: screen_refresh_live_edit(); break;
     }
-}
-
-static void screen_refresh_track() {
-    if (!(r_edit_dirty & R_ALL)) { return; }
-
-    char s[32];
-    for (uint8_t y = 0; y < 8; y++) {
-        region_fill(&line[y], 0);
-        itoa(y + offset_index, s, 10);
-        font_string_region_clip_right(&line[y], s, 4, 0, 0x1, 0);
-
-        for (uint8_t x = 0; x < 4; x++) {
-            uint8_t a = 1;
-            if (tele_get_pattern_l(x) > y + offset_index) a = 6;
-
-            itoa(tele_get_pattern_val(x, y + offset_index), s, 10);
-            font_string_region_clip_right(&line[y], s, (x + 1) * 30 + 4, 0, a,
-                                          0);
-
-            if (y + offset_index >= tele_get_pattern_start(x)) {
-                if (y + offset_index <= tele_get_pattern_end(x)) {
-                    for (uint8_t i = 0; i < 8; i += 2) {
-                        line[y].data[i * 128 + (x + 1) * 30 + 6] = 1;
-                    }
-                }
-            }
-
-            if (y + offset_index == tele_get_pattern_i(x)) {
-                line[y].data[2 * 128 + (x + 1) * 30 + 6] = 11;
-                line[y].data[3 * 128 + (x + 1) * 30 + 6] = 11;
-                line[y].data[4 * 128 + (x + 1) * 30 + 6] = 11;
-            }
-        }
-    }
-
-    itoa(tele_get_pattern_val(edit_pattern, edit_index + offset_index), s, 10);
-    font_string_region_clip_right(&line[edit_index], s,
-                                  (edit_pattern + 1) * 30 + 4, 0, 0xf, 0);
-
-    for (uint8_t y = 0; y < 64; y += 2) {
-        line[y >> 3].data[(y & 0x7) * 128 + 8] = 1;
-    }
-
-    for (uint8_t y = 0; y < 8; y++) {
-        line[(offset_index + y) >> 3]
-            .data[((offset_index + y) & 0x7) * 128 + 8] = 6;
-    }
-
-    r_edit_dirty &= ~R_ALL;
-
-    screen_dirty = true;
 }
 
 static void screen_refresh_live_edit() {
@@ -770,8 +709,8 @@ void set_mode(tele_mode_t m) {
             for (int n = pos; n < 32; n++) input[n] = 0;
             r_edit_dirty |= R_ALL;
             break;
-        case M_TRACK:
-            mode = M_TRACK;
+        case M_PATTERN:
+            mode = M_PATTERN;
             flash_save_mode(mode);
             r_edit_dirty = R_ALL;
             break;
@@ -801,7 +740,7 @@ void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key) {
     switch (mode) {
         case M_EDIT:
         case M_LIVE: process_live_edit_keys(key, mod_key, is_held_key); break;
-        case M_TRACK: process_tracker_keys(key, mod_key, is_held_key); break;
+        case M_PATTERN: process_pattern_keys(key, mod_key, is_held_key); break;
         case M_PRESET_W:
             process_preset_w_keys(key, mod_key, is_held_key);
             break;
@@ -827,11 +766,11 @@ bool process_global_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
                 set_mode(M_LIVE);
             return true;
         case TILDE:
-            if (mode == M_TRACK)
+            if (mode == M_PATTERN)
                 set_mode(last_mode);
             else {
                 last_mode = mode;
-                set_mode(M_TRACK);
+                set_mode(M_PATTERN);
             }
             return true;
         case ESCAPE:
@@ -1161,302 +1100,6 @@ void process_live_edit_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
     r_edit_dirty |= R_INPUT;
 }
 
-void process_tracker_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
-    uint8_t mod_SH = mod_key & SHIFT;
-    uint8_t mod_ALT = mod_key & ALT;
-
-    switch (key) {
-        case 0x51:  // down
-            if (mod_ALT) {
-                if (offset_index < 48)
-                    offset_index += 8;
-                else {
-                    offset_index = 56;
-                    edit_index = 7;
-                }
-            }
-            else {
-                edit_index++;
-                if (edit_index == 8) {
-                    edit_index = 7;
-                    if (offset_index < 56) { offset_index++; }
-                }
-            }
-            r_edit_dirty |= R_ALL;
-            break;
-
-        case 0x52:  // up
-
-            if (mod_ALT) {
-                if (offset_index > 8) { offset_index -= 8; }
-                else {
-                    offset_index = 0;
-                    edit_index = 0;
-                }
-            }
-            else {
-                if (edit_index)
-                    edit_index--;
-                else if (offset_index)
-                    offset_index--;
-            }
-            r_edit_dirty |= R_ALL;
-            break;
-
-        case 0x50:  // back
-            if (mod_ALT) {
-                edit_index = 0;
-                offset_index = 0;
-            }
-            else {
-                if (edit_pattern > 0) edit_pattern--;
-            }
-            r_edit_dirty |= R_ALL;
-            break;
-
-        case 0x4f:  // forward
-            if (mod_ALT) {
-                edit_index = 7;
-                offset_index = 56;
-            }
-            else {
-                if (edit_pattern < 3) edit_pattern++;
-            }
-            r_edit_dirty |= R_ALL;
-            break;
-
-        case 0x30:  // ]
-        {
-            int16_t v =
-                tele_get_pattern_val(edit_pattern, edit_index + offset_index);
-            if (v < 32766) {
-                tele_set_pattern_val(edit_pattern, edit_index + offset_index,
-                                     v + 1);
-                r_edit_dirty |= R_ALL;
-            }
-            break;
-        }
-
-        case 0x2F:  // [
-        {
-            int16_t v =
-                tele_get_pattern_val(edit_pattern, edit_index + offset_index);
-            if (v > -32767) {
-                tele_set_pattern_val(edit_pattern, edit_index + offset_index,
-                                     v - 1);
-                r_edit_dirty |= R_ALL;
-            }
-            break;
-        }
-
-        case BACKSPACE: {
-            if (mod_SH) {
-                for (int i = edit_index + offset_index; i < 63; i++) {
-                    int16_t v = tele_get_pattern_val(edit_pattern, i + 1);
-                    tele_set_pattern_val(edit_pattern, i, v);
-                }
-
-                uint16_t l = tele_get_pattern_l(edit_pattern);
-                if (l > edit_index + offset_index)
-                    tele_set_pattern_l(edit_pattern, l - 1);
-            }
-            else {
-                int16_t new_v = tele_get_pattern_val(
-                                    edit_pattern, edit_index + offset_index) /
-                                10;
-                tele_set_pattern_val(edit_pattern, edit_index + offset_index,
-                                     new_v);
-            }
-            r_edit_dirty |= R_ALL;
-            break;
-        }
-
-        case RETURN: {
-            if (mod_SH) {
-                for (int i = 63; i > edit_index + offset_index; i--) {
-                    int16_t v = tele_get_pattern_val(edit_pattern, i - 1);
-                    tele_set_pattern_val(edit_pattern, i, v);
-                }
-                uint16_t l = tele_get_pattern_l(edit_pattern);
-                if (l < 64) { tele_set_pattern_l(edit_pattern, l + 1); }
-                r_edit_dirty |= R_ALL;
-            }
-            else {
-                uint16_t l = tele_get_pattern_l(edit_pattern);
-                if (edit_index + offset_index == l && l < 64)
-                    tele_set_pattern_l(edit_pattern, l + 1);
-                edit_index++;
-                if (edit_index == 8) {
-                    edit_index = 7;
-                    if (offset_index < 56) { offset_index++; }
-                }
-                r_edit_dirty |= R_ALL;
-            }
-            break;
-        }
-
-        default: {
-            if (mod_ALT) {          // ALT
-                if (key == 0x1b) {  // x CUT
-                    num_buffer = tele_get_pattern_val(
-                        edit_pattern, edit_index + offset_index);
-                    for (int i = edit_index + offset_index; i < 63; i++) {
-                        int16_t v = tele_get_pattern_val(edit_pattern, i + 1);
-                        tele_set_pattern_val(edit_pattern, i, v);
-                    }
-
-                    uint16_t l = tele_get_pattern_l(edit_pattern);
-                    if (l > edit_index + offset_index) {
-                        tele_set_pattern_l(edit_pattern, l - 1);
-                    }
-                    r_edit_dirty |= R_ALL;
-                }
-                else if (key == 0x06) {  // c COPY
-                    num_buffer = tele_get_pattern_val(
-                        edit_pattern, edit_index + offset_index);
-                    r_edit_dirty |= R_ALL;
-                }
-                else if (key == 0x19) {  // v PASTE
-                    if (mod_SH) {
-                        for (int i = 63; i > edit_index + offset_index; i--) {
-                            int16_t v =
-                                tele_get_pattern_val(edit_pattern, i - 1);
-                            tele_set_pattern_val(edit_pattern, i, v);
-                        }
-                        uint16_t l = tele_get_pattern_l(edit_pattern);
-                        if (l >= edit_index + offset_index && l < 63) {
-                            tele_set_pattern_l(edit_pattern, l + 1);
-                        }
-                    }
-                    tele_set_pattern_val(edit_pattern,
-                                         edit_index + offset_index, num_buffer);
-                    r_edit_dirty |= R_ALL;
-                }
-                else {
-                    u8 n = hid_to_ascii_raw(key);
-                    if (n == 'L') {
-                        uint16_t l = tele_get_pattern_l(edit_pattern);
-                        if (l) {
-                            offset_index = ((l - 1) >> 3) << 3;
-                            edit_index = (l - 1) & 0x7;
-
-                            int8_t delta = edit_index - 3;
-
-                            if ((offset_index + delta > 0) &&
-                                (offset_index + delta < 56)) {
-                                offset_index += delta;
-                                edit_index = 3;
-                            }
-                        }
-                        else {
-                            offset_index = 0;
-                            edit_index = 0;
-                        }
-                        r_edit_dirty |= R_ALL;
-                    }
-                    else if (n == 'S') {
-                        int16_t start = tele_get_pattern_start(edit_pattern);
-                        if (start) {
-                            offset_index = (start >> 3) << 3;
-                            edit_index = start & 0x7;
-
-                            int8_t delta = edit_index - 3;
-
-                            if ((offset_index + delta > 0) &&
-                                (offset_index + delta < 56)) {
-                                offset_index += delta;
-                                edit_index = 3;
-                            }
-                        }
-                        else {
-                            offset_index = 0;
-                            edit_index = 0;
-                        }
-                        r_edit_dirty |= R_ALL;
-                    }
-                    else if (n == 'E') {
-                        int16_t end = tele_get_pattern_end(edit_pattern);
-                        if (end) {
-                            offset_index = (end >> 3) << 3;
-                            edit_index = end & 0x7;
-
-                            int8_t delta = edit_index - 3;
-
-                            if ((offset_index + delta > 0) &&
-                                (offset_index + delta < 56)) {
-                                offset_index += delta;
-                                edit_index = 3;
-                            }
-                        }
-                        else {
-                            offset_index = 0;
-                            edit_index = 0;
-                        }
-                        r_edit_dirty |= R_ALL;
-                    }
-                }
-            }  // end if (mod_ALT)
-            else if (mod_SH) {
-                u8 n = hid_to_ascii_raw(key);
-                if (n == 'L') {
-                    tele_set_pattern_l(edit_pattern,
-                                       edit_index + offset_index + 1);
-                    r_edit_dirty |= R_ALL;
-                }
-                else if (n == 'S') {
-                    tele_set_pattern_start(edit_pattern,
-                                           offset_index + edit_index);
-                }
-                else if (n == 'E') {
-                    tele_set_pattern_end(edit_pattern,
-                                         offset_index + edit_index);
-                }
-            }
-            else {
-                u8 n = hid_to_ascii(key, mod_key);
-
-                if (n > 0x2F && n < 0x03A) {
-                    int16_t v = tele_get_pattern_val(edit_pattern,
-                                                     edit_index + offset_index);
-                    if (v && v < 3276 && v > -3276) {
-                        v = v * 10;
-                        if (v > 0)
-                            tele_set_pattern_val(edit_pattern,
-                                                 edit_index + offset_index,
-                                                 v + n - 0x30);
-                        else
-                            tele_set_pattern_val(edit_pattern,
-                                                 edit_index + offset_index,
-                                                 v - n - 0x30);
-                    }
-                    else
-                        tele_set_pattern_val(
-                            edit_pattern, edit_index + offset_index, n - 0x30);
-                    r_edit_dirty |= R_ALL;
-                }
-                else if (n == 0x2D) {  // -
-                    int16_t v = tele_get_pattern_val(edit_pattern,
-                                                     edit_index + offset_index);
-                    tele_set_pattern_val(edit_pattern,
-                                         edit_index + offset_index, -v);
-                    r_edit_dirty |= R_ALL;
-                }
-                else if (n == 0x20) {  // space
-                    if (tele_get_pattern_val(edit_pattern,
-                                             edit_index + offset_index))
-                        tele_set_pattern_val(edit_pattern,
-                                             edit_index + offset_index, 0);
-                    else
-                        tele_set_pattern_val(edit_pattern,
-                                             edit_index + offset_index, 1);
-                    r_edit_dirty |= R_ALL;
-                }
-            }
-            break;
-        }
-    }
-}
-
 
 void render_init(void) {
     region_alloc(&line[0]);
@@ -1593,7 +1236,7 @@ void tele_scene(uint8_t i) {
 }
 
 void tele_pi() {
-    if (mode == M_TRACK) r_edit_dirty |= R_ALL;
+    if (mode == M_PATTERN) r_edit_dirty |= R_ALL;
 }
 
 int8_t script_caller;
