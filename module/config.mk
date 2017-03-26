@@ -62,10 +62,12 @@ TARGET = $(THIS).elf
 # List of C source files.
 CSRCS = \
 	../module/main.c					\
+	../module/edit_mode.c   				\
 	../module/flash.c					\
 	../module/gitversion.c					\
 	../module/help_mode.c  					\
 	../module/line_editor.c					\
+	../module/live_mode.c   				\
 	../module/pattern_mode.c   				\
 	../module/preset_r_mode.c   				\
 	../module/preset_w_mode.c   				\
