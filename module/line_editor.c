@@ -20,7 +20,7 @@
 // global copy buffer
 static char copy_buffer[LINE_EDITOR_SIZE];
 
-void line_editor_set(line_editor_t *le, char value[LINE_EDITOR_SIZE]) {
+void line_editor_set(line_editor_t *le, const char value[LINE_EDITOR_SIZE]) {
     size_t length = strlen(value);
     if (length < LINE_EDITOR_SIZE) {
         strcpy(le->buffer, value);
@@ -34,7 +34,7 @@ void line_editor_set(line_editor_t *le, char value[LINE_EDITOR_SIZE]) {
     }
 }
 
-void line_editor_set_command(line_editor_t *le, tele_command_t *command) {
+void line_editor_set_command(line_editor_t *le, const tele_command_t *command) {
     print_command(command, le->buffer);
     le->length = strlen(le->buffer);
     le->cursor = le->length;
@@ -111,4 +111,8 @@ void line_editor_draw(line_editor_t *le, char prefix, region *reg) {
 
     region_fill(reg, 0);
     font_string_region_clip_hi(reg, s, 0, 0, 0xf, 0, le->cursor + 2);
+}
+
+void line_editor_set_copy_buffer(const char *value) {
+    strcpy(copy_buffer, value);
 }

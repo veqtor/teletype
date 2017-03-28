@@ -382,6 +382,61 @@ void tele_set_script_c(size_t script_idx, size_t c_idx,
            sizeof(tele_command_t));
 }
 
+void overwrite_script_command(size_t script_idx, size_t command_idx,
+                              const tele_command_t *cmd) {
+    if (command_idx >= SCRIPT_MAX_COMMANDS) return;
+
+    tele_set_script_c(script_idx, command_idx, cmd);
+
+    const uint8_t script_len = tele_get_script_l(script_idx);
+
+    if (script_len < SCRIPT_MAX_COMMANDS && command_idx >= script_len) {
+        tele_set_script_l(script_idx, script_len + 1);
+    }
+}
+
+void insert_script_command(size_t script_idx, size_t command_idx,
+                           const tele_command_t *cmd) {
+    if (command_idx >= SCRIPT_MAX_COMMANDS) return;
+
+    uint8_t script_len = tele_get_script_l(script_idx);
+    if (script_len == SCRIPT_MAX_COMMANDS) {                // no room to insert
+        delete_script_command(script_idx, script_len - 1);  // make room
+        script_len = tele_get_script_l(script_idx);
+    }
+
+    // shuffle down
+    for (size_t i = script_len; i > command_idx; i--) {
+        const tele_command_t *cmd = tele_get_script_c(script_idx, i - 1);
+        tele_set_script_c(script_idx, i, cmd);
+    }
+
+    // increase length
+    tele_set_script_l(script_idx, script_len + 1);
+
+    // overwrite at command_idx
+    overwrite_script_command(script_idx, command_idx, cmd);
+}
+
+void delete_script_command(size_t script_idx, size_t command_idx) {
+    if (command_idx >= SCRIPT_MAX_COMMANDS) return;
+
+    uint8_t script_len = tele_get_script_l(script_idx);
+    if (script_len && tele_get_script_c(script_idx, command_idx)->length) {
+        script_len--;
+        tele_set_script_l(script_idx, script_len);
+
+        for (size_t n = command_idx; n < script_len; n++) {
+            const tele_command_t *cmd = tele_get_script_c(script_idx, n + 1);
+            tele_set_script_c(script_idx, n, cmd);
+        }
+
+        tele_command_t blank_command;
+        blank_command.length = 0;
+        tele_set_script_c(script_idx, script_len, &blank_command);
+    }
+}
+
 scene_script_t *tele_script_ptr() {
     return scene_state.scripts;
 }
