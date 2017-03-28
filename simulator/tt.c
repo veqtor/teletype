@@ -136,7 +136,7 @@ int main() {
         tele_command_t temp;
         exec_state_t es;
         es_init(&es);
-        char error_msg[ERROR_MSG_LENGTH];
+        char error_msg[TELE_ERROR_MSG_LENGTH];
         status = parse(in, &temp, error_msg);
         if (status == E_OK) {
             status = validate(&temp, error_msg);

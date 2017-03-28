@@ -23,8 +23,12 @@ char input[32];
 char input_buffer[32];
 uint8_t edit_line;
 uint8_t edit;
+error_t status;
+char error_msg[TELE_ERROR_MSG_LENGTH];
 
 void set_edit_mode() {
+    status = E_OK;
+    error_msg[0] = 0;
     edit_line = 0;
     print_command(tele_get_script_c(edit, edit_line), input);
     pos = strlen(input);
@@ -67,6 +71,8 @@ void process_edit_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
             break;
 
         case 0x30:  // ]
+            status = E_OK;
+            error_msg[0] = 0;
             edit++;
             if (edit == 10) edit = 0;
             if (edit_line > tele_get_script_l(edit))
@@ -80,6 +86,8 @@ void process_edit_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
             break;
 
         case 0x2F:  // [
+            status = E_OK;
+            error_msg[0] = 0;
             if (edit)
                 edit--;
             else
@@ -282,10 +290,6 @@ void screen_refresh_edit() {
                 error_msg[0] = 0;
             }
             status = E_OK;
-        }
-        else if (output_new) {
-            output_new = 0;
-            s[0] = 0;
         }
         else {
             s[0] = 0;

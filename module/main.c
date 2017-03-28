@@ -61,7 +61,6 @@ http://msgpack.org
 #include "edit_mode.h"
 #include "flash.h"
 #include "fudge.h"
-#include "gitversion.h"
 #include "help_mode.h"
 #include "live_mode.h"
 #include "pattern_mode.h"
@@ -95,21 +94,11 @@ aout_t aout[4];
 // defined in fudge.h
 u8 mutes[8];
 
-// defined in fudge.h
-error_t status;
-// defined in fudge.h
-char error_msg[ERROR_MSG_LENGTH];
-
 
 uint8_t metro_act;
 unsigned int metro_time;
 
 uint8_t mod_key = 0, hold_key, hold_key_count = 0;
-
-// defined in fudge.h
-int16_t output;
-// defined in fudge.h
-int16_t output_new;
 
 #define I2C_DATA_LENGTH_MAX 8
 #define I2C_QUEUE_SIZE 16
@@ -130,8 +119,6 @@ uint8_t r_edit_dirty;
 
 // defined in fudge.h
 uint8_t activity;
-// defined in fudge.h
-uint8_t activity_prev;
 
 // defined in fudge.h
 region line[8] = {
@@ -1092,6 +1079,9 @@ static void tele_usb_disk() {
                                     if (c == '\n') {
                                         if (p && l < SCRIPT_MAX_COMMANDS) {
                                             tele_command_t temp;
+                                            error_t status;
+                                            char error_msg
+                                                [TELE_ERROR_MSG_LENGTH];
                                             status =
                                                 parse(input, &temp, error_msg);
 
@@ -1317,12 +1307,9 @@ int main(void) {
 
     for (int i = 0; i < 8; i++) mutes[i] = 1;
 
-    status = E_WELCOME;
-    strcpy(error_msg, git_version);
+    init_live_mode();
     r_edit_dirty = R_MESSAGE | R_INPUT;
     activity = 0;
-    activity_prev = 0xff;
-
     set_mode(f.mode);
 
     run_script(INIT_SCRIPT);

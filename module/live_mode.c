@@ -5,12 +5,12 @@
 // this
 #include "flash.h"
 #include "fudge.h"
+#include "gitversion.h"
 #include "keyboard_helper.h"
 #include "line_editor.h"
 
 // libavr32
 #include "font.h"
-#include "kbd.h"
 #include "region.h"
 #include "util.h"
 
@@ -18,154 +18,84 @@
 #include "conf_usb_host.h"  // needed in order to include "usb_protocol_hid.h"
 #include "usb_protocol_hid.h"
 
-uint8_t pos;
-char input[32];
-char input_buffer[32];
-uint8_t edit_line;
-scene_script_t history;
-uint8_t edit;
+#define HISTORY_SIZE 6
+tele_command_t history[HISTORY_SIZE];
+uint8_t history_line;
+line_editor_t le;
+process_result_t output;
+error_t status;
+char error_msg[TELE_ERROR_MSG_LENGTH];
+uint8_t activity_prev;
+
+void init_live_mode() {
+    status = E_WELCOME;
+    strcpy(error_msg, git_version);
+    activity_prev = 0xff;
+}
 
 void set_live_mode() {
-    for (int n = 0; n < 32; n++) input[n] = 0;
-    pos = 0;
-    edit_line = SCRIPT_MAX_COMMANDS;
+    line_editor_set(&le, "");
+    history_line = HISTORY_SIZE;
     activity |= A_REFRESH;
 }
 
-void process_live_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
-    uint8_t mod_SH = mod_key & SHIFT;
-    uint8_t mod_ALT = mod_key & ALT;
-
-    switch (key) {
-        case 0x51:  // down
-            if (edit_line < (SCRIPT_MAX_COMMANDS - 1)) {
-                edit_line++;
-                print_command(&history.c[edit_line], input);
-                pos = strlen(input);
-                for (size_t n = pos; n < 32; n++) input[n] = 0;
-            }
-            else {
-                edit_line = SCRIPT_MAX_COMMANDS;
-                pos = 0;
-                for (size_t n = 0; n < 32; n++) input[n] = 0;
-            }
-            break;
-        case 0x52:  // up
-            if (edit_line) {
-                edit_line--;
-                print_command(&history.c[edit_line], input);
-
-                pos = strlen(input);
-                for (size_t n = pos; n < 32; n++) input[n] = 0;
-            }
-            break;
-
-        case 0x50:  // back
-            if (pos) { pos--; }
-            break;
-
-        case 0x4f:  // forward
-            if (pos < strlen(input)) { pos++; }
-            break;
-
-        case BACKSPACE:
-            if (mod_SH) {
-                for (size_t n = 0; n < 32; n++) input[n] = 0;
-                pos = 0;
-            }
-            else if (pos) {
-                pos--;
-                // input[pos] = ' ';
-                for (int x = pos; x < 31; x++) input[x] = input[x + 1];
-            }
-            break;
-
-        case RETURN: {
-            tele_command_t temp;
-            status = parse(input, &temp, error_msg);
-
-            if (status == E_OK) {
-                status = validate(&temp, error_msg);
-
-                if (status == E_OK) {
-                    edit_line = SCRIPT_MAX_COMMANDS;
-
-                    if (temp.length) {
-                        memcpy(&history.c[0], &history.c[1],
-                               sizeof(tele_command_t));
-                        memcpy(&history.c[1], &history.c[2],
-                               sizeof(tele_command_t));
-                        memcpy(&history.c[2], &history.c[3],
-                               sizeof(tele_command_t));
-                        memcpy(&history.c[3], &history.c[4],
-                               sizeof(tele_command_t));
-                        memcpy(&history.c[4], &history.c[5],
-                               sizeof(tele_command_t));
-                        memcpy(&history.c[5], &temp, sizeof(tele_command_t));
-
-                        process_result_t o = run_command(&temp);
-                        if (o.has_value) {
-                            output = o.value;
-                            output_new++;
-                        }
-                    }
-
-                    for (size_t n = 0; n < 32; n++) input[n] = 0;
-                    pos = 0;
-                }
-            }
-            r_edit_dirty |= R_MESSAGE;
-            break;
+void process_live_keys(uint8_t k, uint8_t m, bool is_held_key) {
+    if (match_no_mod(m, k, HID_DOWN)) {  // down
+        if (history_line < (HISTORY_SIZE - 1)) {
+            history_line++;
+            line_editor_set_command(&le, &history[history_line]);
+            r_edit_dirty |= R_INPUT;
         }
-
-        default:
-            if (mod_ALT) {          // ALT
-                if (key == 0x1b) {  // x CUT
-                    memcpy(&input_buffer, &input, sizeof(input));
-                    for (size_t n = 0; n < 32; n++) input[n] = 0;
-                    pos = 0;
-                }
-                else if (key == 0x06) {  // c COPY
-                    memcpy(&input_buffer, &input, sizeof(input));
-                }
-                else if (key == 0x19) {  // v PASTE
-                    memcpy(&input, &input_buffer, sizeof(input));
-                    pos = strlen(input);
-                }
-            }
-            else {  /// NORMAL TEXT ENTRY
-                if (pos < 29) {
-                    u8 n = hid_to_ascii(key, mod_key);
-                    if (n) {
-                        for (int x = 31; x > pos; x--) input[x] = input[x - 1];
-
-                        input[pos] = n;
-                        pos++;
-                    }
-                }
-            }
-
-            break;
+        else {
+            history_line = HISTORY_SIZE;
+            line_editor_set(&le, "");
+            r_edit_dirty |= R_INPUT;
+        }
     }
+    else if (match_no_mod(m, k, HID_UP)) {  // up
+        if (history_line) {
+            history_line--;
+            line_editor_set_command(&le, &history[history_line]);
+            r_edit_dirty |= R_INPUT;
+        }
+    }
+    else if (match_no_mod(m, k, HID_ENTER)) {  // enter
+        r_edit_dirty |= R_MESSAGE;  // something will definitely happen
+        r_edit_dirty |= R_INPUT;
 
-    r_edit_dirty |= R_INPUT;
+        tele_command_t command;
+
+        status = parse(line_editor_get(&le), &command, error_msg);
+        if (status != E_OK)
+            return;  // quit, screen_refresh_live will display the error message
+
+        status = validate(&command, error_msg);
+        if (status != E_OK)
+            return;  // quit, screen_refresh_live will display the error message
+
+        history_line = HISTORY_SIZE;
+        if (command.length) {
+            // shuffle the history up
+            // should really use some sort of ring buffer
+            for (size_t i = 0; i < HISTORY_SIZE - 1; i++) {
+                memcpy(&history[i], &history[i + 1], sizeof(command));
+            }
+            memcpy(&history[HISTORY_SIZE - 1], &command, sizeof(command));
+
+            output = run_command(&command);
+        }
+        line_editor_set(&le, "");
+    }
+    else {  // pass the key though to the line editor
+        bool processed = line_editor_process_keys(&le, k, m, is_held_key);
+        if (processed) r_edit_dirty |= R_INPUT;
+    }
 }
 
 
 void screen_refresh_live() {
     if (r_edit_dirty & R_INPUT) {
-        char s[32];
-
-        s[0] = '>';
-        s[1] = ' ';
-        s[2] = 0;
-
-        strcat(s, input);
-        strcat(s, " ");
-
-        region_fill(&line[7], 0);
-        font_string_region_clip_hi(&line[7], s, 0, 0, 0xf, 0, pos + 2);
-
+        line_editor_draw(&le, '>', &line[7]);
         screen_dirty = true;
         r_edit_dirty &= ~R_INPUT;
     }
@@ -181,9 +111,10 @@ void screen_refresh_live() {
             }
             status = E_OK;
         }
-        else if (output_new) {
-            output_new = 0;
-            itoa(output, s, 10);
+
+        else if (output.has_value) {
+            itoa(output.value, s, 10);
+            output.has_value = false;
         }
         else {
             s[0] = 0;

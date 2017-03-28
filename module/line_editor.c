@@ -5,6 +5,9 @@
 // this
 #include "keyboard_helper.h"
 
+// teletype
+#include "teletype.h"
+
 // libavr32
 #include "font.h"
 #include "kbd.h"
@@ -13,6 +16,9 @@
 // asf
 #include "conf_usb_host.h"  // needed in order to include "usb_protocol_hid.h"
 #include "usb_protocol_hid.h"
+
+// global copy buffer
+static char copy_buffer[LINE_EDITOR_SIZE];
 
 void line_editor_set(line_editor_t *le, char value[LINE_EDITOR_SIZE]) {
     size_t length = strlen(value);
@@ -26,6 +32,12 @@ void line_editor_set(line_editor_t *le, char value[LINE_EDITOR_SIZE]) {
         le->cursor = 0;
         le->length = 0;
     }
+}
+
+void line_editor_set_command(line_editor_t *le, tele_command_t *command) {
+    print_command(command, le->buffer);
+    le->length = strlen(le->buffer);
+    le->cursor = le->length;
 }
 
 char *line_editor_get(line_editor_t *le) {
@@ -53,9 +65,20 @@ bool line_editor_process_keys(line_editor_t *le, uint8_t k, uint8_t m,
         return true;
     }
     else if (match_shift(m, k, HID_BACKSPACE)) {  // backspace
-        le->buffer[0] = 0;
-        le->cursor = 0;
-        le->length = 0;
+        line_editor_set(le, "");
+        return true;
+    }
+    else if (match_alt(m, k, HID_X)) {  // alt + x
+        strcpy(copy_buffer, le->buffer);
+        line_editor_set(le, "");
+        return true;
+    }
+    else if (match_alt(m, k, HID_C)) {  // alt + c
+        strcpy(copy_buffer, le->buffer);
+        return true;
+    }
+    else if (match_alt(m, k, HID_V)) {  // alt + v
+        line_editor_set(le, copy_buffer);
         return true;
     }
     else if (m == HID_MODIFIER_NONE || m == HID_MODIFIER_LEFT_SHIFT ||

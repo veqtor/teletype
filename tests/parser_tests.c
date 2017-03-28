@@ -8,7 +8,7 @@
 
 error_t parse_and_validate_helper(char* text) {
     tele_command_t cmd;
-    char error_msg[ERROR_MSG_LENGTH];
+    char error_msg[TELE_ERROR_MSG_LENGTH];
     error_t result = parse(text, &cmd, error_msg);
     if (result != E_OK) { return result; }
 
@@ -190,7 +190,7 @@ TEST parser_should_return_op() {
         const tele_op_t* op = tele_ops[i];
         const char* text = op->name;
         tele_command_t cmd;
-        char error_msg[ERROR_MSG_LENGTH];
+        char error_msg[TELE_ERROR_MSG_LENGTH];
         error_t result = parse(text, &cmd, error_msg);
         ASSERT_EQm(text, result, E_OK);
         ASSERT_EQm(text, cmd.length, 1);
@@ -206,7 +206,7 @@ TEST parser_should_return_mod() {
         const tele_mod_t* mod = tele_mods[i];
         const char* text = mod->name;
         tele_command_t cmd;
-        char error_msg[ERROR_MSG_LENGTH];
+        char error_msg[TELE_ERROR_MSG_LENGTH];
         error_t result = parse(text, &cmd, error_msg);
         ASSERT_EQm(text, result, E_OK);
         ASSERT_EQm(text, cmd.length, 1);

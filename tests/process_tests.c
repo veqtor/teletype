@@ -12,7 +12,7 @@ TEST process_helper(size_t n, char* lines[], int16_t answer) {
     es_init(&es);
     for (size_t i = 0; i < n; i++) {
         tele_command_t cmd;
-        char error_msg[ERROR_MSG_LENGTH];
+        char error_msg[TELE_ERROR_MSG_LENGTH];
         error_t error = parse(lines[i], &cmd, error_msg);
         if (error != E_OK) { FAIL(); }
         if (validate(&cmd, error_msg) != E_OK) { FAIL(); }

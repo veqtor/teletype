@@ -86,7 +86,7 @@ void clear_delays(void) {
 // PARSE ////////////////////////////////////////////////////////
 
 error_t parse(const char *cmd, tele_command_t *out,
-              char error_msg[ERROR_MSG_LENGTH]) {
+              char error_msg[TELE_ERROR_MSG_LENGTH]) {
     // call the Ragel generated scanner function
     return scanner(cmd, out, error_msg);
 }
@@ -94,7 +94,8 @@ error_t parse(const char *cmd, tele_command_t *out,
 /////////////////////////////////////////////////////////////////
 // VALIDATE /////////////////////////////////////////////////////
 
-error_t validate(const tele_command_t *c, char error_msg[ERROR_MSG_LENGTH]) {
+error_t validate(const tele_command_t *c,
+                 char error_msg[TELE_ERROR_MSG_LENGTH]) {
     error_msg[0] = 0;
     int16_t stack_depth = 0;
     uint8_t idx = c->length;
