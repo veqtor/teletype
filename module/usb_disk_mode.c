@@ -306,14 +306,10 @@ void tele_usb_disk() {
                                                     validate(&temp, error_msg);
 
                                                 if (status == E_OK) {
-                                                    tele_set_script_c(s, l,
-                                                                      &temp);
+                                                    overwrite_script_command(
+                                                        s, l, &temp);
                                                     memset(input, 0,
                                                            sizeof(input));
-                                                    tele_set_script_l(
-                                                        s,
-                                                        tele_get_script_l(s) +
-                                                            1);
                                                 }
                                                 else {
                                                     print_dbg("\r\nvalidate: ");

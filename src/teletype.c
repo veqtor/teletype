@@ -20,6 +20,10 @@
 
 // static char dbg[32];
 
+void tele_set_script_l(size_t idx, uint8_t l);
+void tele_set_script_c(size_t script_idx, size_t c_idx,
+                       const tele_command_t *cmd);
+
 static const char *errordesc[] = { "OK",
                                    WELCOME,
                                    "UNKNOWN WORD",

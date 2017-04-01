@@ -68,10 +68,7 @@ scene_pattern_t *tele_patterns_ptr(void);
 size_t tele_patterns_size(void);
 
 uint8_t tele_get_script_l(size_t idx);
-void tele_set_script_l(size_t idx, uint8_t l);
 const tele_command_t *tele_get_script_c(size_t script_idx, size_t c_idx);
-void tele_set_script_c(size_t script_idx, size_t c_idx,
-                       const tele_command_t *cmd);
 
 void overwrite_script_command(size_t script_idx, size_t command_idx,
                               const tele_command_t *cmd);
