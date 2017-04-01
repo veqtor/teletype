@@ -1,24 +1,6 @@
-/*
-teletype!
-
-todo:
-
-- remove op text strings?
-- script tr execution clocked? on 1ms timer, where interrupts simply queue
-execution?
-- protect process() from ints? tele_tick??
-
-serial framing:
-http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
-
-msgpack:
-http://msgpack.org
-
-*/
-
-#include <ctype.h>   // toupper
-#include <stdio.h>   // sprintf
-#include <string.h>  // memcpy
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
 
 // asf
 #include "compiler.h"
@@ -32,22 +14,19 @@ http://msgpack.org
 #include "sysclk.h"
 
 // system
+#include "adc.h"
 #include "events.h"
+#include "font.h"
+#include "hid.h"
 #include "i2c.h"
 #include "init_common.h"
 #include "init_teletype.h"
 #include "kbd.h"
-#include "types.h"
-// #include "monome.h"
-#include "adc.h"
-#include "timers.h"
-#include "util.h"
-// #include "ftdi.h"
-#include "font.h"
-#include "hid.h"
 #include "region.h"
 #include "screen.h"
-
+#include "timers.h"
+#include "types.h"
+#include "util.h"
 
 // this
 #include "conf_board.h"
@@ -63,8 +42,13 @@ http://msgpack.org
 #include "teletype_io.h"
 #include "usb_disk_mode.h"
 
+
 #define RATE_CLOCK 10
 #define RATE_CV 6
+
+
+////////////////////////////////////////////////////////////////////////////////
+// globals
 
 // defined in fudge.h
 uint8_t preset_select;
@@ -133,7 +117,6 @@ bool screen_dirty = false;
 static void check_events(void);
 
 // handler protos
-// static void handler_None(s32 data) { ;; }
 static void handler_KeyTimer(s32 data);
 static void handler_Front(s32 data);
 static void handler_HidConnect(s32 data);
@@ -146,20 +129,7 @@ static void handler_II(s32 data);
 static void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key);
 bool process_global_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
 
-
 static void render_init(void);
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-// application
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -220,21 +190,7 @@ static void cvTimer_callback(void* o) {
 }
 
 static void clockTimer_callback(void* o) {
-    // static event_t e;
-    // e.type = kEventTimer;
-    // e.data = 0;
-    // event_post(&e);
-    // print_dbg("\r\ntimer.");
-
-    // clock_phase++;
-    // if(clock_phase>1) clock_phase=0;
-    // (*clock_pulse)(clock_phase);
-
-    // clock_time++;
-
     tele_tick(RATE_CLOCK);
-
-    // i2c_master_tx(d);
 }
 
 static void refreshTimer_callback(void* o) {
@@ -282,16 +238,9 @@ static void metroTimer_callback(void* o) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 // event handlers
 
 static void handler_Front(s32 data) {
-    // print_dbg("\r\n //// FRONT HOLD");
-
     if (data == 0) {
         if (mode != M_PRESET_R) {
             front_timer = 0;
@@ -319,11 +268,6 @@ static void handler_PollADC(s32 data) {
         process_preset_r_knob(adc[1], mod_key);
     else
         tele_set_param(adc[1] << 2);
-
-    // print_dbg("\r\nadc:\t"); print_dbg_ulong(adc[0]);
-    // print_dbg("\t"); print_dbg_ulong(adc[1]);
-    // print_dbg("\t"); print_dbg_ulong(adc[2]);
-    // print_dbg("\t"); print_dbg_ulong(adc[3]);
 }
 
 static void handler_SaveFlash(s32 data) {
@@ -354,21 +298,14 @@ static void handler_KeyTimer(s32 data) {
 }
 
 static void handler_HidConnect(s32 data) {
-    // print_dbg("\r\nhid connect\r\n");
     timer_add(&hidTimer, 47, &hidTimer_callback, NULL);
 }
 
 static void handler_HidDisconnect(s32 data) {
     timer_remove(&hidTimer);
-    // print_dbg("\r\nno more hid");
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // keys
 
@@ -388,10 +325,6 @@ static void handler_HidTimer(s32 data) {
             }
 
             if (frame_compare(frame[i]) == false) {
-                // print_dbg("\r\nk: ");
-                // print_dbg_hex(frame[i]);
-                // print_dbg("\r\nmod: ");
-                // print_dbg_hex(frame[0]);
                 hold_key = frame[i];
                 hold_key_count = 0;
                 process_keypress(hold_key, mod_key, false);
@@ -399,21 +332,13 @@ static void handler_HidTimer(s32 data) {
         }
 
         set_old_frame(frame);
-
-        // print_dbg("\r\nhid:\t");
-        // for(i=0;i<8;i++) {
-        // 	print_dbg_ulong( (int) frame[i] );
-        // 	print_dbg("\t");
-        // }
     }
 
     hid_clear_frame_dirty();
 }
 
 
-static void handler_HidPacket(s32 data) {
-    // print_dbg("\r\nhid packet");
-}
+static void handler_HidPacket(s32 data) {}
 
 
 static void handler_Trigger(s32 data) {
@@ -421,11 +346,6 @@ static void handler_Trigger(s32 data) {
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // refresh
 
@@ -440,7 +360,6 @@ static void handler_ScreenRefresh(s32 data) {
     }
 }
 
-
 static void handler_II(s32 data) {
     uint8_t i = data & 0xff;
     int16_t d = (int)(data >> 16);
@@ -453,14 +372,6 @@ static void handler_II(s32 data) {
     buffer[2] = d & 0xff;
 
     i2c_master_tx(addr, buffer, 3);
-    // print_dbg("\r\ni2c: ");
-    // print_dbg_ulong(addr);
-    // print_dbg(" ");
-    // print_dbg_ulong(i);
-    // print_dbg(" ");
-    // if(d<0)
-    // 	print_dbg(" -");
-    // print_dbg_ulong(d);
 }
 
 static void handler_IItx(s32 data) {
@@ -469,8 +380,6 @@ static void handler_IItx(s32 data) {
     i2c_master_tx(i2c_queue[data].addr, i2c_queue[data].d, i2c_queue[data].l);
 }
 
-
-// assign event handlers
 static inline void assign_main_event_handlers(void) {
     app_event_handlers[kEventFront] = &handler_Front;
     app_event_handlers[kEventPollADC] = &handler_PollADC;
@@ -493,11 +402,6 @@ void check_events(void) {
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // funcs
 
@@ -648,26 +552,25 @@ void render_init(void) {
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+// teletype_io.h
+
 void tele_metro(int16_t m, int16_t m_act, uint8_t m_reset) {
     metro_time = m;
 
     if (m_act && !metro_act) {
-        // print_dbg("\r\nTURN ON METRO");
         metro_act = 1;
         if (tele_get_script_l(METRO_SCRIPT)) activity |= A_METRO;
         timer_add(&metroTimer, metro_time, &metroTimer_callback, NULL);
     }
     else if (!m_act && metro_act) {
-        // print_dbg("\r\nTURN OFF METRO");
         metro_act = 0;
         timer_remove(&metroTimer);
     }
     else if (!m_reset) {
-        // print_dbg("\r\nSET METRO");
         timer_set(&metroTimer, metro_time);
     }
     else {
-        // print_dbg("\r\nRESET METRO");
         timer_reset(&metroTimer);
     }
 
@@ -732,29 +635,6 @@ void tele_ii(uint8_t i, int16_t d) {
 
 void tele_ii_tx(uint8_t addr, uint8_t* data, uint8_t l) {
     i2c_master_tx(addr, data, l);
-    /*
-    int i = 0, n;
-
-    if (i2c_waiting_count < I2C_QUEUE_SIZE) {
-        while (i2c_queue[i].waiting == true) i++;
-
-        i2c_queue[i].waiting = true;
-        i2c_queue[i].addr = addr;
-        i2c_queue[i].l = l;
-
-        for (n = 0; n < l; n++) i2c_queue[i].d[n] = data[n];
-
-        i2c_waiting_count++;
-
-        static event_t e;
-        e.type = kEventIItx;
-        e.data = i;
-        event_post(&e);
-    }
-    else {
-        print_dbg("\r\ni2c queue full");
-    }
-    */
 }
 
 void tele_ii_tx_now(uint8_t addr, uint8_t* data, uint8_t l) {
@@ -803,17 +683,6 @@ bool tele_get_input_state(uint8_t n) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 // main
 
 int main(void) {
@@ -833,10 +702,7 @@ int main(void) {
     cpu_irq_enable();
 
     init_usb_host();
-    // init_monome();
-
     init_oled();
-
     init_i2c_master();
 
     print_dbg("\r\n\n// teletype! //////////////////////////////// ");
