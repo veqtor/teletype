@@ -35,7 +35,8 @@ static void mod_S_func(scene_state_t *ss, exec_state_t *NOTUSED(es),
 static void op_S_ALL_get(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *es, command_state_t *NOTUSED(cs)) {
     for (int16_t i = 0; i < ss->stack_op.top; i++) {
-        process_command(es, &ss->stack_op.commands[ss->stack_op.top - i - 1]);
+        process_command(ss, es,
+                        &ss->stack_op.commands[ss->stack_op.top - i - 1]);
     }
     ss->stack_op.top = 0;
     tele_s(0);
@@ -45,7 +46,7 @@ static void op_S_POP_get(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *es, command_state_t *NOTUSED(cs)) {
     if (ss->stack_op.top) {
         ss->stack_op.top--;
-        process_command(es, &ss->stack_op.commands[ss->stack_op.top]);
+        process_command(ss, es, &ss->stack_op.commands[ss->stack_op.top]);
         if (ss->stack_op.top == 0) tele_s(0);
     }
 }

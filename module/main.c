@@ -50,6 +50,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 // globals
 
+scene_state_t scene_state;
+
+
 // defined in fudge.h
 uint8_t preset_select;
 
@@ -190,7 +193,7 @@ static void cvTimer_callback(void* o) {
 }
 
 static void clockTimer_callback(void* o) {
-    tele_tick(RATE_CLOCK);
+    tele_tick(&scene_state, RATE_CLOCK);
 }
 
 static void refreshTimer_callback(void* o) {
@@ -228,9 +231,9 @@ static void hidTimer_callback(void* o) {
 }
 
 static void metroTimer_callback(void* o) {
-    if (tele_get_script_l(METRO_SCRIPT)) {
+    if (ss_get_script_len(&scene_state, METRO_SCRIPT)) {
         activity |= A_METRO;
-        run_script(METRO_SCRIPT);
+        run_script(&scene_state, METRO_SCRIPT);
     }
     else
         activity &= ~A_METRO;
@@ -260,14 +263,14 @@ static void handler_Front(s32 data) {
 static void handler_PollADC(s32 data) {
     adc_convert(&adc);
 
-    tele_set_in(adc[0] << 2);
+    ss_set_in(&scene_state, adc[0] << 2);
 
     if (mode == M_PATTERN)
         process_pattern_knob(adc[1], mod_key);
     else if (mode == M_PRESET_R)
         process_preset_r_knob(adc[1], mod_key);
     else
-        tele_set_param(adc[1] << 2);
+        ss_set_param(&scene_state, adc[1] << 2);
 }
 
 static void handler_SaveFlash(s32 data) {
@@ -279,7 +282,7 @@ static void handler_KeyTimer(s32 data) {
         if (front_timer == 1) {
             flash_read(preset_select);
 
-            run_script(INIT_SCRIPT);
+            run_script(&scene_state, INIT_SCRIPT);
 
             set_mode(last_mode);
 
@@ -342,7 +345,7 @@ static void handler_HidPacket(s32 data) {}
 
 
 static void handler_Trigger(s32 data) {
-    if (mutes[data]) { run_script(data); }
+    if (mutes[data]) { run_script(&scene_state, data); }
 }
 
 
@@ -488,7 +491,7 @@ bool process_global_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
             }
             else if (mod_META) {
                 if (!is_held_key) {
-                    clear_delays();
+                    clear_delays(&scene_state);
                     for (int i = 0; i < 4; i++) { aout[i].step = 1; }
                 }
             }
@@ -522,11 +525,11 @@ bool process_global_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
             return true;
         }
         else if (n == 'M') {
-            run_script(METRO_SCRIPT);
+            run_script(&scene_state, METRO_SCRIPT);
             return true;
         }
         else if (n == 'I') {
-            run_script(INIT_SCRIPT);
+            run_script(&scene_state, INIT_SCRIPT);
             return true;
         }
     }
@@ -560,7 +563,7 @@ void tele_metro(int16_t m, int16_t m_act, uint8_t m_reset) {
 
     if (m_act && !metro_act) {
         metro_act = 1;
-        if (tele_get_script_l(METRO_SCRIPT)) activity |= A_METRO;
+        if (ss_get_script_len(&scene_state, METRO_SCRIPT)) activity |= A_METRO;
         timer_add(&metroTimer, metro_time, &metroTimer_callback, NULL);
     }
     else if (!m_act && metro_act) {
@@ -658,10 +661,10 @@ int8_t script_caller;
 void tele_script(uint8_t a) {
     if (!script_caller) {
         script_caller = a;
-        run_script(a - 1);
+        run_script(&scene_state, a - 1);
     }
     else if (a != script_caller) {
-        run_script(a - 1);
+        run_script(&scene_state, a - 1);
     }
 
     script_caller = 0;
@@ -709,7 +712,7 @@ int main(void) {
     print_dbg("\r\nflash size: ");
     print_dbg_ulong(sizeof(f));
 
-    tele_init();
+    ss_init(&scene_state);
 
     if (flash_is_fresh()) {
         print_dbg("\r\n:::: first run, clearing flash");
@@ -717,7 +720,7 @@ int main(void) {
     }
     else {
         preset_select = f.scene;
-        tele_set_scene(preset_select);
+        ss_set_scene(&scene_state, preset_select);
         flash_read(preset_select);
         // load from flash at startup
     }
@@ -745,7 +748,7 @@ int main(void) {
     metro_time = 1000;
     timer_add(&metroTimer, metro_time, &metroTimer_callback, NULL);
 
-    clear_delays();
+    clear_delays(&scene_state);
 
     aout[0].slew = 1;
     aout[1].slew = 1;
@@ -759,7 +762,7 @@ int main(void) {
     activity = 0;
     set_mode(f.mode);
 
-    run_script(INIT_SCRIPT);
+    run_script(&scene_state, INIT_SCRIPT);
 
     while (true) { check_events(); }
 }

@@ -11,10 +11,6 @@
 #include "teletype_io.h"
 #include "util.h"
 
-void tele_set_script_l(size_t idx, uint8_t l);
-void tele_set_script_c(size_t script_idx, size_t c_idx,
-                       const tele_command_t *cmd);
-
 static const char *errordesc[] = { "OK",
                                    WELCOME,
                                    "UNKNOWN WORD",
@@ -34,43 +30,15 @@ const char *tele_error(error_t e) {
 
 
 /////////////////////////////////////////////////////////////////
-// STATE ////////////////////////////////////////////////////////
-
-// eventually these will not be global variables
-static scene_state_t scene_state = {
-    // variables that haven't been explicitly initialised, will be set to 0
-    .variables = {.a = 1,
-                  .b = 2,
-                  .c = 3,
-                  .cv_slew = { 1, 1, 1, 1 },
-                  .d = 4,
-                  .drunk_min = 0,
-                  .drunk_max = 255,
-                  .m = 1000,
-                  .m_act = 1,
-                  .o_inc = 1,
-                  .o_min = 0,
-                  .o_max = 63,
-                  .o_wrap = 1,
-                  .q_n = 1,
-                  .time_act = 1,
-                  .tr_pol = { 1, 1, 1, 1 },
-                  .tr_time = { 100, 100, 100, 100 } }
-};
-
-/////////////////////////////////////////////////////////////////
 // DELAY ////////////////////////////////////////////////////////
 
-void clear_delays(void) {
-    for (int16_t i = 0; i < TR_COUNT; i++) {
-        scene_state.tr_pulse_timer[i] = 0;
-    }
+void clear_delays(scene_state_t *ss) {
+    for (int16_t i = 0; i < TR_COUNT; i++) { ss->tr_pulse_timer[i] = 0; }
 
-    for (int16_t i = 0; i < DELAY_SIZE; i++) { scene_state.delay.time[i] = 0; }
+    for (int16_t i = 0; i < DELAY_SIZE; i++) { ss->delay.time[i] = 0; }
 
-    scene_state.delay.count = 0;
-
-    scene_state.stack_op.top = 0;
+    ss->delay.count = 0;
+    ss->stack_op.top = 0;
 
     tele_delay(0);
     tele_s(0);
@@ -180,20 +148,21 @@ error_t validate(const tele_command_t *c,
 /////////////////////////////////////////////////////////////////
 // RUN //////////////////////////////////////////////////////////
 
-process_result_t run_script(size_t script_no) {
+process_result_t run_script(scene_state_t *ss, size_t script_no) {
     process_result_t result = {.has_value = false, .value = 0 };
     exec_state_t es;
     es_init(&es);
-    for (size_t i = 0; i < tele_get_script_l(script_no); i++) {
-        result = process_command(&es, tele_get_script_c(script_no, i));
+    for (size_t i = 0; i < ss_get_script_len(ss, script_no); i++) {
+        result =
+            process_command(ss, &es, ss_get_script_command(ss, script_no, i));
     }
     return result;
 }
 
-process_result_t run_command(const tele_command_t *cmd) {
+process_result_t run_command(scene_state_t *ss, const tele_command_t *cmd) {
     exec_state_t es;
     es_init(&es);
-    return process_command(&es, cmd);
+    return process_command(ss, &es, cmd);
 }
 
 
@@ -201,7 +170,8 @@ process_result_t run_command(const tele_command_t *cmd) {
 // PROCESS //////////////////////////////////////////////////////
 
 // run a single command inside a given exec_state
-process_result_t process_command(exec_state_t *es, const tele_command_t *c) {
+process_result_t process_command(scene_state_t *ss, exec_state_t *es,
+                                 const tele_command_t *c) {
     command_state_t cs;
     cs_init(&cs);
 
@@ -262,15 +232,14 @@ process_result_t process_command(exec_state_t *es, const tele_command_t *c) {
                 // pointer and we have enough params, then run set, else run get
                 if (idx == sub_start && op->set != NULL &&
                     cs_stack_size(&cs) >= op->params + 1)
-                    op->set(op->data, &scene_state, es, &cs);
+                    op->set(op->data, ss, es, &cs);
                 else
-                    op->get(op->data, &scene_state, es, &cs);
+                    op->get(op->data, ss, es, &cs);
             }
             else if (word_type == MOD) {
                 tele_command_t post_command;
                 copy_post_command(&post_command, c);
-                tele_mods[word_value]->func(&scene_state, es, &cs,
-                                            &post_command);
+                tele_mods[word_value]->func(ss, es, &cs, &post_command);
             }
         }
     }
@@ -288,203 +257,38 @@ process_result_t process_command(exec_state_t *es, const tele_command_t *c) {
     }
 }
 
-/////////////////////////////////////////////////////////////////
-// GETTERS & SETTERS ////////////////////////////////////////////
-
-void tele_set_in(int16_t value) {
-    scene_state.variables.in = value;
-}
-
-void tele_set_param(int16_t value) {
-    scene_state.variables.param = value;
-}
-
-void tele_set_scene(int16_t value) {
-    scene_state.variables.scene = value;
-}
-
-int16_t tele_get_pattern_i(size_t pattern) {
-    return scene_state.patterns[pattern].i;
-}
-
-void tele_set_pattern_i(size_t pattern, int16_t i) {
-    scene_state.patterns[pattern].i = i;
-}
-
-int16_t tele_get_pattern_l(size_t pattern) {
-    return scene_state.patterns[pattern].l;
-}
-
-void tele_set_pattern_l(size_t pattern, int16_t l) {
-    scene_state.patterns[pattern].l = l;
-}
-
-uint16_t tele_get_pattern_wrap(size_t pattern) {
-    return scene_state.patterns[pattern].wrap;
-}
-
-void tele_set_pattern_wrap(size_t pattern, uint16_t wrap) {
-    scene_state.patterns[pattern].wrap = wrap;
-}
-
-int16_t tele_get_pattern_start(size_t pattern) {
-    return scene_state.patterns[pattern].start;
-}
-
-void tele_set_pattern_start(size_t pattern, int16_t start) {
-    scene_state.patterns[pattern].start = start;
-}
-
-int16_t tele_get_pattern_end(size_t pattern) {
-    return scene_state.patterns[pattern].end;
-}
-
-void tele_set_pattern_end(size_t pattern, int16_t end) {
-    scene_state.patterns[pattern].end = end;
-}
-
-int16_t tele_get_pattern_val(size_t pattern, size_t idx) {
-    return scene_state.patterns[pattern].v[idx];
-}
-
-void tele_set_pattern_val(size_t pattern, size_t idx, int16_t val) {
-    scene_state.patterns[pattern].v[idx] = val;
-}
-
-scene_pattern_t *tele_patterns_ptr() {
-    return scene_state.patterns;
-}
-
-size_t tele_patterns_size() {
-    return sizeof(scene_state.patterns);
-}
-
-uint8_t tele_get_script_l(size_t idx) {
-    return scene_state.scripts[idx].l;
-}
-
-void tele_set_script_l(size_t idx, uint8_t l) {
-    scene_state.scripts[idx].l = l;
-}
-
-const tele_command_t *tele_get_script_c(size_t script_idx, size_t c_idx) {
-    return &scene_state.scripts[script_idx].c[c_idx];
-}
-
-void tele_set_script_c(size_t script_idx, size_t c_idx,
-                       const tele_command_t *cmd) {
-    memcpy(&scene_state.scripts[script_idx].c[c_idx], cmd,
-           sizeof(tele_command_t));
-}
-
-void overwrite_script_command(size_t script_idx, size_t command_idx,
-                              const tele_command_t *cmd) {
-    if (command_idx >= SCRIPT_MAX_COMMANDS) return;
-
-    tele_set_script_c(script_idx, command_idx, cmd);
-
-    const uint8_t script_len = tele_get_script_l(script_idx);
-
-    if (script_len < SCRIPT_MAX_COMMANDS && command_idx >= script_len) {
-        tele_set_script_l(script_idx, script_len + 1);
-    }
-}
-
-void insert_script_command(size_t script_idx, size_t command_idx,
-                           const tele_command_t *cmd) {
-    if (command_idx >= SCRIPT_MAX_COMMANDS) return;
-
-    uint8_t script_len = tele_get_script_l(script_idx);
-    if (script_len == SCRIPT_MAX_COMMANDS) {                // no room to insert
-        delete_script_command(script_idx, script_len - 1);  // make room
-        script_len = tele_get_script_l(script_idx);
-    }
-
-    // shuffle down
-    for (size_t i = script_len; i > command_idx; i--) {
-        const tele_command_t *cmd = tele_get_script_c(script_idx, i - 1);
-        tele_set_script_c(script_idx, i, cmd);
-    }
-
-    // increase length
-    tele_set_script_l(script_idx, script_len + 1);
-
-    // overwrite at command_idx
-    overwrite_script_command(script_idx, command_idx, cmd);
-}
-
-void delete_script_command(size_t script_idx, size_t command_idx) {
-    if (command_idx >= SCRIPT_MAX_COMMANDS) return;
-
-    uint8_t script_len = tele_get_script_l(script_idx);
-    if (script_len && tele_get_script_c(script_idx, command_idx)->length) {
-        script_len--;
-        tele_set_script_l(script_idx, script_len);
-
-        for (size_t n = command_idx; n < script_len; n++) {
-            const tele_command_t *cmd = tele_get_script_c(script_idx, n + 1);
-            tele_set_script_c(script_idx, n, cmd);
-        }
-
-        tele_command_t blank_command;
-        blank_command.length = 0;
-        tele_set_script_c(script_idx, script_len, &blank_command);
-    }
-}
-
-scene_script_t *tele_script_ptr() {
-    return scene_state.scripts;
-}
-
-size_t tele_script_size() {
-    return sizeof(scene_state.scripts);
-}
 
 /////////////////////////////////////////////////////////////////
 // TICK /////////////////////////////////////////////////////////
 
-void tele_tick(uint8_t time) {
+void tele_tick(scene_state_t *ss, uint8_t time) {
     // inc time
-    if (scene_state.variables.time_act) scene_state.variables.time += time;
+    if (ss->variables.time_act) ss->variables.time += time;
 
     // process delays
     for (int16_t i = 0; i < DELAY_SIZE; i++) {
-        if (scene_state.delay.time[i]) {
-            scene_state.delay.time[i] -= time;
-            if (scene_state.delay.time[i] <= 0) {
+        if (ss->delay.time[i]) {
+            ss->delay.time[i] -= time;
+            if (ss->delay.time[i] <= 0) {
                 // sprintf(dbg,"\r\ndelay %d", i);
                 // DBG
-                run_command(&scene_state.delay.commands[i]);
-                scene_state.delay.time[i] = 0;
-                scene_state.delay.count--;
-                if (scene_state.delay.count == 0) tele_delay(0);
+                run_command(ss, &ss->delay.commands[i]);
+                ss->delay.time[i] = 0;
+                ss->delay.count--;
+                if (ss->delay.count == 0) tele_delay(0);
             }
         }
     }
 
     // process tr pulses
     for (int16_t i = 0; i < TR_COUNT; i++) {
-        if (scene_state.tr_pulse_timer[i]) {
-            scene_state.tr_pulse_timer[i] -= time;
-            if (scene_state.tr_pulse_timer[i] <= 0) {
-                scene_state.tr_pulse_timer[i] = 0;
-                scene_state.variables.tr[i] =
-                    scene_state.variables.tr_pol[i] == 0;
-                tele_tr(i, scene_state.variables.tr[i]);
+        if (ss->tr_pulse_timer[i]) {
+            ss->tr_pulse_timer[i] -= time;
+            if (ss->tr_pulse_timer[i] <= 0) {
+                ss->tr_pulse_timer[i] = 0;
+                ss->variables.tr[i] = ss->variables.tr_pol[i] == 0;
+                tele_tr(i, ss->variables.tr[i]);
             }
         }
-    }
-}
-
-/////////////////////////////////////////////////////////////////
-// INIT /////////////////////////////////////////////////////////
-
-void tele_init() {
-    for (size_t i = 0; i < 4; i++) {
-        tele_set_pattern_i(i, 0);
-        tele_set_pattern_l(i, 0);
-        tele_set_pattern_wrap(i, 1);
-        tele_set_pattern_start(i, 0);
-        tele_set_pattern_end(i, 63);
     }
 }

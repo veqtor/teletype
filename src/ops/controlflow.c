@@ -43,41 +43,41 @@ const tele_op_t op_SCENE =
     MAKE_GET_SET_OP(SCENE, op_SCENE_get, op_SCENE_set, 0, true);
 
 
-static void mod_PROB_func(scene_state_t *NOTUSED(ss), exec_state_t *es,
+static void mod_PROB_func(scene_state_t *ss, exec_state_t *es,
                           command_state_t *cs,
                           const tele_command_t *post_command) {
     int16_t a = cs_pop(cs);
 
-    if (rand() % 101 < a) { process_command(es, post_command); }
+    if (rand() % 101 < a) { process_command(ss, es, post_command); }
 }
 
-static void mod_IF_func(scene_state_t *NOTUSED(ss), exec_state_t *es,
+static void mod_IF_func(scene_state_t *ss, exec_state_t *es,
                         command_state_t *cs,
                         const tele_command_t *post_command) {
     es->if_else_condition = false;
     if (cs_pop(cs)) {
         es->if_else_condition = true;
-        process_command(es, post_command);
+        process_command(ss, es, post_command);
     }
 }
 
-static void mod_ELIF_func(scene_state_t *NOTUSED(ss), exec_state_t *es,
+static void mod_ELIF_func(scene_state_t *ss, exec_state_t *es,
                           command_state_t *cs,
                           const tele_command_t *post_command) {
     if (!es->if_else_condition) {
         if (cs_pop(cs)) {
             es->if_else_condition = true;
-            process_command(es, post_command);
+            process_command(ss, es, post_command);
         }
     }
 }
 
-static void mod_ELSE_func(scene_state_t *NOTUSED(ss), exec_state_t *es,
+static void mod_ELSE_func(scene_state_t *ss, exec_state_t *es,
                           command_state_t *NOTUSED(cs),
                           const tele_command_t *post_command) {
     if (!es->if_else_condition) {
         es->if_else_condition = true;
-        process_command(es, post_command);
+        process_command(ss, es, post_command);
     }
 }
 
@@ -89,7 +89,7 @@ static void mod_L_func(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
 
     for (int16_t i = 0; i <= loop_size; i++) {
         ss->variables.i = a < b ? a + i : a - i;
-        process_command(es, post_command);
+        process_command(ss, es, post_command);
     }
 }
 
@@ -110,9 +110,9 @@ static void op_SCRIPT_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
     uint16_t a = cs_pop(cs);
     if (a > 0 && a < 9) tele_script(a);
 }
-static void op_KILL_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_KILL_get(const void *NOTUSED(data), scene_state_t *ss,
                         exec_state_t *NOTUSED(es),
                         command_state_t *NOTUSED(cs)) {
-    clear_delays();
+    clear_delays(ss);
     tele_kill();
 }

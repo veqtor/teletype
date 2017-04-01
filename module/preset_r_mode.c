@@ -57,9 +57,9 @@ void process_preset_r_keys(uint8_t k, uint8_t m, bool is_held_key) {
     }
     else if (match_no_mod(m, k, HID_ENTER) && !is_held_key) {  // enter
         flash_read(preset_select);
-        tele_set_scene(preset_select);
+        ss_set_scene(&scene_state, preset_select);
 
-        run_script(INIT_SCRIPT);
+        run_script(&scene_state, INIT_SCRIPT);
 
         set_mode(last_mode);
     }

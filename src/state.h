@@ -2,6 +2,7 @@
 #define _STATE_H_
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #include "command.h"
@@ -15,6 +16,7 @@
 #define PATTERN_COUNT 4
 #define PATTERN_LENGTH 64
 #define SCRIPT_MAX_COMMANDS 6
+#define SCRIPT_COUNT 10
 
 #define METRO_SCRIPT 8
 #define INIT_SCRIPT 9
@@ -62,12 +64,12 @@ typedef struct {
 } scene_variables_t;
 
 typedef struct {
-    int16_t i;
-    uint16_t l;
+    int16_t idx;
+    uint16_t len;
     uint16_t wrap;
     int16_t start;
     int16_t end;
-    int16_t v[PATTERN_LENGTH];
+    int16_t val[PATTERN_LENGTH];
 } scene_pattern_t;
 
 typedef struct {
@@ -92,8 +94,49 @@ typedef struct {
     scene_delay_t delay;
     scene_stack_op_t stack_op;
     int16_t tr_pulse_timer[TR_COUNT];
-    scene_script_t scripts[10];
+    scene_script_t scripts[SCRIPT_COUNT];
 } scene_state_t;
+
+extern void ss_init(scene_state_t *ss);
+extern void ss_variables_init(scene_state_t *ss);
+extern void ss_patterns_init(scene_state_t *ss);
+extern void ss_pattern_init(scene_state_t *ss, size_t pattern_no);
+
+extern void ss_set_in(scene_state_t *ss, int16_t value);
+extern void ss_set_param(scene_state_t *ss, int16_t value);
+extern void ss_set_scene(scene_state_t *ss, int16_t value);
+
+extern int16_t ss_get_pattern_idx(scene_state_t *ss, size_t pattern);
+extern void ss_set_pattern_idx(scene_state_t *ss, size_t pattern, int16_t i);
+extern int16_t ss_get_pattern_len(scene_state_t *ss, size_t pattern);
+extern void ss_set_pattern_len(scene_state_t *ss, size_t pattern, int16_t l);
+extern uint16_t ss_get_pattern_wrap(scene_state_t *ss, size_t pattern);
+extern void ss_set_pattern_wrap(scene_state_t *ss, size_t pattern,
+                                uint16_t wrap);
+extern int16_t ss_get_pattern_start(scene_state_t *ss, size_t pattern);
+extern void ss_set_pattern_start(scene_state_t *ss, size_t pattern,
+                                 int16_t start);
+extern int16_t ss_get_pattern_end(scene_state_t *ss, size_t pattern);
+extern void ss_set_pattern_end(scene_state_t *ss, size_t pattern, int16_t end);
+extern int16_t ss_get_pattern_val(scene_state_t *ss, size_t pattern,
+                                  size_t idx);
+extern void ss_set_pattern_val(scene_state_t *ss, size_t pattern, size_t idx,
+                               int16_t val);
+extern scene_pattern_t *ss_patterns_ptr(scene_state_t *ss);
+extern size_t ss_patterns_size(void);
+
+uint8_t ss_get_script_len(scene_state_t *ss, size_t idx);
+const tele_command_t *ss_get_script_command(scene_state_t *ss,
+                                            size_t script_idx, size_t c_idx);
+void ss_overwrite_script_command(scene_state_t *ss, size_t script_idx,
+                                 size_t command_idx, const tele_command_t *cmd);
+void ss_insert_script_command(scene_state_t *ss, size_t script_idx,
+                              size_t command_idx, const tele_command_t *cmd);
+void ss_delete_script_command(scene_state_t *ss, size_t script_idx,
+                              size_t command_idx);
+
+scene_script_t *ss_script_ptr(scene_state_t *ss);
+size_t ss_script_size(void);
 
 ////////////////////////////////////////////////////////////////////////////////
 // EXEC STATE //////////////////////////////////////////////////////////////////

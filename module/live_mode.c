@@ -82,7 +82,7 @@ void process_live_keys(uint8_t k, uint8_t m, bool is_held_key) {
             }
             memcpy(&history[HISTORY_SIZE - 1], &command, sizeof(command));
 
-            output = run_command(&command);
+            output = run_command(&scene_state, &command);
         }
         line_editor_set(&le, "");
     }

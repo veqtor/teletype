@@ -28,15 +28,17 @@ void set_edit_mode() {
     status = E_OK;
     error_msg[0] = 0;
     line_no = 0;
-    line_editor_set_command(&le, tele_get_script_c(script, line_no));
+    line_editor_set_command(
+        &le, ss_get_script_command(&scene_state, script, line_no));
 }
 
 void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
     if (match_no_mod(m, k, HID_DOWN)) {
         if (line_no < (SCRIPT_MAX_COMMANDS - 1) &&
-            line_no < tele_get_script_l(script)) {
+            line_no < ss_get_script_len(&scene_state, script)) {
             line_no++;
-            line_editor_set_command(&le, tele_get_script_c(script, line_no));
+            line_editor_set_command(
+                &le, ss_get_script_command(&scene_state, script, line_no));
             r_edit_dirty |= R_LIST;
             r_edit_dirty |= R_INPUT;
         }
@@ -44,7 +46,8 @@ void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
     else if (match_no_mod(m, k, HID_UP)) {
         if (line_no) {
             line_no--;
-            line_editor_set_command(&le, tele_get_script_c(script, line_no));
+            line_editor_set_command(
+                &le, ss_get_script_command(&scene_state, script, line_no));
             r_edit_dirty |= R_LIST;
             r_edit_dirty |= R_INPUT;
         }
@@ -56,9 +59,10 @@ void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
             script--;
         else
             script = 9;
-        if (line_no > tele_get_script_l(script))
-            line_no = tele_get_script_l(script);
-        line_editor_set_command(&le, tele_get_script_c(script, line_no));
+        if (line_no > ss_get_script_len(&scene_state, script))
+            line_no = ss_get_script_len(&scene_state, script);
+        line_editor_set_command(
+            &le, ss_get_script_command(&scene_state, script, line_no));
         r_edit_dirty |= R_LIST;
         r_edit_dirty |= R_INPUT;
     }
@@ -67,19 +71,21 @@ void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
         error_msg[0] = 0;
         script++;
         if (script == 10) script = 0;
-        if (line_no > tele_get_script_l(script))
-            line_no = tele_get_script_l(script);
-        line_editor_set_command(&le, tele_get_script_c(script, line_no));
+        if (line_no > ss_get_script_len(&scene_state, script))
+            line_no = ss_get_script_len(&scene_state, script);
+        line_editor_set_command(
+            &le, ss_get_script_command(&scene_state, script, line_no));
         r_edit_dirty |= R_LIST;
         r_edit_dirty |= R_INPUT;
     }
     else if (match_alt(m, k, HID_X)) {  // override line editors cut
         line_editor_set_copy_buffer(line_editor_get(&le));
-        delete_script_command(script, line_no);
-        if (line_no > tele_get_script_l(script)) {
-            line_no = tele_get_script_l(script);
+        ss_delete_script_command(&scene_state, script, line_no);
+        if (line_no > ss_get_script_len(&scene_state, script)) {
+            line_no = ss_get_script_len(&scene_state, script);
         }
-        line_editor_set_command(&le, tele_get_script_c(script, line_no));
+        line_editor_set_command(
+            &le, ss_get_script_command(&scene_state, script, line_no));
 
         r_edit_dirty |= R_LIST;
         r_edit_dirty |= R_INPUT;
@@ -98,16 +104,18 @@ void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
             return;  // quit, screen_refresh_edit will display the error message
 
         if (command.length == 0) {  // blank line, delete the command
-            delete_script_command(script, line_no);
-            if (line_no > tele_get_script_l(script)) {
-                line_no = tele_get_script_l(script);
+            ss_delete_script_command(&scene_state, script, line_no);
+            if (line_no > ss_get_script_len(&scene_state, script)) {
+                line_no = ss_get_script_len(&scene_state, script);
             }
         }
         else {
-            overwrite_script_command(script, line_no, &command);
+            ss_overwrite_script_command(&scene_state, script, line_no,
+                                        &command);
             if (line_no < SCRIPT_MAX_COMMANDS - 1) { line_no++; }
         }
-        line_editor_set_command(&le, tele_get_script_c(script, line_no));
+        line_editor_set_command(
+            &le, ss_get_script_command(&scene_state, script, line_no));
         r_edit_dirty |= R_LIST;
         r_edit_dirty |= R_INPUT;
     }
@@ -125,11 +133,12 @@ void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
             return;  // quit, screen_refresh_edit will display the error message
 
         if (command.length > 0) {
-            insert_script_command(script, line_no, &command);
+            ss_insert_script_command(&scene_state, script, line_no, &command);
             if (line_no < (SCRIPT_MAX_COMMANDS - 1)) { line_no++; }
         }
 
-        line_editor_set_command(&le, tele_get_script_c(script, line_no));
+        line_editor_set_command(
+            &le, ss_get_script_command(&scene_state, script, line_no));
         r_edit_dirty |= R_LIST;
         r_edit_dirty |= R_INPUT;
     }
@@ -143,9 +152,9 @@ void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
 void screen_refresh_edit() {
     if (r_edit_dirty & R_INPUT) {
         char prefix = script + '1';
-        if (script == 8)
+        if (script == METRO_SCRIPT)
             prefix = 'M';
-        else if (script == 9)
+        else if (script == INIT_SCRIPT)
             prefix = 'I';
 
         line_editor_draw(&le, prefix, &line[7]);
@@ -179,9 +188,10 @@ void screen_refresh_edit() {
         for (int i = 0; i < 6; i++) {
             uint8_t a = line_no == i;
             region_fill(&line[i], a);
-            if (tele_get_script_l(script) > i) {
+            if (ss_get_script_len(&scene_state, script) > i) {
                 char s[32];
-                print_command(tele_get_script_c(script, i), s);
+                print_command(ss_get_script_command(&scene_state, script, i),
+                              s);
                 region_string(&line[i], s, 2, 0, 0xf, a, 0);
             }
         }

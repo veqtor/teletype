@@ -19,8 +19,8 @@ static int16_t normalise_pn(const int16_t pn) {
 
 // ensure that the pattern index is within bounds
 // also adjust for negative indices (they index from the back)
-static int16_t normalise_idx(const int16_t pn, int16_t idx) {
-    const int16_t len = tele_get_pattern_l(pn);
+static int16_t normalise_idx(scene_state_t *ss, const int16_t pn, int16_t idx) {
+    const int16_t len = ss_get_pattern_len(ss, pn);
     if (idx < 0) {
         if (idx == len)
             idx = 0;
@@ -57,31 +57,31 @@ const tele_op_t op_P_N = MAKE_GET_SET_OP(P.N, op_P_N_get, op_P_N_set, 0, true);
 // P and PN ////////////////////////////////////////////////////////////////////
 
 // Get
-static int16_t p_get(int16_t pn, int16_t idx) {
+static int16_t p_get(scene_state_t *ss, int16_t pn, int16_t idx) {
     pn = normalise_pn(pn);
-    idx = normalise_idx(pn, idx);
-    return tele_get_pattern_val(pn, idx);
+    idx = normalise_idx(ss, pn, idx);
+    return ss_get_pattern_val(ss, pn, idx);
 }
 
 static void op_P_get(const void *NOTUSED(data), scene_state_t *ss,
                      exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
     int16_t a = cs_pop(cs);
-    cs_push(cs, p_get(pn, a));
+    cs_push(cs, p_get(ss, pn, a));
 }
 
-static void op_PN_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_PN_get(const void *NOTUSED(data), scene_state_t *ss,
                       exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = cs_pop(cs);
     int16_t a = cs_pop(cs);
-    cs_push(cs, p_get(pn, a));
+    cs_push(cs, p_get(ss, pn, a));
 }
 
 // Set
-static void p_set(int16_t pn, int16_t idx, int16_t val) {
+static void p_set(scene_state_t *ss, int16_t pn, int16_t idx, int16_t val) {
     pn = normalise_pn(pn);
-    idx = normalise_idx(pn, idx);
-    tele_set_pattern_val(pn, idx, val);
+    idx = normalise_idx(ss, pn, idx);
+    ss_set_pattern_val(ss, pn, idx, val);
 }
 
 static void op_P_set(const void *NOTUSED(data), scene_state_t *ss,
@@ -89,16 +89,16 @@ static void op_P_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t pn = ss->variables.p_n;
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
-    p_set(pn, a, b);
+    p_set(ss, pn, a, b);
     tele_pi();
 }
 
-static void op_PN_set(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_PN_set(const void *NOTUSED(data), scene_state_t *ss,
                       exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = cs_pop(cs);
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
-    p_set(pn, a, b);
+    p_set(ss, pn, a, b);
     tele_pi();
 }
 
@@ -114,39 +114,39 @@ const tele_op_t op_PN = MAKE_GET_SET_OP(PN, op_PN_get, op_PN_set, 2, true);
 static void op_P_L_get(const void *NOTUSED(data), scene_state_t *ss,
                        exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(ss->variables.p_n);
-    cs_push(cs, tele_get_pattern_l(pn));
+    cs_push(cs, ss_get_pattern_len(ss, pn));
 }
 
-static void op_PN_L_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_PN_L_get(const void *NOTUSED(data), scene_state_t *ss,
                         exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(cs_pop(cs));
-    cs_push(cs, tele_get_pattern_l(pn));
+    cs_push(cs, ss_get_pattern_len(ss, pn));
 }
 
 // Set
-static void p_l_set(int16_t pn, int16_t l) {
+static void p_l_set(scene_state_t *ss, int16_t pn, int16_t l) {
     pn = normalise_pn(pn);
     if (l < 0)
-        tele_set_pattern_l(pn, 0);
+        ss_set_pattern_len(ss, pn, 0);
     else if (l > PATTERN_LENGTH)
-        tele_set_pattern_l(pn, PATTERN_LENGTH);
+        ss_set_pattern_len(ss, pn, PATTERN_LENGTH);
     else
-        tele_set_pattern_l(pn, l);
+        ss_set_pattern_len(ss, pn, l);
 }
 
 static void op_P_L_set(const void *NOTUSED(data), scene_state_t *ss,
                        exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
     int16_t a = cs_pop(cs);
-    p_l_set(pn, a);
+    p_l_set(ss, pn, a);
     tele_pi();
 }
 
-static void op_PN_L_set(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_PN_L_set(const void *NOTUSED(data), scene_state_t *ss,
                         exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = cs_pop(cs);
     int16_t a = cs_pop(cs);
-    p_l_set(pn, a);
+    p_l_set(ss, pn, a);
     tele_pi();
 }
 
@@ -163,14 +163,13 @@ const tele_op_t op_PN_L =
 static void op_P_WRAP_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(ss->variables.p_n);
-    cs_push(cs, tele_get_pattern_wrap(pn));
+    cs_push(cs, ss_get_pattern_wrap(ss, pn));
 }
 
-static void op_PN_WRAP_get(const void *NOTUSED(data),
-                           scene_state_t *NOTUSED(ss),
+static void op_PN_WRAP_get(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(cs_pop(cs));
-    cs_push(cs, tele_get_pattern_wrap(pn));
+    cs_push(cs, ss_get_pattern_wrap(ss, pn));
 }
 
 // Set
@@ -178,15 +177,14 @@ static void op_P_WRAP_set(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
     int16_t a = cs_pop(cs);
-    tele_set_pattern_wrap(pn, a >= 1);
+    ss_set_pattern_wrap(ss, pn, a >= 1);
 }
 
-static void op_PN_WRAP_set(const void *NOTUSED(data),
-                           scene_state_t *NOTUSED(ss),
+static void op_PN_WRAP_set(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(cs_pop(cs));
     int16_t a = cs_pop(cs);
-    tele_set_pattern_wrap(pn, a >= 1);
+    ss_set_pattern_wrap(ss, pn, a >= 1);
 }
 
 // Make ops
@@ -203,31 +201,29 @@ const tele_op_t op_PN_WRAP =
 static void op_P_START_get(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(ss->variables.p_n);
-    cs_push(cs, tele_get_pattern_start(pn));
+    cs_push(cs, ss_get_pattern_start(ss, pn));
 }
 
 static void op_P_START_set(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(ss->variables.p_n);
-    int16_t a = normalise_idx(pn, cs_pop(cs));
-    tele_set_pattern_start(pn, a);
+    int16_t a = normalise_idx(ss, pn, cs_pop(cs));
+    ss_set_pattern_start(ss, pn, a);
     tele_pi();
 }
 
 // Set
-static void op_PN_START_get(const void *NOTUSED(data),
-                            scene_state_t *NOTUSED(ss),
+static void op_PN_START_get(const void *NOTUSED(data), scene_state_t *ss,
                             exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(cs_pop(cs));
-    cs_push(cs, tele_get_pattern_start(pn));
+    cs_push(cs, ss_get_pattern_start(ss, pn));
 }
 
-static void op_PN_START_set(const void *NOTUSED(data),
-                            scene_state_t *NOTUSED(ss),
+static void op_PN_START_set(const void *NOTUSED(data), scene_state_t *ss,
                             exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(cs_pop(cs));
-    int16_t a = normalise_idx(pn, cs_pop(cs));
-    tele_set_pattern_start(pn, a);
+    int16_t a = normalise_idx(ss, pn, cs_pop(cs));
+    ss_set_pattern_start(ss, pn, a);
     tele_pi();
 }
 
@@ -245,29 +241,29 @@ const tele_op_t op_PN_START =
 static void op_P_END_get(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(ss->variables.p_n);
-    cs_push(cs, tele_get_pattern_end(pn));
+    cs_push(cs, ss_get_pattern_end(ss, pn));
 }
 
-static void op_PN_END_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_PN_END_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(cs_pop(cs));
-    cs_push(cs, tele_get_pattern_end(pn));
+    cs_push(cs, ss_get_pattern_end(ss, pn));
 }
 
 // Set
 static void op_P_END_set(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(ss->variables.p_n);
-    int16_t a = normalise_idx(pn, cs_pop(cs));
-    tele_set_pattern_end(pn, a);
+    int16_t a = normalise_idx(ss, pn, cs_pop(cs));
+    ss_set_pattern_end(ss, pn, a);
     tele_pi();
 }
 
-static void op_PN_END_set(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_PN_END_set(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(cs_pop(cs));
-    int16_t a = normalise_idx(pn, cs_pop(cs));
-    tele_set_pattern_end(pn, a);
+    int16_t a = normalise_idx(ss, pn, cs_pop(cs));
+    ss_set_pattern_end(ss, pn, a);
     tele_pi();
 }
 
@@ -285,41 +281,41 @@ const tele_op_t op_PN_END =
 static void op_P_I_get(const void *NOTUSED(data), scene_state_t *ss,
                        exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(ss->variables.p_n);
-    cs_push(cs, tele_get_pattern_i(pn));
+    cs_push(cs, ss_get_pattern_idx(ss, pn));
 }
 
-static void op_PN_I_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_PN_I_get(const void *NOTUSED(data), scene_state_t *ss,
                         exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(cs_pop(cs));
-    cs_push(cs, tele_get_pattern_i(pn));
+    cs_push(cs, ss_get_pattern_idx(ss, pn));
 }
 
 // Set
-static void p_i_set(int16_t pn, int16_t i) {
+static void p_i_set(scene_state_t *ss, int16_t pn, int16_t i) {
     pn = normalise_pn(pn);
-    i = normalise_idx(pn, i);
-    int16_t len = tele_get_pattern_l(pn);
+    i = normalise_idx(ss, pn, i);
+    int16_t len = ss_get_pattern_len(ss, pn);
     if (i < 0)
-        tele_set_pattern_i(pn, 0);
+        ss_set_pattern_idx(ss, pn, 0);
     else if (i > len)
-        tele_set_pattern_i(pn, len);
+        ss_set_pattern_idx(ss, pn, len);
     else
-        tele_set_pattern_i(pn, i);
+        ss_set_pattern_idx(ss, pn, i);
 }
 
 static void op_P_I_set(const void *NOTUSED(data), scene_state_t *ss,
                        exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
     int16_t a = cs_pop(cs);
-    p_i_set(pn, a);
+    p_i_set(ss, pn, a);
     tele_pi();
 }
 
-static void op_PN_I_set(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_PN_I_set(const void *NOTUSED(data), scene_state_t *ss,
                         exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = cs_pop(cs);
     int16_t a = cs_pop(cs);
-    p_i_set(pn, a);
+    p_i_set(ss, pn, a);
     tele_pi();
 }
 
@@ -336,14 +332,13 @@ const tele_op_t op_PN_I =
 static void op_P_HERE_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(ss->variables.p_n);
-    cs_push(cs, tele_get_pattern_val(pn, tele_get_pattern_i(pn)));
+    cs_push(cs, ss_get_pattern_val(ss, pn, ss_get_pattern_idx(ss, pn)));
 }
 
-static void op_PN_HERE_get(const void *NOTUSED(data),
-                           scene_state_t *NOTUSED(ss),
+static void op_PN_HERE_get(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(cs_pop(cs));
-    cs_push(cs, tele_get_pattern_val(pn, tele_get_pattern_i(pn)));
+    cs_push(cs, ss_get_pattern_val(ss, pn, ss_get_pattern_idx(ss, pn)));
 }
 
 // Set
@@ -351,15 +346,14 @@ static void op_P_HERE_set(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(ss->variables.p_n);
     int16_t a = cs_pop(cs);
-    tele_set_pattern_val(pn, tele_get_pattern_i(pn), a);
+    ss_set_pattern_val(ss, pn, ss_get_pattern_idx(ss, pn), a);
 }
 
-static void op_PN_HERE_set(const void *NOTUSED(data),
-                           scene_state_t *NOTUSED(ss),
+static void op_PN_HERE_set(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = normalise_pn(cs_pop(cs));
     int16_t a = cs_pop(cs);
-    tele_set_pattern_val(pn, tele_get_pattern_i(pn), a);
+    ss_set_pattern_val(ss, pn, ss_get_pattern_idx(ss, pn), a);
 }
 
 // Make ops
@@ -373,15 +367,15 @@ const tele_op_t op_PN_HERE =
 // P.NEXT //////////////////////////////////////////////////////////////////////
 
 // Increment I obeying START, END, WRAP and L
-static void p_next_inc_i(int16_t pn) {
+static void p_next_inc_i(scene_state_t *ss, int16_t pn) {
     pn = normalise_pn(pn);
 
-    const int16_t len = tele_get_pattern_l(pn);
-    const int16_t start = tele_get_pattern_start(pn);
-    const int16_t end = tele_get_pattern_end(pn);
-    const uint16_t wrap = tele_get_pattern_wrap(pn);
+    const int16_t len = ss_get_pattern_len(ss, pn);
+    const int16_t start = ss_get_pattern_start(ss, pn);
+    const int16_t end = ss_get_pattern_end(ss, pn);
+    const uint16_t wrap = ss_get_pattern_wrap(ss, pn);
 
-    int16_t idx = tele_get_pattern_i(pn);
+    int16_t idx = ss_get_pattern_idx(ss, pn);
 
     if ((idx == (len - 1)) || (idx == end)) {
         if (wrap) idx = start;
@@ -391,24 +385,23 @@ static void p_next_inc_i(int16_t pn) {
 
     if (idx > len || idx < 0 || idx >= PATTERN_LENGTH) idx = 0;
 
-    tele_set_pattern_i(pn, idx);
+    ss_set_pattern_idx(ss, pn, idx);
 }
 
 // Get
 static void op_P_NEXT_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     const int16_t pn = normalise_pn(ss->variables.p_n);
-    p_next_inc_i(pn);
-    cs_push(cs, tele_get_pattern_val(pn, tele_get_pattern_i(pn)));
+    p_next_inc_i(ss, pn);
+    cs_push(cs, ss_get_pattern_val(ss, pn, ss_get_pattern_idx(ss, pn)));
     tele_pi();
 }
 
-static void op_PN_NEXT_get(const void *NOTUSED(data),
-                           scene_state_t *NOTUSED(ss),
+static void op_PN_NEXT_get(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     const int16_t pn = normalise_pn(cs_pop(cs));
-    p_next_inc_i(pn);
-    cs_push(cs, tele_get_pattern_val(pn, tele_get_pattern_i(pn)));
+    p_next_inc_i(ss, pn);
+    cs_push(cs, ss_get_pattern_val(ss, pn, ss_get_pattern_idx(ss, pn)));
     tele_pi();
 }
 
@@ -417,18 +410,17 @@ static void op_P_NEXT_set(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     const int16_t pn = normalise_pn(ss->variables.p_n);
     int16_t a = cs_pop(cs);
-    p_next_inc_i(pn);
-    tele_set_pattern_val(pn, tele_get_pattern_i(pn), a);
+    p_next_inc_i(ss, pn);
+    ss_set_pattern_val(ss, pn, ss_get_pattern_idx(ss, pn), a);
     tele_pi();
 }
 
-static void op_PN_NEXT_set(const void *NOTUSED(data),
-                           scene_state_t *NOTUSED(ss),
+static void op_PN_NEXT_set(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     const int16_t pn = normalise_pn(cs_pop(cs));
     int16_t a = cs_pop(cs);
-    p_next_inc_i(pn);
-    tele_set_pattern_val(pn, tele_get_pattern_i(pn), a);
+    p_next_inc_i(ss, pn);
+    ss_set_pattern_val(ss, pn, ss_get_pattern_idx(ss, pn), a);
     tele_pi();
 }
 
@@ -443,15 +435,15 @@ const tele_op_t op_PN_NEXT =
 // P.PREV //////////////////////////////////////////////////////////////////////
 
 // Increment I obeying START, END, WRAP and L
-static void p_prev_dec_i(int16_t pn) {
+static void p_prev_dec_i(scene_state_t *ss, int16_t pn) {
     pn = normalise_pn(pn);
 
-    const int16_t len = tele_get_pattern_l(pn);
-    const int16_t start = tele_get_pattern_start(pn);
-    const int16_t end = tele_get_pattern_end(pn);
-    const uint16_t wrap = tele_get_pattern_wrap(pn);
+    const int16_t len = ss_get_pattern_len(ss, pn);
+    const int16_t start = ss_get_pattern_start(ss, pn);
+    const int16_t end = ss_get_pattern_end(ss, pn);
+    const uint16_t wrap = ss_get_pattern_wrap(ss, pn);
 
-    int16_t idx = tele_get_pattern_i(pn);
+    int16_t idx = ss_get_pattern_idx(ss, pn);
 
     if ((idx == 0) || (idx == start)) {
         if (wrap) {
@@ -464,24 +456,23 @@ static void p_prev_dec_i(int16_t pn) {
     else
         idx--;
 
-    tele_set_pattern_i(pn, idx);
+    ss_set_pattern_idx(ss, pn, idx);
 }
 
 // Get
 static void op_P_PREV_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     const int16_t pn = normalise_pn(ss->variables.p_n);
-    p_prev_dec_i(pn);
-    cs_push(cs, tele_get_pattern_val(pn, tele_get_pattern_i(pn)));
+    p_prev_dec_i(ss, pn);
+    cs_push(cs, ss_get_pattern_val(ss, pn, ss_get_pattern_idx(ss, pn)));
     tele_pi();
 }
 
-static void op_PN_PREV_get(const void *NOTUSED(data),
-                           scene_state_t *NOTUSED(ss),
+static void op_PN_PREV_get(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     const int16_t pn = cs_pop(cs);
-    p_prev_dec_i(pn);
-    cs_push(cs, tele_get_pattern_val(pn, tele_get_pattern_i(pn)));
+    p_prev_dec_i(ss, pn);
+    cs_push(cs, ss_get_pattern_val(ss, pn, ss_get_pattern_idx(ss, pn)));
     tele_pi();
 }
 
@@ -490,18 +481,17 @@ static void op_P_PREV_set(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     const int16_t pn = normalise_pn(ss->variables.p_n);
     const int16_t a = cs_pop(cs);
-    p_prev_dec_i(pn);
-    tele_set_pattern_val(pn, tele_get_pattern_i(pn), a);
+    p_prev_dec_i(ss, pn);
+    ss_set_pattern_val(ss, pn, ss_get_pattern_idx(ss, pn), a);
     tele_pi();
 }
 
-static void op_PN_PREV_set(const void *NOTUSED(data),
-                           scene_state_t *NOTUSED(ss),
+static void op_PN_PREV_set(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     const int16_t pn = cs_pop(cs);
     const int16_t a = cs_pop(cs);
-    p_prev_dec_i(pn);
-    tele_set_pattern_val(pn, tele_get_pattern_i(pn), a);
+    p_prev_dec_i(ss, pn);
+    ss_set_pattern_val(ss, pn, ss_get_pattern_idx(ss, pn), a);
     tele_pi();
 }
 
@@ -516,20 +506,20 @@ const tele_op_t op_PN_PREV =
 // P.INS ///////////////////////////////////////////////////////////////////////
 
 // Get
-static void p_ins_get(int16_t pn, int16_t idx, int16_t val) {
+static void p_ins_get(scene_state_t *ss, int16_t pn, int16_t idx, int16_t val) {
     pn = normalise_pn(pn);
-    idx = normalise_idx(pn, idx);
-    const int16_t len = tele_get_pattern_l(pn);
+    idx = normalise_idx(ss, pn, idx);
+    const int16_t len = ss_get_pattern_len(ss, pn);
 
     if (len >= idx) {
         for (int16_t i = len; i > idx; i--) {
-            int16_t v = tele_get_pattern_val(pn, i - 1);
-            tele_set_pattern_val(pn, i, v);
+            int16_t v = ss_get_pattern_val(ss, pn, i - 1);
+            ss_set_pattern_val(ss, pn, i, v);
         }
-        if (len < PATTERN_LENGTH - 1) { tele_set_pattern_l(pn, len + 1); }
+        if (len < PATTERN_LENGTH - 1) { ss_set_pattern_len(ss, pn, len + 1); }
     }
 
-    tele_set_pattern_val(pn, idx, val);
+    ss_set_pattern_val(ss, pn, idx, val);
 }
 
 static void op_P_INS_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -537,17 +527,17 @@ static void op_P_INS_get(const void *NOTUSED(data), scene_state_t *ss,
     int16_t pn = ss->variables.p_n;
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
-    p_ins_get(pn, a, b);
+    p_ins_get(ss, pn, a, b);
 
     tele_pi();
 }
 
-static void op_PN_INS_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_PN_INS_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = cs_pop(cs);
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
-    p_ins_get(pn, a, b);
+    p_ins_get(ss, pn, a, b);
 
     tele_pi();
 }
@@ -561,20 +551,20 @@ const tele_op_t op_PN_INS = MAKE_GET_OP(PN.INS, op_PN_INS_get, 3, false);
 // P.RM ////////////////////////////////////////////////////////////////////////
 
 // Get
-static int16_t p_rm_get(int16_t pn, int16_t idx) {
+static int16_t p_rm_get(scene_state_t *ss, int16_t pn, int16_t idx) {
     pn = normalise_pn(pn);
-    const int16_t len = tele_get_pattern_l(pn);
+    const int16_t len = ss_get_pattern_len(ss, pn);
 
     if (len > 0) {
-        idx = normalise_idx(pn, idx);
-        int16_t ret = tele_get_pattern_val(pn, idx);
+        idx = normalise_idx(ss, pn, idx);
+        int16_t ret = ss_get_pattern_val(ss, pn, idx);
 
         for (int16_t i = idx; i < len; i++) {
-            int16_t v = tele_get_pattern_val(pn, i + 1);
-            tele_set_pattern_val(pn, i, v);
+            int16_t v = ss_get_pattern_val(ss, pn, i + 1);
+            ss_set_pattern_val(ss, pn, i, v);
         }
 
-        tele_set_pattern_l(pn, len - 1);
+        ss_set_pattern_len(ss, pn, len - 1);
 
         return ret;
     }
@@ -586,15 +576,15 @@ static void op_P_RM_get(const void *NOTUSED(data), scene_state_t *ss,
                         exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
     int16_t a = cs_pop(cs);
-    cs_push(cs, p_rm_get(pn, a));
+    cs_push(cs, p_rm_get(ss, pn, a));
     tele_pi();
 }
 
-static void op_PN_RM_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_PN_RM_get(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = cs_pop(cs);
     int16_t a = cs_pop(cs);
-    cs_push(cs, p_rm_get(pn, a));
+    cs_push(cs, p_rm_get(ss, pn, a));
     tele_pi();
 }
 
@@ -607,13 +597,13 @@ const tele_op_t op_PN_RM = MAKE_GET_OP(PN.RM, op_PN_RM_get, 2, true);
 // P.PUSH //////////////////////////////////////////////////////////////////////
 
 // Get
-static void p_push_get(int16_t pn, int16_t val) {
+static void p_push_get(scene_state_t *ss, int16_t pn, int16_t val) {
     pn = normalise_pn(pn);
-    const int16_t len = tele_get_pattern_l(pn);
+    const int16_t len = ss_get_pattern_len(ss, pn);
 
     if (len < PATTERN_LENGTH) {
-        tele_set_pattern_val(pn, len, val);
-        tele_set_pattern_l(pn, len + 1);
+        ss_set_pattern_val(ss, pn, len, val);
+        ss_set_pattern_len(ss, pn, len + 1);
     }
 }
 
@@ -621,16 +611,15 @@ static void op_P_PUSH_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = ss->variables.p_n;
     int16_t a = cs_pop(cs);
-    p_push_get(pn, a);
+    p_push_get(ss, pn, a);
     tele_pi();
 }
 
-static void op_PN_PUSH_get(const void *NOTUSED(data),
-                           scene_state_t *NOTUSED(ss),
+static void op_PN_PUSH_get(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = cs_pop(cs);
     int16_t a = cs_pop(cs);
-    p_push_get(pn, a);
+    p_push_get(ss, pn, a);
     tele_pi();
 }
 
@@ -642,12 +631,12 @@ const tele_op_t op_PN_PUSH = MAKE_GET_OP(PN.PUSH, op_PN_PUSH_get, 2, false);
 // P.POP ///////////////////////////////////////////////////////////////////////
 
 // Get
-static int16_t p_pop_get(int16_t pn) {
+static int16_t p_pop_get(scene_state_t *ss, int16_t pn) {
     pn = normalise_pn(pn);
-    const int16_t len = tele_get_pattern_l(pn);
+    const int16_t len = ss_get_pattern_len(ss, pn);
     if (len > 0) {
-        tele_set_pattern_l(pn, len - 1);
-        return tele_get_pattern_val(pn, len - 1);
+        ss_set_pattern_len(ss, pn, len - 1);
+        return ss_get_pattern_val(ss, pn, len - 1);
     }
     else
         return 0;
@@ -655,14 +644,14 @@ static int16_t p_pop_get(int16_t pn) {
 
 static void op_P_POP_get(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *NOTUSED(es), command_state_t *cs) {
-    cs_push(cs, p_pop_get(ss->variables.p_n));
+    cs_push(cs, p_pop_get(ss, ss->variables.p_n));
     tele_pi();
 }
 
-static void op_PN_POP_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_PN_POP_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t pn = cs_pop(cs);
-    cs_push(cs, p_pop_get(pn));
+    cs_push(cs, p_pop_get(ss, pn));
     tele_pi();
 }
 

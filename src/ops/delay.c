@@ -34,9 +34,8 @@ static void mod_DEL_func(scene_state_t *ss, exec_state_t *NOTUSED(es),
     }
 }
 
-static void op_DEL_CLR_get(const void *NOTUSED(data),
-                           scene_state_t *NOTUSED(ss),
+static void op_DEL_CLR_get(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es),
                            command_state_t *NOTUSED(cs)) {
-    clear_delays();
+    clear_delays(ss);
 }

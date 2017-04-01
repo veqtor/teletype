@@ -75,10 +75,10 @@ void tele_usb_disk() {
                                                 0xa, 0);
                     region_draw(&line[0]);
 
-                    memcpy(tele_script_ptr(), &f.s[i].script,
-                           tele_script_size());
-                    memcpy(tele_patterns_ptr(), &f.s[i].patterns,
-                           tele_patterns_size());
+                    memcpy(ss_script_ptr(&scene_state), &f.s[i].script,
+                           ss_script_size());
+                    memcpy(ss_patterns_ptr(&scene_state), &f.s[i].patterns,
+                           ss_patterns_size());
                     memcpy(&scene_text, &f.s[i].text, sizeof(scene_text));
 
                     if (!nav_file_create((FS_STRING)filename)) {
@@ -130,9 +130,12 @@ void tele_usb_disk() {
                         else
                             file_putc(s + 49);
 
-                        for (int l = 0; l < tele_get_script_l(s); l++) {
+                        for (int l = 0; l < ss_get_script_len(&scene_state, s);
+                             l++) {
                             file_putc('\n');
-                            print_command(tele_get_script_c(s, l), input);
+                            print_command(
+                                ss_get_script_command(&scene_state, s, l),
+                                input);
                             file_write_buf((uint8_t*)input, strlen(input));
                         }
                     }
@@ -144,7 +147,7 @@ void tele_usb_disk() {
                     file_putc('\n');
 
                     for (int b = 0; b < 4; b++) {
-                        itoa(tele_get_pattern_l(b), input, 10);
+                        itoa(ss_get_pattern_len(&scene_state, b), input, 10);
                         file_write_buf((uint8_t*)input, strlen(input));
                         if (b == 3)
                             file_putc('\n');
@@ -153,7 +156,7 @@ void tele_usb_disk() {
                     }
 
                     for (int b = 0; b < 4; b++) {
-                        itoa(tele_get_pattern_wrap(b), input, 10);
+                        itoa(ss_get_pattern_wrap(&scene_state, b), input, 10);
                         file_write_buf((uint8_t*)input, strlen(input));
                         if (b == 3)
                             file_putc('\n');
@@ -162,7 +165,7 @@ void tele_usb_disk() {
                     }
 
                     for (int b = 0; b < 4; b++) {
-                        itoa(tele_get_pattern_start(b), input, 10);
+                        itoa(ss_get_pattern_start(&scene_state, b), input, 10);
                         file_write_buf((uint8_t*)input, strlen(input));
                         if (b == 3)
                             file_putc('\n');
@@ -171,7 +174,7 @@ void tele_usb_disk() {
                     }
 
                     for (int b = 0; b < 4; b++) {
-                        itoa(tele_get_pattern_end(b), input, 10);
+                        itoa(ss_get_pattern_end(&scene_state, b), input, 10);
                         file_write_buf((uint8_t*)input, strlen(input));
                         if (b == 3)
                             file_putc('\n');
@@ -183,7 +186,8 @@ void tele_usb_disk() {
 
                     for (int l = 0; l < 64; l++) {
                         for (int b = 0; b < 4; b++) {
-                            itoa(tele_get_pattern_val(b, l), input, 10);
+                            itoa(ss_get_pattern_val(&scene_state, b, l), input,
+                                 10);
                             file_write_buf((uint8_t*)input, strlen(input));
                             if (b == 3)
                                 file_putc('\n');
@@ -306,8 +310,9 @@ void tele_usb_disk() {
                                                     validate(&temp, error_msg);
 
                                                 if (status == E_OK) {
-                                                    overwrite_script_command(
-                                                        s, l, &temp);
+                                                    ss_overwrite_script_command(
+                                                        &scene_state, s, l,
+                                                        &temp);
                                                     memset(input, 0,
                                                            sizeof(input));
                                                 }
@@ -325,7 +330,8 @@ void tele_usb_disk() {
                                                 print_dbg(input);
                                                 char pcmd[32];
                                                 print_command(
-                                                    tele_get_script_c(s, l),
+                                                    ss_get_script_command(
+                                                        &scene_state, s, l),
                                                     pcmd);
                                                 print_dbg(pcmd);
                                             }
@@ -345,8 +351,9 @@ void tele_usb_disk() {
                                     if (c == '\n' || c == '\t') {
                                         if (b < 4) {
                                             if (l > 3) {
-                                                tele_set_pattern_val(b, l - 4,
-                                                                     neg * num);
+                                                ss_set_pattern_val(&scene_state,
+                                                                   b, l - 4,
+                                                                   neg * num);
                                                 // print_dbg("\r\nset: ");
                                                 // print_dbg_ulong(b);
                                                 // print_dbg(" ");
@@ -355,16 +362,20 @@ void tele_usb_disk() {
                                                 // print_dbg_ulong(num);
                                             }
                                             else if (l == 0) {
-                                                tele_set_pattern_l(b, num);
+                                                ss_set_pattern_len(&scene_state,
+                                                                   b, num);
                                             }
                                             else if (l == 1) {
-                                                tele_set_pattern_wrap(b, num);
+                                                ss_set_pattern_wrap(
+                                                    &scene_state, b, num);
                                             }
                                             else if (l == 2) {
-                                                tele_set_pattern_start(b, num);
+                                                ss_set_pattern_start(
+                                                    &scene_state, b, num);
                                             }
                                             else if (l == 3) {
-                                                tele_set_pattern_end(b, num);
+                                                ss_set_pattern_end(&scene_state,
+                                                                   b, num);
                                             }
                                         }
 
@@ -425,7 +436,7 @@ void tele_usb_disk() {
 }
 
 void mem_clear() {
-    memset(tele_script_ptr(), 0, tele_script_size());
-    memset(tele_patterns_ptr(), 0, tele_patterns_size());
+    memset(ss_script_ptr(&scene_state), 0, ss_script_size());
+    memset(ss_patterns_ptr(&scene_state), 0, ss_patterns_size());
     memset(&scene_text, 0, sizeof(scene_text));
 }

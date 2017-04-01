@@ -119,9 +119,10 @@ int main() {
 
     in = malloc(256);
 
-    tele_init();
-
     printf("teletype. (blank line quits)\n\n");
+
+    scene_state_t ss;
+    ss_init(&ss);
 
     do {
         printf("> ");
@@ -144,7 +145,7 @@ int main() {
             if (error_msg[0]) printf(": %s", error_msg);
             printf("\n");
             if (status == E_OK) {
-                process_result_t output = process_command(&es, &temp);
+                process_result_t output = process_command(&ss, &es, &temp);
                 if (output.has_value) { printf(">>> %i\n", output.value); }
             }
         }
