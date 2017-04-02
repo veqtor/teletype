@@ -31,9 +31,8 @@ typedef enum {
     M_HELP
 } tele_mode_t;
 
-extern tele_mode_t mode;
-extern tele_mode_t last_mode;
 void set_mode(tele_mode_t mode);
+void set_last_mode(void);
 
 #define A_METRO 0x1
 #define A_TR 0x2

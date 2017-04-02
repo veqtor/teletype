@@ -61,7 +61,7 @@ void process_preset_r_keys(uint8_t k, uint8_t m, bool is_held_key) {
 
         run_script(&scene_state, INIT_SCRIPT);
 
-        set_mode(last_mode);
+        set_last_mode();
     }
 }
 

@@ -249,7 +249,6 @@ static void handler_Front(s32 data) {
     if (data == 0) {
         if (mode != M_PRESET_R) {
             front_timer = 0;
-            last_mode = mode;
             set_preset_r_mode(adc[1]);
             set_mode(M_PRESET_R);
         }
@@ -257,7 +256,7 @@ static void handler_Front(s32 data) {
             front_timer = 15;
     }
     else {
-        if (front_timer) { set_mode(last_mode); }
+        if (front_timer) { set_last_mode(); }
         front_timer = 0;
     }
 }
@@ -286,7 +285,7 @@ static void handler_KeyTimer(s32 data) {
 
             run_script(&scene_state, INIT_SCRIPT);
 
-            set_mode(last_mode);
+            set_last_mode();
 
             front_timer--;
         }
@@ -411,6 +410,7 @@ void check_events(void) {
 // funcs
 
 void set_mode(tele_mode_t m) {
+    last_mode = mode;
     switch (m) {
         case M_LIVE:
             set_live_mode();
@@ -445,6 +445,14 @@ void set_mode(tele_mode_t m) {
     }
 }
 
+void set_last_mode() {
+    if (mode == last_mode) return;
+
+    if (last_mode == M_LIVE || last_mode == M_EDIT || last_mode == M_PATTERN)
+        set_mode(last_mode);
+    else
+        set_mode(M_LIVE);
+}
 
 void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key) {
     // first try global keys
@@ -474,24 +482,21 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
     }
     else if (match_no_mod(m, k, HID_TILDE)) {
         if (mode == M_PATTERN)
-            set_mode(last_mode);
+            set_last_mode();
         else {
-            last_mode = mode;
             set_mode(M_PATTERN);
         }
         return true;
     }
     else if (match_no_mod(m, k, HID_ESCAPE)) {
         if (mode == M_PRESET_R)
-            set_mode(last_mode);
+            set_last_mode();
         else {
-            last_mode = mode;
             set_mode(M_PRESET_R);
         }
         return true;
     }
     else if (match_alt(m, k, HID_ESCAPE)) {
-        last_mode = mode;
         set_mode(M_PRESET_W);
         return true;
     }
@@ -504,9 +509,8 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
     }
     else if (match_no_mod(m, k, HID_F1)) {
         if (mode == M_HELP)
-            set_mode(last_mode);
+            set_last_mode();
         else {
-            last_mode = mode;
             set_mode(M_HELP);
         }
         return true;
