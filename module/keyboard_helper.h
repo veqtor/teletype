@@ -39,4 +39,10 @@ static inline bool match_shift_alt(uint8_t mod, uint8_t key,
     return (mod & either_sh) && (mod & either_alt) && (key == required_key);
 }
 
+static inline bool match_win(uint8_t mod, uint8_t key, uint8_t required_key) {
+    return (mod == HID_MODIFIER_LEFT_UI || mod == HID_MODIFIER_RIGHT_UI ||
+            mod == (HID_MODIFIER_LEFT_UI | HID_MODIFIER_RIGHT_UI)) &&
+        (key == required_key);
+}
+
 #endif

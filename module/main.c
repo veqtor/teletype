@@ -12,6 +12,7 @@
 #include "print_funcs.h"
 #include "spi.h"
 #include "sysclk.h"
+#include "usb_protocol_hid.h"
 
 // system
 #include "adc.h"
@@ -34,6 +35,7 @@
 #include "flash.h"
 #include "fudge.h"
 #include "help_mode.h"
+#include "keyboard_helper.h"
 #include "live_mode.h"
 #include "pattern_mode.h"
 #include "preset_r_mode.h"
@@ -462,84 +464,60 @@ void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key) {
     }
 }
 
-bool process_global_keys(uint8_t key, uint8_t mod_key, bool is_held_key) {
-    // determine modifiers
-    uint8_t mod_SH = mod_key & SHIFT;
-    uint8_t mod_ALT = mod_key & ALT;
-    uint8_t mod_META = mod_key & META;
-
-    // global keys
-    switch (key) {
-        case TAB:
-            if (mode == M_LIVE)
-                set_mode(M_EDIT);
-            else
-                set_mode(M_LIVE);
-            return true;
-        case TILDE:
-            if (mode == M_PATTERN)
-                set_mode(last_mode);
-            else {
-                last_mode = mode;
-                set_mode(M_PATTERN);
-            }
-            return true;
-        case ESCAPE:
-            if (mod_ALT) {
-                last_mode = mode;
-                set_mode(M_PRESET_W);
-            }
-            else if (mod_META) {
-                if (!is_held_key) {
-                    clear_delays(&scene_state);
-                    for (int i = 0; i < 4; i++) { aout[i].step = 1; }
-                }
-            }
-            else if (mode == M_PRESET_R)
-                set_mode(last_mode);
-            else {
-                last_mode = mode;
-                set_mode(M_PRESET_R);
-            }
-            return true;
-        case 0x3A:  // F1
-            if (mode == M_HELP)
-                set_mode(last_mode);
-            else {
-                last_mode = mode;
-                set_mode(M_HELP);
-            }
-            return true;
-    }
-
-    if (mod_META) {
-        u8 n = hid_to_ascii_raw(key);
-
-        if (n > 0x30 && n < 0x039) {
-            if (mod_SH) {
-                mutes[n - 0x31] ^= 1;
-                activity |= A_MUTES;
-            }
-            else
-                tele_script(n - 0x30);
-            return true;
-        }
-        else if (n == 'M') {
-            run_script(&scene_state, METRO_SCRIPT);
-            return true;
-        }
-        else if (n == 'I') {
-            run_script(&scene_state, INIT_SCRIPT);
-            return true;
-        }
-    }
-
-    if (key > 0x58 && key < 0x61) {  // number pad keys?
-        tele_script(key - 0x58);
+bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
+    if (match_no_mod(m, k, HID_TAB)) {
+        if (mode == M_LIVE)
+            set_mode(M_EDIT);
+        else
+            set_mode(M_LIVE);
         return true;
     }
-
-    return false;
+    else if (match_no_mod(m, k, HID_TILDE)) {
+        if (mode == M_PATTERN)
+            set_mode(last_mode);
+        else {
+            last_mode = mode;
+            set_mode(M_PATTERN);
+        }
+        return true;
+    }
+    else if (match_no_mod(m, k, HID_ESCAPE)) {
+        if (mode == M_PRESET_R)
+            set_mode(last_mode);
+        else {
+            last_mode = mode;
+            set_mode(M_PRESET_R);
+        }
+        return true;
+    }
+    else if (match_alt(m, k, HID_ESCAPE)) {
+        last_mode = mode;
+        set_mode(M_PRESET_W);
+        return true;
+    }
+    else if (match_win(m, k, HID_ESCAPE)) {
+        if (!is_held_key) {
+            clear_delays(&scene_state);
+            for (int i = 0; i < 4; i++) { aout[i].step = 1; }
+        }
+        return true;
+    }
+    else if (match_no_mod(m, k, HID_F1)) {
+        if (mode == M_HELP)
+            set_mode(last_mode);
+        else {
+            last_mode = mode;
+            set_mode(M_HELP);
+        }
+        return true;
+    }
+    else if (m == HID_MODIFIER_NONE && k >= HID_KEYPAD_1 && k <= HID_KEYPAD_8) {
+        tele_script(k - HID_KEYPAD_1 + 1);
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 
