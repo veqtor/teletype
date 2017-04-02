@@ -476,16 +476,10 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
     if (match_no_mod(m, k, HID_TAB)) {
         if (mode == M_LIVE)
             set_mode(M_EDIT);
+        else if (mode == M_EDIT)
+            set_mode(M_PATTERN);
         else
             set_mode(M_LIVE);
-        return true;
-    }
-    else if (match_no_mod(m, k, HID_TILDE)) {
-        if (mode == M_PATTERN)
-            set_last_mode();
-        else {
-            set_mode(M_PATTERN);
-        }
         return true;
     }
     else if (match_no_mod(m, k, HID_ESCAPE)) {
