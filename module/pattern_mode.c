@@ -228,7 +228,7 @@ void process_pattern_keys(uint8_t k, uint8_t m, bool is_held_key) {
             ss_set_pattern_val(&scene_state, pattern, base + offset, 1);
         r_edit_dirty |= R_ALL;
     }
-    else if ((m == HID_MODIFIER_NONE) && (k >= HID_1 && k <= HID_0)) {
+    else if (no_mod(m) && k >= HID_1 && k <= HID_0) {
         uint8_t n = (k - HID_1 + 1) % 10;  // convert HID numbers to decimal,
                                            // taking care of HID_0
         int16_t v = ss_get_pattern_val(&scene_state, pattern, base + offset);
@@ -246,13 +246,12 @@ void process_pattern_keys(uint8_t k, uint8_t m, bool is_held_key) {
 }
 
 void process_pattern_knob(uint16_t knob, uint8_t m) {
-    if (m == HID_MODIFIER_LEFT_CTRL || m == HID_MODIFIER_RIGHT_CTRL) {
-        if (m == HID_MODIFIER_LEFT_SHIFT || m == HID_MODIFIER_RIGHT_SHIFT) {
-            ss_set_pattern_val(&scene_state, pattern, base + offset, knob >> 2);
-        }
-        else {
-            ss_set_pattern_val(&scene_state, pattern, base + offset, knob >> 7);
-        }
+    if (mod_only_ctrl(m)) {
+        ss_set_pattern_val(&scene_state, pattern, base + offset, knob >> 7);
+        r_edit_dirty |= R_ALL;
+    }
+    else if (mod_only_shift_ctrl(m)) {
+        ss_set_pattern_val(&scene_state, pattern, base + offset, knob >> 2);
         r_edit_dirty |= R_ALL;
     }
 }

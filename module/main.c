@@ -512,18 +512,16 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         return true;
     }
-    else if (m == HID_MODIFIER_NONE && k >= HID_F1 && k <= HID_F10) {
+    else if (no_mod(m) && k >= HID_F1 && k <= HID_F10) {
         tele_script(k - HID_F1 + 1);
         return true;
     }
-    else if ((m == HID_MODIFIER_LEFT_ALT || m == HID_MODIFIER_RIGHT_ALT ||
-              m == (HID_MODIFIER_LEFT_ALT | HID_MODIFIER_RIGHT_ALT)) &&
-             k >= HID_F1 && k <= HID_F10) {
+    else if (mod_only_alt(m) && k >= HID_F1 && k <= HID_F10) {
         set_edit_mode_script(k - HID_F1);
         set_mode(M_EDIT);
         return true;
     }
-    else if (m == HID_MODIFIER_NONE && k >= HID_KEYPAD_1 && k <= HID_KEYPAD_8) {
+    else if (no_mod(m) && k >= HID_KEYPAD_1 && k <= HID_KEYPAD_8) {
         tele_script(k - HID_KEYPAD_1 + 1);
         return true;
     }

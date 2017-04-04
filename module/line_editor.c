@@ -81,9 +81,7 @@ bool line_editor_process_keys(line_editor_t *le, uint8_t k, uint8_t m,
         line_editor_set(le, copy_buffer);
         return true;
     }
-    else if (m == HID_MODIFIER_NONE || m == HID_MODIFIER_LEFT_SHIFT ||
-             m == HID_MODIFIER_RIGHT_SHIFT ||
-             m == (HID_MODIFIER_LEFT_SHIFT | HID_MODIFIER_RIGHT_SHIFT)) {
+    else if (no_mod(m) || mod_only_shift(m)) {
         if (le->length < LINE_EDITOR_SIZE - 2) {  // room for another char & 0
             uint8_t n = hid_to_ascii(k, m);
             if (n) {
