@@ -473,6 +473,9 @@ void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key) {
 }
 
 bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
+    if (is_held_key)  // none of these want to work with held keys
+        return false;
+
     if (match_no_mod(m, k, HID_TAB)) {
         if (mode == M_LIVE)
             set_mode(M_EDIT);
@@ -501,12 +504,23 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         return true;
     }
-    else if (match_no_mod(m, k, HID_F1)) {
+    else if (match_no_mod(m, k, HID_PRINTSCREEN)) {
         if (mode == M_HELP)
             set_last_mode();
         else {
             set_mode(M_HELP);
         }
+        return true;
+    }
+    else if (m == HID_MODIFIER_NONE && k >= HID_F1 && k <= HID_F10) {
+        tele_script(k - HID_F1 + 1);
+        return true;
+    }
+    else if ((m == HID_MODIFIER_LEFT_ALT || m == HID_MODIFIER_RIGHT_ALT ||
+              m == (HID_MODIFIER_LEFT_ALT | HID_MODIFIER_RIGHT_ALT)) &&
+             k >= HID_F1 && k <= HID_F10) {
+        set_edit_mode_script(k - HID_F1);
+        set_mode(M_EDIT);
         return true;
     }
     else if (m == HID_MODIFIER_NONE && k >= HID_KEYPAD_1 && k <= HID_KEYPAD_8) {

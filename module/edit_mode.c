@@ -32,6 +32,11 @@ void set_edit_mode() {
         &le, ss_get_script_command(&scene_state, script, line_no));
 }
 
+void set_edit_mode_script(uint8_t new_script) {
+    script = new_script;
+    if (script >= SCRIPT_COUNT) script = SCRIPT_COUNT - 1;
+}
+
 void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
     if (match_no_mod(m, k, HID_DOWN)) {
         if (line_no < (SCRIPT_MAX_COMMANDS - 1) &&
@@ -58,7 +63,7 @@ void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
         if (script)
             script--;
         else
-            script = 9;
+            script = SCRIPT_COUNT - 1;
         if (line_no > ss_get_script_len(&scene_state, script))
             line_no = ss_get_script_len(&scene_state, script);
         line_editor_set_command(
@@ -70,7 +75,7 @@ void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
         status = E_OK;
         error_msg[0] = 0;
         script++;
-        if (script == 10) script = 0;
+        if (script >= SCRIPT_COUNT) script = 0;
         if (line_no > ss_get_script_len(&scene_state, script))
             line_no = ss_get_script_len(&scene_state, script);
         line_editor_set_command(

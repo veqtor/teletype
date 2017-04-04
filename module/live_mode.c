@@ -86,6 +86,11 @@ void process_live_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         line_editor_set(&le, "");
     }
+    else if (match_no_mod(m, k, HID_OPEN_BRACKET) ||
+             match_no_mod(m, k, HID_CLOSE_BRACKET)) {  // [ or ]
+        set_mode(M_EDIT);
+    }
+
     else {  // pass the key though to the line editor
         bool processed = line_editor_process_keys(&le, k, m, is_held_key);
         if (processed) r_edit_dirty |= R_INPUT;
