@@ -63,6 +63,10 @@ static inline bool match_shift(uint8_t mod, uint8_t key, uint8_t required_key) {
     return mod_only_shift(mod) && key == required_key;
 }
 
+static inline bool match_ctrl(uint8_t mod, uint8_t key, uint8_t required_key) {
+    return mod_only_ctrl(mod) && key == required_key;
+}
+
 static inline bool match_alt(uint8_t mod, uint8_t key, uint8_t required_key) {
     return mod_only_alt(mod) && key == required_key;
 }

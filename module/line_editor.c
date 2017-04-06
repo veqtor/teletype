@@ -46,15 +46,28 @@ char *line_editor_get(line_editor_t *le) {
 
 bool line_editor_process_keys(line_editor_t *le, uint8_t k, uint8_t m,
                               bool is_key_held) {
-    if (match_no_mod(m, k, HID_LEFT)) {  // left
+    // <left> or ctrl-b: move cursor left
+    if (match_no_mod(m, k, HID_LEFT) || match_ctrl(m, k, HID_B)) {
         if (le->cursor) { le->cursor--; }
         return true;
     }
-    else if (match_no_mod(m, k, HID_RIGHT)) {  // right
+    // <right> or ctrl-f: move cursor right
+    else if (match_no_mod(m, k, HID_RIGHT) || match_ctrl(m, k, HID_F)) {
         if (le->cursor < le->length) { le->cursor++; }
         return true;
     }
-    else if (match_no_mod(m, k, HID_BACKSPACE)) {  // backspace
+    // <home> or ctrl-a: move to beginning of line
+    else if (match_no_mod(m, k, HID_HOME) || match_ctrl(m, k, HID_A)) {
+        le->cursor = 0;
+        return true;
+    }
+    // <end> or ctrl-e: move to end of line
+    else if (match_no_mod(m, k, HID_END) || match_ctrl(m, k, HID_E)) {
+        le->cursor = le->length;
+        return true;
+    }
+    // <backspace> or ctrl-h: backwards delete one character
+    else if (match_no_mod(m, k, HID_BACKSPACE) || match_ctrl(m, k, HID_H)) {
         if (le->cursor) {
             le->cursor--;
             for (size_t x = le->cursor; x < LINE_EDITOR_SIZE - 1; x++) {
@@ -64,20 +77,60 @@ bool line_editor_process_keys(line_editor_t *le, uint8_t k, uint8_t m,
         }
         return true;
     }
-    else if (match_shift(m, k, HID_BACKSPACE)) {  // backspace
-        line_editor_set(le, "");
+    // <delete> or ctrl-d: forwards delete one character
+    else if (match_no_mod(m, k, HID_DELETE) || match_ctrl(m, k, HID_D)) {
+        if (le->cursor < le->length) {
+            for (size_t x = le->cursor; x < LINE_EDITOR_SIZE - 1; x++) {
+                le->buffer[x] = le->buffer[x + 1];
+            }
+            le->length--;
+        }
         return true;
     }
-    else if (match_alt(m, k, HID_X)) {  // alt + x
+    // shift-<backspace> or ctrl-u: delete from cursor to beginning
+    else if (match_shift(m, k, HID_BACKSPACE) || match_ctrl(m, k, HID_U)) {
+        // strings will overlap, so we need to use an intermediate buffer
+        char temp[LINE_EDITOR_SIZE];
+        strcpy(temp, &le->buffer[le->cursor]);
+        line_editor_set(le, temp);
+        le->cursor = 0;
+        return true;
+    }
+    // shift-<delete> or ctrl-e: delete from cursor to end
+    else if (match_shift(m, k, HID_DELETE) || match_ctrl(m, k, HID_K)) {
+        le->buffer[le->cursor] = 0;
+        le->length = le->cursor;
+        return true;
+    }
+    // alt-<backspace> or ctrl-w: delete from cursor to beginning of word
+    else if (match_alt(m, k, HID_DELETE) || match_ctrl(m, k, HID_W)) {
+        while (le->cursor) {
+            // delete a character
+            le->cursor--;
+            for (size_t x = le->cursor; x < LINE_EDITOR_SIZE - 1; x++) {
+                le->buffer[x] = le->buffer[x + 1];
+            }
+            le->length--;
+
+            // place the check at the bottom so that we can chain invocations to
+            // delete multiple words
+            if (le->buffer[le->cursor - 1] == ' ') break;
+        }
+        return true;
+    }
+    // ctrl-x or alt-x: cut
+    else if (match_ctrl(m, k, HID_X) || match_alt(m, k, HID_X)) {
         strcpy(copy_buffer, le->buffer);
         line_editor_set(le, "");
         return true;
     }
-    else if (match_alt(m, k, HID_C)) {  // alt + c
+    // ctrl-c or alt-c: copy
+    else if (match_ctrl(m, k, HID_C) || match_alt(m, k, HID_C)) {
         strcpy(copy_buffer, le->buffer);
         return true;
     }
-    else if (match_alt(m, k, HID_V)) {  // alt + v
+    // ctrl-v or alt-v: paste
+    else if (match_ctrl(m, k, HID_V) || match_alt(m, k, HID_V)) {
         line_editor_set(le, copy_buffer);
         return true;
     }
