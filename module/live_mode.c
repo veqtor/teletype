@@ -201,14 +201,12 @@ void screen_refresh_live() {
         line[0].data[122 + 4 + 512] = metro_fg;
 
         // mutes
-        line[0].data[87 + 0 + 128] = 15 - mutes[0] * 12;
-        line[0].data[87 + 1 + 384] = 15 - mutes[1] * 12;
-        line[0].data[87 + 2 + 128] = 15 - mutes[2] * 12;
-        line[0].data[87 + 3 + 384] = 15 - mutes[3] * 12;
-        line[0].data[87 + 4 + 128] = 15 - mutes[4] * 12;
-        line[0].data[87 + 5 + 384] = 15 - mutes[5] * 12;
-        line[0].data[87 + 6 + 128] = 15 - mutes[6] * 12;
-        line[0].data[87 + 7 + 384] = 15 - mutes[7] * 12;
+        for (size_t i = 0; i < 8; i++) {
+            // make it staggered to match how the device looks
+            size_t stagger = i % 2 ? 384 : 128;
+            uint8_t mute_fg = ss_get_mute(&scene_state, i) ? 15 : 1;
+            line[0].data[87 + i + stagger] = mute_fg;
+        }
 
         activity_prev = activity;
         screen_dirty = true;

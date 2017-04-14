@@ -2,6 +2,8 @@
 
 #include <string.h>
 
+#include "teletype_io.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // SCENE STATE /////////////////////////////////////////////////////////////////
@@ -70,6 +72,17 @@ void ss_set_param(scene_state_t *ss, int16_t value) {
 
 void ss_set_scene(scene_state_t *ss, int16_t value) {
     ss->variables.scene = value;
+}
+
+// mutes
+
+bool ss_get_mute(scene_state_t *ss, size_t idx) {
+    return ss->variables.mutes[idx];
+}
+
+void ss_set_mute(scene_state_t *ss, size_t idx, bool value) {
+    ss->variables.mutes[idx] = value;
+    tele_mute();
 }
 
 // pattern getters and setters

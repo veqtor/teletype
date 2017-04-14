@@ -434,18 +434,16 @@ static void op_CV_SET_get(const void *NOTUSED(data), scene_state_t *ss,
     }
 }
 
-static void op_MUTE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_MUTE_get(const void *NOTUSED(data), scene_state_t *ss,
                         exec_state_t *NOTUSED(es), command_state_t *cs) {
-    int16_t a;
-    a = cs_pop(cs);
-    if (a > 0 && a < 9) { tele_mute(a - 1, 0); }
+    int16_t a = cs_pop(cs) - 1;
+    if (a >= 0 && a < TRIGGER_INPUTS) { ss_set_mute(ss, a, true); }
 }
 
-static void op_UNMUTE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_UNMUTE_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
-    int16_t a;
-    a = cs_pop(cs);
-    if (a > 0 && a < 9) { tele_mute(a - 1, 1); }
+    int16_t a = cs_pop(cs) - 1;
+    if (a >= 0 && a < TRIGGER_INPUTS) { ss_set_mute(ss, a, false); }
 }
 
 static void op_STATE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),

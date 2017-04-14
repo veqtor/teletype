@@ -74,10 +74,6 @@ typedef struct {
 
 aout_t aout[4];
 
-// defined in fudge.h
-u8 mutes[8];
-
-
 uint8_t metro_act;
 unsigned int metro_time;
 
@@ -346,7 +342,7 @@ static void handler_HidPacket(s32 data) {}
 
 
 static void handler_Trigger(s32 data) {
-    if (mutes[data]) { run_script(&scene_state, data); }
+    if (!ss_get_mute(&scene_state, data)) { run_script(&scene_state, data); }
 }
 
 
@@ -649,8 +645,7 @@ void tele_kill() {
     for (int i = 0; i < 4; i++) aout[i].step = 1;
 }
 
-void tele_mute(uint8_t i, uint8_t s) {
-    mutes[i] = s;
+void tele_mute() {
     activity |= A_MUTES;
 }
 
@@ -729,8 +724,6 @@ int main(void) {
     aout[1].slew = 1;
     aout[2].slew = 1;
     aout[3].slew = 1;
-
-    for (int i = 0; i < 8; i++) mutes[i] = 1;
 
     init_live_mode();
     r_edit_dirty = R_MESSAGE | R_INPUT;

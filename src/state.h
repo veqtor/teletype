@@ -11,6 +11,7 @@
 #define CV_COUNT 4
 #define Q_LENGTH 16
 #define TR_COUNT 4
+#define TRIGGER_INPUTS 8
 #define DELAY_SIZE 8
 #define STACK_OP_SIZE 8
 #define PATTERN_COUNT 4
@@ -42,6 +43,7 @@ typedef struct {
     int16_t in;
     int16_t m;
     int16_t m_act;
+    bool mutes[TRIGGER_INPUTS];
     int16_t o;
     int16_t o_inc;
     int16_t o_min;
@@ -105,6 +107,9 @@ extern void ss_pattern_init(scene_state_t *ss, size_t pattern_no);
 extern void ss_set_in(scene_state_t *ss, int16_t value);
 extern void ss_set_param(scene_state_t *ss, int16_t value);
 extern void ss_set_scene(scene_state_t *ss, int16_t value);
+
+extern bool ss_get_mute(scene_state_t *ss, size_t idx);
+extern void ss_set_mute(scene_state_t *ss, size_t idx, bool value);
 
 extern int16_t ss_get_pattern_idx(scene_state_t *ss, size_t pattern);
 extern void ss_set_pattern_idx(scene_state_t *ss, size_t pattern, int16_t i);

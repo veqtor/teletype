@@ -44,6 +44,4 @@ void set_last_mode(void);
 #define A_MUTES 0x80
 extern uint8_t activity;
 
-extern uint8_t mutes[8];
-
 #endif

@@ -21,7 +21,7 @@ extern void tele_ii_rx(uint8_t addr, uint8_t *data, uint8_t l);
 extern void tele_scene(uint8_t i);
 extern void tele_pi(void);
 extern void tele_kill(void);
-extern void tele_mute(uint8_t, uint8_t);
+extern void tele_mute(void);
 extern bool tele_get_input_state(uint8_t);
 
 #endif

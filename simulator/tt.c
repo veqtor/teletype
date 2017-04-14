@@ -82,8 +82,8 @@ void tele_kill() {
     printf("\n");
 }
 
-void tele_mute(uint8_t i, uint8_t s) {
-    printf("MUTE  i:%" PRIu8 " s:%" PRIu8, i, s);
+void tele_mute() {
+    printf("MUTE");
     printf("\n");
 }
 

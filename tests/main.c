@@ -24,7 +24,7 @@ void tele_ii_rx(uint8_t addr, uint8_t *data, uint8_t l) {}
 void tele_scene(uint8_t i) {}
 void tele_pi() {}
 void tele_kill() {}
-void tele_mute(uint8_t i, uint8_t s) {}
+void tele_mute() {}
 bool tele_get_input_state(uint8_t n) {
     return false;
 }
