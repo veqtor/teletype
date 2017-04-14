@@ -38,7 +38,7 @@ void set_edit_mode_script(uint8_t new_script) {
 }
 
 void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
-    if (match_no_mod(m, k, HID_DOWN)) {
+    if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {
         if (line_no < (SCRIPT_MAX_COMMANDS - 1) &&
             line_no < ss_get_script_len(&scene_state, script)) {
             line_no++;
@@ -48,7 +48,7 @@ void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
             r_edit_dirty |= R_INPUT;
         }
     }
-    else if (match_no_mod(m, k, HID_UP)) {
+    else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {
         if (line_no) {
             line_no--;
             line_editor_set_command(

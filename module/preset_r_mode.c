@@ -32,13 +32,13 @@ void process_preset_r_knob(uint16_t knob, uint8_t mod_key) {
 }
 
 void process_preset_r_keys(uint8_t k, uint8_t m, bool is_held_key) {
-    if (match_no_mod(m, k, HID_DOWN)) {  // down
+    if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {  // down
         if (offset < SCENE_TEXT_LINES - 8) {
             offset++;
             r_edit_dirty |= R_ALL;
         }
     }
-    else if (match_no_mod(m, k, HID_UP)) {  // up
+    else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {  // up
         if (offset) {
             offset--;
             r_edit_dirty |= R_ALL;

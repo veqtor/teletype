@@ -29,7 +29,7 @@ void set_preset_w_mode() {
 }
 
 void process_preset_w_keys(uint8_t k, uint8_t m, bool is_held_key) {
-    if (match_no_mod(m, k, HID_DOWN)) {  // down
+    if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {  // down
         if ((edit_offset + edit_line) < 31) {
             if (edit_line == 5)
                 edit_offset++;
@@ -39,7 +39,7 @@ void process_preset_w_keys(uint8_t k, uint8_t m, bool is_held_key) {
             r_edit_dirty |= R_ALL;
         }
     }
-    else if (match_no_mod(m, k, HID_UP)) {  // up
+    else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {  // up
         if (edit_line + edit_offset) {
             if (edit_line)
                 edit_line--;

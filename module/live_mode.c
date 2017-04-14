@@ -40,7 +40,7 @@ void set_live_mode() {
 }
 
 void process_live_keys(uint8_t k, uint8_t m, bool is_held_key) {
-    if (match_no_mod(m, k, HID_DOWN)) {  // down
+    if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {  // down
         if (history_line < (HISTORY_SIZE - 1)) {
             history_line++;
             line_editor_set_command(&le, &history[history_line]);
@@ -52,7 +52,7 @@ void process_live_keys(uint8_t k, uint8_t m, bool is_held_key) {
             r_edit_dirty |= R_INPUT;
         }
     }
-    else if (match_no_mod(m, k, HID_UP)) {  // up
+    else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {  // up
         if (history_line) {
             history_line--;
             line_editor_set_command(&le, &history[history_line]);

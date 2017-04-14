@@ -250,13 +250,13 @@ uint8_t offset;
 
 
 void process_help_keys(uint8_t k, uint8_t m, bool is_held_key) {
-    if (match_no_mod(m, k, HID_DOWN)) {  // down
+    if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {  // down
         if (offset < help_length[page_no] - 8) {
             offset++;
             r_edit_dirty |= R_ALL;
         }
     }
-    else if (match_no_mod(m, k, HID_UP)) {  // up
+    else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {  // up
         if (offset) {
             offset--;
             r_edit_dirty |= R_ALL;
