@@ -76,10 +76,6 @@ void tele_pi() {
     printf("PI");
     printf("\n");
 }
-void tele_script(uint8_t a) {
-    printf("SCRIPT  a:%" PRIu8, a);
-    printf("\n");
-}
 
 void tele_kill() {
     printf("KILL");

@@ -142,7 +142,10 @@ size_t ss_script_size(void);
 // EXEC STATE //////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-typedef struct { bool if_else_condition; } exec_state_t;
+typedef struct {
+    bool if_else_condition;
+    uint8_t exec_depth;
+} exec_state_t;
 
 extern void es_init(exec_state_t *es);
 

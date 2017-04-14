@@ -105,11 +105,14 @@ static void op_SCENE_set(const void *NOTUSED(data), scene_state_t *ss,
     tele_scene(scene);
 }
 
-static void op_SCRIPT_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
-                          exec_state_t *NOTUSED(es), command_state_t *cs) {
-    uint16_t a = cs_pop(cs);
-    if (a > 0 && a < 9) tele_script(a);
+static void op_SCRIPT_get(const void *NOTUSED(data), scene_state_t *ss,
+                          exec_state_t *es, command_state_t *cs) {
+    uint16_t a = cs_pop(cs) - 1;
+    if (a >= SCRIPT_COUNT || a == INIT_SCRIPT || a == METRO_SCRIPT) return;
+
+    run_script_with_exec_state(ss, es, a);
 }
+
 static void op_KILL_get(const void *NOTUSED(data), scene_state_t *ss,
                         exec_state_t *NOTUSED(es),
                         command_state_t *NOTUSED(cs)) {

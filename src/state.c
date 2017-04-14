@@ -227,6 +227,7 @@ size_t ss_script_size() {
 
 void es_init(exec_state_t *es) {
     es->if_else_condition = false;
+    es->exec_depth = 0;
 }
 
 

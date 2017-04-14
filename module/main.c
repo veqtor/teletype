@@ -513,7 +513,7 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
         return true;
     }
     else if (no_mod(m) && k >= HID_F1 && k <= HID_F10) {
-        tele_script(k - HID_F1 + 1);
+        run_script(&scene_state, k - HID_F1);
         return true;
     }
     else if (mod_only_alt(m) && k >= HID_F1 && k <= HID_F10) {
@@ -522,7 +522,7 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
         return true;
     }
     else if (no_mod(m) && k >= HID_KEYPAD_1 && k <= HID_KEYPAD_8) {
-        tele_script(k - HID_KEYPAD_1 + 1);
+        run_script(&scene_state, k - HID_KEYPAD_1);
         return true;
     }
     else {
@@ -643,19 +643,6 @@ void tele_scene(uint8_t i) {
 
 void tele_pi() {
     if (mode == M_PATTERN) r_edit_dirty |= R_ALL;
-}
-
-int8_t script_caller;
-void tele_script(uint8_t a) {
-    if (!script_caller) {
-        script_caller = a;
-        run_script(&scene_state, a - 1);
-    }
-    else if (a != script_caller) {
-        run_script(&scene_state, a - 1);
-    }
-
-    script_caller = 0;
 }
 
 void tele_kill() {
