@@ -11,23 +11,6 @@
 #include "teletype_io.h"
 #include "util.h"
 
-static const char *errordesc[] = { "OK",
-                                   WELCOME,
-                                   "UNKNOWN WORD",
-                                   "COMMAND TOO LONG",
-                                   "NOT ENOUGH PARAMS",
-                                   "TOO MANY PARAMS",
-                                   "MOD NOT ALLOWED HERE",
-                                   "EXTRA PRE SEPARATOR",
-                                   "NEED PRE SEPARATOR",
-                                   "BAD PRE SEPARATOR",
-                                   "NO SUB SEP IN PRE",
-                                   "MOVE LEFT" };
-
-const char *tele_error(error_t e) {
-    return errordesc[e];
-}
-
 
 /////////////////////////////////////////////////////////////////
 // DELAY ////////////////////////////////////////////////////////
@@ -304,4 +287,23 @@ void tele_tick(scene_state_t *ss, uint8_t time) {
             }
         }
     }
+}
+
+/////////////////////////////////////////////////////////////////
+// ERROR MESSAGES ///////////////////////////////////////////////
+
+const char *tele_error(error_t e) {
+    const char *error_string[] = { "OK",
+                                   "UNKNOWN WORD",
+                                   "COMMAND TOO LONG",
+                                   "NOT ENOUGH PARAMS",
+                                   "TOO MANY PARAMS",
+                                   "MOD NOT ALLOWED HERE",
+                                   "EXTRA PRE SEPARATOR",
+                                   "NEED PRE SEPARATOR",
+                                   "BAD PRE SEPARATOR",
+                                   "NO SUB SEP IN PRE",
+                                   "MOVE LEFT" };
+
+    return error_string[e];
 }

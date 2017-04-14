@@ -8,14 +8,11 @@
 #include "command.h"
 #include "state.h"
 
+#define TELETYPE_VERSION "TELETYPE 2.0b"
 #define TELE_ERROR_MSG_LENGTH 16
-
-#define WELCOME "TELETYPE 2.0b"
-
 
 typedef enum {
     E_OK,
-    E_WELCOME,
     E_PARSE,
     E_LENGTH,
     E_NEED_PARAMS,
@@ -48,7 +45,6 @@ process_result_t process_command(scene_state_t *ss, exec_state_t *es,
 void tele_tick(scene_state_t *ss, uint8_t);
 
 void clear_delays(scene_state_t *ss);
-
 
 const char *tele_error(error_t);
 

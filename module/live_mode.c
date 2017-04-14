@@ -26,10 +26,11 @@ process_result_t output;
 error_t status;
 char error_msg[TELE_ERROR_MSG_LENGTH];
 uint8_t activity_prev;
+bool show_welcome_message;
 
 void init_live_mode() {
-    status = E_WELCOME;
-    strcpy(error_msg, git_version);
+    status = E_OK;
+    show_welcome_message = true;
     activity_prev = 0xff;
 }
 
@@ -116,10 +117,14 @@ void screen_refresh_live() {
             }
             status = E_OK;
         }
-
         else if (output.has_value) {
             itoa(output.value, s, 10);
             output.has_value = false;
+        }
+        else if (show_welcome_message) {
+            strcpy(s, TELETYPE_VERSION ": ");
+            strcat(s, git_version);
+            show_welcome_message = false;
         }
         else {
             s[0] = 0;
