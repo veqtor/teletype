@@ -95,7 +95,6 @@
         "TR.P"        => { MATCH_OP(E_OP_TR_P); };
         "CV.SET"      => { MATCH_OP(E_OP_CV_SET); };
         "MUTE"        => { MATCH_OP(E_OP_MUTE); };
-        "UNMUTE"      => { MATCH_OP(E_OP_UNMUTE); };
         "STATE"       => { MATCH_OP(E_OP_STATE); };
 
         # maths

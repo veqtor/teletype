@@ -74,7 +74,6 @@ typedef enum {
     E_OP_TR_P,
     E_OP_CV_SET,
     E_OP_MUTE,
-    E_OP_UNMUTE,
     E_OP_STATE,
     E_OP_ADD,
     E_OP_SUB,

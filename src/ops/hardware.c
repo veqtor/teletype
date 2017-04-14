@@ -40,8 +40,8 @@ static void op_CV_SET_get(const void *data, scene_state_t *ss, exec_state_t *es,
                           command_state_t *cs);
 static void op_MUTE_get(const void *data, scene_state_t *ss, exec_state_t *es,
                         command_state_t *cs);
-static void op_UNMUTE_get(const void *data, scene_state_t *ss, exec_state_t *es,
-                          command_state_t *cs);
+static void op_MUTE_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                        command_state_t *cs);
 static void op_STATE_get(const void *data, scene_state_t *ss, exec_state_t *es,
                          command_state_t *cs);
 
@@ -60,8 +60,7 @@ const tele_op_t op_TR_TOG   = MAKE_GET_OP    (TR.TOG  , op_TR_TOG_get  , 1, fals
 const tele_op_t op_TR_PULSE = MAKE_GET_OP    (TR.PULSE, op_TR_PULSE_get, 1, false);
 const tele_op_t op_TR_P     = MAKE_ALIAS_OP  (TR.P    , op_TR_PULSE_get, NULL, 1, false);
 const tele_op_t op_CV_SET   = MAKE_GET_OP    (CV.SET  , op_CV_SET_get  , 2, false);
-const tele_op_t op_MUTE     = MAKE_GET_OP    (MUTE    , op_MUTE_get    , 1, false);
-const tele_op_t op_UNMUTE   = MAKE_GET_OP    (UNMUTE  , op_UNMUTE_get  , 1, false);
+const tele_op_t op_MUTE     = MAKE_GET_SET_OP(MUTE    , op_MUTE_get    , op_MUTE_set   , 1, true);
 const tele_op_t op_STATE    = MAKE_GET_OP    (STATE   , op_STATE_get   , 1, true );
 // clang-format on
 
@@ -437,13 +436,17 @@ static void op_CV_SET_get(const void *NOTUSED(data), scene_state_t *ss,
 static void op_MUTE_get(const void *NOTUSED(data), scene_state_t *ss,
                         exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs) - 1;
-    if (a >= 0 && a < TRIGGER_INPUTS) { ss_set_mute(ss, a, true); }
+    if (a >= 0 && a < TRIGGER_INPUTS) { cs_push(cs, ss_get_mute(ss, a)); }
+    else {
+        cs_push(cs, 0);
+    }
 }
 
-static void op_UNMUTE_get(const void *NOTUSED(data), scene_state_t *ss,
-                          exec_state_t *NOTUSED(es), command_state_t *cs) {
+static void op_MUTE_set(const void *NOTUSED(data), scene_state_t *ss,
+                        exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs) - 1;
-    if (a >= 0 && a < TRIGGER_INPUTS) { ss_set_mute(ss, a, false); }
+    bool b = cs_pop(cs) > 0;
+    if (a >= 0 && a < TRIGGER_INPUTS) { ss_set_mute(ss, a, b); }
 }
 
 static void op_STATE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
