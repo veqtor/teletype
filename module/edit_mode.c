@@ -154,7 +154,8 @@ void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
 }
 
 
-void screen_refresh_edit() {
+bool screen_refresh_edit() {
+    bool screen_dirty = false;
     if (r_edit_dirty & R_INPUT) {
         char prefix = script + '1';
         if (script == METRO_SCRIPT)
@@ -204,4 +205,6 @@ void screen_refresh_edit() {
         screen_dirty = true;
         r_edit_dirty &= ~R_LIST;
     }
+
+    return screen_dirty;
 }

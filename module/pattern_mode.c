@@ -256,8 +256,8 @@ void process_pattern_knob(uint16_t knob, uint8_t m) {
     }
 }
 
-void screen_refresh_pattern() {
-    if (!(r_edit_dirty & R_ALL)) { return; }
+bool screen_refresh_pattern() {
+    if (!(r_edit_dirty & R_ALL)) { return false; }
 
     char s[32];
     for (uint8_t y = 0; y < 8; y++) {
@@ -303,5 +303,5 @@ void screen_refresh_pattern() {
 
     r_edit_dirty &= ~R_ALL;
 
-    screen_dirty = true;
+    return true;
 }

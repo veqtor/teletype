@@ -82,8 +82,8 @@ void process_preset_w_keys(uint8_t k, uint8_t m, bool is_held_key) {
 }
 
 
-void screen_refresh_preset_w() {
-    if (!(r_edit_dirty & R_ALL)) { return; }
+bool screen_refresh_preset_w() {
+    if (!(r_edit_dirty & R_ALL)) { return false; }
 
     char header[6] = ">>> ";
     itoa(preset_select, header + 4, 10);
@@ -101,5 +101,5 @@ void screen_refresh_preset_w() {
     line_editor_draw(&le, '+', &line[7]);
 
     r_edit_dirty &= ~R_ALL;
-    screen_dirty = true;
+    return true;
 }

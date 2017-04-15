@@ -106,9 +106,6 @@ region line[8] = {
     {.w = 128, .h = 8, .x = 0, .y = 48 }, {.w = 128, .h = 8, .x = 0, .y = 56 }
 };
 
-// defined in fudge.h
-bool screen_dirty = false;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // prototypes
@@ -199,12 +196,6 @@ static void refreshTimer_callback(void* o) {
     e.type = kEventScreenRefresh;
     e.data = 0;
     event_post(&e);
-
-    if (screen_dirty) {
-        for (int i = 0; i < 8; i++) region_draw(&line[i]);
-
-        screen_dirty = false;
-    }
 }
 
 static void keyTimer_callback(void* o) {
@@ -350,13 +341,19 @@ static void handler_Trigger(s32 data) {
 // refresh
 
 static void handler_ScreenRefresh(s32 data) {
+    bool screen_dirty = false;
+
     switch (mode) {
-        case M_PATTERN: screen_refresh_pattern(); break;
-        case M_PRESET_W: screen_refresh_preset_w(); break;
-        case M_PRESET_R: screen_refresh_preset_r(); break;
-        case M_HELP: screen_refresh_help(); break;
-        case M_LIVE: screen_refresh_live(); break;
-        case M_EDIT: screen_refresh_edit(); break;
+        case M_PATTERN: screen_dirty = screen_refresh_pattern(); break;
+        case M_PRESET_W: screen_dirty = screen_refresh_preset_w(); break;
+        case M_PRESET_R: screen_dirty = screen_refresh_preset_r(); break;
+        case M_HELP: screen_dirty = screen_refresh_help(); break;
+        case M_LIVE: screen_dirty = screen_refresh_live(); break;
+        case M_EDIT: screen_dirty = screen_refresh_edit(); break;
+    }
+
+    if (screen_dirty) {
+        for (size_t i = 0; i < 8; i++) { region_draw(&line[i]); }
     }
 }
 

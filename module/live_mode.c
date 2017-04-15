@@ -99,7 +99,8 @@ void process_live_keys(uint8_t k, uint8_t m, bool is_held_key) {
 }
 
 
-void screen_refresh_live() {
+bool screen_refresh_live() {
+    bool screen_dirty = false;
     if (r_edit_dirty & R_INPUT) {
         line_editor_draw(&le, '>', &line[7]);
         screen_dirty = true;
@@ -218,4 +219,6 @@ void screen_refresh_live() {
         activity &= ~A_MUTES;
         activity &= ~A_REFRESH;
     }
+
+    return screen_dirty;
 }

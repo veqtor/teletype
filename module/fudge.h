@@ -18,7 +18,6 @@ extern scene_state_t scene_state;
 extern uint8_t r_edit_dirty;
 
 extern region line[8];
-extern bool screen_dirty;
 
 extern uint8_t preset_select;
 

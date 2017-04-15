@@ -5,6 +5,6 @@
 #include <stdint.h>
 
 void process_help_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
-void screen_refresh_help(void);
+bool screen_refresh_help(void);
 
 #endif

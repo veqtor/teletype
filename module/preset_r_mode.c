@@ -65,8 +65,8 @@ void process_preset_r_keys(uint8_t k, uint8_t m, bool is_held_key) {
     }
 }
 
-void screen_refresh_preset_r() {
-    if (!(r_edit_dirty & R_ALL)) { return; }
+bool screen_refresh_preset_r() {
+    if (!(r_edit_dirty & R_ALL)) { return false; }
 
     char s[32];
     itoa(preset_select, s, 10);
@@ -82,5 +82,5 @@ void screen_refresh_preset_r() {
     }
 
     r_edit_dirty &= ~R_ALL;
-    screen_dirty = true;
+    return true;
 };

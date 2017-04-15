@@ -280,8 +280,8 @@ void process_help_keys(uint8_t k, uint8_t m, bool is_held_key) {
     }
 }
 
-void screen_refresh_help() {
-    if (!(r_edit_dirty & R_ALL)) { return; }
+bool screen_refresh_help() {
+    if (!(r_edit_dirty & R_ALL)) { return false; }
 
     // clamp value of page_no
     if (page_no >= HELP_PAGES) page_no = HELP_PAGES - 1;
@@ -297,5 +297,5 @@ void screen_refresh_help() {
     }
 
     r_edit_dirty &= ~R_ALL;
-    screen_dirty = true;
+    return true;
 };
