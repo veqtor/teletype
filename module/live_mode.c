@@ -28,6 +28,12 @@ char error_msg[TELE_ERROR_MSG_LENGTH];
 uint8_t activity_prev;
 bool show_welcome_message;
 
+static const uint8_t D_INPUT = 1 << 0;
+static const uint8_t D_LIST = 1 << 1;
+static const uint8_t D_MESSAGE = 1 << 2;
+static const uint8_t D_ALL = 0xFF;
+uint8_t dirty;
+
 void init_live_mode() {
     status = E_OK;
     show_welcome_message = true;
@@ -38,6 +44,7 @@ void set_live_mode() {
     line_editor_set(&le, "");
     history_line = HISTORY_SIZE;
     activity |= A_REFRESH;
+    dirty = D_ALL;
 }
 
 void process_live_keys(uint8_t k, uint8_t m, bool is_held_key) {
@@ -45,24 +52,24 @@ void process_live_keys(uint8_t k, uint8_t m, bool is_held_key) {
         if (history_line < (HISTORY_SIZE - 1)) {
             history_line++;
             line_editor_set_command(&le, &history[history_line]);
-            r_edit_dirty |= R_INPUT;
+            dirty |= D_INPUT;
         }
         else {
             history_line = HISTORY_SIZE;
             line_editor_set(&le, "");
-            r_edit_dirty |= R_INPUT;
+            dirty |= D_INPUT;
         }
     }
     else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {  // up
         if (history_line) {
             history_line--;
             line_editor_set_command(&le, &history[history_line]);
-            r_edit_dirty |= R_INPUT;
+            dirty |= D_INPUT;
         }
     }
     else if (match_no_mod(m, k, HID_ENTER)) {  // enter
-        r_edit_dirty |= R_MESSAGE;  // something will definitely happen
-        r_edit_dirty |= R_INPUT;
+        dirty |= D_MESSAGE;  // something will definitely happen
+        dirty |= D_INPUT;
 
         tele_command_t command;
 
@@ -94,20 +101,20 @@ void process_live_keys(uint8_t k, uint8_t m, bool is_held_key) {
 
     else {  // pass the key though to the line editor
         bool processed = line_editor_process_keys(&le, k, m, is_held_key);
-        if (processed) r_edit_dirty |= R_INPUT;
+        if (processed) dirty |= D_INPUT;
     }
 }
 
 
 bool screen_refresh_live() {
     bool screen_dirty = false;
-    if (r_edit_dirty & R_INPUT) {
+    if (dirty & D_INPUT) {
         line_editor_draw(&le, '>', &line[7]);
         screen_dirty = true;
-        r_edit_dirty &= ~R_INPUT;
+        dirty &= ~D_INPUT;
     }
 
-    if (r_edit_dirty & R_MESSAGE) {
+    if (dirty & D_MESSAGE) {
         char s[32];
         if (status != E_OK) {
             strcpy(s, tele_error(status));
@@ -135,14 +142,14 @@ bool screen_refresh_live() {
         font_string_region_clip(&line[6], s, 0, 0, 0x4, 0);
 
         screen_dirty = true;
-        r_edit_dirty &= ~R_MESSAGE;
+        dirty &= ~D_MESSAGE;
     }
 
-    if (r_edit_dirty & R_LIST) {
+    if (dirty & D_LIST) {
         for (int i = 0; i < 6; i++) region_fill(&line[i], 0);
 
         screen_dirty = true;
-        r_edit_dirty &= ~R_LIST;
+        dirty &= ~D_LIST;
     }
 
     if ((activity != activity_prev)) {

@@ -93,8 +93,6 @@ uint8_t i2c_waiting_count;
 tele_mode_t mode;
 tele_mode_t last_mode;
 
-uint8_t r_edit_dirty;
-
 // defined in fudge.h
 uint8_t activity;
 
@@ -409,31 +407,27 @@ void set_mode(tele_mode_t m) {
             set_live_mode();
             mode = M_LIVE;
             flash_save_mode(mode);
-            r_edit_dirty |= R_ALL;
             break;
         case M_EDIT:
             set_edit_mode();
             mode = M_EDIT;
-            r_edit_dirty |= R_ALL;
             break;
         case M_PATTERN:
+            set_pattern_mode();
             mode = M_PATTERN;
             flash_save_mode(mode);
-            r_edit_dirty = R_ALL;
             break;
         case M_PRESET_W:
             set_preset_w_mode();
             mode = M_PRESET_W;
-            r_edit_dirty = R_ALL;
             break;
         case M_PRESET_R:
             set_preset_r_mode(adc[1]);
             mode = M_PRESET_R;
-            r_edit_dirty = R_ALL;
             break;
         case M_HELP:
+            set_help_mode();
             mode = M_HELP;
-            r_edit_dirty = R_ALL;
             break;
     }
 }
@@ -640,10 +634,6 @@ void tele_scene(uint8_t i) {
     flash_read(i);
 }
 
-void tele_pi() {
-    if (mode == M_PATTERN) r_edit_dirty |= R_ALL;
-}
-
 void tele_kill() {
     for (int i = 0; i < 4; i++) aout[i].step = 1;
 }
@@ -729,7 +719,6 @@ int main(void) {
     aout[3].slew = 1;
 
     init_live_mode();
-    r_edit_dirty = R_MESSAGE | R_INPUT;
     activity = 0;
     set_mode(f.mode);
 

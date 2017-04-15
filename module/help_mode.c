@@ -248,18 +248,23 @@ const uint8_t help_length[HELP_PAGES] = { HELP1_LENGTH, HELP2_LENGTH,
 uint8_t page_no;
 uint8_t offset;
 
+bool dirty;
+
+void set_help_mode() {
+    dirty = true;
+}
 
 void process_help_keys(uint8_t k, uint8_t m, bool is_held_key) {
     if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {  // down
         if (offset < help_length[page_no] - 8) {
             offset++;
-            r_edit_dirty |= R_ALL;
+            dirty = true;
         }
     }
     else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {  // up
         if (offset) {
             offset--;
-            r_edit_dirty |= R_ALL;
+            dirty = true;
         }
     }
     else if (match_no_mod(m, k, HID_LEFT) ||
@@ -267,7 +272,7 @@ void process_help_keys(uint8_t k, uint8_t m, bool is_held_key) {
         if (page_no) {
             offset = 0;
             page_no--;
-            r_edit_dirty |= R_ALL;
+            dirty = true;
         }
     }
     else if (match_no_mod(m, k, HID_RIGHT) ||
@@ -275,13 +280,13 @@ void process_help_keys(uint8_t k, uint8_t m, bool is_held_key) {
         if (page_no < HELP_PAGES - 1) {
             offset = 0;
             page_no++;
-            r_edit_dirty |= R_ALL;
+            dirty = true;
         }
     }
 }
 
 bool screen_refresh_help() {
-    if (!(r_edit_dirty & R_ALL)) { return false; }
+    if (!dirty) { return false; }
 
     // clamp value of page_no
     if (page_no >= HELP_PAGES) page_no = HELP_PAGES - 1;
@@ -296,6 +301,6 @@ bool screen_refresh_help() {
         font_string_region_clip_tab(&line[y], text[y + offset], 2, 0, 0xa, 0);
     }
 
-    r_edit_dirty &= ~R_ALL;
+    dirty = false;
     return true;
 };

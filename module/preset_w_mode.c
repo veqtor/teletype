@@ -22,10 +22,16 @@ uint8_t edit_line;
 uint8_t edit_offset;
 line_editor_t le;
 
+static const uint8_t D_INPUT = 1 << 0;
+static const uint8_t D_LIST = 1 << 1;
+static const uint8_t D_ALL = 0xFF;
+uint8_t dirty;
+
 void set_preset_w_mode() {
     edit_line = 0;
     edit_offset = 0;
     line_editor_set(&le, scene_text[0]);
+    dirty = D_ALL;
 }
 
 void process_preset_w_keys(uint8_t k, uint8_t m, bool is_held_key) {
@@ -36,7 +42,8 @@ void process_preset_w_keys(uint8_t k, uint8_t m, bool is_held_key) {
             else
                 edit_line++;
             line_editor_set(&le, scene_text[edit_line + edit_offset]);
-            r_edit_dirty |= R_ALL;
+            dirty |= D_LIST;
+            dirty |= D_INPUT;
         }
     }
     else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {  // up
@@ -46,16 +53,17 @@ void process_preset_w_keys(uint8_t k, uint8_t m, bool is_held_key) {
             else
                 edit_offset--;
             line_editor_set(&le, scene_text[edit_line + edit_offset]);
-            r_edit_dirty |= R_ALL;
+            dirty |= D_LIST;
+            dirty |= D_INPUT;
         }
     }
     else if (match_no_mod(m, k, HID_OPEN_BRACKET)) {  // [
         if (preset_select) preset_select--;
-        r_edit_dirty |= R_ALL;
+        dirty |= D_LIST;
     }
     else if (match_no_mod(m, k, HID_CLOSE_BRACKET)) {  // ]
         if (preset_select < SCENE_SLOTS - 1) preset_select++;
-        r_edit_dirty |= R_ALL;
+        dirty |= D_LIST;
     }
     else if (match_no_mod(m, k, HID_ENTER)) {  // enter
         strcpy(scene_text[edit_line + edit_offset], line_editor_get(&le));
@@ -66,7 +74,8 @@ void process_preset_w_keys(uint8_t k, uint8_t m, bool is_held_key) {
                 edit_line++;
         }
         line_editor_set(&le, scene_text[edit_line + edit_offset]);
-        r_edit_dirty |= R_ALL;
+        dirty |= D_LIST;
+        dirty |= D_INPUT;
     }
     else if (match_alt(m, k, HID_ENTER)) {  // alt+enter
         if (!is_held_key) {
@@ -77,29 +86,34 @@ void process_preset_w_keys(uint8_t k, uint8_t m, bool is_held_key) {
     }
     else {  // pass to line editor
         bool processed = line_editor_process_keys(&le, k, m, is_held_key);
-        if (processed) r_edit_dirty |= R_INPUT;
+        if (processed) dirty |= D_INPUT;
     }
 }
 
 
 bool screen_refresh_preset_w() {
-    if (!(r_edit_dirty & R_ALL)) { return false; }
+    if (!(dirty & D_ALL)) { return false; }
 
-    char header[6] = ">>> ";
-    itoa(preset_select, header + 4, 10);
-    region_fill(&line[0], 1);
-    font_string_region_clip_right(&line[0], header, 126, 0, 0xf, 1);
-    font_string_region_clip(&line[0], "WRITE", 2, 0, 0xf, 1);
+    if (dirty & D_LIST) {
+        char header[6] = ">>> ";
+        itoa(preset_select, header + 4, 10);
+        region_fill(&line[0], 1);
+        font_string_region_clip_right(&line[0], header, 126, 0, 0xf, 1);
+        font_string_region_clip(&line[0], "WRITE", 2, 0, 0xf, 1);
 
-    for (uint8_t y = 1; y < 7; y++) {
-        uint8_t a = edit_line == (y - 1);
-        region_fill(&line[y], a);
-        font_string_region_clip(&line[y], scene_text[edit_offset + y - 1], 2, 0,
-                                0xa + a * 5, a);
+        for (uint8_t y = 1; y < 7; y++) {
+            uint8_t a = edit_line == (y - 1);
+            region_fill(&line[y], a);
+            font_string_region_clip(&line[y], scene_text[edit_offset + y - 1],
+                                    2, 0, 0xa + a * 5, a);
+        }
+        dirty &= ~D_LIST;
     }
 
-    line_editor_draw(&le, '+', &line[7]);
+    if (dirty & D_INPUT) {
+        line_editor_draw(&le, '+', &line[7]);
+        dirty &= ~D_INPUT;
+    }
 
-    r_edit_dirty &= ~R_ALL;
     return true;
 }
