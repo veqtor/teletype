@@ -396,7 +396,7 @@ static inline void assign_main_event_handlers(void) {
 
 // app event loop
 void check_events(void) {
-    static event_t e;
+    event_t e;
     if (event_next(&e)) { (app_event_handlers)[e.type](e.data); }
 }
 
