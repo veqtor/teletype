@@ -10,7 +10,8 @@
 #include "parser_tests.h"
 #include "process_tests.h"
 
-void tele_metro(int16_t m, int16_t m_act, uint8_t m_reset) {}
+void tele_metro_updated() {}
+void tele_metro_reset() {}
 void tele_tr(uint8_t i, int16_t v) {}
 void tele_cv(uint8_t i, int16_t v, uint8_t s) {}
 void tele_cv_slew(uint8_t i, int16_t v) {}

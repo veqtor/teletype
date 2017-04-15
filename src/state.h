@@ -42,7 +42,7 @@ typedef struct {
     int16_t i;
     int16_t in;
     int16_t m;
-    int16_t m_act;
+    bool m_act;
     bool mutes[TRIGGER_INPUTS];
     int16_t o;
     int16_t o_inc;

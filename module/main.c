@@ -74,8 +74,7 @@ typedef struct {
 
 aout_t aout[4];
 
-uint8_t metro_act;
-unsigned int metro_time;
+bool metro_timer_enabled;
 
 uint8_t mod_key = 0, hold_key, hold_key_count = 0;
 
@@ -542,26 +541,32 @@ void render_init(void) {
 ////////////////////////////////////////////////////////////////////////////////
 // teletype_io.h
 
-void tele_metro(int16_t m, int16_t m_act, uint8_t m_reset) {
-    metro_time = m;
+void tele_metro_updated() {
+    uint32_t metro_time = scene_state.variables.m;
 
-    if (m_act && !metro_act) {
-        metro_act = 1;
-        if (ss_get_script_len(&scene_state, METRO_SCRIPT)) activity |= A_METRO;
+    bool m_act = scene_state.variables.m_act > 0;
+    if (metro_time < 10) metro_time = 10;
+
+    if (m_act && !metro_timer_enabled) {  // enable the timer
         timer_add(&metroTimer, metro_time, &metroTimer_callback, NULL);
+        metro_timer_enabled = true;
     }
-    else if (!m_act && metro_act) {
-        metro_act = 0;
+    else if (!m_act && metro_timer_enabled) {  // disable the timer
         timer_remove(&metroTimer);
+        metro_timer_enabled = false;
     }
-    else if (!m_reset) {
+    else if (metro_timer_enabled) {  // just update the time
         timer_set(&metroTimer, metro_time);
     }
-    else {
-        timer_reset(&metroTimer);
-    }
 
-    if (!metro_act) activity &= ~A_METRO;
+    if (metro_timer_enabled && ss_get_script_len(&scene_state, METRO_SCRIPT))
+        activity |= A_METRO;
+    else
+        activity &= ~A_METRO;
+}
+
+void tele_metro_reset() {
+    if (metro_timer_enabled) { timer_reset(&metroTimer); }
 }
 
 void tele_tr(uint8_t i, int16_t v) {
@@ -714,9 +719,9 @@ int main(void) {
     timer_add(&adcTimer, 61, &adcTimer_callback, NULL);
     timer_add(&refreshTimer, 63, &refreshTimer_callback, NULL);
 
-    metro_act = 1;
-    metro_time = 1000;
-    timer_add(&metroTimer, metro_time, &metroTimer_callback, NULL);
+    // manually call tele_metro_updated to sync metro to scene_state
+    metro_timer_enabled = false;
+    tele_metro_updated();
 
     clear_delays(&scene_state);
 

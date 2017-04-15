@@ -11,9 +11,13 @@
 #include "util.h"
 
 
-void tele_metro(int16_t m, int16_t m_act, uint8_t m_reset) {
-    printf("METRO  m:%" PRIi16 " m_act:%" PRIi16 "m_reset:%" PRIu8, m, m_act,
-           m_reset);
+void tele_metro_updated() {
+    printf("METRO UPDATED");
+    printf("\n");
+}
+
+void tele_metro_reset() {
+    printf("METRO RESET");
     printf("\n");
 }
 

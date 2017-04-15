@@ -7,7 +7,12 @@
 // These functions are for interacting with the teletype hardware, each target
 // must provide it's own implementation
 
-extern void tele_metro(int16_t, int16_t, uint8_t);
+// called when M or M.ACT are updated
+extern void tele_metro_updated(void);
+
+// called by M.RESET
+extern void tele_metro_reset(void);
+
 extern void tele_tr(uint8_t i, int16_t v);
 extern void tele_cv(uint8_t i, int16_t v, uint8_t s);
 extern void tele_cv_slew(uint8_t i, int16_t v);
