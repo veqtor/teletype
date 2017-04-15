@@ -23,8 +23,8 @@ void clear_delays(scene_state_t *ss) {
     ss->delay.count = 0;
     ss->stack_op.top = 0;
 
-    tele_delay(0);
-    tele_s(0);
+    tele_has_delays(false);
+    tele_has_stack(false);
 }
 
 
@@ -266,12 +266,10 @@ void tele_tick(scene_state_t *ss, uint8_t time) {
         if (ss->delay.time[i]) {
             ss->delay.time[i] -= time;
             if (ss->delay.time[i] <= 0) {
-                // sprintf(dbg,"\r\ndelay %d", i);
-                // DBG
                 run_command(ss, &ss->delay.commands[i]);
                 ss->delay.time[i] = 0;
                 ss->delay.count--;
-                if (ss->delay.count == 0) tele_delay(0);
+                if (ss->delay.count == 0) tele_has_delays(false);
             }
         }
     }

@@ -28,7 +28,7 @@ static void mod_S_func(scene_state_t *ss, exec_state_t *NOTUSED(es),
     if (ss->stack_op.top < STACK_OP_SIZE) {
         copy_command(&ss->stack_op.commands[ss->stack_op.top], post_command);
         ss->stack_op.top++;
-        if (ss->stack_op.top == 1) tele_s(1);
+        tele_has_stack(ss->stack_op.top > 0);
     }
 }
 
@@ -39,7 +39,7 @@ static void op_S_ALL_get(const void *NOTUSED(data), scene_state_t *ss,
                         &ss->stack_op.commands[ss->stack_op.top - i - 1]);
     }
     ss->stack_op.top = 0;
-    tele_s(0);
+    tele_has_stack(false);
 }
 
 static void op_S_POP_get(const void *NOTUSED(data), scene_state_t *ss,
@@ -47,7 +47,7 @@ static void op_S_POP_get(const void *NOTUSED(data), scene_state_t *ss,
     if (ss->stack_op.top) {
         ss->stack_op.top--;
         process_command(ss, es, &ss->stack_op.commands[ss->stack_op.top]);
-        if (ss->stack_op.top == 0) tele_s(0);
+        if (ss->stack_op.top == 0) tele_has_stack(false);
     }
 }
 
@@ -55,7 +55,7 @@ static void op_S_CLR_get(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *NOTUSED(es),
                          command_state_t *NOTUSED(cs)) {
     ss->stack_op.top = 0;
-    tele_s(0);
+    tele_has_stack(false);
 }
 
 static void op_S_L_get(const void *NOTUSED(data), scene_state_t *ss,

@@ -94,9 +94,6 @@ tele_mode_t mode;
 tele_mode_t last_mode;
 
 // defined in fudge.h
-uint8_t activity;
-
-// defined in fudge.h
 region line[8] = {
     {.w = 128, .h = 8, .x = 0, .y = 0 },  {.w = 128, .h = 8, .x = 0, .y = 8 },
     {.w = 128, .h = 8, .x = 0, .y = 16 }, {.w = 128, .h = 8, .x = 0, .y = 24 },
@@ -141,8 +138,7 @@ static softTimer_t metroTimer = {.next = NULL, .prev = NULL };
 
 static void cvTimer_callback(void* o) {
     bool updated = false;
-
-    activity &= ~A_SLEW;
+    bool slewing = false;
 
     for (size_t i = 0; i < 4; i++) {
         if (aout[i].step) {
@@ -152,12 +148,14 @@ static void cvTimer_callback(void* o) {
             else {
                 aout[i].a += aout[i].delta;
                 aout[i].now = aout[i].a >> 16;
-                activity |= A_SLEW;
+                slewing = true;
             }
 
             updated = true;
         }
     }
+
+    set_slew_icon(slewing);
 
     if (updated) {
         uint16_t a0 = aout[0].now >> 2;
@@ -219,11 +217,11 @@ static void hidTimer_callback(void* o) {
 
 static void metroTimer_callback(void* o) {
     if (ss_get_script_len(&scene_state, METRO_SCRIPT)) {
-        activity |= A_METRO;
+        set_metro_icon(true);
         run_script(&scene_state, METRO_SCRIPT);
     }
     else
-        activity &= ~A_METRO;
+        set_metro_icon(false);
 }
 
 
@@ -552,9 +550,9 @@ void tele_metro_updated() {
     }
 
     if (metro_timer_enabled && ss_get_script_len(&scene_state, METRO_SCRIPT))
-        activity |= A_METRO;
+        set_metro_icon(true);
     else
-        activity &= ~A_METRO;
+        set_metro_icon(false);
 }
 
 void tele_metro_reset() {
@@ -594,18 +592,6 @@ void tele_cv_slew(uint8_t i, int16_t v) {
     if (aout[i].slew == 0) aout[i].slew = 1;
 }
 
-void tele_delay(uint8_t i) {
-    if (i) { activity |= A_DELAY; }
-    else
-        activity &= ~A_DELAY;
-}
-
-void tele_s(uint8_t i) {
-    if (i) { activity |= A_Q; }
-    else
-        activity &= ~A_Q;
-}
-
 void tele_cv_off(uint8_t i, int16_t v) {
     aout[i].off = v;
 }
@@ -636,10 +622,6 @@ void tele_scene(uint8_t i) {
 
 void tele_kill() {
     for (int i = 0; i < 4; i++) aout[i].step = 1;
-}
-
-void tele_mute() {
-    activity |= A_MUTES;
 }
 
 
@@ -719,7 +701,6 @@ int main(void) {
     aout[3].slew = 1;
 
     init_live_mode();
-    activity = 0;
     set_mode(f.mode);
 
     run_script(&scene_state, INIT_SCRIPT);

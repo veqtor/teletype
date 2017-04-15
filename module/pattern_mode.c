@@ -25,7 +25,7 @@ uint8_t offset;
 bool dirty;
 
 // teletype_io.h
-void tele_pi() {
+void tele_pattern_updated() {
     dirty = true;
 }
 

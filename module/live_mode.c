@@ -9,6 +9,9 @@
 #include "keyboard_helper.h"
 #include "line_editor.h"
 
+// teletype
+#include "teletype_io.h"
+
 // libavr32
 #include "font.h"
 #include "region.h"
@@ -25,7 +28,6 @@ line_editor_t le;
 process_result_t output;
 error_t status;
 char error_msg[TELE_ERROR_MSG_LENGTH];
-uint8_t activity_prev;
 bool show_welcome_message;
 
 static const uint8_t D_INPUT = 1 << 0;
@@ -34,16 +36,58 @@ static const uint8_t D_MESSAGE = 1 << 2;
 static const uint8_t D_ALL = 0xFF;
 uint8_t dirty;
 
+static const uint8_t A_METRO = 1 << 0;
+static const uint8_t A_SLEW = 1 << 1;
+static const uint8_t A_DELAY = 1 << 2;
+static const uint8_t A_STACK = 1 << 3;
+static const uint8_t A_MUTES = 1 << 4;
+uint8_t activity_prev;
+uint8_t activity;
+
+// teletype_io.h
+void tele_has_delays(bool has_delays) {
+    if (has_delays)
+        activity |= A_DELAY;
+    else
+        activity &= ~A_DELAY;
+}
+
+void tele_has_stack(bool has_stack) {
+    if (has_stack)
+        activity |= A_STACK;
+    else
+        activity &= ~A_STACK;
+}
+
+void tele_mute() {
+    activity |= A_MUTES;
+}
+
+// set icons
+void set_slew_icon(bool display) {
+    if (display)
+        activity |= A_SLEW;
+    else
+        activity &= ~A_SLEW;
+}
+
+void set_metro_icon(bool display) {
+    if (display)
+        activity |= A_METRO;
+    else
+        activity &= ~A_METRO;
+}
+
+// main mode functions
 void init_live_mode() {
     status = E_OK;
     show_welcome_message = true;
-    activity_prev = 0xff;
+    activity_prev = 0xFF;
 }
 
 void set_live_mode() {
     line_editor_set(&le, "");
     history_line = HISTORY_SIZE;
-    activity |= A_REFRESH;
     dirty = D_ALL;
 }
 
@@ -180,22 +224,22 @@ bool screen_refresh_live() {
         line[0].data[106 + 4 + 512] = delay_fg;
 
         // queue icon
-        uint8_t queue_fg = activity & A_Q ? 15 : 1;
-        line[0].data[114 + 0 + 0] = queue_fg;
-        line[0].data[114 + 1 + 0] = queue_fg;
-        line[0].data[114 + 2 + 0] = queue_fg;
-        line[0].data[114 + 3 + 0] = queue_fg;
-        line[0].data[114 + 4 + 0] = queue_fg;
-        line[0].data[114 + 0 + 256] = queue_fg;
-        line[0].data[114 + 1 + 256] = queue_fg;
-        line[0].data[114 + 2 + 256] = queue_fg;
-        line[0].data[114 + 3 + 256] = queue_fg;
-        line[0].data[114 + 4 + 256] = queue_fg;
-        line[0].data[114 + 0 + 512] = queue_fg;
-        line[0].data[114 + 1 + 512] = queue_fg;
-        line[0].data[114 + 2 + 512] = queue_fg;
-        line[0].data[114 + 3 + 512] = queue_fg;
-        line[0].data[114 + 4 + 512] = queue_fg;
+        uint8_t stack_fg = activity & A_STACK ? 15 : 1;
+        line[0].data[114 + 0 + 0] = stack_fg;
+        line[0].data[114 + 1 + 0] = stack_fg;
+        line[0].data[114 + 2 + 0] = stack_fg;
+        line[0].data[114 + 3 + 0] = stack_fg;
+        line[0].data[114 + 4 + 0] = stack_fg;
+        line[0].data[114 + 0 + 256] = stack_fg;
+        line[0].data[114 + 1 + 256] = stack_fg;
+        line[0].data[114 + 2 + 256] = stack_fg;
+        line[0].data[114 + 3 + 256] = stack_fg;
+        line[0].data[114 + 4 + 256] = stack_fg;
+        line[0].data[114 + 0 + 512] = stack_fg;
+        line[0].data[114 + 1 + 512] = stack_fg;
+        line[0].data[114 + 2 + 512] = stack_fg;
+        line[0].data[114 + 3 + 512] = stack_fg;
+        line[0].data[114 + 4 + 512] = stack_fg;
 
         // metro icon
         uint8_t metro_fg = activity & A_METRO ? 15 : 1;
@@ -224,7 +268,6 @@ bool screen_refresh_live() {
         activity_prev = activity;
         screen_dirty = true;
         activity &= ~A_MUTES;
-        activity &= ~A_REFRESH;
     }
 
     return screen_dirty;

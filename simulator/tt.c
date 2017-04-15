@@ -36,13 +36,13 @@ void tele_cv_slew(uint8_t i, int16_t v) {
     printf("\n");
 }
 
-void tele_delay(uint8_t i) {
-    printf("DELAY  i:%" PRIu8, i);
+void tele_has_delays(bool i) {
+    printf("DELAY  i:%s", i ? "true" : "false");
     printf("\n");
 }
 
-void tele_s(uint8_t i) {
-    printf("S  i:%" PRIu8, i);
+void tele_has_stack(bool i) {
+    printf("STACK  i:%s", i ? "true" : "false");
     printf("\n");
 }
 
@@ -76,8 +76,8 @@ void tele_scene(uint8_t i) {
     printf("\n");
 }
 
-void tele_pi() {
-    printf("PI");
+void tele_pattern_updated() {
+    printf("PATTERN UPDATED");
     printf("\n");
 }
 

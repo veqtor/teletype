@@ -26,14 +26,4 @@ typedef enum {
 void set_mode(tele_mode_t mode);
 void set_last_mode(void);
 
-#define A_METRO 0x1
-#define A_TR 0x2
-#define A_SLEW 0x4
-#define A_DELAY 0x8
-#define A_Q 0x10
-#define A_X 0x20
-#define A_REFRESH 0x40
-#define A_MUTES 0x80
-extern uint8_t activity;
-
 #endif

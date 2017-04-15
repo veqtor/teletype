@@ -27,7 +27,7 @@ static void mod_DEL_func(scene_state_t *ss, exec_state_t *NOTUSED(es),
 
     if (i < DELAY_SIZE) {
         ss->delay.count++;
-        if (ss->delay.count == 1) tele_delay(1);
+        tele_has_delays(ss->delay.count > 0);
         ss->delay.time[i] = a;
 
         copy_command(&ss->delay.commands[i], post_command);
