@@ -145,12 +145,11 @@ static softTimer_t metroTimer = {.next = NULL, .prev = NULL };
 
 
 static void cvTimer_callback(void* o) {
-    u8 i, r = 0;
-    u16 a;
+    bool updated = false;
 
     activity &= ~A_SLEW;
 
-    for (i = 0; i < 4; i++)
+    for (size_t i = 0; i < 4; i++) {
         if (aout[i].step) {
             aout[i].step--;
 
@@ -161,30 +160,32 @@ static void cvTimer_callback(void* o) {
                 activity |= A_SLEW;
             }
 
-            r++;
+            updated = true;
         }
+    }
 
-    if (r) {
+    if (updated) {
+        uint16_t a0 = aout[0].now >> 2;
+        uint16_t a1 = aout[1].now >> 2;
+        uint16_t a2 = aout[2].now >> 2;
+        uint16_t a3 = aout[3].now >> 2;
+
         spi_selectChip(DAC_SPI, DAC_SPI_NPCS);
         spi_write(DAC_SPI, 0x31);
-        a = aout[2].now >> 2;
-        spi_write(DAC_SPI, a >> 4);
-        spi_write(DAC_SPI, a << 4);
+        spi_write(DAC_SPI, a2 >> 4);
+        spi_write(DAC_SPI, a2 << 4);
         spi_write(DAC_SPI, 0x31);
-        a = aout[0].now >> 2;
-        spi_write(DAC_SPI, a >> 4);
-        spi_write(DAC_SPI, a << 4);
+        spi_write(DAC_SPI, a0 >> 4);
+        spi_write(DAC_SPI, a0 << 4);
         spi_unselectChip(DAC_SPI, DAC_SPI_NPCS);
 
         spi_selectChip(DAC_SPI, DAC_SPI_NPCS);
         spi_write(DAC_SPI, 0x38);
-        a = aout[3].now >> 2;
-        spi_write(DAC_SPI, a >> 4);
-        spi_write(DAC_SPI, a << 4);
+        spi_write(DAC_SPI, a3 >> 4);
+        spi_write(DAC_SPI, a3 << 4);
         spi_write(DAC_SPI, 0x38);
-        a = aout[1].now >> 2;
-        spi_write(DAC_SPI, a >> 4);
-        spi_write(DAC_SPI, a << 4);
+        spi_write(DAC_SPI, a1 >> 4);
+        spi_write(DAC_SPI, a1 << 4);
         spi_unselectChip(DAC_SPI, DAC_SPI_NPCS);
     }
 }
