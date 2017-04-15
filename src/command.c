@@ -17,24 +17,33 @@ void copy_post_command(tele_command_t *dst, const tele_command_t *src) {
            dst->length * sizeof(tele_data_t));
 }
 
-void print_command(const tele_command_t *c, char *out) {
-    *out = 0;
-    for (int n = 0; n < c->length; n++) {
-        switch (c->data[n].tag) {
-            case OP: strcat(out, tele_ops[c->data[n].value]->name); break;
+void print_command(const tele_command_t *cmd, char *out) {
+    out[0] = 0;
+    for (size_t i = 0; i < cmd->length; i++) {
+        tele_word_t tag = cmd->data[i].tag;
+        int16_t value = cmd->data[i].value;
+
+        switch (tag) {
+            case OP: strcat(out, tele_ops[value]->name); break;
             case NUMBER: {
                 char number[8];
-                itoa(c->data[n].value, number, 10);
+                itoa(value, number, 10);
                 strcat(out, number);
                 break;
             }
-            case MOD: strcat(out, tele_mods[c->data[n].value]->name); break;
+            case MOD: strcat(out, tele_mods[value]->name); break;
             case PRE_SEP: strcat(out, ":"); break;
             case SUB_SEP: strcat(out, ";"); break;
-            default: break;
         }
-        strcat(out, " ");
+
+        // do we need to add a space?
+        // first check if we're not at the end
+        if (i < cmd->length - 1) {
+            // otherwise, only add a space if the next tag is a not a seperator
+            tele_word_t next_tag = cmd->data[i + 1].tag;
+            if (next_tag != PRE_SEP && next_tag != SUB_SEP) {
+                strcat(out, " ");
+            }
+        }
     }
-    size_t out_len = strlen(out);
-    if (out_len > 0) out[out_len - 1] = 0;
 }

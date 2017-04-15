@@ -37,10 +37,14 @@ error_t scanner(const char *data, tele_command_t *out,
 
     %%{
         separator = [ \n\t];
-        pre_separator = ' : ';
-        sub_seperator = ' ; ';
+        pre_separator = ': ';
+        sub_seperator = '; ';
+        invalid_pre = ':';
+        invalid_sub = ';';
 
-        token = any+ -- (separator | pre_separator | sub_seperator);
+        token = any+ -- (separator
+                         | pre_separator | sub_seperator
+                         | invalid_pre | invalid_sub);
 
         action token {
             // token matched
@@ -98,10 +102,20 @@ error_t scanner(const char *data, tele_command_t *out,
             if (out->length >= COMMAND_MAX_LENGTH) return E_LENGTH;
         }
 
+        action invalid_pre {
+            return E_NEED_SPACE_PRE_SEP;
+        }
+
+        action invalid_sub {
+            return E_NEED_SPACE_SUB_SEP;
+        }
+
         main := |*
             separator;
             pre_separator => pre_separator;
             sub_seperator => sub_separator;
+            invalid_pre => invalid_pre;
+            invalid_sub => invalid_sub;
             token => token;
         *|;
 

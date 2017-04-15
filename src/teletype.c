@@ -303,7 +303,9 @@ const char *tele_error(error_t e) {
                                    "NEED PRE SEPARATOR",
                                    "BAD PRE SEPARATOR",
                                    "NO SUB SEP IN PRE",
-                                   "MOVE LEFT" };
+                                   "MOVE LEFT",
+                                   "NEED SPACE AFTER :",
+                                   "NEED SPACE AFTER ;" };
 
     return error_string[e];
 }

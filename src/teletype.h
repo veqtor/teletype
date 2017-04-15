@@ -22,7 +22,9 @@ typedef enum {
     E_NEED_PRE_SEP,
     E_PLACE_PRE_SEP,
     E_NO_SUB_SEP_IN_PRE,
-    E_NOT_LEFT
+    E_NOT_LEFT,
+    E_NEED_SPACE_PRE_SEP,
+    E_NEED_SPACE_SUB_SEP
 } error_t;
 
 typedef struct {
