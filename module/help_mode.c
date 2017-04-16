@@ -1,7 +1,7 @@
 #include "help_mode.h"
 
 // this
-#include "fudge.h"
+#include "globals.h"
 #include "keyboard_helper.h"
 
 // libavr32

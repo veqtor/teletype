@@ -6,7 +6,7 @@
 #include "flashc.h"
 
 // this
-#include "fudge.h"
+#include "globals.h"
 
 #define FIRSTRUN_KEY 0x22
 

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "fudge.h"
+#include "globals.h"
 #include "line_editor.h"
 #include "teletype.h"
 

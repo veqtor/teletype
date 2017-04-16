@@ -1,19 +1,23 @@
-#ifndef _FUDGE_H_
-#define _FUDGE_H_
+#ifndef _GLOBALS_H_
+#define _GLOBALS_H_
 
 #include <stdbool.h>
 #include <stdint.h>
 #include "region.h"
 #include "teletype.h"
 
-// Temporary header, while we transistion modes out of main.c
+// global variables (defined in main.c)
 
+// holds the current scene
 extern scene_state_t scene_state;
 
-extern region line[8];
-
+// the current preset
 extern uint8_t preset_select;
 
+// holds screen data
+extern region line[8];
+
+// mode handling
 typedef enum {
     M_LIVE,
     M_EDIT,

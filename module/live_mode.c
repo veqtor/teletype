@@ -4,8 +4,8 @@
 
 // this
 #include "flash.h"
-#include "fudge.h"
 #include "gitversion.h"
+#include "globals.h"
 #include "keyboard_helper.h"
 #include "line_editor.h"
 

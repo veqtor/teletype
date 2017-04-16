@@ -6,7 +6,7 @@
 
 // this
 #include "flash.h"
-#include "fudge.h"
+#include "globals.h"
 
 // libavr32
 #include "font.h"

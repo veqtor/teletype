@@ -33,7 +33,7 @@
 #include "conf_board.h"
 #include "edit_mode.h"
 #include "flash.h"
-#include "fudge.h"
+#include "globals.h"
 #include "help_mode.h"
 #include "keyboard_helper.h"
 #include "live_mode.h"
@@ -50,15 +50,22 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// globals
+// globals (defined in globals.h)
 
 scene_state_t scene_state;
-
-
-// defined in fudge.h
 uint8_t preset_select;
+region line[8] = {
+    {.w = 128, .h = 8, .x = 0, .y = 0 },  {.w = 128, .h = 8, .x = 0, .y = 8 },
+    {.w = 128, .h = 8, .x = 0, .y = 16 }, {.w = 128, .h = 8, .x = 0, .y = 24 },
+    {.w = 128, .h = 8, .x = 0, .y = 32 }, {.w = 128, .h = 8, .x = 0, .y = 40 },
+    {.w = 128, .h = 8, .x = 0, .y = 48 }, {.w = 128, .h = 8, .x = 0, .y = 56 }
+};
 
-uint8_t front_timer;
+////////////////////////////////////////////////////////////////////////////////
+// locals
+
+tele_mode_t mode;
+tele_mode_t last_mode;
 
 u16 adc[4];
 
@@ -73,14 +80,12 @@ typedef struct {
 } aout_t;
 
 aout_t aout[4];
-
 bool metro_timer_enabled;
-
+uint8_t front_timer;
 uint8_t mod_key = 0, hold_key, hold_key_count = 0;
 
 #define I2C_DATA_LENGTH_MAX 8
 #define I2C_QUEUE_SIZE 16
-
 struct {
     bool waiting;
     uint8_t addr;
@@ -89,17 +94,6 @@ struct {
 } i2c_queue[I2C_QUEUE_SIZE];
 
 uint8_t i2c_waiting_count;
-
-tele_mode_t mode;
-tele_mode_t last_mode;
-
-// defined in fudge.h
-region line[8] = {
-    {.w = 128, .h = 8, .x = 0, .y = 0 },  {.w = 128, .h = 8, .x = 0, .y = 8 },
-    {.w = 128, .h = 8, .x = 0, .y = 16 }, {.w = 128, .h = 8, .x = 0, .y = 24 },
-    {.w = 128, .h = 8, .x = 0, .y = 32 }, {.w = 128, .h = 8, .x = 0, .y = 40 },
-    {.w = 128, .h = 8, .x = 0, .y = 48 }, {.w = 128, .h = 8, .x = 0, .y = 56 }
-};
 
 
 ////////////////////////////////////////////////////////////////////////////////
