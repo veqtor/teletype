@@ -21,7 +21,7 @@
 #include "conf_usb_host.h"  // needed in order to include "usb_protocol_hid.h"
 #include "usb_protocol_hid.h"
 
-#define HISTORY_SIZE 6
+#define HISTORY_SIZE 16
 tele_command_t history[HISTORY_SIZE];
 uint8_t history_line;
 line_editor_t le;
