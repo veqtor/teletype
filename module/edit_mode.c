@@ -45,6 +45,7 @@ void set_edit_mode_script(uint8_t new_script) {
 }
 
 void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
+    // <down> or C-n: line down
     if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {
         if (line_no < (SCRIPT_MAX_COMMANDS - 1) &&
             line_no < ss_get_script_len(&scene_state, script)) {
@@ -55,6 +56,7 @@ void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
             dirty |= D_INPUT;
         }
     }
+    // <up> or C-p: line up
     else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {
         if (line_no) {
             line_no--;
@@ -64,6 +66,7 @@ void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
             dirty |= D_INPUT;
         }
     }
+    // [: previous script
     else if (match_no_mod(m, k, HID_OPEN_BRACKET)) {
         status = E_OK;
         error_msg[0] = 0;
@@ -78,6 +81,7 @@ void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
         dirty |= D_LIST;
         dirty |= D_INPUT;
     }
+    // ]: next script
     else if (match_no_mod(m, k, HID_CLOSE_BRACKET)) {
         status = E_OK;
         error_msg[0] = 0;
@@ -90,7 +94,8 @@ void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
         dirty |= D_LIST;
         dirty |= D_INPUT;
     }
-    else if (match_alt(m, k, HID_X)) {  // override line editors cut
+    // ctrl-x or alt-x: override line editors cut
+    else if (match_ctrl(m, k, HID_X) || match_alt(m, k, HID_X)) {
         line_editor_set_copy_buffer(line_editor_get(&le));
         ss_delete_script_command(&scene_state, script, line_no);
         if (line_no > ss_get_script_len(&scene_state, script)) {
@@ -102,6 +107,7 @@ void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
         dirty |= D_LIST;
         dirty |= D_INPUT;
     }
+    // <enter>: enter command
     else if (match_no_mod(m, k, HID_ENTER)) {
         dirty |= D_MESSAGE;  // something will happen
 
@@ -131,6 +137,7 @@ void process_edit_keys(uint8_t k, uint8_t m, bool is_held_key) {
         dirty |= D_LIST;
         dirty |= D_INPUT;
     }
+    // shift-<enter>: insert command
     else if (match_shift(m, k, HID_ENTER)) {
         dirty |= D_MESSAGE;  // something will happen
 

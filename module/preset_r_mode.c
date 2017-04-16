@@ -34,30 +34,34 @@ void process_preset_r_knob(uint16_t knob, uint8_t mod_key) {
 }
 
 void process_preset_r_keys(uint8_t k, uint8_t m, bool is_held_key) {
-    if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {  // down
+    // <down> or C-n: line down
+    if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {
         if (offset < SCENE_TEXT_LINES - 8) {
             offset++;
             dirty = true;
         }
     }
-    else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {  // up
+    // <up> or C-p: line up
+    else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {
         if (offset) {
             offset--;
             dirty = true;
         }
     }
+    // <left> or [: preset down
     else if (match_no_mod(m, k, HID_LEFT) ||
-             match_no_mod(m, k, HID_OPEN_BRACKET)) {  // left or [
+             match_no_mod(m, k, HID_OPEN_BRACKET)) {
         if (preset_select) preset_select--;
         dirty = true;
     }
-
+    // <right> or ]: preset up
     else if (match_no_mod(m, k, HID_RIGHT) ||
-             match_no_mod(m, k, HID_CLOSE_BRACKET)) {  // right or ]
+             match_no_mod(m, k, HID_CLOSE_BRACKET)) {
         if (preset_select < SCENE_SLOTS - 1) preset_select++;
         dirty = true;
     }
-    else if (match_no_mod(m, k, HID_ENTER) && !is_held_key) {  // enter
+    // <enter>: load preset
+    else if (match_no_mod(m, k, HID_ENTER) && !is_held_key) {
         flash_read(preset_select);
         ss_set_scene(&scene_state, preset_select);
 

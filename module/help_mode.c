@@ -255,28 +255,32 @@ void set_help_mode() {
 }
 
 void process_help_keys(uint8_t k, uint8_t m, bool is_held_key) {
-    if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {  // down
+    // <down> or C-n: line down
+    if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {
         if (offset < help_length[page_no] - 8) {
             offset++;
             dirty = true;
         }
     }
-    else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {  // up
+    // <up> or C-p: line up
+    else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {
         if (offset) {
             offset--;
             dirty = true;
         }
     }
+    // <left> or [: previous page
     else if (match_no_mod(m, k, HID_LEFT) ||
-             match_no_mod(m, k, HID_OPEN_BRACKET)) {  // left or [
+             match_no_mod(m, k, HID_OPEN_BRACKET)) {
         if (page_no) {
             offset = 0;
             page_no--;
             dirty = true;
         }
     }
+    // <right> or ]: next page
     else if (match_no_mod(m, k, HID_RIGHT) ||
-             match_no_mod(m, k, HID_CLOSE_BRACKET)) {  // right or ]
+             match_no_mod(m, k, HID_CLOSE_BRACKET)) {
         if (page_no < HELP_PAGES - 1) {
             offset = 0;
             page_no++;

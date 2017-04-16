@@ -455,6 +455,7 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
     if (is_held_key)  // none of these want to work with held keys
         return false;
 
+    // <tab>: change modes, live to edit to pattern and back
     if (match_no_mod(m, k, HID_TAB)) {
         if (mode == M_LIVE)
             set_mode(M_EDIT);
@@ -464,6 +465,7 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
             set_mode(M_LIVE);
         return true;
     }
+    // <esc>: preset read mode, or return to last mode
     else if (match_no_mod(m, k, HID_ESCAPE)) {
         if (mode == M_PRESET_R)
             set_last_mode();
@@ -472,10 +474,12 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         return true;
     }
+    // alt-<esc>: preset write mode
     else if (match_alt(m, k, HID_ESCAPE)) {
         set_mode(M_PRESET_W);
         return true;
     }
+    // win-<esc>: clear delays, stack and slews
     else if (match_win(m, k, HID_ESCAPE)) {
         if (!is_held_key) {
             clear_delays(&scene_state);
@@ -483,6 +487,7 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         return true;
     }
+    // <print screen>: help text, or return to last mode
     else if (match_no_mod(m, k, HID_PRINTSCREEN)) {
         if (mode == M_HELP)
             set_last_mode();
@@ -491,15 +496,22 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         return true;
     }
+    // <F1> through <F8>: run corresponding script
+    // <F8>: run metro script
+    // <F9>: run init script
     else if (no_mod(m) && k >= HID_F1 && k <= HID_F10) {
         run_script(&scene_state, k - HID_F1);
         return true;
     }
+    // alt-<F1> through alt-<F8>: edit corresponding script
+    // alt-<F8>: edit metro script
+    // alt-<F9>: edit init script
     else if (mod_only_alt(m) && k >= HID_F1 && k <= HID_F10) {
         set_edit_mode_script(k - HID_F1);
         set_mode(M_EDIT);
         return true;
     }
+    // <numpad-1> through <numpad-8>: run corresponding script
     else if (no_mod(m) && k >= HID_KEYPAD_1 && k <= HID_KEYPAD_8) {
         run_script(&scene_state, k - HID_KEYPAD_1);
         return true;

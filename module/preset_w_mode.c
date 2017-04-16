@@ -35,7 +35,8 @@ void set_preset_w_mode() {
 }
 
 void process_preset_w_keys(uint8_t k, uint8_t m, bool is_held_key) {
-    if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {  // down
+    // <down> or C-n: line down
+    if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {
         if ((edit_offset + edit_line) < 31) {
             if (edit_line == 5)
                 edit_offset++;
@@ -46,7 +47,8 @@ void process_preset_w_keys(uint8_t k, uint8_t m, bool is_held_key) {
             dirty |= D_INPUT;
         }
     }
-    else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {  // up
+    // <up> or C-p: line up
+    else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {
         if (edit_line + edit_offset) {
             if (edit_line)
                 edit_line--;
@@ -57,15 +59,18 @@ void process_preset_w_keys(uint8_t k, uint8_t m, bool is_held_key) {
             dirty |= D_INPUT;
         }
     }
-    else if (match_no_mod(m, k, HID_OPEN_BRACKET)) {  // [
+    // [: preset down
+    else if (match_no_mod(m, k, HID_OPEN_BRACKET)) {
         if (preset_select) preset_select--;
         dirty |= D_LIST;
     }
-    else if (match_no_mod(m, k, HID_CLOSE_BRACKET)) {  // ]
+    // ]: preset up
+    else if (match_no_mod(m, k, HID_CLOSE_BRACKET)) {
         if (preset_select < SCENE_SLOTS - 1) preset_select++;
         dirty |= D_LIST;
     }
-    else if (match_no_mod(m, k, HID_ENTER)) {  // enter
+    // <enter>: enter text
+    else if (match_no_mod(m, k, HID_ENTER)) {
         strcpy(scene_text[edit_line + edit_offset], line_editor_get(&le));
         if (edit_line + edit_offset < 31) {
             if (edit_line == 5)
@@ -77,7 +82,8 @@ void process_preset_w_keys(uint8_t k, uint8_t m, bool is_held_key) {
         dirty |= D_LIST;
         dirty |= D_INPUT;
     }
-    else if (match_alt(m, k, HID_ENTER)) {  // alt+enter
+    // alt-<enter>: save preset
+    else if (match_alt(m, k, HID_ENTER)) {
         if (!is_held_key) {
             strcpy(scene_text[edit_line + edit_offset], line_editor_get(&le));
             flash_write(preset_select);

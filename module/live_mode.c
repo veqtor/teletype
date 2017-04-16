@@ -92,7 +92,8 @@ void set_live_mode() {
 }
 
 void process_live_keys(uint8_t k, uint8_t m, bool is_held_key) {
-    if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {  // down
+    // <down> or C-n: history next
+    if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {
         if (history_line < (HISTORY_SIZE - 1)) {
             history_line++;
             line_editor_set_command(&le, &history[history_line]);
@@ -104,14 +105,16 @@ void process_live_keys(uint8_t k, uint8_t m, bool is_held_key) {
             dirty |= D_INPUT;
         }
     }
-    else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {  // up
+    // <up> or C-p: history previous
+    else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {
         if (history_line) {
             history_line--;
             line_editor_set_command(&le, &history[history_line]);
             dirty |= D_INPUT;
         }
     }
-    else if (match_no_mod(m, k, HID_ENTER)) {  // enter
+    // <enter>: execute command
+    else if (match_no_mod(m, k, HID_ENTER)) {
         dirty |= D_MESSAGE;  // something will definitely happen
         dirty |= D_INPUT;
 
@@ -138,11 +141,11 @@ void process_live_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         line_editor_set(&le, "");
     }
+    // [ or ]: switch to edit mode
     else if (match_no_mod(m, k, HID_OPEN_BRACKET) ||
-             match_no_mod(m, k, HID_CLOSE_BRACKET)) {  // [ or ]
+             match_no_mod(m, k, HID_CLOSE_BRACKET)) {
         set_mode(M_EDIT);
     }
-
     else {  // pass the key though to the line editor
         bool processed = line_editor_process_keys(&le, k, m, is_held_key);
         if (processed) dirty |= D_INPUT;

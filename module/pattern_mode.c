@@ -34,7 +34,8 @@ void set_pattern_mode() {
 }
 
 void process_pattern_keys(uint8_t k, uint8_t m, bool is_held_key) {
-    if (match_no_mod(m, k, HID_DOWN)) {  // down
+    // <down>: move down
+    if (match_no_mod(m, k, HID_DOWN)) {
         base++;
         if (base == 8) {
             base = 7;
@@ -42,7 +43,8 @@ void process_pattern_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         dirty = true;
     }
-    else if (match_alt(m, k, HID_DOWN)) {  // alt + down
+    // alt-<down>: move a page down
+    else if (match_alt(m, k, HID_DOWN)) {
         if (offset < 48)
             offset += 8;
         else {
@@ -51,14 +53,16 @@ void process_pattern_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         dirty = true;
     }
-    else if (match_no_mod(m, k, HID_UP)) {  // up
+    // <up>: move up
+    else if (match_no_mod(m, k, HID_UP)) {
         if (base)
             base--;
         else if (offset)
             offset--;
         dirty = true;
     }
-    else if (match_alt(m, k, HID_UP)) {  // alt + up
+    // alt-<up>: move a page up
+    else if (match_alt(m, k, HID_UP)) {
         if (offset > 8) { offset -= 8; }
         else {
             offset = 0;
@@ -66,44 +70,52 @@ void process_pattern_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         dirty = true;
     }
-    else if (match_no_mod(m, k, HID_LEFT)) {  // left
+    // <left>: move left
+    else if (match_no_mod(m, k, HID_LEFT)) {
         if (pattern > 0) pattern--;
         dirty = true;
     }
-    else if (match_alt(m, k, HID_LEFT)) {  // alt + left
+    // alt-<left>: move to the very left
+    else if (match_alt(m, k, HID_LEFT)) {
         base = 0;
         offset = 0;
         dirty = true;
     }
-    else if (match_no_mod(m, k, HID_RIGHT)) {  // right
+    // <right>: move right
+    else if (match_no_mod(m, k, HID_RIGHT)) {
         if (pattern < 3) pattern++;
         dirty = true;
     }
-    else if (match_alt(m, k, HID_RIGHT)) {  // alt + right
+    // alt-<right>: move to the very right
+    else if (match_alt(m, k, HID_RIGHT)) {
         base = 7;
         offset = 56;
     }
-    else if (match_no_mod(m, k, HID_OPEN_BRACKET)) {  // [
+    // [: decrement by 1
+    else if (match_no_mod(m, k, HID_OPEN_BRACKET)) {
         int16_t v = ss_get_pattern_val(&scene_state, pattern, base + offset);
         if (v > INT16_MIN) {  // -32767
             ss_set_pattern_val(&scene_state, pattern, base + offset, v - 1);
             dirty = true;
         }
     }
-    else if (match_no_mod(m, k, HID_CLOSE_BRACKET)) {  // ]
+    // ]: increment by 1
+    else if (match_no_mod(m, k, HID_CLOSE_BRACKET)) {
         int16_t v = ss_get_pattern_val(&scene_state, pattern, base + offset);
         if (v < INT16_MAX) {  // 32766
             ss_set_pattern_val(&scene_state, pattern, base + offset, v + 1);
             dirty = true;
         }
     }
-    else if (match_no_mod(m, k, HID_BACKSPACE)) {  // backspace
+    // <backspace>: delete a digit
+    else if (match_no_mod(m, k, HID_BACKSPACE)) {
         int16_t v =
             ss_get_pattern_val(&scene_state, pattern, base + offset) / 10;
         ss_set_pattern_val(&scene_state, pattern, base + offset, v);
         dirty = true;
     }
-    else if (match_shift(m, k, HID_BACKSPACE)) {  // shift + backspace
+    // shift-<backspace>: delete an entry, shift numbers up
+    else if (match_shift(m, k, HID_BACKSPACE)) {
         for (size_t i = base + offset; i < 63; i++) {
             int16_t v = ss_get_pattern_val(&scene_state, pattern, i + 1);
             ss_set_pattern_val(&scene_state, pattern, i, v);
@@ -113,7 +125,9 @@ void process_pattern_keys(uint8_t k, uint8_t m, bool is_held_key) {
         if (l > base + offset) ss_set_pattern_len(&scene_state, pattern, l - 1);
         dirty = true;
     }
-    else if (match_no_mod(m, k, HID_ENTER)) {  // enter
+    // <enter>: move down (increase length only if on the entry immediately
+    // after the current length)
+    else if (match_no_mod(m, k, HID_ENTER)) {
         uint16_t l = ss_get_pattern_len(&scene_state, pattern);
         if (base + offset == l && l < 64)
             ss_set_pattern_len(&scene_state, pattern, l + 1);
@@ -124,16 +138,21 @@ void process_pattern_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         dirty = true;
     }
-    else if (match_shift(m, k, HID_ENTER)) {  // shift + enter
+    // shift-<enter>: duplicate entry and shift downwards (increase length only
+    // if on the entry immediately after the current length)
+    else if (match_shift(m, k, HID_ENTER)) {
         for (int i = 63; i > base + offset; i--) {
             int16_t v = ss_get_pattern_val(&scene_state, pattern, i - 1);
             ss_set_pattern_val(&scene_state, pattern, i, v);
         }
         uint16_t l = ss_get_pattern_len(&scene_state, pattern);
-        if (l < 64) { ss_set_pattern_len(&scene_state, pattern, l + 1); }
+        if (base + offset == l && l < 64) {
+            ss_set_pattern_len(&scene_state, pattern, l + 1);
+        }
         dirty = true;
     }
-    else if (match_alt(m, k, HID_X)) {  // alt + x = cut
+    // alt-x: cut value (n.b. ctrl-x not supported)
+    else if (match_alt(m, k, HID_X)) {
         copy_buffer = ss_get_pattern_val(&scene_state, pattern, base + offset);
         for (int i = base + offset; i < 63; i++) {
             int16_t v = ss_get_pattern_val(&scene_state, pattern, i + 1);
@@ -146,14 +165,17 @@ void process_pattern_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         dirty = true;
     }
-    else if (match_alt(m, k, HID_C)) {  // alt + c = copy
+    // alt-c: copy value (n.b. ctrl-c not supported)
+    else if (match_alt(m, k, HID_C)) {
         copy_buffer = ss_get_pattern_val(&scene_state, pattern, base + offset);
     }
-    else if (match_alt(m, k, HID_V)) {  // alt + v = paste
+    // alt-v: paste value (n.b. ctrl-v not supported)
+    else if (match_alt(m, k, HID_V)) {
         ss_set_pattern_val(&scene_state, pattern, base + offset, copy_buffer);
         dirty = true;
     }
-    else if (match_shift_alt(m, k, HID_V)) {  // shift + alt + v = insert paste
+    // shift-alt-v: insert value
+    else if (match_shift_alt(m, k, HID_V)) {
         for (int i = 63; i > base + offset; i--) {
             int16_t v = ss_get_pattern_val(&scene_state, pattern, i - 1);
             ss_set_pattern_val(&scene_state, pattern, i, v);
@@ -165,11 +187,13 @@ void process_pattern_keys(uint8_t k, uint8_t m, bool is_held_key) {
         ss_set_pattern_val(&scene_state, pattern, base + offset, copy_buffer);
         dirty = true;
     }
-    else if (match_shift(m, k, HID_L)) {  // shift + l
+    // shift-l: set length to current position
+    else if (match_shift(m, k, HID_L)) {
         ss_set_pattern_len(&scene_state, pattern, base + offset + 1);
         dirty = true;
     }
-    else if (match_alt(m, k, HID_L)) {  // alt + l
+    // alt-l: go to current length entry
+    else if (match_alt(m, k, HID_L)) {
         uint16_t l = ss_get_pattern_len(&scene_state, pattern);
         if (l) {
             offset = ((l - 1) >> 3) << 3;
@@ -186,11 +210,13 @@ void process_pattern_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         dirty = true;
     }
-    else if (match_shift(m, k, HID_S)) {  // shift + s
+    // shift-s: set start to current position
+    else if (match_shift(m, k, HID_S)) {
         ss_set_pattern_start(&scene_state, pattern, offset + base);
         dirty = true;
     }
-    else if (match_alt(m, k, HID_S)) {  // alt + s
+    // alt-s: go to start entry
+    else if (match_alt(m, k, HID_S)) {
         int16_t start = ss_get_pattern_start(&scene_state, pattern);
         if (start) {
             offset = (start >> 3) << 3;
@@ -207,11 +233,13 @@ void process_pattern_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         dirty = true;
     }
-    else if (match_shift(m, k, HID_E)) {  // shift + e
+    // shift-e: set end to current position
+    else if (match_shift(m, k, HID_E)) {
         ss_set_pattern_end(&scene_state, pattern, offset + base);
         dirty = true;
     }
-    else if (match_alt(m, k, HID_E)) {  // alt + e
+    // alt-e: go to end entry
+    else if (match_alt(m, k, HID_E)) {
         int16_t end = ss_get_pattern_end(&scene_state, pattern);
         if (end) {
             offset = (end >> 3) << 3;
@@ -228,18 +256,21 @@ void process_pattern_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         dirty = true;
     }
-    else if (match_no_mod(m, k, HID_UNDERSCORE)) {  // -
+    // -: negate value
+    else if (match_no_mod(m, k, HID_UNDERSCORE)) {
         int16_t v = ss_get_pattern_val(&scene_state, pattern, base + offset);
         ss_set_pattern_val(&scene_state, pattern, base + offset, -v);
         dirty = true;
     }
-    else if (match_no_mod(m, k, HID_SPACEBAR)) {  // space
+    // <space>: toggle non-zero to zero, and zero to 1
+    else if (match_no_mod(m, k, HID_SPACEBAR)) {
         if (ss_get_pattern_val(&scene_state, pattern, base + offset))
             ss_set_pattern_val(&scene_state, pattern, base + offset, 0);
         else
             ss_set_pattern_val(&scene_state, pattern, base + offset, 1);
         dirty = true;
     }
+    // 0-9: numeric entry
     else if (no_mod(m) && k >= HID_1 && k <= HID_0) {
         uint8_t n = (k - HID_1 + 1) % 10;  // convert HID numbers to decimal,
                                            // taking care of HID_0
