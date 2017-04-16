@@ -497,15 +497,15 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
         return true;
     }
     // <F1> through <F8>: run corresponding script
-    // <F8>: run metro script
-    // <F9>: run init script
+    // <F9>: run metro script
+    // <F10>: run init script
     else if (no_mod(m) && k >= HID_F1 && k <= HID_F10) {
         run_script(&scene_state, k - HID_F1);
         return true;
     }
     // alt-<F1> through alt-<F8>: edit corresponding script
-    // alt-<F8>: edit metro script
-    // alt-<F9>: edit init script
+    // alt-<F9>: edit metro script
+    // alt-<F10>: edit init script
     else if (mod_only_alt(m) && k >= HID_F1 && k <= HID_F10) {
         set_edit_mode_script(k - HID_F1);
         set_mode(M_EDIT);

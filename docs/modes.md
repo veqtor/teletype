@@ -11,11 +11,11 @@ These bindings work everywhere.
 | `win-<esc>`                  | clear delays, stack and slews                  |
 | `<print screen>`             | help text, or return to last mode              |
 | `<F1>` to `<F8>`             | run corresponding script                       |
-| `<F8>`                       | run metro script                               |
-| `<F9>`                       | run init script                                |
+| `<F9>`                       | run metro script                               |
+| `<F10>`                      | run init script                                |
 | `alt-<F1>` to `alt-<F8>`     | edit corresponding script                      |
-| `alt-<F8>`                   | edit metro script                              |
-| `alt-<F9>`                   | edit init script                               |
+| `alt-<F9>`                   | edit metro script                              |
+| `alt-<F10>`                  | edit init script                               |
 | `<numpad-1>` to `<numpad-8>` | run corresponding script                       |
 
 ## Text editing
