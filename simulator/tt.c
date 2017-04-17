@@ -51,19 +51,12 @@ void tele_cv_off(uint8_t i, int16_t v) {
     printf("\n");
 }
 
-void tele_ii(uint8_t i, int16_t d) {
-    printf("II  i:%" PRIu8 " d:%" PRId16, i, d);
-    printf("\n");
-}
-
 void tele_ii_tx(uint8_t addr, uint8_t *data, uint8_t l) {
     printf("II_tx  addr:%" PRIu8 " l:%" PRIu8, addr, l);
     printf("\n");
-}
-
-void tele_ii_tx_now(uint8_t addr, uint8_t *data, uint8_t l) {
-    printf("II_tx  addr:%" PRIu8 " l:%" PRIu8, addr, l);
-    printf("\n");
+    for (size_t i = 0; i < l; i++) {
+        printf("[%" PRIuPTR "] = %" PRIu8 "\n", i, data[i]);
+    }
 }
 
 void tele_ii_rx(uint8_t addr, uint8_t *data, uint8_t l) {

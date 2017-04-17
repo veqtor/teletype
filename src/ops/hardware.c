@@ -75,7 +75,7 @@ static void op_CV_get(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_CV | II_GET, a & 0x3 };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-        tele_ii_tx_now(addr, d, 2);
+        tele_ii_tx(addr, d, 2);
         d[0] = 0;
         d[1] = 0;
         tele_ii_rx(addr, d, 2);
@@ -116,7 +116,7 @@ static void op_CV_SLEW_get(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_CV_SLEW | II_GET, a & 0x3 };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-        tele_ii_tx_now(addr, d, 2);
+        tele_ii_tx(addr, d, 2);
         d[0] = 0;
         d[1] = 0;
         tele_ii_rx(addr, d, 2);
@@ -156,7 +156,7 @@ static void op_CV_OFF_get(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_CV_OFF | II_GET, a & 0x3 };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-        tele_ii_tx_now(addr, d, 2);
+        tele_ii_tx(addr, d, 2);
         d[0] = 0;
         d[1] = 0;
         tele_ii_rx(addr, d, 2);
@@ -207,7 +207,7 @@ static void op_TR_get(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_TR | II_GET, a & 0x3 };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-        tele_ii_tx_now(addr, d, 2);
+        tele_ii_tx(addr, d, 2);
         d[0] = 0;
         tele_ii_rx(addr, d, 1);
         cs_push(cs, d[0]);
@@ -245,7 +245,7 @@ static void op_TR_POL_get(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_TR_POL | II_GET, a & 0x3 };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-        tele_ii_tx_now(addr, d, 2);
+        tele_ii_tx(addr, d, 2);
         d[0] = 0;
         tele_ii_rx(addr, d, 1);
         cs_push(cs, d[0]);
@@ -282,7 +282,7 @@ static void op_TR_TIME_get(const void *NOTUSED(data), scene_state_t *ss,
     else if (a < 20) {
         uint8_t d[] = { II_ANSIBLE_TR_TIME | II_GET, a & 0x3 };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 4) >> 2) << 1);
-        tele_ii_tx_now(addr, d, 2);
+        tele_ii_tx(addr, d, 2);
         d[0] = 0;
         d[1] = 0;
         tele_ii_rx(addr, d, 2);
@@ -401,7 +401,7 @@ static void op_STATE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
     else if (a < 24) {
         uint8_t d[] = { II_ANSIBLE_INPUT | II_GET, a & 0x3 };
         uint8_t addr = II_ANSIBLE_ADDR + (((a - 8) >> 2) << 1);
-        tele_ii_tx_now(addr, d, 2);
+        tele_ii_tx(addr, d, 2);
         d[0] = 0;
         tele_ii_rx(addr, d, 1);
         cs_push(cs, d[0]);

@@ -169,7 +169,13 @@ void op_poke_i16(const void *data, scene_state_t *ss, exec_state_t *NOTUSED(es),
 
 void op_simple_i2c(const void *data, scene_state_t *NOTUSED(ss),
                    exec_state_t *NOTUSED(es), command_state_t *cs) {
-    int16_t address = (intptr_t)data;
+    int16_t message = (intptr_t)data;
     int16_t value = cs_pop(cs);
-    tele_ii(address, value);
+
+    uint8_t address = message & 0xF0;
+    uint8_t message_type = message & 0xFF;
+
+    uint8_t buffer[3] = { message_type, value >> 8, value & 0xFF };
+
+    tele_ii_tx(address, buffer, 3);
 }

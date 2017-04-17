@@ -84,18 +84,6 @@ bool metro_timer_enabled;
 uint8_t front_timer;
 uint8_t mod_key = 0, hold_key, hold_key_count = 0;
 
-#define I2C_DATA_LENGTH_MAX 8
-#define I2C_QUEUE_SIZE 16
-struct {
-    bool waiting;
-    uint8_t addr;
-    uint8_t l;
-    uint8_t d[I2C_DATA_LENGTH_MAX];
-} i2c_queue[I2C_QUEUE_SIZE];
-
-uint8_t i2c_waiting_count;
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // prototypes
 
@@ -110,7 +98,6 @@ static void handler_HidDisconnect(s32 data);
 static void handler_HidPacket(s32 data);
 static void handler_Trigger(s32 data);
 static void handler_ScreenRefresh(s32 data);
-static void handler_II(s32 data);
 
 static void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key);
 bool process_global_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
@@ -336,26 +323,6 @@ static void handler_ScreenRefresh(s32 data) {
     }
 }
 
-static void handler_II(s32 data) {
-    uint8_t i = data & 0xff;
-    int16_t d = (int)(data >> 16);
-    uint8_t addr = i & 0xf0;
-
-    uint8_t buffer[3];
-
-    buffer[0] = i;
-    buffer[1] = d >> 8;
-    buffer[2] = d & 0xff;
-
-    i2c_master_tx(addr, buffer, 3);
-}
-
-static void handler_IItx(s32 data) {
-    i2c_queue[data].waiting = false;
-    i2c_waiting_count--;
-    i2c_master_tx(i2c_queue[data].addr, i2c_queue[data].d, i2c_queue[data].l);
-}
-
 static void handler_EventTimer(s32 data) {
     tele_tick(&scene_state, RATE_CLOCK);
 }
@@ -382,8 +349,6 @@ static inline void assign_main_event_handlers(void) {
     app_event_handlers[kEventHidTimer] = &handler_HidTimer;
     app_event_handlers[kEventTrigger] = &handler_Trigger;
     app_event_handlers[kEventScreenRefresh] = &handler_ScreenRefresh;
-    app_event_handlers[kEventII] = &handler_II;
-    app_event_handlers[kEventIItx] = &handler_IItx;
     app_event_handlers[kEventTimer] = &handler_EventTimer;
     app_event_handlers[kEventAppCustom] = &handler_AppCustom;
 }
@@ -608,16 +573,7 @@ void tele_cv_off(uint8_t i, int16_t v) {
     aout[i].off = v;
 }
 
-void tele_ii(uint8_t i, int16_t d) {
-    event_t e = {.type = kEventII, .data = (d << 16) + i };
-    event_post(&e);
-}
-
 void tele_ii_tx(uint8_t addr, uint8_t* data, uint8_t l) {
-    i2c_master_tx(addr, data, l);
-}
-
-void tele_ii_tx_now(uint8_t addr, uint8_t* data, uint8_t l) {
     i2c_master_tx(addr, data, l);
 }
 

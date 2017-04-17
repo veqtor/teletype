@@ -182,7 +182,7 @@ static void op_KR_PRESET_get(const void *NOTUSED(data),
                              exec_state_t *NOTUSED(es), command_state_t *cs) {
     uint8_t d[] = { II_KR_PRESET | II_GET };
     uint8_t addr = II_KR_ADDR;
-    tele_ii_tx_now(addr, d, 1);
+    tele_ii_tx(addr, d, 1);
     d[0] = 0;
     tele_ii_rx(addr, d, 1);
     cs_push(cs, d[0]);
@@ -201,7 +201,7 @@ static void op_KR_PATTERN_get(const void *NOTUSED(data),
                               exec_state_t *NOTUSED(es), command_state_t *cs) {
     uint8_t d[] = { II_KR_PATTERN | II_GET };
     uint8_t addr = II_KR_ADDR;
-    tele_ii_tx_now(addr, d, 1);
+    tele_ii_tx(addr, d, 1);
     d[0] = 0;
     tele_ii_rx(addr, d, 1);
     cs_push(cs, d[0]);
@@ -220,7 +220,7 @@ static void op_KR_SCALE_get(const void *NOTUSED(data),
                             exec_state_t *NOTUSED(es), command_state_t *cs) {
     uint8_t d[] = { II_KR_SCALE | II_GET };
     uint8_t addr = II_KR_ADDR;
-    tele_ii_tx_now(addr, d, 1);
+    tele_ii_tx(addr, d, 1);
     d[0] = 0;
     tele_ii_rx(addr, d, 1);
     cs_push(cs, d[0]);
@@ -239,7 +239,7 @@ static void op_KR_PERIOD_get(const void *NOTUSED(data),
                              exec_state_t *NOTUSED(es), command_state_t *cs) {
     uint8_t d[] = { II_KR_PERIOD | II_GET, 0 };
     uint8_t addr = II_KR_ADDR;
-    tele_ii_tx_now(addr, d, 1);
+    tele_ii_tx(addr, d, 1);
     d[0] = 0;
     d[1] = 0;
     tele_ii_rx(addr, d, 2);
@@ -261,7 +261,7 @@ static void op_KR_POS_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
     int16_t b = cs_pop(cs);
     uint8_t d[] = { II_KR_POS | II_GET, a, b };
     uint8_t addr = II_KR_ADDR;
-    tele_ii_tx_now(addr, d, 3);
+    tele_ii_tx(addr, d, 3);
     d[0] = 0;
     tele_ii_rx(addr, d, 1);
     cs_push(cs, d[0]);
@@ -284,7 +284,7 @@ static void op_KR_LOOP_ST_get(const void *NOTUSED(data),
     int16_t b = cs_pop(cs);
     uint8_t d[] = { II_KR_LOOP_ST | II_GET, a, b };
     uint8_t addr = II_KR_ADDR;
-    tele_ii_tx_now(addr, d, 3);
+    tele_ii_tx(addr, d, 3);
     d[0] = 0;
     tele_ii_rx(addr, d, 1);
     cs_push(cs, d[0]);
@@ -307,7 +307,7 @@ static void op_KR_LOOP_LEN_get(const void *NOTUSED(data),
     int16_t b = cs_pop(cs);
     uint8_t d[] = { II_KR_LOOP_LEN | II_GET, a, b };
     uint8_t addr = II_KR_ADDR;
-    tele_ii_tx_now(addr, d, 3);
+    tele_ii_tx(addr, d, 3);
     d[0] = 0;
     tele_ii_rx(addr, d, 1);
     cs_push(cs, d[0]);
@@ -335,7 +335,7 @@ static void op_MP_PRESET_get(const void *NOTUSED(data),
                              exec_state_t *NOTUSED(es), command_state_t *cs) {
     uint8_t d[] = { II_MP_PRESET | II_GET };
     uint8_t addr = II_MP_ADDR;
-    tele_ii_tx_now(addr, d, 1);
+    tele_ii_tx(addr, d, 1);
     d[0] = 0;
     tele_ii_rx(addr, d, 1);
     cs_push(cs, d[0]);
@@ -370,7 +370,7 @@ static void op_MP_SCALE_get(const void *NOTUSED(data),
                             exec_state_t *NOTUSED(es), command_state_t *cs) {
     uint8_t d[] = { II_MP_SCALE | II_GET };
     uint8_t addr = II_MP_ADDR;
-    tele_ii_tx_now(addr, d, 1);
+    tele_ii_tx(addr, d, 1);
     d[0] = 0;
     tele_ii_rx(addr, d, 1);
     cs_push(cs, d[0]);
@@ -389,7 +389,7 @@ static void op_MP_PERIOD_get(const void *NOTUSED(data),
                              exec_state_t *NOTUSED(es), command_state_t *cs) {
     uint8_t d[] = { II_MP_PERIOD | II_GET, 0 };
     uint8_t addr = II_MP_ADDR;
-    tele_ii_tx_now(addr, d, 1);
+    tele_ii_tx(addr, d, 1);
     d[0] = 0;
     d[1] = 0;
     tele_ii_rx(addr, d, 2);
@@ -409,7 +409,7 @@ static void op_LV_PRESET_get(const void *NOTUSED(data),
                              exec_state_t *NOTUSED(es), command_state_t *cs) {
     uint8_t d[] = { II_LV_PRESET | II_GET };
     uint8_t addr = II_LV_ADDR;
-    tele_ii_tx_now(addr, d, 1);
+    tele_ii_tx(addr, d, 1);
     d[0] = 0;
     tele_ii_rx(addr, d, 1);
     cs_push(cs, d[0]);
@@ -434,7 +434,7 @@ static void op_LV_POS_get(const void *data, scene_state_t *ss, exec_state_t *es,
                           command_state_t *cs) {
     uint8_t d[] = { II_LV_POS | II_GET };
     uint8_t addr = II_LV_ADDR;
-    tele_ii_tx_now(addr, d, 1);
+    tele_ii_tx(addr, d, 1);
     d[0] = 0;
     tele_ii_rx(addr, d, 1);
     cs_push(cs, d[0]);
@@ -451,7 +451,7 @@ static void op_LV_L_ST_get(const void *data, scene_state_t *ss,
                            exec_state_t *es, command_state_t *cs) {
     uint8_t d[] = { II_LV_L_ST | II_GET };
     uint8_t addr = II_LV_ADDR;
-    tele_ii_tx_now(addr, d, 1);
+    tele_ii_tx(addr, d, 1);
     d[0] = 0;
     tele_ii_rx(addr, d, 1);
     cs_push(cs, d[0]);
@@ -468,7 +468,7 @@ static void op_LV_L_LEN_get(const void *data, scene_state_t *ss,
                             exec_state_t *es, command_state_t *cs) {
     uint8_t d[] = { II_LV_L_LEN | II_GET };
     uint8_t addr = II_LV_ADDR;
-    tele_ii_tx_now(addr, d, 1);
+    tele_ii_tx(addr, d, 1);
     d[0] = 0;
     tele_ii_rx(addr, d, 1);
     cs_push(cs, d[0]);
@@ -485,7 +485,7 @@ static void op_LV_L_DIR_get(const void *data, scene_state_t *ss,
                             exec_state_t *es, command_state_t *cs) {
     uint8_t d[] = { II_LV_L_DIR | II_GET };
     uint8_t addr = II_LV_ADDR;
-    tele_ii_tx_now(addr, d, 1);
+    tele_ii_tx(addr, d, 1);
     d[0] = 0;
     tele_ii_rx(addr, d, 1);
     cs_push(cs, d[0]);
@@ -497,7 +497,7 @@ static void op_LV_CV_get(const void *data, scene_state_t *ss, exec_state_t *es,
     a--;
     uint8_t d[] = { II_LV_CV | II_GET, a & 0x3 };
     uint8_t addr = II_LV_ADDR;
-    tele_ii_tx_now(addr, d, 2);
+    tele_ii_tx(addr, d, 2);
     d[0] = 0;
     d[1] = 0;
     tele_ii_rx(addr, d, 2);
@@ -516,7 +516,7 @@ static void op_CY_PRESET_get(const void *NOTUSED(data),
                              exec_state_t *NOTUSED(es), command_state_t *cs) {
     uint8_t d[] = { II_CY_PRESET | II_GET };
     uint8_t addr = II_CY_ADDR;
-    tele_ii_tx_now(addr, d, 1);
+    tele_ii_tx(addr, d, 1);
     d[0] = 0;
     tele_ii_rx(addr, d, 1);
     cs_push(cs, d[0]);
@@ -543,7 +543,7 @@ static void op_CY_POS_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
     int16_t a = cs_pop(cs);
     uint8_t d[] = { II_CY_POS | II_GET, a };
     uint8_t addr = II_CY_ADDR;
-    tele_ii_tx_now(addr, d, 2);
+    tele_ii_tx(addr, d, 2);
     d[0] = 0;
     tele_ii_rx(addr, d, 1);
     cs_push(cs, d[0]);
@@ -562,7 +562,7 @@ static void op_CY_CV_get(const void *data, scene_state_t *ss, exec_state_t *es,
     a--;
     uint8_t d[] = { II_CY_CV | II_GET, a & 0x3 };
     uint8_t addr = II_CY_ADDR;
-    tele_ii_tx_now(addr, d, 2);
+    tele_ii_tx(addr, d, 2);
     d[0] = 0;
     d[1] = 0;
     tele_ii_rx(addr, d, 2);
