@@ -33,8 +33,8 @@ void flash_unfresh(void) {
 }
 
 void flash_write(uint8_t preset_no) {
-    flashc_memcpy((void*)&f.s[preset_no].script, ss_script_ptr(&scene_state),
-                  ss_script_size(), true);
+    flashc_memcpy((void*)&f.s[preset_no].script, ss_scripts_ptr(&scene_state),
+                  ss_scripts_size(), true);
     flashc_memcpy((void*)&f.s[preset_no].patterns,
                   ss_patterns_ptr(&scene_state), ss_patterns_size(), true);
     flashc_memcpy((void*)&f.s[preset_no].text, &scene_text, sizeof(scene_text),
@@ -43,8 +43,8 @@ void flash_write(uint8_t preset_no) {
 }
 
 void flash_read(uint8_t preset_no) {
-    memcpy(ss_script_ptr(&scene_state), &f.s[preset_no].script,
-           ss_script_size());
+    memcpy(ss_scripts_ptr(&scene_state), &f.s[preset_no].script,
+           ss_scripts_size());
     memcpy(ss_patterns_ptr(&scene_state), &f.s[preset_no].patterns,
            ss_patterns_size());
     memcpy(&scene_text, &f.s[preset_no].text, sizeof(scene_text));

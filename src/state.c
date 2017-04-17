@@ -226,12 +226,12 @@ void ss_delete_script_command(scene_state_t *ss, size_t script_idx,
     }
 }
 
-scene_script_t *ss_script_ptr(scene_state_t *ss) {
+scene_script_t *ss_scripts_ptr(scene_state_t *ss) {
     return ss->scripts;
 }
 
-size_t ss_script_size() {
-    return sizeof(scene_script_t);
+size_t ss_scripts_size() {
+    return sizeof(scene_script_t) * SCRIPT_COUNT;
 }
 
 

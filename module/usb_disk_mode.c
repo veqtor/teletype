@@ -75,8 +75,8 @@ void tele_usb_disk() {
                                                 0xa, 0);
                     region_draw(&line[0]);
 
-                    memcpy(ss_script_ptr(&scene_state), &f.s[i].script,
-                           ss_script_size());
+                    memcpy(ss_scripts_ptr(&scene_state), &f.s[i].script,
+                           ss_scripts_size());
                     memcpy(ss_patterns_ptr(&scene_state), &f.s[i].patterns,
                            ss_patterns_size());
                     memcpy(&scene_text, &f.s[i].text, sizeof(scene_text));
@@ -436,7 +436,7 @@ void tele_usb_disk() {
 }
 
 void mem_clear() {
-    memset(ss_script_ptr(&scene_state), 0, ss_script_size());
+    memset(ss_scripts_ptr(&scene_state), 0, ss_scripts_size());
     memset(ss_patterns_ptr(&scene_state), 0, ss_patterns_size());
     memset(&scene_text, 0, sizeof(scene_text));
 }

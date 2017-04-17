@@ -140,8 +140,8 @@ void ss_insert_script_command(scene_state_t *ss, size_t script_idx,
 void ss_delete_script_command(scene_state_t *ss, size_t script_idx,
                               size_t command_idx);
 
-scene_script_t *ss_script_ptr(scene_state_t *ss);
-size_t ss_script_size(void);
+scene_script_t *ss_scripts_ptr(scene_state_t *ss);
+size_t ss_scripts_size(void);
 
 ////////////////////////////////////////////////////////////////////////////////
 // EXEC STATE //////////////////////////////////////////////////////////////////
