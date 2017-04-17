@@ -182,30 +182,22 @@ static void clockTimer_callback(void* o) {
 }
 
 static void refreshTimer_callback(void* o) {
-    static event_t e;
-    e.type = kEventScreenRefresh;
-    e.data = 0;
+    event_t e = {.type = kEventScreenRefresh, .data = 0 };
     event_post(&e);
 }
 
 static void keyTimer_callback(void* o) {
-    static event_t e;
-    e.type = kEventKeyTimer;
-    e.data = 0;
+    event_t e = {.type = kEventKeyTimer, .data = 0 };
     event_post(&e);
 }
 
 static void adcTimer_callback(void* o) {
-    static event_t e;
-    e.type = kEventPollADC;
-    e.data = 0;
+    event_t e = {.type = kEventPollADC, .data = 0 };
     event_post(&e);
 }
 
 static void hidTimer_callback(void* o) {
-    static event_t e;
-    e.type = kEventHidTimer;
-    e.data = 0;
+    event_t e = {.type = kEventHidTimer, .data = 0 };
     event_post(&e);
 }
 
@@ -603,9 +595,7 @@ void tele_cv_off(uint8_t i, int16_t v) {
 }
 
 void tele_ii(uint8_t i, int16_t d) {
-    static event_t e;
-    e.type = kEventII;
-    e.data = (d << 16) + i;
+    event_t e = {.type = kEventII, .data = (d << 16) + i };
     event_post(&e);
 }
 
