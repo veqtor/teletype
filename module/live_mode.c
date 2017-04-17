@@ -89,6 +89,7 @@ void set_live_mode() {
     line_editor_set(&le, "");
     history_line = HISTORY_SIZE;
     dirty = D_ALL;
+    activity_prev = 0xFF;
 }
 
 void process_live_keys(uint8_t k, uint8_t m, bool is_held_key) {
