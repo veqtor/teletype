@@ -178,7 +178,8 @@ static void cvTimer_callback(void* o) {
 }
 
 static void clockTimer_callback(void* o) {
-    tele_tick(&scene_state, RATE_CLOCK);
+    event_t e = {.type = kEventTimer, .data = 0 };
+    event_post(&e);
 }
 
 static void refreshTimer_callback(void* o) {
@@ -202,12 +203,8 @@ static void hidTimer_callback(void* o) {
 }
 
 static void metroTimer_callback(void* o) {
-    if (ss_get_script_len(&scene_state, METRO_SCRIPT)) {
-        set_metro_icon(true);
-        run_script(&scene_state, METRO_SCRIPT);
-    }
-    else
-        set_metro_icon(false);
+    event_t e = {.type = kEventAppCustom, .data = 0 };
+    event_post(&e);
 }
 
 
@@ -359,6 +356,21 @@ static void handler_IItx(s32 data) {
     i2c_master_tx(i2c_queue[data].addr, i2c_queue[data].d, i2c_queue[data].l);
 }
 
+static void handler_EventTimer(s32 data) {
+    tele_tick(&scene_state, RATE_CLOCK);
+}
+
+static void handler_AppCustom(s32 data) {
+    // If we need multiple custom event handlers then we can use an enum in the
+    // data argument. For now, we're just using it for the metro
+    if (ss_get_script_len(&scene_state, METRO_SCRIPT)) {
+        set_metro_icon(true);
+        run_script(&scene_state, METRO_SCRIPT);
+    }
+    else
+        set_metro_icon(false);
+}
+
 static inline void assign_main_event_handlers(void) {
     app_event_handlers[kEventFront] = &handler_Front;
     app_event_handlers[kEventPollADC] = &handler_PollADC;
@@ -372,6 +384,8 @@ static inline void assign_main_event_handlers(void) {
     app_event_handlers[kEventScreenRefresh] = &handler_ScreenRefresh;
     app_event_handlers[kEventII] = &handler_II;
     app_event_handlers[kEventIItx] = &handler_IItx;
+    app_event_handlers[kEventTimer] = &handler_EventTimer;
+    app_event_handlers[kEventAppCustom] = &handler_AppCustom;
 }
 
 // app event loop
