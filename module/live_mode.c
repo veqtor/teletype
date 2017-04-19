@@ -82,6 +82,7 @@ void set_metro_icon(bool display) {
 void init_live_mode() {
     status = E_OK;
     show_welcome_message = true;
+    dirty = D_ALL;
     activity_prev = 0xFF;
 }
 
