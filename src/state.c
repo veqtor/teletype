@@ -141,7 +141,7 @@ scene_pattern_t *ss_patterns_ptr(scene_state_t *ss) {
 }
 
 size_t ss_patterns_size() {
-    return sizeof(scene_pattern_t);
+    return sizeof(scene_pattern_t) * PATTERN_COUNT;
 }
 
 // script manipulation
