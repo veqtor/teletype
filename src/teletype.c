@@ -169,7 +169,6 @@ process_result_t run_command(scene_state_t *ss, const tele_command_t *cmd) {
 process_result_t process_command(scene_state_t *ss, exec_state_t *es,
                                  const tele_command_t *c) {
     command_state_t cs;
-    cs_init(&cs);
 
     // 1. Do we have a PRE seperator?
     // ------------------------------
@@ -213,6 +212,11 @@ process_result_t process_command(scene_state_t *ss, exec_state_t *es,
     for (ssize_t sub_idx = 0; sub_idx < sub_len; sub_idx++) {
         const ssize_t sub_start = subs[sub_idx].start;
         const ssize_t sub_end = subs[sub_idx].end;
+
+        // initialise the command state for each sub, otherwise a value left on
+        // the stack for the previous sub, can cause the set fn to trigger when
+        // it shouldn't
+        cs_init(&cs);
 
         // as we are using a stack based language, we must process commands from
         // right to left
