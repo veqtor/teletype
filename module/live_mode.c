@@ -22,27 +22,27 @@
 #include "usb_protocol_hid.h"
 
 #define HISTORY_SIZE 16
-tele_command_t history[HISTORY_SIZE];
-uint8_t history_line;
-line_editor_t le;
-process_result_t output;
-error_t status;
-char error_msg[TELE_ERROR_MSG_LENGTH];
-bool show_welcome_message;
+static tele_command_t history[HISTORY_SIZE];
+static uint8_t history_line;
+static line_editor_t le;
+static process_result_t output;
+static error_t status;
+static char error_msg[TELE_ERROR_MSG_LENGTH];
+static bool show_welcome_message;
 
 static const uint8_t D_INPUT = 1 << 0;
 static const uint8_t D_LIST = 1 << 1;
 static const uint8_t D_MESSAGE = 1 << 2;
 static const uint8_t D_ALL = 0xFF;
-uint8_t dirty;
+static uint8_t dirty;
 
 static const uint8_t A_METRO = 1 << 0;
 static const uint8_t A_SLEW = 1 << 1;
 static const uint8_t A_DELAY = 1 << 2;
 static const uint8_t A_STACK = 1 << 3;
 static const uint8_t A_MUTES = 1 << 4;
-uint8_t activity_prev;
-uint8_t activity;
+static uint8_t activity_prev;
+static uint8_t activity;
 
 // teletype_io.h
 void tele_has_delays(bool has_delays) {

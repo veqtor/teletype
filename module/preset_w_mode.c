@@ -18,14 +18,14 @@
 #include "conf_usb_host.h"  // needed in order to include "usb_protocol_hid.h"
 #include "usb_protocol_hid.h"
 
-uint8_t edit_line;
-uint8_t edit_offset;
-line_editor_t le;
+static uint8_t edit_line;
+static uint8_t edit_offset;
+static line_editor_t le;
 
 static const uint8_t D_INPUT = 1 << 0;
 static const uint8_t D_LIST = 1 << 1;
 static const uint8_t D_ALL = 0xFF;
-uint8_t dirty;
+static uint8_t dirty;
 
 void set_preset_w_mode() {
     edit_line = 0;

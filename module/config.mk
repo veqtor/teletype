@@ -210,7 +210,7 @@ ARFLAGS =
 ASFLAGS =
 
 # Extra flags to use when compiling.
-CFLAGS = -fshort-enums
+CFLAGS = -fshort-enums -fno-common
 
 # Extra flags to use when preprocessing.
 #

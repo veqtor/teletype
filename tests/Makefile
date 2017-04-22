@@ -1,5 +1,5 @@
 .PHONY: clean test
-CFLAGS = -std=c99 -g -Wall -DSIM -I../src -I../libavr32/src
+CFLAGS = -std=c99 -g -Wall -fno-common -DSIM -I../src -I../libavr32/src
 
 tests: main.o \
 	match_token_tests.o op_mod_tests.o \

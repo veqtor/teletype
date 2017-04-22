@@ -18,17 +18,17 @@
 #include "conf_usb_host.h"  // needed in order to include "usb_protocol_hid.h"
 #include "usb_protocol_hid.h"
 
-line_editor_t le;
-uint8_t line_no;
-uint8_t script;
-error_t status;
-char error_msg[TELE_ERROR_MSG_LENGTH];
+static line_editor_t le;
+static uint8_t line_no;
+static uint8_t script;
+static error_t status;
+static char error_msg[TELE_ERROR_MSG_LENGTH];
 
 static const uint8_t D_INPUT = 1 << 0;
 static const uint8_t D_LIST = 1 << 1;
 static const uint8_t D_MESSAGE = 1 << 2;
 static const uint8_t D_ALL = 0xFF;
-uint8_t dirty;
+static uint8_t dirty;
 
 void set_edit_mode() {
     status = E_OK;

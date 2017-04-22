@@ -64,10 +64,10 @@ region line[8] = {
 ////////////////////////////////////////////////////////////////////////////////
 // locals
 
-tele_mode_t mode;
-tele_mode_t last_mode;
+static tele_mode_t mode;
+static tele_mode_t last_mode;
 
-u16 adc[4];
+static u16 adc[4];
 
 typedef struct {
     u16 now;
@@ -79,10 +79,10 @@ typedef struct {
     u32 a;
 } aout_t;
 
-aout_t aout[4];
-bool metro_timer_enabled;
-uint8_t front_timer;
-uint8_t mod_key = 0, hold_key, hold_key_count = 0;
+static aout_t aout[4];
+static bool metro_timer_enabled;
+static uint8_t front_timer;
+static uint8_t mod_key = 0, hold_key, hold_key_count = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 // prototypes

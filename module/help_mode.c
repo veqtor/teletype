@@ -245,10 +245,10 @@ const uint8_t help_length[HELP_PAGES] = { HELP1_LENGTH, HELP2_LENGTH,
                                           HELP5_LENGTH, HELP6_LENGTH,
                                           HELP7_LENGTH, HELP8_LENGTH };
 
-uint8_t page_no;
-uint8_t offset;
+static uint8_t page_no;
+static uint8_t offset;
 
-bool dirty;
+static bool dirty;
 
 void set_help_mode() {
     dirty = true;

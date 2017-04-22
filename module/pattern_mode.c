@@ -17,12 +17,12 @@
 #include "conf_usb_host.h"  // needed in order to include "usb_protocol_hid.h"
 #include "usb_protocol_hid.h"
 
-int16_t copy_buffer;
-uint8_t pattern;  // which pattern are we editting
-uint8_t base;     // base + offset determine what we are editting
-uint8_t offset;
+static int16_t copy_buffer;
+static uint8_t pattern;  // which pattern are we editting
+static uint8_t base;     // base + offset determine what we are editting
+static uint8_t offset;
 
-bool dirty;
+static bool dirty;
 
 // teletype_io.h
 void tele_pattern_updated() {

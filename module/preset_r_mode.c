@@ -14,9 +14,9 @@
 #include "conf_usb_host.h"  // needed in order to include "usb_protocol_hid.h"
 #include "usb_protocol_hid.h"
 
-uint8_t offset;
-uint8_t knob_last;
-bool dirty;
+static uint8_t offset;
+static uint8_t knob_last;
+static bool dirty;
 
 void set_preset_r_mode(uint16_t knob) {
     knob_last = knob >> 7;
