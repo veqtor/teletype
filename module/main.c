@@ -110,6 +110,7 @@ static void hidTimer_callback(void* o);
 static void metroTimer_callback(void* o);
 
 // event handler prototypes
+static void handler_None(int32_t data);
 static void handler_Front(int32_t data);
 static void handler_PollADC(int32_t data);
 static void handler_SaveFlash(int32_t data);
@@ -117,13 +118,17 @@ static void handler_KeyTimer(int32_t data);
 static void handler_HidConnect(int32_t data);
 static void handler_HidDisconnect(int32_t data);
 static void handler_HidTimer(int32_t data);
+static void handler_MscConnect(int32_t data);
+static void handler_MscDisconnect(int32_t data);
 static void handler_Trigger(int32_t data);
 static void handler_ScreenRefresh(int32_t data);
 static void handler_EventTimer(int32_t data);
 static void handler_AppCustom(int32_t data);
 
 // event queue
+static void empty_event_handlers(void);
 static void assign_main_event_handlers(void);
+static void assign_msc_event_handlers(void);
 static void check_events(void);
 
 // key handling
@@ -218,6 +223,8 @@ void metroTimer_callback(void* o) {
 ////////////////////////////////////////////////////////////////////////////////
 // event handlers
 
+void handler_None(int32_t data) {}
+
 void handler_Front(int32_t data) {
     if (data == 0) {
         if (mode != M_PRESET_R) {
@@ -310,6 +317,15 @@ void handler_HidTimer(int32_t data) {
     hid_clear_frame_dirty();
 }
 
+void handler_MscConnect(int32_t data) {
+    assign_msc_event_handlers();
+    tele_usb_disk();
+}
+
+void handler_MscDisconnect(int32_t data) {
+    assign_main_event_handlers();
+}
+
 void handler_Trigger(int32_t data) {
     if (!ss_get_mute(&scene_state, data)) { run_script(&scene_state, data); }
 }
@@ -350,7 +366,15 @@ void handler_AppCustom(int32_t data) {
 ////////////////////////////////////////////////////////////////////////////////
 // event queue
 
+void empty_event_handlers() {
+    for (size_t i = 0; i < kNumEventTypes; i++) {
+        app_event_handlers[i] = &handler_None;
+    }
+}
+
 void assign_main_event_handlers() {
+    empty_event_handlers();
+
     app_event_handlers[kEventFront] = &handler_Front;
     app_event_handlers[kEventPollADC] = &handler_PollADC;
     app_event_handlers[kEventKeyTimer] = &handler_KeyTimer;
@@ -358,10 +382,17 @@ void assign_main_event_handlers() {
     app_event_handlers[kEventHidConnect] = &handler_HidConnect;
     app_event_handlers[kEventHidDisconnect] = &handler_HidDisconnect;
     app_event_handlers[kEventHidTimer] = &handler_HidTimer;
+    app_event_handlers[kEventMscConnect] = &handler_MscConnect;
+    app_event_handlers[kEventMscDisconnect] = &handler_MscDisconnect;
     app_event_handlers[kEventTrigger] = &handler_Trigger;
     app_event_handlers[kEventScreenRefresh] = &handler_ScreenRefresh;
     app_event_handlers[kEventTimer] = &handler_EventTimer;
     app_event_handlers[kEventAppCustom] = &handler_AppCustom;
+}
+
+static void assign_msc_event_handlers(void) {
+    empty_event_handlers();
+    app_event_handlers[kEventMscDisconnect] = &handler_MscDisconnect;
 }
 
 // app event loop
@@ -658,9 +689,6 @@ int main(void) {
 
     // screen init
     render_init();
-
-    // usb disk check
-    tele_usb_disk();
 
     // setup daisy chain for two dacs
     spi_selectChip(DAC_SPI, DAC_SPI_NPCS);
