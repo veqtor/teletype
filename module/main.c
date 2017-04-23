@@ -26,7 +26,6 @@
 #include "region.h"
 #include "screen.h"
 #include "timers.h"
-#include "types.h"
 #include "util.h"
 
 // this
@@ -45,6 +44,9 @@
 #include "usb_disk_mode.h"
 
 
+////////////////////////////////////////////////////////////////////////////////
+// constants
+
 #define RATE_CLOCK 10
 #define RATE_CV 6
 
@@ -61,22 +63,23 @@ region line[8] = {
     {.w = 128, .h = 8, .x = 0, .y = 48 }, {.w = 128, .h = 8, .x = 0, .y = 56 }
 };
 
+
 ////////////////////////////////////////////////////////////////////////////////
 // locals
 
 static tele_mode_t mode;
 static tele_mode_t last_mode;
 
-static u16 adc[4];
+static uint16_t adc[4];
 
 typedef struct {
-    u16 now;
-    u16 off;
-    u16 target;
-    u16 slew;
-    u16 step;
-    s32 delta;
-    u32 a;
+    uint16_t now;
+    uint16_t off;
+    uint16_t target;
+    uint16_t slew;
+    uint16_t step;
+    int32_t delta;
+    uint32_t a;
 } aout_t;
 
 static aout_t aout[4];
@@ -84,30 +87,7 @@ static bool metro_timer_enabled;
 static uint8_t front_timer;
 static uint8_t mod_key = 0, hold_key, hold_key_count = 0;
 
-////////////////////////////////////////////////////////////////////////////////
-// prototypes
-
-// check the event queue
-static void check_events(void);
-
-// handler protos
-static void handler_KeyTimer(s32 data);
-static void handler_Front(s32 data);
-static void handler_HidConnect(s32 data);
-static void handler_HidDisconnect(s32 data);
-static void handler_HidPacket(s32 data);
-static void handler_Trigger(s32 data);
-static void handler_ScreenRefresh(s32 data);
-
-static void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key);
-bool process_global_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
-
-static void render_init(void);
-
-
-////////////////////////////////////////////////////////////////////////////////
 // timers
-
 static softTimer_t clockTimer = {.next = NULL, .prev = NULL };
 static softTimer_t refreshTimer = {.next = NULL, .prev = NULL };
 static softTimer_t keyTimer = {.next = NULL, .prev = NULL };
@@ -117,7 +97,47 @@ static softTimer_t hidTimer = {.next = NULL, .prev = NULL };
 static softTimer_t metroTimer = {.next = NULL, .prev = NULL };
 
 
-static void cvTimer_callback(void* o) {
+////////////////////////////////////////////////////////////////////////////////
+// prototypes
+
+// timer callback prototypes
+static void cvTimer_callback(void* o);
+static void clockTimer_callback(void* o);
+static void refreshTimer_callback(void* o);
+static void keyTimer_callback(void* o);
+static void adcTimer_callback(void* o);
+static void hidTimer_callback(void* o);
+static void metroTimer_callback(void* o);
+
+// event handler prototypes
+static void handler_Front(int32_t data);
+static void handler_PollADC(int32_t data);
+static void handler_SaveFlash(int32_t data);
+static void handler_KeyTimer(int32_t data);
+static void handler_HidConnect(int32_t data);
+static void handler_HidDisconnect(int32_t data);
+static void handler_HidTimer(int32_t data);
+static void handler_Trigger(int32_t data);
+static void handler_ScreenRefresh(int32_t data);
+static void handler_EventTimer(int32_t data);
+static void handler_AppCustom(int32_t data);
+
+// event queue
+static void assign_main_event_handlers(void);
+static void check_events(void);
+
+// key handling
+static void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key);
+static bool process_global_keys(uint8_t key, uint8_t mod_key, bool is_held_key);
+
+// other
+static void render_init(void);
+
+
+////////////////////////////////////////////////////////////////////////////////
+// timer callbacks
+
+void cvTimer_callback(void* o) {
     bool updated = false;
     bool slewing = false;
 
@@ -164,32 +184,32 @@ static void cvTimer_callback(void* o) {
     }
 }
 
-static void clockTimer_callback(void* o) {
+void clockTimer_callback(void* o) {
     event_t e = {.type = kEventTimer, .data = 0 };
     event_post(&e);
 }
 
-static void refreshTimer_callback(void* o) {
+void refreshTimer_callback(void* o) {
     event_t e = {.type = kEventScreenRefresh, .data = 0 };
     event_post(&e);
 }
 
-static void keyTimer_callback(void* o) {
+void keyTimer_callback(void* o) {
     event_t e = {.type = kEventKeyTimer, .data = 0 };
     event_post(&e);
 }
 
-static void adcTimer_callback(void* o) {
+void adcTimer_callback(void* o) {
     event_t e = {.type = kEventPollADC, .data = 0 };
     event_post(&e);
 }
 
-static void hidTimer_callback(void* o) {
+void hidTimer_callback(void* o) {
     event_t e = {.type = kEventHidTimer, .data = 0 };
     event_post(&e);
 }
 
-static void metroTimer_callback(void* o) {
+void metroTimer_callback(void* o) {
     event_t e = {.type = kEventAppCustom, .data = 0 };
     event_post(&e);
 }
@@ -198,7 +218,7 @@ static void metroTimer_callback(void* o) {
 ////////////////////////////////////////////////////////////////////////////////
 // event handlers
 
-static void handler_Front(s32 data) {
+void handler_Front(int32_t data) {
     if (data == 0) {
         if (mode != M_PRESET_R) {
             front_timer = 0;
@@ -214,7 +234,7 @@ static void handler_Front(s32 data) {
     }
 }
 
-static void handler_PollADC(s32 data) {
+void handler_PollADC(int32_t data) {
     adc_convert(&adc);
 
     ss_set_in(&scene_state, adc[0] << 2);
@@ -227,11 +247,11 @@ static void handler_PollADC(s32 data) {
         ss_set_param(&scene_state, adc[1] << 2);
 }
 
-static void handler_SaveFlash(s32 data) {
+void handler_SaveFlash(int32_t data) {
     flash_write(preset_select);
 }
 
-static void handler_KeyTimer(s32 data) {
+void handler_KeyTimer(int32_t data) {
     if (front_timer) {
         if (front_timer == 1) {
             flash_read(preset_select);
@@ -254,21 +274,17 @@ static void handler_KeyTimer(s32 data) {
     }
 }
 
-static void handler_HidConnect(s32 data) {
+void handler_HidConnect(int32_t data) {
     timer_add(&hidTimer, 47, &hidTimer_callback, NULL);
 }
 
-static void handler_HidDisconnect(s32 data) {
+void handler_HidDisconnect(int32_t data) {
     timer_remove(&hidTimer);
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-// keys
-
-static void handler_HidTimer(s32 data) {
+void handler_HidTimer(int32_t data) {
     if (hid_get_frame_dirty()) {
-        const s8* frame = (const s8*)hid_get_frame_data();
+        const int8_t* frame = (const int8_t*)hid_get_frame_data();
 
         for (size_t i = 2; i < 8; i++) {
             if (frame[i] == 0) {
@@ -294,19 +310,11 @@ static void handler_HidTimer(s32 data) {
     hid_clear_frame_dirty();
 }
 
-
-static void handler_HidPacket(s32 data) {}
-
-
-static void handler_Trigger(s32 data) {
+void handler_Trigger(int32_t data) {
     if (!ss_get_mute(&scene_state, data)) { run_script(&scene_state, data); }
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-// refresh
-
-static void handler_ScreenRefresh(s32 data) {
+void handler_ScreenRefresh(int32_t data) {
     bool screen_dirty = false;
 
     switch (mode) {
@@ -323,11 +331,11 @@ static void handler_ScreenRefresh(s32 data) {
     }
 }
 
-static void handler_EventTimer(s32 data) {
+void handler_EventTimer(int32_t data) {
     tele_tick(&scene_state, RATE_CLOCK);
 }
 
-static void handler_AppCustom(s32 data) {
+void handler_AppCustom(int32_t data) {
     // If we need multiple custom event handlers then we can use an enum in the
     // data argument. For now, we're just using it for the metro
     if (ss_get_script_len(&scene_state, METRO_SCRIPT)) {
@@ -338,14 +346,17 @@ static void handler_AppCustom(s32 data) {
         set_metro_icon(false);
 }
 
-static inline void assign_main_event_handlers(void) {
+
+////////////////////////////////////////////////////////////////////////////////
+// event queue
+
+void assign_main_event_handlers() {
     app_event_handlers[kEventFront] = &handler_Front;
     app_event_handlers[kEventPollADC] = &handler_PollADC;
     app_event_handlers[kEventKeyTimer] = &handler_KeyTimer;
     app_event_handlers[kEventSaveFlash] = &handler_SaveFlash;
     app_event_handlers[kEventHidConnect] = &handler_HidConnect;
     app_event_handlers[kEventHidDisconnect] = &handler_HidDisconnect;
-    app_event_handlers[kEventHidPacket] = &handler_HidPacket;
     app_event_handlers[kEventHidTimer] = &handler_HidTimer;
     app_event_handlers[kEventTrigger] = &handler_Trigger;
     app_event_handlers[kEventScreenRefresh] = &handler_ScreenRefresh;
@@ -361,8 +372,9 @@ void check_events(void) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// funcs
+// mode handling
 
+// defined in globals.h
 void set_mode(tele_mode_t m) {
     last_mode = mode;
     switch (m) {
@@ -395,6 +407,7 @@ void set_mode(tele_mode_t m) {
     }
 }
 
+// defined in globals.h
 void set_last_mode() {
     if (mode == last_mode) return;
 
@@ -403,6 +416,10 @@ void set_last_mode() {
     else
         set_mode(M_LIVE);
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+// key handling
 
 void process_keypress(uint8_t key, uint8_t mod_key, bool is_held_key) {
     // first try global keys
@@ -492,6 +509,9 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
     }
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// other
 
 void render_init(void) {
     region_alloc(&line[0]);
