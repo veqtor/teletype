@@ -415,8 +415,6 @@ void tele_usb_disk() {
         usb_retry = 0;
 
         nav_exit();
-        region_fill(&line[0], 0);
-        region_fill(&line[1], 0);
         mem_clear();
         delay_ms(100);
     }
