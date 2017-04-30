@@ -219,7 +219,6 @@ void tele_usb_disk() {
             region_fill(&line[1], 0);
             font_string_region_clip_tab(&line[1], input_buffer, 2, 0, 0xa, 0);
             region_draw(&line[1]);
-            delay_ms(50);
             if (nav_filelist_findname(filename, 0)) {
                 print_dbg("\r\nfound: ");
                 print_dbg(filename);
