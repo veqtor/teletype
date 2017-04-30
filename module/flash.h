@@ -9,8 +9,7 @@
 
 #define SCENE_SLOTS 32
 
-uint8_t flash_is_fresh(void);
-void flash_unfresh(void);
+void flash_prepare(void);
 void flash_read(uint8_t preset_no, scene_state_t *scene,
                 char (*text)[SCENE_TEXT_LINES][SCENE_TEXT_CHARS]);
 void flash_write(uint8_t preset_no, scene_state_t *scene,

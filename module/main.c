@@ -680,16 +680,13 @@ int main(void) {
 
     ss_init(&scene_state);
 
-    if (flash_is_fresh()) {
-        print_dbg("\r\n:::: first run, clearing flash");
-        flash_unfresh();
-    }
-    else {
-        preset_select = flash_last_saved_scene();
-        ss_set_scene(&scene_state, preset_select);
-        flash_read(preset_select, &scene_state, &scene_text);
-        // load from flash at startup
-    }
+    // prepare flash (if needed)
+    flash_prepare();
+
+    // load preset from flash
+    preset_select = flash_last_saved_scene();
+    ss_set_scene(&scene_state, preset_select);
+    flash_read(preset_select, &scene_state, &scene_text);
 
     // screen init
     render_init();
