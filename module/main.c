@@ -320,8 +320,11 @@ void handler_MscConnect(int32_t data) {
     // disable event handlers while doing USB write
     assign_msc_event_handlers();
 
+    // disable timers
+    timers_pause();
+
     // clear screen
-    for (size_t i=0; i<8; i++) {
+    for (size_t i = 0; i < 8; i++) {
         region_fill(&line[i], 0);
         region_draw(&line[i]);
     }
@@ -332,6 +335,7 @@ void handler_MscConnect(int32_t data) {
     // renable teletype
     set_mode(M_LIVE);
     assign_main_event_handlers();
+    timers_resume();
 }
 
 void handler_Trigger(int32_t data) {
