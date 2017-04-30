@@ -6,15 +6,24 @@
 #include "flashc.h"
 
 // this
-#include "globals.h"
+#include "teletype.h"
 
 #define FIRSTRUN_KEY 0x22
 
-char scene_text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
-
 // NVRAM data structure located in the flash array.
-__attribute__((__section__(".flash_nvram"))) nvram_data_t f;
+typedef const struct {
+    scene_script_t script[SCRIPT_COUNT];
+    scene_pattern_t patterns[PATTERN_COUNT];
+    char text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
+} nvram_scene_t;
 
+typedef const struct {
+    nvram_scene_t s[SCENE_SLOTS];
+    uint8_t scene;
+    uint8_t fresh;
+} nvram_data_t;
+
+static __attribute__((__section__(".flash_nvram"))) nvram_data_t f;
 
 uint8_t flash_is_fresh(void) {
     return (f.fresh != FIRSTRUN_KEY);
@@ -22,35 +31,43 @@ uint8_t flash_is_fresh(void) {
 
 // write fresh status
 void flash_unfresh(void) {
-    for (uint8_t preset_select = 0; preset_select < SCENE_SLOTS;
-         preset_select++) {
-        flash_write(preset_select);
-    }
+    // blank scene to write to flash
+    scene_state_t scene;
+    ss_init(&scene);
+
+    char text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
+    memset(text, 0, SCENE_TEXT_LINES * SCENE_TEXT_CHARS);
+
+    for (uint8_t i = 0; i < SCENE_SLOTS; i++) { flash_write(i, &scene, &text); }
     preset_select = 0;
-    flashc_memset8((void*)&(f.scene), preset_select, 1, true);
-    flashc_memset8((void*)&(f.mode), M_LIVE, 1, true);
-    flashc_memset8((void*)&(f.fresh), FIRSTRUN_KEY, 1, true);
+    flashc_memset8((void *)&(f.scene), preset_select, 1, true);
+    flashc_memset8((void *)&(f.fresh), FIRSTRUN_KEY, 1, true);
 }
 
-void flash_write(uint8_t preset_no) {
-    flashc_memcpy((void*)&f.s[preset_no].script, ss_scripts_ptr(&scene_state),
+void flash_write(uint8_t preset_no, scene_state_t *scene,
+                 char (*text)[SCENE_TEXT_LINES][SCENE_TEXT_CHARS]) {
+    flashc_memcpy((void *)&f.s[preset_no].script, ss_scripts_ptr(scene),
                   ss_scripts_size(), true);
-    flashc_memcpy((void*)&f.s[preset_no].patterns,
-                  ss_patterns_ptr(&scene_state), ss_patterns_size(), true);
-    flashc_memcpy((void*)&f.s[preset_no].text, &scene_text, sizeof(scene_text),
-                  true);
-    flashc_memset8((void*)&(f.scene), preset_no, 1, true);
+    flashc_memcpy((void *)&f.s[preset_no].patterns, ss_patterns_ptr(scene),
+                  ss_patterns_size(), true);
+    flashc_memcpy((void *)&f.s[preset_no].text, text,
+                  SCENE_TEXT_LINES * SCENE_TEXT_CHARS, true);
+    flashc_memset8((void *)&(f.scene), preset_no, 1, true);
 }
 
-void flash_read(uint8_t preset_no) {
-    memcpy(ss_scripts_ptr(&scene_state), &f.s[preset_no].script,
-           ss_scripts_size());
-    memcpy(ss_patterns_ptr(&scene_state), &f.s[preset_no].patterns,
+void flash_read(uint8_t preset_no, scene_state_t *scene,
+                char (*text)[SCENE_TEXT_LINES][SCENE_TEXT_CHARS]) {
+    memcpy(ss_scripts_ptr(scene), &f.s[preset_no].script, ss_scripts_size());
+    memcpy(ss_patterns_ptr(scene), &f.s[preset_no].patterns,
            ss_patterns_size());
-    memcpy(&scene_text, &f.s[preset_no].text, sizeof(scene_text));
-    flashc_memset8((void*)&(f.scene), preset_no, 1, true);
+    memcpy(text, &f.s[preset_no].text, SCENE_TEXT_LINES * SCENE_TEXT_CHARS);
+    flashc_memset8((void *)&(f.scene), preset_no, 1, true);
 }
 
-void flash_save_mode(tele_mode_t mode) {
-    flashc_memset8((void*)&(f.mode), mode, 1, true);
+uint8_t flash_last_saved_scene() {
+    return f.scene;
+}
+
+const char *flash_scene_text(uint8_t preset_no, size_t line) {
+    return f.s[preset_no].text[line];
 }

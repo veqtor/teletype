@@ -55,6 +55,7 @@
 // globals (defined in globals.h)
 
 scene_state_t scene_state;
+char scene_text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
 uint8_t preset_select;
 region line[8] = {
     {.w = 128, .h = 8, .x = 0, .y = 0 },  {.w = 128, .h = 8, .x = 0, .y = 8 },
@@ -67,8 +68,8 @@ region line[8] = {
 ////////////////////////////////////////////////////////////////////////////////
 // locals
 
-static tele_mode_t mode;
-static tele_mode_t last_mode;
+static tele_mode_t mode = M_LIVE;
+static tele_mode_t last_mode = M_LIVE;
 
 static uint16_t adc[4];
 
@@ -113,7 +114,6 @@ static void metroTimer_callback(void* o);
 static void handler_None(int32_t data);
 static void handler_Front(int32_t data);
 static void handler_PollADC(int32_t data);
-static void handler_SaveFlash(int32_t data);
 static void handler_KeyTimer(int32_t data);
 static void handler_HidConnect(int32_t data);
 static void handler_HidDisconnect(int32_t data);
@@ -253,14 +253,10 @@ void handler_PollADC(int32_t data) {
         ss_set_param(&scene_state, adc[1] << 2);
 }
 
-void handler_SaveFlash(int32_t data) {
-    flash_write(preset_select);
-}
-
 void handler_KeyTimer(int32_t data) {
     if (front_timer) {
         if (front_timer == 1) {
-            flash_read(preset_select);
+            flash_read(preset_select, &scene_state, &scene_text);
 
             run_script(&scene_state, INIT_SCRIPT);
 
@@ -390,7 +386,6 @@ void assign_main_event_handlers() {
     app_event_handlers[kEventFront] = &handler_Front;
     app_event_handlers[kEventPollADC] = &handler_PollADC;
     app_event_handlers[kEventKeyTimer] = &handler_KeyTimer;
-    app_event_handlers[kEventSaveFlash] = &handler_SaveFlash;
     app_event_handlers[kEventHidConnect] = &handler_HidConnect;
     app_event_handlers[kEventHidDisconnect] = &handler_HidDisconnect;
     app_event_handlers[kEventHidTimer] = &handler_HidTimer;
@@ -425,7 +420,6 @@ void set_mode(tele_mode_t m) {
         case M_LIVE:
             set_live_mode();
             mode = M_LIVE;
-            flash_save_mode(mode);
             break;
         case M_EDIT:
             set_edit_mode();
@@ -434,7 +428,6 @@ void set_mode(tele_mode_t m) {
         case M_PATTERN:
             set_pattern_mode();
             mode = M_PATTERN;
-            flash_save_mode(mode);
             break;
         case M_PRESET_W:
             set_preset_w_mode();
@@ -647,7 +640,7 @@ void tele_ii_rx(uint8_t addr, uint8_t* data, uint8_t l) {
 
 void tele_scene(uint8_t i) {
     preset_select = i;
-    flash_read(i);
+    flash_read(i, &scene_state, &scene_text);
 }
 
 void tele_kill() {
@@ -684,8 +677,6 @@ int main(void) {
     init_i2c_master();
 
     print_dbg("\r\n\n// teletype! //////////////////////////////// ");
-    print_dbg("\r\nflash size: ");
-    print_dbg_ulong(sizeof(f));
 
     ss_init(&scene_state);
 
@@ -694,9 +685,9 @@ int main(void) {
         flash_unfresh();
     }
     else {
-        preset_select = f.scene;
+        preset_select = flash_last_saved_scene();
         ss_set_scene(&scene_state, preset_select);
-        flash_read(preset_select);
+        flash_read(preset_select, &scene_state, &scene_text);
         // load from flash at startup
     }
 
@@ -728,7 +719,7 @@ int main(void) {
     aout[3].slew = 1;
 
     init_live_mode();
-    set_mode(f.mode);
+    set_mode(M_LIVE);
 
     run_script(&scene_state, INIT_SCRIPT);
 

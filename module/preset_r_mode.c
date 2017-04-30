@@ -62,7 +62,7 @@ void process_preset_r_keys(uint8_t k, uint8_t m, bool is_held_key) {
     }
     // <enter>: load preset
     else if (match_no_mod(m, k, HID_ENTER) && !is_held_key) {
-        flash_read(preset_select);
+        flash_read(preset_select, &scene_state, &scene_text);
         ss_set_scene(&scene_state, preset_select);
 
         run_script(&scene_state, INIT_SCRIPT);
@@ -78,13 +78,15 @@ bool screen_refresh_preset_r() {
     itoa(preset_select, s, 10);
     region_fill(&line[0], 1);
     font_string_region_clip_right(&line[0], s, 126, 0, 0xf, 1);
-    font_string_region_clip(&line[0], f.s[preset_select].text[0], 2, 0, 0xf, 1);
+    font_string_region_clip(&line[0], flash_scene_text(preset_select, 0), 2, 0,
+                            0xf, 1);
 
 
     for (uint8_t y = 1; y < 8; y++) {
         region_fill(&line[y], 0);
-        font_string_region_clip(&line[y], f.s[preset_select].text[offset + y],
-                                2, 0, 0xa, 0);
+        font_string_region_clip(&line[y],
+                                flash_scene_text(preset_select, offset + y), 2,
+                                0, 0xa, 0);
     }
 
     dirty = false;

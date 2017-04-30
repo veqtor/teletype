@@ -3,13 +3,18 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "line_editor.h"
 #include "region.h"
 #include "teletype.h"
+
+#define SCENE_TEXT_LINES 32
+#define SCENE_TEXT_CHARS LINE_EDITOR_SIZE
 
 // global variables (defined in main.c)
 
 // holds the current scene
 extern scene_state_t scene_state;
+extern char scene_text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
 
 // the current preset
 extern uint8_t preset_select;

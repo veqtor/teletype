@@ -86,7 +86,7 @@ void process_preset_w_keys(uint8_t k, uint8_t m, bool is_held_key) {
     else if (match_alt(m, k, HID_ENTER)) {
         if (!is_held_key) {
             strcpy(scene_text[edit_line + edit_offset], line_editor_get(&le));
-            flash_write(preset_select);
+            flash_write(preset_select, &scene_state, &scene_text);
             set_last_mode();
         }
     }

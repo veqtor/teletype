@@ -16,7 +16,7 @@ void ss_init(scene_state_t *ss) {
     ss->delay.count = 0;
     for (size_t i = 0; i < TR_COUNT; i++) { ss->tr_pulse_timer[i] = 0; }
     ss->stack_op.top = 0;
-    for (size_t i = 0; i < SCRIPT_COUNT; i++) { ss->scripts[i].l = 0; }
+    memset(&ss->scripts, 0, ss_scripts_size());
 }
 
 void ss_variables_init(scene_state_t *ss) {
