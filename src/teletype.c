@@ -281,7 +281,14 @@ void tele_tick(scene_state_t *ss, uint8_t time) {
     // process tr pulses
     for (int16_t i = 0; i < TR_COUNT; i++) {
         if (ss->tr_pulse_timer[i]) {
+            // prevent tr_pulse_timer from being greater than tr_time
+            int16_t tr_time = ss->variables.tr_time[i];
+            if (tr_time < 0) tr_time = 0;
+            if (ss->tr_pulse_timer[i] > tr_time)
+                ss->tr_pulse_timer[i] = tr_time;
+
             ss->tr_pulse_timer[i] -= time;
+
             if (ss->tr_pulse_timer[i] <= 0) {
                 ss->tr_pulse_timer[i] = 0;
                 ss->variables.tr[i] = ss->variables.tr_pol[i] == 0;
