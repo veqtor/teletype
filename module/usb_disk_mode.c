@@ -67,6 +67,7 @@ void tele_usb_disk() {
             ss_init(&scene);
 
             char text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
+            memset(text, 0, SCENE_TEXT_LINES * SCENE_TEXT_CHARS);
 
             strcat(input_buffer, ".");
             region_fill(&line[0], 0);
@@ -214,6 +215,7 @@ void tele_usb_disk() {
             scene_state_t scene;
             ss_init(&scene);
             char text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
+            memset(text, 0, SCENE_TEXT_LINES * SCENE_TEXT_CHARS);
 
             strcat(input_buffer, ".");
             region_fill(&line[1], 0);
