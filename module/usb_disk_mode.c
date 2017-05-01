@@ -386,8 +386,8 @@ void tele_usb_disk() {
                     flash_write(i, &scene, &text);
                 }
             }
-            else
-                nav_filelist_reset();
+
+            nav_filelist_reset();
 
             if (filename[3] == '9') {
                 filename[3] = '0';
