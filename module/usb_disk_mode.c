@@ -298,11 +298,14 @@ void tele_usb_disk() {
                                         if (status == E_OK) {
                                             ss_overwrite_script_command(
                                                 &scene, s, l, &temp);
-                                            memset(input, 0, sizeof(input));
+                                            l++;
                                         }
                                         else {
                                             print_dbg("\r\nvalidate: ");
                                             print_dbg(tele_error(status));
+                                            print_dbg(" >> ");
+                                            print_dbg("\r\nINPUT: ");
+                                            print_dbg(input);
                                         }
                                     }
                                     else {
@@ -311,14 +314,9 @@ void tele_usb_disk() {
                                         print_dbg(" >> ");
                                         print_dbg("\r\nINPUT: ");
                                         print_dbg(input);
-                                        char pcmd[32];
-                                        print_command(
-                                            ss_get_script_command(&scene, s, l),
-                                            pcmd);
-                                        print_dbg(pcmd);
                                     }
 
-                                    l++;
+                                    memset(input, 0, sizeof(input));
                                     p = 0;
                                 }
                             }
