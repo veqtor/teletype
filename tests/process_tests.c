@@ -228,6 +228,27 @@ TEST test_sub_commands() {
     PASS();
 }
 
+TEST test_blank_command() {
+    scene_state_t ss;
+    ss_init(&ss);
+    exec_state_t es;
+    es_init(&es);
+    tele_command_t cmd;
+    char error_msg[TELE_ERROR_MSG_LENGTH];
+
+    char* test = "";
+    error_t error = parse(test, &cmd, error_msg);
+    if (error != E_OK) { FAIL(); }
+    if (validate(&cmd, error_msg) != E_OK) { FAIL(); }
+
+    process_result_t result = process_command(&ss, &es, &cmd);
+
+    ASSERT_EQ(result.has_value, false);
+    ASSERT_EQ(result.value, 0);
+
+    PASS();
+}
+
 SUITE(process_suite) {
     RUN_TEST(test_numbers);
     RUN_TEST(test_ADD);
@@ -240,4 +261,5 @@ SUITE(process_suite) {
     RUN_TEST(test_PN);
     RUN_TEST(test_X);
     RUN_TEST(test_sub_commands);
+    RUN_TEST(test_blank_command);
 }

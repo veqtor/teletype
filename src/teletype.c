@@ -169,6 +169,8 @@ process_result_t run_command(scene_state_t *ss, const tele_command_t *cmd) {
 process_result_t process_command(scene_state_t *ss, exec_state_t *es,
                                  const tele_command_t *c) {
     command_state_t cs;
+    cs_init(&cs);  // initialise this here as well as inside the loop, in case
+                   // the command has 0 length
 
     // 1. Do we have a PRE seperator?
     // ------------------------------
