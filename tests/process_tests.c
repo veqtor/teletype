@@ -79,16 +79,16 @@ TEST test_ADD() {
 }
 
 TEST test_IF() {
-    char* test1[3] = { "X 0", "IF 1 : X 1", "X" };
+    char* test1[3] = { "X 0", "IF 1: X 1", "X" };
     CHECK_CALL(process_helper(3, test1, 1));
 
-    char* test2[3] = { "X 0", "IF 0 : X 1", "X" };
+    char* test2[3] = { "X 0", "IF 0: X 1", "X" };
     CHECK_CALL(process_helper(3, test2, 0));
 
-    char* test3[3] = { "PN 0 0 0", "IF 1 : PN 0 0 1", "PN 0 0" };
+    char* test3[3] = { "PN 0 0 0", "IF 1: PN 0 0 1", "PN 0 0" };
     CHECK_CALL(process_helper(3, test3, 1));
 
-    char* test4[3] = { "PN 0 0 0", "IF 0 : PN 0 0 1", "PN 0 0" };
+    char* test4[3] = { "PN 0 0 0", "IF 0: PN 0 0 1", "PN 0 0" };
     CHECK_CALL(process_helper(3, test4, 0));
 
     PASS();
@@ -111,13 +111,13 @@ TEST test_FLIP() {
 }
 
 TEST test_L() {
-    char* test1[3] = { "X 0", "L 1 10 : X I", "X" };
+    char* test1[3] = { "X 0", "L 1 10: X I", "X" };
     CHECK_CALL(process_helper(3, test1, 10));
 
-    char* test2[3] = { "X 0", "L 1 -10 : X I", "X" };
+    char* test2[3] = { "X 0", "L 1 -10: X I", "X" };
     CHECK_CALL(process_helper(3, test2, -10));
 
-    char* test3[3] = { "X 0", "L 1 10 : X ADD X I", "X" };
+    char* test3[3] = { "X 0", "L 1 10: X ADD X I", "X" };
     CHECK_CALL(process_helper(3, test3, 55));
 
     PASS();
@@ -233,13 +233,13 @@ TEST test_X() {
 }
 
 TEST test_sub_commands() {
-    char* test1[2] = { "X 10 ; Y 20 ; Z 30", "ADD X ADD Y Z" };
+    char* test1[2] = { "X 10; Y 20; Z 30", "ADD X ADD Y Z" };
     CHECK_CALL(process_helper(2, test1, 60));
 
-    char* test2[2] = { "IF 1 : X 1 ; Y 2 ; Z 3", "ADD X ADD Y Z" };
+    char* test2[2] = { "IF 1: X 1; Y 2; Z 3", "ADD X ADD Y Z" };
     CHECK_CALL(process_helper(2, test2, 6));
 
-    char* test3[3] = { "X 0 ; Y 0 ; Z 0", "IF 0 : X 1 ; Y 2 ; Z 3",
+    char* test3[3] = { "X 0; Y 0; Z 0", "IF 0: X 1; Y 2; Z 3",
                        "ADD X ADD Y Z" };
     CHECK_CALL(process_helper(3, test3, 0));
 
