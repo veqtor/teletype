@@ -49,7 +49,9 @@ TEST process_helper(size_t n, char* lines[], int16_t answer) {
     scene_state_t ss;
     ss_init(&ss);
 
-    return process_helper_state(&ss, n, lines, answer);
+    CHECK_CALL(process_helper_state(&ss, n, lines, answer));
+
+    PASS();
 }
 
 TEST test_numbers() {
