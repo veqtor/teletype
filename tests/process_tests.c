@@ -1,5 +1,8 @@
 #include "process_tests.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "greatest/greatest.h"
 
 #include "teletype.h"
@@ -18,8 +21,23 @@ TEST process_helper_state(scene_state_t* ss, size_t n, char* lines[],
         if (validate(&cmd, error_msg) != E_OK) { FAIL(); }
         result = process_command(ss, &es, &cmd);
     }
+
     ASSERT_EQ(result.has_value, true);
-    ASSERT_EQ(result.value, answer);
+
+    // prep a message for the test
+    ssize_t size = 0;
+    for (size_t i = 0; i < n; i++) {
+        size += strlen(lines[i]) + 3;  // 3 extra chars fo ' | '
+    }
+    char* message = calloc(size + 1, sizeof(char));
+    for (size_t i = 0; i < n; i++) {
+        strcat(message, lines[i]);
+        if (i < n - 1) strcat(message, " | ");
+    }
+
+    ASSERT_EQm(message, result.value, answer);
+
+    free(message);
 
     PASS();
 }
