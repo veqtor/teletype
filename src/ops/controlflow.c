@@ -54,8 +54,10 @@ static void mod_PROB_func(scene_state_t *ss, exec_state_t *es,
 static void mod_IF_func(scene_state_t *ss, exec_state_t *es,
                         command_state_t *cs,
                         const tele_command_t *post_command) {
+    int16_t a = cs_pop(cs);
+
     es->if_else_condition = false;
-    if (cs_pop(cs)) {
+    if (a) {
         es->if_else_condition = true;
         process_command(ss, es, post_command);
     }
@@ -64,8 +66,10 @@ static void mod_IF_func(scene_state_t *ss, exec_state_t *es,
 static void mod_ELIF_func(scene_state_t *ss, exec_state_t *es,
                           command_state_t *cs,
                           const tele_command_t *post_command) {
+    int16_t a = cs_pop(cs);
+
     if (!es->if_else_condition) {
-        if (cs_pop(cs)) {
+        if (a) {
             es->if_else_condition = true;
             process_command(ss, es, post_command);
         }

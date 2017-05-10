@@ -93,6 +93,30 @@ TEST test_IF() {
     char* test4[3] = { "PN 0 0 0", "IF 0: PN 0 0 1", "PN 0 0" };
     CHECK_CALL(process_helper(3, test4, 0));
 
+    char* test5[3] = { "X 0", "ELSE: X 1", "X" };
+    CHECK_CALL(process_helper(3, test5, 0));
+
+    char* test6[3] = { "X 0", "ELIF 1: X 1", "X" };
+    CHECK_CALL(process_helper(3, test6, 0));
+
+    char* test7[4] = { "X 0", "ELIF 1: X 1", "ELSE: X 1", "X" };
+    CHECK_CALL(process_helper(4, test7, 0));
+
+    char* test8[4] = { "X 0", "IF 0: X 2", "ELSE: X 1", "X" };
+    CHECK_CALL(process_helper(4, test8, 1));
+
+    char* test9[4] = { "X 0", "IF 0: X 2", "ELIF 1: X 1", "X" };
+    CHECK_CALL(process_helper(4, test9, 1));
+
+    char* test10[5] = { "X 0", "IF 1: X 1", "ELIF 1: X 2", "ELSE: X 3", "X" };
+    CHECK_CALL(process_helper(5, test10, 1));
+
+    char* test11[5] = { "X 0", "IF 0: X 1", "ELIF 1: X 2", "ELSE: X 3", "X" };
+    CHECK_CALL(process_helper(5, test11, 2));
+
+    char* test12[5] = { "X 0", "IF 0: X 1", "ELIF 0: X 2", "ELSE: X 3", "X" };
+    CHECK_CALL(process_helper(5, test12, 3));
+
     PASS();
 }
 
