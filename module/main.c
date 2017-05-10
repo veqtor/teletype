@@ -245,12 +245,16 @@ void handler_PollADC(int32_t data) {
 
     ss_set_in(&scene_state, adc[0] << 2);
 
-    if (mode == M_PATTERN)
+    if (mode == M_PATTERN) {
         process_pattern_knob(adc[1], mod_key);
-    else if (mode == M_PRESET_R)
-        process_preset_r_knob(adc[1], mod_key);
-    else
         ss_set_param(&scene_state, adc[1] << 2);
+    }
+    else if (mode == M_PRESET_R) {
+        process_preset_r_knob(adc[1], mod_key);
+    }
+    else {
+        ss_set_param(&scene_state, adc[1] << 2);
+    }
 }
 
 void handler_KeyTimer(int32_t data) {
