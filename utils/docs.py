@@ -92,7 +92,9 @@ def common_md():
     output += "\\appendix\n\n"
     output += "# Missing documentation\n\n"
     missing_ops = (set(list_ops()) | set(list_mods())) - ops_with_docs
-    output += ", ".join([f"`{o}`" for o in sorted(missing_ops)])
+    output += ", ".join([f"`{o}`" for o in sorted(missing_ops)]) + "\n\n"
+
+    output += Path(ROOT_DIR / "CHANGELOG.md").read_text() + "\n\n"
 
     return output
 

@@ -1,6 +1,6 @@
 # Changelog
 
-## vNext
+## v2.0
 - **BREAKING**: remove `II` op. Ops that required it will now work with out it. (e.g. `II MP.PRESET 1` will become just `MP.PRESET 1`)
 - **BREAKING**: merge the `MUTE` and `UNMUTE` ops. Now `MUTE x` will return the mute status for trigger `x` (`0` is unmuted, `1` is muted), and `MUTE x y` will set the mute for trigger `x` (`y = 0` to unmute, `y = 1` to mute)
 - **NEW**: sub commands, use a `;` separator to run multiple commands on a single line, e.g. `X 1; Y 2`
@@ -19,7 +19,7 @@
 - **NEW**: TELEX Aliases: `TO.TR.P` for `TO.TR.PULSE` (plus all sub-commands) and `TI.PRM` for `TI.PARAM` (plus all sub-commands)
 - **NEW**: TELEX initialization commands: `TO.TR.INIT n`, `TO.CV.INIT n`, `TO.INIT x`, `TI.PARAM.INIT n`, `TI.IN.INIT n`, and `TI.INIT x`
 
-## v1.41
+## v1.4.1
 - **NEW**: added Ansible remote commands `LV.CV` and `CY.CV`
 - **NEW**: Added TELEX Modules Support for the TXi and the TXo
 - **NEW**: 75 New Operators Across the Two Modules
@@ -29,7 +29,7 @@
 - **NEW**: Experimental output operators add oscillators, envelopes, independent metronomes, pulse dividing, etc.
 - **NEW**: [Full List of Methods Found and Maintained Here](https://github.com/bpcmusic/telex/blob/master/commands.md)
 
-## v1.21
+## v1.2.1
 - **NEW**: Just Friends ops: `JF.GOD`, `JF.MODE`, `JF.NOTE`, `JF.RMODE`, `JF.RUN`, `JF.SHIFT`, `JF.TICK`, `JF.TR`, `JF.TUNE`, `JF.VOX`, `JF.VTR`
 
 ## v1.2
