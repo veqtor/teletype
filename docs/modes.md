@@ -1,3 +1,4 @@
+# Modes
 
 ## Global key bindings
 

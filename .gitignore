@@ -50,3 +50,5 @@ __pycache__/
 /simulator/tt
 /module/gitversion.c
 /tests/tests
+/docs/teletype.pdf
+/docs/teletype.html

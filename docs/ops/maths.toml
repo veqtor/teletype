@@ -1,0 +1,20 @@
+[ADD]
+prototype = "ADD x y"
+aliases = ["+"]
+short = "add `x` and `y` together"
+description = """
+Add 2 numbers together
+
+Example 1:
+```
+ADD 2 3
+= 5
+```
+
+Example 2:
+```
++ 2 5
+= 7
+```
+
+"""

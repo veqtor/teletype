@@ -1,0 +1,40 @@
+[A]
+prototype = "A"
+prototype_set = "A x"
+short = "get / set the variable `A`, default value `1`"
+
+[B]
+prototype = "B"
+prototype_set = "B x"
+short = "get / set the variable `B`, default value `2`"
+
+[C]
+prototype = "C"
+prototype_set = "C x"
+short = "get / set the variable `C`, default value `3`"
+
+[D]
+prototype = "D"
+prototype_set = "D x"
+short = "get / set the variable `D`, default value `4`"
+
+[DRUNK]
+prototype = "DRUNK"
+prototype_set = "DRUNK x"
+short = """changes by `-1`, `0`, or `1` upon each read saving its state,
+setting will give it a new value for the next read"""
+description="""
+Changes by `-1`, `0`, or `1` upon each read, saving its state. Setting `DRUNK`
+will give it a new value for the next read, and drunkedness will continue on
+from there with subsequent reads.
+"""
+
+["DRUNK.MIN"]
+prototype = "DRUNK.MIN"
+prototype_set = "DRUNK.MIN x"
+short = "set the lower bound for `DRUNK`"
+
+[FLIP]
+prototype = "FLIP"
+prototype_set = "FLIP x"
+short = "returns inverted state (`0` or `1`) on each read (also settable)"

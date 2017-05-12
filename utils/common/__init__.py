@@ -16,6 +16,10 @@ def list_tele_ops():
         return ops
 
 
+def list_ops():
+    return map(_convert_struct_name_to_op_name, list_tele_ops())
+
+
 def list_tele_mods():
     """Return the names of all the structs defined in tele_mods"""
     with open(OP_C, "r") as f:
@@ -23,6 +27,10 @@ def list_tele_mods():
         mods = re.findall("&mod_[a-zA-Z0-9_]+", op_c)
         mods = [s[1:] for s in mods]
         return mods
+
+
+def list_mods():
+    return map(_convert_struct_name_to_op_name, list_tele_mods())
 
 
 def _remove_comments(op_c):
@@ -34,3 +42,20 @@ def _remove_comments(op_c):
 def _is_not_comment(line):
     s = line.lstrip()
     return not (s.startswith("//") or s.startswith("/*"))
+
+
+def _convert_struct_name_to_op_name(name):
+    stripped = name.replace("op_", "").replace("mod_", "")
+
+    MAPPINGS = {
+        "SYM_PLUS":          "+",
+        "SYM_DASH":          "-",
+        "SYM_STAR":          "*",
+        "SYM_FORWARD.SLASH": "/",
+        "SYM_PERCENTAGE":    "%"
+    }
+
+    if stripped in MAPPINGS:
+        return MAPPINGS[stripped]
+    else:
+        return stripped.replace("_", ".")

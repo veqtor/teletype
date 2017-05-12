@@ -66,3 +66,33 @@ To format the code using `clang-format`, run `make format` in the project's root
 
 [libavr32]: https://github.com/monome/libavr32
 [ragel]: http://www.colm.net/open-source/ragel/
+
+## Documentation
+
+In order to build the documentation you will need Python 3.6, [Pandoc][], as well as the Python libraries specified in the [`requirements.pip`][requirements.pip] file. In addition to generate the PDF output you will also require [TexLive][] (or [MacTex][]).
+
+On OSX the dependencies can be installed with `brew`.
+
+```bash
+brew install python3
+brew install pandoc
+brew cask install mactex  # warning, MacTex is a very large install!
+cd utils
+pip3 install -r requirements.pip
+```
+
+On Linux I would suggest using your package manager to install all the dependencies (including those in the [`requirements.pip`][requirements.pip] file).
+
+To generate the documentation:
+
+```bash
+cd docs
+make               # build both teletype.pdf and teletype.html
+make teletype.pdf  # build just teletype.pdf (requires TexLive or MacTex)
+make teletype.html # build just teletype.html
+```
+
+[requirements.pip]: utils/requirements.pip
+[Pandoc]: http://pandoc.org/
+[TexLive]: https://www.tug.org/texlive/
+[MacTex]: https://www.tug.org/mactex/
