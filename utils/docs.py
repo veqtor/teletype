@@ -7,6 +7,8 @@ import jinja2
 import pypandoc
 import pytoml as toml
 
+from common import list_ops, list_mods
+
 if sys.version_info < (3, 6):
     raise "Need Python 3.6 or later"
 
@@ -57,6 +59,7 @@ def common_md():
     output += Path(DOCS_DIR / "ops.md").read_text()
 
     extended = []
+    ops_with_docs = set()
 
     for section in OPS_SECTIONS:
         md_file = Path(OP_DOCS_DIR, section + ".md")
@@ -73,6 +76,9 @@ def common_md():
             ops = toml.loads(toml_file.read_text())
             for key in ops:
                 print(f" - {key}")
+                ops_with_docs.add(key)
+                if "aliases" in ops[key]:
+                    ops_with_docs |= set(ops[key]["aliases"])
                 if "description" in ops[key]:
                     render = op_extended_template.render(name=key, **ops[key])
                     extended.append((key, render))
@@ -81,7 +87,12 @@ def common_md():
             output += "\n"
 
     output += "# Extended OP documentation\n\n"
-    output += "\n".join([e[1] for e in sorted(extended)])
+    output += "\n".join([e[1] for e in sorted(extended)]) + "\n\n"
+
+    output += "\\appendix\n\n"
+    output += "# Missing documentation\n\n"
+    missing_ops = (set(list_ops()) | set(list_mods())) - ops_with_docs
+    output += ", ".join([f"`{o}`" for o in sorted(missing_ops)])
 
     return output
 
