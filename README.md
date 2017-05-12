@@ -12,6 +12,7 @@ http://monome.org/docs/modular/teletype
 - `module`: `main.c` and additional code for the Eurorack module (e.g. IO and UI)
 - `tests`: algorithm tests
 - `simulator`: a (very) simple teletype command parser and simulator
+- `docs`: files used to generate the teletype manual
 
 ## Building
 
@@ -69,7 +70,7 @@ To format the code using `clang-format`, run `make format` in the project's root
 
 ## Documentation
 
-In order to build the documentation you will need Python 3.6, [Pandoc][], as well as the Python libraries specified in the [`requirements.pip`][requirements.pip] file. In addition to generate the PDF output you will also require [TexLive][] (or [MacTex][]).
+In order to build the documentation you will need Python 3.6, [Pandoc][], as well as the Python libraries specified in the [`requirements.pip`][requirements.pip] file. In addition, to generate the PDF output you will also require [TexLive][] (or [MacTex][]).
 
 On OSX the dependencies can be installed with `brew`.
 
