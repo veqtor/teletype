@@ -96,3 +96,14 @@ make teletype.html # build just teletype.html
 [Pandoc]: http://pandoc.org/
 [TexLive]: https://www.tug.org/texlive/
 [MacTex]: https://www.tug.org/mactex/
+
+## Making a Release
+
+To create a `teletype.zip` file containing:
+
+ - `teletype.hex`
+ - `flash.sh`
+ - `update_firmware.command`
+ - `teletype.pdf`
+
+Run `make release` in the project's root directory
