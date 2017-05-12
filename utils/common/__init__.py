@@ -48,11 +48,22 @@ def _convert_struct_name_to_op_name(name):
     stripped = name.replace("op_", "").replace("mod_", "")
 
     MAPPINGS = {
-        "SYM_PLUS":          "+",
-        "SYM_DASH":          "-",
-        "SYM_STAR":          "*",
-        "SYM_FORWARD.SLASH": "/",
-        "SYM_PERCENTAGE":    "%"
+        "SYM_PLUS":               "+",
+        "SYM_DASH":               "-",
+        "SYM_STAR":               "*",
+        "SYM_FORWARD_SLASH":      "/",
+        "SYM_PERCENTAGE":         "%",
+        "SYM_EQUAL_x2":           "==",
+        "SYM_EXCLAMATION_EQUAL":  "!=",
+        "SYM_LEFT_ANGLED":        "<",
+        "SYM_RIGHT_ANGLED":       ">",
+        "SYM_LEFT_ANGLED_EQUAL":  "<=",
+        "SYM_RIGHT_ANGLED_EQUAL": ">=",
+        "SYM_EXCLAMATION":        "!",
+        "SYM_LEFT_ANGLED_x2":     "<<",
+        "SYM_RIGHT_ANGLED_x2":    ">>",
+        "SYM_AMPERSAND_x2":       "&&",
+        "SYM_PIPE_x2":            "||"
     }
 
     if stripped in MAPPINGS:
