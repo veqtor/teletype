@@ -1,4 +1,4 @@
-## `{{ name }}`
+### `{{ name }}`
 
 {% if prototype_set is defined %}
  - **`{{ prototype }}`** / **`{{ prototype_set }}`**

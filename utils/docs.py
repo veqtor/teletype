@@ -58,7 +58,6 @@ def common_md():
     output += Path(DOCS_DIR / "modes.md").read_text()
     output += Path(DOCS_DIR / "ops.md").read_text()
 
-    extended = []
     ops_with_docs = set()
 
     for section in OPS_SECTIONS:
@@ -72,6 +71,7 @@ def common_md():
 
         if toml_file.exists() and toml_file.is_file():
             print(f"Reading {toml_file}")
+            extended = []
             # n.b. Python 3.6 dicts maintain insertion order
             ops = toml.loads(toml_file.read_text())
             for key in ops:
@@ -85,9 +85,7 @@ def common_md():
 
             output += op_table_template.render(ops=ops)
             output += "\n"
-
-    output += "# Extended OP documentation\n\n"
-    output += "\n".join([e[1] for e in sorted(extended)]) + "\n\n"
+            output += "\n".join([e[1] for e in extended]) + "\n\n"
 
     output += "\\appendix\n\n"
     output += "# Missing documentation\n\n"
