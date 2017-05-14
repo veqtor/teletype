@@ -58,6 +58,8 @@ def common_md():
     output += Path(DOCS_DIR / "modes.md").read_text()
     output += Path(DOCS_DIR / "ops.md").read_text()
 
+    all_ops = set(list_ops()) | set(list_mods())
+
     ops_with_docs = set()
 
     for section in OPS_SECTIONS:
@@ -75,7 +77,8 @@ def common_md():
             # n.b. Python 3.6 dicts maintain insertion order
             ops = toml.loads(toml_file.read_text())
             for key in ops:
-                print(f" - {key}")
+                if key not in all_ops:
+                    print(f" - WARNING: unknown {key}")
                 ops_with_docs.add(key)
                 if "aliases" in ops[key]:
                     ops_with_docs |= set(ops[key]["aliases"])
@@ -89,7 +92,7 @@ def common_md():
 
     output += "\\appendix\n\n"
     output += "# Missing documentation\n\n"
-    missing_ops = (set(list_ops()) | set(list_mods())) - ops_with_docs
+    missing_ops = all_ops - ops_with_docs
     output += ", ".join([f"`{o}`" for o in sorted(missing_ops)]) + "\n\n"
 
     output += Path(ROOT_DIR / "CHANGELOG.md").read_text() + "\n\n"
