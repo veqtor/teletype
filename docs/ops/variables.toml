@@ -1,22 +1,22 @@
 [A]
 prototype = "A"
 prototype_set = "A x"
-short = "get / set the variable `A`, default value `1`"
+short = "get / set the variable `A`, default `1`"
 
 [B]
 prototype = "B"
 prototype_set = "B x"
-short = "get / set the variable `B`, default value `2`"
+short = "get / set the variable `B`, default `2`"
 
 [C]
 prototype = "C"
 prototype_set = "C x"
-short = "get / set the variable `C`, default value `3`"
+short = "get / set the variable `C`, default `3`"
 
 [D]
 prototype = "D"
 prototype_set = "D x"
-short = "get / set the variable `D`, default value `4`"
+short = "get / set the variable `D`, default `4`"
 
 [DRUNK]
 prototype = "DRUNK"
@@ -27,14 +27,116 @@ description="""
 Changes by `-1`, `0`, or `1` upon each read, saving its state. Setting `DRUNK`
 will give it a new value for the next read, and drunkedness will continue on
 from there with subsequent reads.
+
+Setting `DRUNK.MIN` and `DRUNK.MAX` controls the lower and upper bounds
+(inclusive) that `DRUNK` can reach. `DRUNK.WRAP` controls whether the value can
+wrap around when it reaches it's bounds.
 """
 
 ["DRUNK.MIN"]
 prototype = "DRUNK.MIN"
 prototype_set = "DRUNK.MIN x"
-short = "set the lower bound for `DRUNK`"
+short = "set the lower bound for `DRUNK`, default `0`"
+
+["DRUNK.MAX"]
+prototype = "DRUNK.MAX"
+prototype_set = "DRUNK.MAX x"
+short = "set the upper bound for `DRUNK`, default `255`"
+
+["DRUNK.WRAP"]
+prototype = "DRUNK.WRAP"
+prototype_set = "DRUNK.WRAP x"
+short = "should `DRUNK` wrap around when it reaches it's bounds, default `0`"
 
 [FLIP]
 prototype = "FLIP"
 prototype_set = "FLIP x"
 short = "returns inverted state (`0` or `1`) on each read (also settable)"
+
+
+[I]
+prototype = "I"
+prototype_set = "I x"
+short = """
+get / set the variable `I`, this variable is overwritten by `L`, but can be used
+freely outside an `L` loop"""
+
+[O]
+prototype = "O"
+prototype_set = "O x"
+short = "auto-increments _after_ each access, can be set, starting value `0`"
+description="""
+Auto-increments by `O.INC` _after_ each access. The initial value is `0`. The
+lower and upper bounds can be set by `O.MIN` (default `0`) and `O.MAX`
+(default `63`). `O.WRAP` controls if the value wraps when it reaches a bound
+(default is `1`).
+
+Example:
+
+```
+O           => 0
+O           => 1
+X O
+X           => 2
+O.INC 2
+O           => 3 (O increments after it's accessed)
+O           => 5
+O.INC -2
+O 2
+O           => 2
+O           => 0
+O           => 63
+O           => 61
+```
+"""
+
+
+["O.INC"]
+prototype = "O.INC"
+prototype_set = "O.INC x"
+short = "how much to increment `O` by on each invocation, default `1`"
+
+["O.MIN"]
+prototype = "O.MIN"
+prototype_set = "O.MIN x"
+short = "the lower bound for `O`, default `0`"
+
+["O.MAX"]
+prototype = "O.MAX"
+prototype_set = "O.MAX x"
+short = "the upper bound for `O`, default `63`"
+
+["O.WRAP"]
+prototype = "O.WRAP"
+prototype_set = "O.WRAP x"
+short = "should `O` wrap when it reaches its bounds, default `1`"
+
+[T]
+prototype = "T"
+prototype_set = "T x"
+short = "get / set the variable `T`, typically used for time, default `0`"
+
+[TIME]
+prototype = "TIME"
+prototype_set = "TIME x"
+short = "timer value, counts up in ms., wraps after 32s, can be set"
+
+["TIME.ACT"]
+prototype = "TIME.ACT"
+prototype_set = "TIME.ACT x"
+short = "enable or disable timer counting, default `1`"
+
+[X]
+prototype = "X"
+prototype_set = "X x"
+short = "get / set the variable `X`, default `0`"
+
+[Y]
+prototype = "Y"
+prototype_set = "Y x"
+short = "get / set the variable `Y`, default `0`"
+
+[Z]
+prototype = "Z"
+prototype_set = "Z x"
+short = "get / set the variable `Z`, default `0`"
