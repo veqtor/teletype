@@ -188,8 +188,9 @@ bool screen_refresh_edit() {
         if (status != E_OK) {
             strcpy(s, tele_error(status));
             if (error_msg[0]) {
+                size_t len = strlen(s);
                 strcat(s, ": ");
-                strcat(s, error_msg);
+                strncat(s, error_msg, 32 - len - 3);
                 error_msg[0] = 0;
             }
             status = E_OK;
