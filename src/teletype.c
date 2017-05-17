@@ -152,6 +152,10 @@ process_result_t run_script_with_exec_state(scene_state_t *ss, exec_state_t *es,
         result =
             process_command(ss, es, ss_get_script_command(ss, script_no, i));
     }
+
+    // decrease the depth once the commands have been run
+    es->exec_depth--;
+
     return result;
 }
 
