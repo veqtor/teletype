@@ -61,28 +61,45 @@ TARGET = $(THIS).elf
 
 # List of C source files.
 CSRCS = \
-	../module/main.c						\
+	../module/main.c					\
+	../module/edit_mode.c   				\
+	../module/flash.c					\
+	../module/gitversion.c					\
+	../module/help_mode.c  					\
+	../module/line_editor.c					\
+	../module/live_mode.c   				\
+	../module/pattern_mode.c   				\
+	../module/preset_r_mode.c   				\
+	../module/preset_w_mode.c   				\
+	../module/usb_disk_mode.c   				\
 	../src/command.c					\
 	../src/helpers.c					\
+	../src/match_token.c					\
+	../src/scanner.c					\
 	../src/state.c						\
 	../src/table.c						\
 	../src/teletype.c					\
 	../src/ops/op.c						\
-	../src/ops/constants.c					\
+	../src/ops/ansible.c					\
 	../src/ops/controlflow.c				\
 	../src/ops/delay.c					\
+	../src/ops/earthsea.c					\
 	../src/ops/hardware.c					\
+	../src/ops/justfriends.c				\
 	../src/ops/maths.c					\
+	../src/ops/meadowphysics.c				\
 	../src/ops/metronome.c					\
+	../src/ops/orca.c      					\
 	../src/ops/patterns.c					\
 	../src/ops/queue.c					\
 	../src/ops/stack.c					\
 	../src/ops/telex.c					\
 	../src/ops/variables.c					\
+	../src/ops/whitewhale.c					\
 	../libavr32/src/adc.c					\
 	../libavr32/src/events.c				\
-	../libavr32/src/euclidean/euclidean.c				\
-	../libavr32/src/euclidean/data.c					\
+	../libavr32/src/euclidean/euclidean.c			\
+	../libavr32/src/euclidean/data.c			\
 	../libavr32/src/fix.c					\
 	../libavr32/src/font.c					\
 	../libavr32/src/i2c.c					\
@@ -100,6 +117,7 @@ CSRCS = \
 	../libavr32/src/usb/hid/uhi_hid.c			\
 	../libavr32/src/usb/midi/uhi_midi.c			\
 	../libavr32/src/usb/midi/midi.c				\
+	../libavr32/src/usb/msc/msc.c				\
 	avr32/drivers/adc/adc.c					\
 	avr32/drivers/flashc/flashc.c				\
 	avr32/drivers/gpio/gpio.c				\
@@ -137,6 +155,7 @@ INC_PATH = \
 	../src/usb/ftdi						\
 	../src/usb/hid						\
 	../src/usb/midi						\
+	../src/usb/msc						\
 	../conf							\
 	../conf/teletype					\
 	avr32/boards						\
@@ -193,7 +212,7 @@ ARFLAGS =
 ASFLAGS =
 
 # Extra flags to use when compiling.
-CFLAGS = -fshort-enums
+CFLAGS = -fshort-enums -fno-common
 
 # Extra flags to use when preprocessing.
 #

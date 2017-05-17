@@ -1,4 +1,21 @@
-#include "teletype.h"
+#include "help_mode.h"
+
+// this
+#include "globals.h"
+#include "keyboard_helper.h"
+
+// libavr32
+#include "font.h"
+#include "region.h"
+
+// asf
+#include "conf_usb_host.h"  // needed in order to include "usb_protocol_hid.h"
+#include "usb_protocol_hid.h"
+
+////////////////////////////////////////////////////////////////////////////////
+// Help text ///////////////////////////////////////////////////////////////////
+
+#define HELP_PAGES 8
 
 #define HELP1_LENGTH 38
 const char* help1[HELP1_LENGTH] = { "1/8 HELP",
@@ -216,3 +233,78 @@ const char* help8[HELP8_LENGTH] = { "8/8 REMOTE",
                                     "ES.STOP|STOP PATTERN",
                                     "ES.TRIPLE|RECALL SHAPE 1-4",
                                     "ES.MAGIC|1=HALF, 2=DOUBLE" };
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Help mode ///////////////////////////////////////////////////////////////////
+
+const char** help_pages[HELP_PAGES] = { help1, help2, help3, help4,
+                                        help5, help6, help7, help8 };
+const uint8_t help_length[HELP_PAGES] = { HELP1_LENGTH, HELP2_LENGTH,
+                                          HELP3_LENGTH, HELP4_LENGTH,
+                                          HELP5_LENGTH, HELP6_LENGTH,
+                                          HELP7_LENGTH, HELP8_LENGTH };
+
+static uint8_t page_no;
+static uint8_t offset;
+
+static bool dirty;
+
+void set_help_mode() {
+    dirty = true;
+}
+
+void process_help_keys(uint8_t k, uint8_t m, bool is_held_key) {
+    // <down> or C-n: line down
+    if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {
+        if (offset < help_length[page_no] - 8) {
+            offset++;
+            dirty = true;
+        }
+    }
+    // <up> or C-p: line up
+    else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {
+        if (offset) {
+            offset--;
+            dirty = true;
+        }
+    }
+    // <left> or [: previous page
+    else if (match_no_mod(m, k, HID_LEFT) ||
+             match_no_mod(m, k, HID_OPEN_BRACKET)) {
+        if (page_no) {
+            offset = 0;
+            page_no--;
+            dirty = true;
+        }
+    }
+    // <right> or ]: next page
+    else if (match_no_mod(m, k, HID_RIGHT) ||
+             match_no_mod(m, k, HID_CLOSE_BRACKET)) {
+        if (page_no < HELP_PAGES - 1) {
+            offset = 0;
+            page_no++;
+            dirty = true;
+        }
+    }
+}
+
+bool screen_refresh_help() {
+    if (!dirty) { return false; }
+
+    // clamp value of page_no
+    if (page_no >= HELP_PAGES) page_no = HELP_PAGES - 1;
+
+    // clamp value of offset
+    if (offset >= help_length[page_no] - 8) offset = help_length[page_no] - 8;
+
+    const char** text = help_pages[page_no];
+
+    for (uint8_t y = 0; y < 8; y++) {
+        region_fill(&line[y], 0);
+        font_string_region_clip_tab(&line[y], text[y + offset], 2, 0, 0xa, 0);
+    }
+
+    dirty = false;
+    return true;
+};

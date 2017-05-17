@@ -11,9 +11,13 @@
 #include "util.h"
 
 
-void tele_metro(int16_t m, int16_t m_act, uint8_t m_reset) {
-    printf("METRO  m:%" PRIi16 " m_act:%" PRIi16 "m_reset:%" PRIu8, m, m_act,
-           m_reset);
+void tele_metro_updated() {
+    printf("METRO UPDATED");
+    printf("\n");
+}
+
+void tele_metro_reset() {
+    printf("METRO RESET");
     printf("\n");
 }
 
@@ -32,13 +36,13 @@ void tele_cv_slew(uint8_t i, int16_t v) {
     printf("\n");
 }
 
-void tele_delay(uint8_t i) {
-    printf("DELAY  i:%" PRIu8, i);
+void tele_has_delays(bool i) {
+    printf("DELAY  i:%s", i ? "true" : "false");
     printf("\n");
 }
 
-void tele_s(uint8_t i) {
-    printf("S  i:%" PRIu8, i);
+void tele_has_stack(bool i) {
+    printf("STACK  i:%s", i ? "true" : "false");
     printf("\n");
 }
 
@@ -47,23 +51,16 @@ void tele_cv_off(uint8_t i, int16_t v) {
     printf("\n");
 }
 
-void tele_ii(uint8_t i, int16_t d) {
-    printf("II  i:%" PRIu8 " d:%" PRId16, i, d);
-    printf("\n");
-}
-
 void tele_ii_tx(uint8_t addr, uint8_t *data, uint8_t l) {
-    printf("II_tx  addr:%" PRIu8 " l:%" PRId16, addr, l);
+    printf("II_tx  addr:%" PRIu8 " l:%" PRIu8, addr, l);
     printf("\n");
-}
-
-void tele_ii_tx_now(uint8_t addr, uint8_t *data, uint8_t l) {
-    printf("II_tx  addr:%" PRIu8 " l:%" PRId16, addr, l);
-    printf("\n");
+    for (size_t i = 0; i < l; i++) {
+        printf("[%" PRIuPTR "] = %" PRIu8 "\n", i, data[i]);
+    }
 }
 
 void tele_ii_rx(uint8_t addr, uint8_t *data, uint8_t l) {
-    printf("II_rx  addr:%" PRIu8 " l:%" PRId16, addr, l);
+    printf("II_rx  addr:%" PRIu8 " l:%" PRIu8, addr, l);
     printf("\n");
 }
 
@@ -72,12 +69,8 @@ void tele_scene(uint8_t i) {
     printf("\n");
 }
 
-void tele_pi() {
-    printf("PI");
-    printf("\n");
-}
-void tele_script(uint8_t a) {
-    printf("SCRIPT  a:%" PRIu8, a);
+void tele_pattern_updated() {
+    printf("PATTERN UPDATED");
     printf("\n");
 }
 
@@ -86,8 +79,8 @@ void tele_kill() {
     printf("\n");
 }
 
-void tele_mute(uint8_t i, uint8_t s) {
-    printf("MUTE  i:%" PRIu8 " s:%" PRIu8, i, s);
+void tele_mute() {
+    printf("MUTE");
     printf("\n");
 }
 
@@ -119,9 +112,10 @@ int main() {
 
     in = malloc(256);
 
-    tele_init();
-
     printf("teletype. (blank line quits)\n\n");
+
+    scene_state_t ss;
+    ss_init(&ss);
 
     do {
         printf("> ");
@@ -136,7 +130,7 @@ int main() {
         tele_command_t temp;
         exec_state_t es;
         es_init(&es);
-        char error_msg[ERROR_MSG_LENGTH];
+        char error_msg[TELE_ERROR_MSG_LENGTH];
         status = parse(in, &temp, error_msg);
         if (status == E_OK) {
             status = validate(&temp, error_msg);
@@ -144,7 +138,7 @@ int main() {
             if (error_msg[0]) printf(": %s", error_msg);
             printf("\n");
             if (status == E_OK) {
-                process_result_t output = process(&es, &temp);
+                process_result_t output = process_command(&ss, &es, &temp);
                 if (output.has_value) { printf(">>> %i\n", output.value); }
             }
         }

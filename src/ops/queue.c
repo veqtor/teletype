@@ -40,9 +40,9 @@ static void op_Q_AVG_get(const void *NOTUSED(data), scene_state_t *ss,
     int16_t *q = ss->variables.q;
     int16_t q_n = ss->variables.q_n;
     for (int16_t i = 0; i < q_n; i++) { avg += q[i]; }
-    avg /= q_n;
 
-    cs_push(cs, avg);
+    int16_t out = q_n != 0 ? avg / q_n : 0;
+    cs_push(cs, out);
 }
 
 static void op_Q_AVG_set(const void *NOTUSED(data), scene_state_t *ss,

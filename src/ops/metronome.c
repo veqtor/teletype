@@ -26,7 +26,7 @@ static void op_M_set(const void *NOTUSED(data), scene_state_t *ss,
     int16_t m = cs_pop(cs);
     if (m < 10) m = 10;
     ss->variables.m = m;
-    tele_metro(m, ss->variables.m_act, 0);
+    tele_metro_updated();
 }
 
 const tele_op_t op_M_ACT =
@@ -40,16 +40,16 @@ static void op_M_ACT_get(const void *NOTUSED(data), scene_state_t *ss,
 
 static void op_M_ACT_set(const void *NOTUSED(data), scene_state_t *ss,
                          exec_state_t *NOTUSED(es), command_state_t *cs) {
-    int16_t m_act = cs_pop(cs);
-    if (m_act != 0) m_act = 1;
+    bool m_act = cs_pop(cs) > 0;
     ss->variables.m_act = m_act;
-    tele_metro(ss->variables.m, m_act, 0);
+    tele_metro_updated();
 }
 
 const tele_op_t op_M_RESET = MAKE_GET_OP(M.RESET, op_M_RESET_get, 0, false);
 
-static void op_M_RESET_get(const void *NOTUSED(data), scene_state_t *ss,
+static void op_M_RESET_get(const void *NOTUSED(data),
+                           scene_state_t *NOTUSED(ss),
                            exec_state_t *NOTUSED(es),
                            command_state_t *NOTUSED(cs)) {
-    tele_metro(ss->variables.m, ss->variables.m_act, 1);
+    tele_metro_reset();
 }

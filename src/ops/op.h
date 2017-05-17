@@ -5,6 +5,7 @@
 #include <stddef.h>
 
 #include "command.h"
+#include "op_enum.h"
 #include "state.h"
 
 typedef struct {
@@ -21,15 +22,12 @@ typedef struct {
 typedef struct {
     const char *name;
     void (*const func)(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
-                       tele_command_t *sub_command);
+                       const tele_command_t *post_command);
     const uint8_t params;
 } tele_mod_t;
 
-#define OPS 270
-extern const tele_op_t *tele_ops[OPS];
-
-#define MODS 7
-extern const tele_mod_t *tele_mods[MODS];
+extern const tele_op_t *tele_ops[E_OP__LENGTH];
+extern const tele_mod_t *tele_mods[E_MOD__LENGTH];
 
 // Get only ops
 #define MAKE_GET_OP(n, g, p, r)                                       \
@@ -44,17 +42,6 @@ extern const tele_mod_t *tele_mods[MODS];
     { .name = #n, .get = g, .set = s, .params = p, .returns = r, .data = NULL }
 
 
-// Constant Ops
-#define MAKE_CONSTANT_OP(n, v)                                    \
-    {                                                             \
-        .name = #n, .get = op_constant, .set = NULL, .params = 0, \
-        .returns = 1, .data = (void *)v                           \
-    }
-
-void op_constant(const void *data, scene_state_t *ss, exec_state_t *es,
-                 command_state_t *cs);
-
-
 // Variables, peek & poke
 #define MAKE_SIMPLE_VARIABLE_OP(n, v)                                    \
     {                                                                    \
@@ -66,6 +53,23 @@ void op_peek_i16(const void *data, scene_state_t *ss, exec_state_t *es,
                  command_state_t *cs);
 void op_poke_i16(const void *data, scene_state_t *ss, exec_state_t *es,
                  command_state_t *cs);
+
+
+// Alias one OP to another
+#define MAKE_ALIAS_OP(n, g, s, p, r) \
+    { .name = #n, .get = g, .set = s, .params = p, .returns = r, .data = NULL }
+
+
+// Simple I2C op (to support the original Trilogy modules)
+#define MAKE_SIMPLE_I2C_OP(n, v)                                    \
+    {                                                               \
+        .name = #n, .get = op_simple_i2c, .set = NULL, .params = 1, \
+        .returns = 0, .data = (void *)v                             \
+    }
+
+void op_simple_i2c(const void *data, scene_state_t *ss, exec_state_t *es,
+                   command_state_t *cs);
+
 
 // Mods
 #define MAKE_MOD(n, f, p) \
