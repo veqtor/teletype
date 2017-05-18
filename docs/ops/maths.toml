@@ -2,19 +2,185 @@
 prototype = "ADD x y"
 aliases = ["+"]
 short = "add `x` and `y` together"
-description = """
-Add 2 numbers together
 
-Example 1:
+[SUB]
+prototype = "SUB x y"
+aliases = ["-"]
+short = "subtract `y` from `x`"
+
+[MUL]
+prototype = "MUL x y"
+aliases = ["*"]
+short = "multiply `x` and `y` together"
+
+[DIV]
+prototype = "DIV x y"
+aliases = ["/"]
+short = "divide `x` by `y`"
+
+[MOD]
+prototype = "MOD x y"
+aliases = ["%"]
+short = "find the remainder after division of `x` by `y`"
+
+[RAND]
+prototype = "RAND x"
+short = "generate a random number between `0` and `x` inclusive"
+
+[RRAND]
+prototype = "RRAND x y"
+short = "generate a random number between `x` and `y` inclusive"
+
+[TOSS]
+prototype = "TOSS"
+short = "randomly return `0` or `1`"
+
+[MIN]
+prototype = "MIN x y"
+short = "return the minimum of `x` and `y`"
+
+[MAX]
+prototype = "MAX x y"
+short = "return the maximum of `x` and `y`"
+
+[LIM]
+prototype = "LIM x y z"
+short = "limit the value `x` to the range `y` to `z` inclusive"
+
+[WRAP]
+prototype = "WRAP x y z"
+short = "limit the value `x` to the range `y` to `z` inclusive, but with wrapping"
+
+[QT]
+prototype = "QT x y"
+short = "round `x` to the closest multiple of `y` (quantise)"
+
+[AVG]
+prototype = "AVG x y"
+short = "the average of `x` and `y`"
+
+[EQ]
+prototype = "EQ x y"
+aliases = ["=="]
+short = "does `x` equal `y`"
+
+[NE]
+prototype = "NE x y"
+aliases = ["!="]
+short = "`x` is not equal to `y`"
+
+[LT]
+prototype = "LT x y"
+aliases = ["<"]
+short = "`x` is less than `y`"
+
+[GT]
+prototype = "GT x y"
+aliases = [">"]
+short = "`x` is greater than `y`"
+
+[LTE]
+prototype = "LTE x y"
+aliases = ["<="]
+short  = "`x` is less than or equal to `y`"
+
+[GTE]
+prototype = "GTE x y"
+aliases = [">="]
+short = "`x` is greater than or equal to `y`"
+
+[EZ]
+prototype = "EZ x"
+aliases = ["!"]
+short  = "`x` is `0`, equivalent to logical NOT"
+
+[NZ]
+prototype = "NZ x"
+short = "`x` is not `0`"
+
+[LSH]
+prototype = "LSH x y"
+aliases = ["<<"]
+short = "left shift `x` by `y` bits, in effect multiply by `2` to the power of `x`"
+
+[RSH]
+prototype = "RSH x y"
+aliases = [">>"]
+short = "right shift `x` by `y` bits, in effect divide by `2` to the power of `x`"
+
+[ABS]
+prototype = "ABS x"
+short = "absolute value of `x`"
+
+[AND]
+prototype = "AND x y"
+aliases = ["&&"]
+short = "logical AND of `x` and `y`"
+
+[OR]
+prototype = "OR x y"
+aliases = ["||"]
+short = "logical OR of `x` and `y`"
+
+[XOR]
+prototype = "XOR x y"
+short = "logical XOR of `x` and `y`"
+
+[JI]
+prototype = "JI x y"
+short = "just intonation helper, precision ratio divider normalised to 1V"
+
+[SCALE]
+prototype = "SCALE a b x y i"
+short = "scale `i` from range `a` to `b` to range `x` to `y`, i.e. `i * (y - x) / (b - a)`"
+
+[ER]
+prototype = "ER f l i"
+short = "Euclidean rhythm, `f` is fill (`1-32`), `l` is length (`1-32`) and `i` is step (any value), returns `0` or `1`"
+description="""
+Euclidean rhythm helper, as described by Godfried Toussaint in his 2005 paper ["The Euclidean Algorithm Generates Traditional Musical Rhythms"][euclidean_rhythm_paper][^euclidean_rhythm_citation]. From the abstract:
+
+ - `f` is fill (`1-32`) and should be less then or equal to length
+ - `l` is length (`1-32`)
+ - `i` is the step index, and will work with negative as well as positive numbers
+
+If you wish to add rotation as well, use the following form:
+
 ```
-ADD 2 3
-= 5
+ER f l SUB i r
 ```
 
-Example 2:
-```
-+ 2 5
-= 7
-```
+where `r` is the number of step of _forward_ rotation you want.
 
+For more info, see the post on [samdoshi.com][samdoshi_com_euclidean]
+
+[samdoshi_com_euclidean]: http://samdoshi.com/post/2016/03/teletype-euclidean/
+[euclidean_rhythm_paper]: http://cgm.cs.mcgill.ca/~godfried/publications/banff.pdf
+[^euclidean_rhythm_citation]: Toussaint, G. T. (2005, July). The Euclidean algorithm generates traditional musical rhythms. _In Proceedings of BRIDGES: Mathematical Connections in Art, Music and Science_ (pp. 47-56).
 """
+
+[N]
+prototype = "N x"
+short = "converts an equal temperament note number to a value usable by the CV outputs (`x` in the range `-127` to `127`)"
+description = """
+The `N` OP converts an equal temperament note number to a value usable by the CV outputs.
+
+Examples:
+
+```
+CV 1 N 60        => set CV 1 to middle C, i.e. 5V
+CV 1 N RAND 24   => set CV 1 to a random note from the lowest 2 octaves
+```
+"""
+
+[V]
+prototype = "V x"
+short = "converts a voltage to a value usable by the CV outputs (`x` between `0` and `10`)"
+
+[VV]
+prototype = "VV x"
+short = "converts a voltage to a value usable by the CV outputs (`x` between `0` and `1000`, `100` represents 1V)"
+
+[EXP]
+prototype = "EXP x"
+short = "exponentiation table lookup. `0-16383` range (V `0-10`)"
