@@ -116,6 +116,8 @@
         "NE"          => { MATCH_OP(E_OP_NE); };
         "LT"          => { MATCH_OP(E_OP_LT); };
         "GT"          => { MATCH_OP(E_OP_GT); };
+        "LTE"         => { MATCH_OP(E_OP_LTE); };
+        "GTE"         => { MATCH_OP(E_OP_GTE); };
         "NZ"          => { MATCH_OP(E_OP_NZ); };
         "EZ"          => { MATCH_OP(E_OP_EZ); };
         "RSH"         => { MATCH_OP(E_OP_RSH); };

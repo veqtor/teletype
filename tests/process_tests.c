@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>  // ssize_t
 
 #include "greatest/greatest.h"
 

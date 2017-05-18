@@ -93,6 +93,8 @@ typedef enum {
     E_OP_NE,
     E_OP_LT,
     E_OP_GT,
+    E_OP_LTE,
+    E_OP_GTE,
     E_OP_NZ,
     E_OP_EZ,
     E_OP_RSH,
