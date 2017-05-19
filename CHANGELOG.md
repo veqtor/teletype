@@ -12,6 +12,7 @@
 - **NEW**: new ops: `LTE` (less than or equal), and `GTE` (greater than or equal)
 - **NEW**: new pattern ops: `PN.L`, `PN.WRAP`, `PN.START`, `PN.END`, `PN.I`, `PN.HERE`, `PN.NEXT`, `PN.PREV`, `PN.INS`, `PN.RM`, `PN.PUSH` and `PN.POP`
 - **NEW**: USB disk loading and saving works at any time
+- **NEW**: `M` limited to setting the metronome speed to 25ms, added `M!` to allow setting the metronome at unsupported speeds as low as 2ms
 - **IMP**: new Ragel parser backend
 - **IMP**: script recursion enhanced, maximum recursion depth is 8, and self recursion is allowed
 - **IMP**: removed the need to prefix `:` and `;` with a space, e.g. `IF X : TR.PULSE 1` becomes `IF X: TR.PULSE`

@@ -4,6 +4,7 @@
 #include "ops/op.h"
 
 extern const tele_op_t op_M;
+extern const tele_op_t op_M_SYM_EXCLAMATION;
 extern const tele_op_t op_M_ACT;
 extern const tele_op_t op_M_RESET;
 

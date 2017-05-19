@@ -28,6 +28,7 @@ typedef enum {
     E_OP_Y,
     E_OP_Z,
     E_OP_M,
+    E_OP_M_SYM_EXCLAMATION,
     E_OP_M_ACT,
     E_OP_M_RESET,
     E_OP_P_N,

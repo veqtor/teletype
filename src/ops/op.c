@@ -35,7 +35,7 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_O_WRAP, &op_T, &op_TIME, &op_TIME_ACT, &op_X, &op_Y, &op_Z,
 
     // metronome
-    &op_M, &op_M_ACT, &op_M_RESET,
+    &op_M, &op_M_SYM_EXCLAMATION, &op_M_ACT, &op_M_RESET,
 
     // patterns
     &op_P_N, &op_P, &op_PN, &op_P_L, &op_PN_L, &op_P_WRAP, &op_PN_WRAP,

@@ -43,6 +43,7 @@
 
         # metronome
         "M"           => { MATCH_OP(E_OP_M); };
+        "M!"          => { MATCH_OP(E_OP_M_SYM_EXCLAMATION); };
         "M.ACT"       => { MATCH_OP(E_OP_M_ACT); };
         "M.RESET"     => { MATCH_OP(E_OP_M_RESET); };
 
