@@ -3,7 +3,7 @@ prototype = "M"
 prototype_set = "M x"
 short = "get/set metronome interval to `x` (in ms), default `1000`, minimum value `25`"
 
-[M!]
+["M!"]
 prototype = "M!"
 prototype_set = "M! x"
 short = "get/set metronome to experimental interval `x` (in ms), minimum value `2`"
