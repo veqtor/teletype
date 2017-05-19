@@ -36,21 +36,21 @@ static void op_KR_LOOP_LEN_set(const void *data, scene_state_t *ss,
 static void op_KR_RESET_get(const void *data, scene_state_t *ss,
                             exec_state_t *es, command_state_t *cs);
 
-static void op_MP_PRESET_get(const void *data, scene_state_t *ss,
+static void op_ME_PRESET_get(const void *data, scene_state_t *ss,
                              exec_state_t *es, command_state_t *cs);
-static void op_MP_PRESET_set(const void *data, scene_state_t *ss,
+static void op_ME_PRESET_set(const void *data, scene_state_t *ss,
                              exec_state_t *es, command_state_t *cs);
-static void op_MP_RESET_get(const void *data, scene_state_t *ss,
+static void op_ME_RESET_get(const void *data, scene_state_t *ss,
                             exec_state_t *es, command_state_t *cs);
-static void op_MP_STOP_get(const void *data, scene_state_t *ss,
+static void op_ME_STOP_get(const void *data, scene_state_t *ss,
                            exec_state_t *es, command_state_t *cs);
-static void op_MP_SCALE_get(const void *data, scene_state_t *ss,
+static void op_ME_SCALE_get(const void *data, scene_state_t *ss,
                             exec_state_t *es, command_state_t *cs);
-static void op_MP_SCALE_set(const void *data, scene_state_t *ss,
+static void op_ME_SCALE_set(const void *data, scene_state_t *ss,
                             exec_state_t *es, command_state_t *cs);
-static void op_MP_PERIOD_get(const void *data, scene_state_t *ss,
+static void op_ME_PERIOD_get(const void *data, scene_state_t *ss,
                              exec_state_t *es, command_state_t *cs);
-static void op_MP_PERIOD_set(const void *data, scene_state_t *ss,
+static void op_ME_PERIOD_set(const void *data, scene_state_t *ss,
                              exec_state_t *es, command_state_t *cs);
 
 static void op_LV_PRESET_get(const void *data, scene_state_t *ss,
@@ -132,11 +132,11 @@ const tele_op_t op_KR_LOOP_ST  = MAKE_GET_SET_OP(KR.L.ST    , op_KR_LOOP_ST_get 
 const tele_op_t op_KR_LOOP_LEN = MAKE_GET_SET_OP(KR.L.LEN   , op_KR_LOOP_LEN_get , op_KR_LOOP_LEN_set , 2, true);
 const tele_op_t op_KR_RESET    = MAKE_GET_OP    (KR.RES     , op_KR_RESET_get                         , 2, false);
 
-const tele_op_t op_MP_PRESET1  = MAKE_GET_SET_OP(MP.PRE     , op_MP_PRESET_get   , op_MP_PRESET_set   , 0, true);
-const tele_op_t op_MP_RESET1   = MAKE_GET_OP    (MP.RES     , op_MP_RESET_get                         , 1, false);
-const tele_op_t op_MP_STOP1    = MAKE_GET_OP    (MP.OFF     , op_MP_STOP_get                          , 1, false);
-const tele_op_t op_MP_SCALE    = MAKE_GET_SET_OP(MP.SCALE   , op_MP_SCALE_get    , op_MP_SCALE_set    , 0, true);
-const tele_op_t op_MP_PERIOD   = MAKE_GET_SET_OP(MP.PERIOD  , op_MP_PERIOD_get   , op_MP_PERIOD_set   , 0, true);
+const tele_op_t op_ME_PRESET   = MAKE_GET_SET_OP(ME.PRESET  , op_ME_PRESET_get   , op_ME_PRESET_set   , 0, true);
+const tele_op_t op_ME_RESET    = MAKE_GET_OP    (ME.RESET   , op_ME_RESET_get                         , 1, false);
+const tele_op_t op_ME_STOP     = MAKE_GET_OP    (ME.STOP    , op_ME_STOP_get                          , 1, false);
+const tele_op_t op_ME_SCALE    = MAKE_GET_SET_OP(ME.SCALE   , op_ME_SCALE_get    , op_ME_SCALE_set    , 0, true);
+const tele_op_t op_ME_PERIOD   = MAKE_GET_SET_OP(ME.PERIOD  , op_ME_PERIOD_get   , op_ME_PERIOD_set   , 0, true);
 
 const tele_op_t op_LV_PRESET   = MAKE_GET_SET_OP(LV.PRE     , op_LV_PRESET_get   , op_LV_PRESET_set   , 0, true);
 const tele_op_t op_LV_RESET    = MAKE_GET_OP(LV.RES         , op_LV_RESET_get    , 1, false);
@@ -322,7 +322,7 @@ static void op_KR_RESET_get(const void *NOTUSED(data),
     tele_ii_tx(II_KR_ADDR, d, 3);
 }
 
-static void op_MP_PRESET_set(const void *NOTUSED(data),
+static void op_ME_PRESET_set(const void *NOTUSED(data),
                              scene_state_t *NOTUSED(ss),
                              exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
@@ -330,7 +330,7 @@ static void op_MP_PRESET_set(const void *NOTUSED(data),
     tele_ii_tx(II_MP_ADDR, d, 2);
 }
 
-static void op_MP_PRESET_get(const void *NOTUSED(data),
+static void op_ME_PRESET_get(const void *NOTUSED(data),
                              scene_state_t *NOTUSED(ss),
                              exec_state_t *NOTUSED(es), command_state_t *cs) {
     uint8_t d[] = { II_MP_PRESET | II_GET };
@@ -341,7 +341,7 @@ static void op_MP_PRESET_get(const void *NOTUSED(data),
     cs_push(cs, d[0]);
 }
 
-static void op_MP_RESET_get(const void *NOTUSED(data),
+static void op_ME_RESET_get(const void *NOTUSED(data),
                             scene_state_t *NOTUSED(ss),
                             exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
@@ -349,7 +349,7 @@ static void op_MP_RESET_get(const void *NOTUSED(data),
     tele_ii_tx(II_MP_ADDR, d, 2);
 }
 
-static void op_MP_STOP_get(const void *NOTUSED(data),
+static void op_ME_STOP_get(const void *NOTUSED(data),
                            scene_state_t *NOTUSED(ss),
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
@@ -357,7 +357,7 @@ static void op_MP_STOP_get(const void *NOTUSED(data),
     tele_ii_tx(II_MP_ADDR, d, 2);
 }
 
-static void op_MP_SCALE_set(const void *NOTUSED(data),
+static void op_ME_SCALE_set(const void *NOTUSED(data),
                             scene_state_t *NOTUSED(ss),
                             exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
@@ -365,7 +365,7 @@ static void op_MP_SCALE_set(const void *NOTUSED(data),
     tele_ii_tx(II_MP_ADDR, d, 2);
 }
 
-static void op_MP_SCALE_get(const void *NOTUSED(data),
+static void op_ME_SCALE_get(const void *NOTUSED(data),
                             scene_state_t *NOTUSED(ss),
                             exec_state_t *NOTUSED(es), command_state_t *cs) {
     uint8_t d[] = { II_MP_SCALE | II_GET };
@@ -376,7 +376,7 @@ static void op_MP_SCALE_get(const void *NOTUSED(data),
     cs_push(cs, d[0]);
 }
 
-static void op_MP_PERIOD_set(const void *NOTUSED(data),
+static void op_ME_PERIOD_set(const void *NOTUSED(data),
                              scene_state_t *NOTUSED(ss),
                              exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
@@ -384,7 +384,7 @@ static void op_MP_PERIOD_set(const void *NOTUSED(data),
     tele_ii_tx(II_MP_ADDR, d, 3);
 }
 
-static void op_MP_PERIOD_get(const void *NOTUSED(data),
+static void op_ME_PERIOD_get(const void *NOTUSED(data),
                              scene_state_t *NOTUSED(ss),
                              exec_state_t *NOTUSED(es), command_state_t *cs) {
     uint8_t d[] = { II_MP_PERIOD | II_GET, 0 };
