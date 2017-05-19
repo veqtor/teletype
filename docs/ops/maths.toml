@@ -116,15 +116,17 @@ short = "absolute value of `x`"
 prototype = "AND x y"
 aliases = ["&&"]
 short = "logical AND of `x` and `y`"
+description = """
+Logical AND of `x` and `y`. Returns `1` if both `x` and `y` are greater than `0`, otherwise it returns `0`.
+"""
 
 [OR]
 prototype = "OR x y"
 aliases = ["||"]
 short = "logical OR of `x` and `y`"
-
-[XOR]
-prototype = "XOR x y"
-short = "logical XOR of `x` and `y`"
+description = """
+Logical OR of `x` and `y`. Returns `1` if either `x` or `y` are greater than `0`, otherwise it returns `0`.
+"""
 
 [JI]
 prototype = "JI x y"
