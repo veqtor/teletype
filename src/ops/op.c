@@ -78,8 +78,7 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_WW_MUTE3, &op_WW_MUTE4, &op_WW_MUTEA, &op_WW_MUTEB,
 
     // meadowphysics
-    &op_MP_PRESET, &op_MP_RESET, &op_MP_SYNC, &op_MP_MUTE, &op_MP_UNMUTE,
-    &op_MP_FREEZE, &op_MP_UNFREEZE, &op_MP_STOP,
+    &op_MP_PRESET, &op_MP_RESET, &op_MP_STOP,
 
     // earthsea
     &op_ES_PRESET, &op_ES_MODE, &op_ES_CLOCK, &op_ES_RESET, &op_ES_PATTERN,

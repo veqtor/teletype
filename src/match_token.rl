@@ -180,14 +180,9 @@
         "WW.MUTEA"    => { MATCH_OP(E_OP_WW_MUTEA); };
         "WW.MUTEB"    => { MATCH_OP(E_OP_WW_MUTEB); };
 
-        # earthsea
+        # meadowphysics
         "MP.PRESET"   => { MATCH_OP(E_OP_MP_PRESET); };
         "MP.RESET"    => { MATCH_OP(E_OP_MP_RESET); };
-        "MP.SYNC"     => { MATCH_OP(E_OP_MP_SYNC); };
-        "MP.MUTE"     => { MATCH_OP(E_OP_MP_MUTE); };
-        "MP.UNMUTE"   => { MATCH_OP(E_OP_MP_UNMUTE); };
-        "MP.FREEZE"   => { MATCH_OP(E_OP_MP_FREEZE); };
-        "MP.UNFREEZE" => { MATCH_OP(E_OP_MP_UNFREEZE); };
         "MP.STOP"     => { MATCH_OP(E_OP_MP_STOP); };
 
         # earthsea
