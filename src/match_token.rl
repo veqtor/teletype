@@ -127,7 +127,6 @@
         "ABS"         => { MATCH_OP(E_OP_ABS); };
         "AND"         => { MATCH_OP(E_OP_AND); };
         "OR"          => { MATCH_OP(E_OP_OR); };
-        "XOR"         => { MATCH_OP(E_OP_XOR); };
         "JI"          => { MATCH_OP(E_OP_JI); };
         "SCALE"       => { MATCH_OP(E_OP_SCALE); };
         "N"           => { MATCH_OP(E_OP_N); };

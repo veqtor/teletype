@@ -31,7 +31,6 @@ extern const tele_op_t op_EXP;
 extern const tele_op_t op_ABS;
 extern const tele_op_t op_AND;
 extern const tele_op_t op_OR;
-extern const tele_op_t op_XOR;
 extern const tele_op_t op_JI;
 extern const tele_op_t op_SCALE;
 extern const tele_op_t op_N;

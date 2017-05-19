@@ -5,6 +5,7 @@
 - **BREAKING**: merge the `MUTE` and `UNMUTE` ops. Now `MUTE x` will return the mute status for trigger `x` (`0` is unmuted, `1` is muted), and `MUTE x y` will set the mute for trigger `x` (`y = 0` to unmute, `y = 1` to mute)
 - **BREAKING**: remove unused Meadowphysics ops: `MP.SYNC`, `MP.MUTE`, `MP.UNMUTE`, `MP.FREEZE`, `MP.UNFREEZE`
 - **BREAKING**: rename Ansible Meadowphysics ops to start with `ME`, and make the names consistent with those used by Meadowphysics
+- **BREAKING**: remove op `XOR`
 - **NEW**: sub commands, use a `;` separator to run multiple commands on a single line, e.g. `X 1; Y 2`
 - **NEW**: key bindings rewritten, see [docs](./docs/modes.md)
 - **NEW**: multiple commands on each line separated by ':'
@@ -16,6 +17,7 @@
 - **IMP**: new Ragel parser backend
 - **IMP**: script recursion enhanced, maximum recursion depth is 8, and self recursion is allowed
 - **IMP**: removed the need to prefix `:` and `;` with a space, e.g. `IF X : TR.PULSE 1` becomes `IF X: TR.PULSE`
+- **IMP**: `AND` and `OR` now work as boolean logic, rather than bitwise
 - **FIX**: divide by zero errors now explicitly return a 0 (e.g. `DIV 5 0` now returns 0 instead of -1), previously the behaviour was undefined and would crash the simulator
 - **FIX**: numerous crashing bugs with text entry
 - **FIX**: `i2c` bus crashes under high `M` times with external triggers

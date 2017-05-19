@@ -104,7 +104,6 @@ typedef enum {
     E_OP_ABS,
     E_OP_AND,
     E_OP_OR,
-    E_OP_XOR,
     E_OP_JI,
     E_OP_SCALE,
     E_OP_N,
