@@ -62,8 +62,6 @@ static void op_AND_get(const void *data, scene_state_t *ss, exec_state_t *es,
                        command_state_t *cs);
 static void op_OR_get(const void *data, scene_state_t *ss, exec_state_t *es,
                       command_state_t *cs);
-static void op_XOR_get(const void *data, scene_state_t *ss, exec_state_t *es,
-                       command_state_t *cs);
 static void op_JI_get(const void *data, scene_state_t *ss, exec_state_t *es,
                       command_state_t *cs);
 static void op_SCALE_get(const void *data, scene_state_t *ss, exec_state_t *es,
@@ -107,7 +105,6 @@ const tele_op_t op_EXP   = MAKE_GET_OP(EXP     , op_EXP_get     , 1, true);
 const tele_op_t op_ABS   = MAKE_GET_OP(ABS     , op_ABS_get     , 1, true);
 const tele_op_t op_AND   = MAKE_GET_OP(AND     , op_AND_get     , 2, true);
 const tele_op_t op_OR    = MAKE_GET_OP(OR      , op_OR_get      , 2, true);
-const tele_op_t op_XOR   = MAKE_GET_OP(XOR     , op_XOR_get     , 2, true);
 const tele_op_t op_JI    = MAKE_GET_OP(JI      , op_JI_get      , 2, true);
 const tele_op_t op_SCALE = MAKE_GET_OP(SCALE   , op_SCALE_get   , 5, true);
 const tele_op_t op_N     = MAKE_GET_OP(N       , op_N_get       , 1, true);
@@ -361,17 +358,16 @@ static void op_ABS_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
 
 static void op_AND_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                        exec_state_t *NOTUSED(es), command_state_t *cs) {
-    cs_push(cs, cs_pop(cs) & cs_pop(cs));
+    int16_t a = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+    cs_push(cs, (a > 0) && (b > 0));
 }
 
 static void op_OR_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                       exec_state_t *NOTUSED(es), command_state_t *cs) {
-    cs_push(cs, cs_pop(cs) | cs_pop(cs));
-}
-
-static void op_XOR_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
-                       exec_state_t *NOTUSED(es), command_state_t *cs) {
-    cs_push(cs, cs_pop(cs) ^ cs_pop(cs));
+    int16_t a = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+    cs_push(cs, (a > 0) || (b > 0));
 }
 
 static void op_JI_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),

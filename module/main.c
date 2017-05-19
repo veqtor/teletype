@@ -573,7 +573,9 @@ void tele_metro_updated() {
     uint32_t metro_time = scene_state.variables.m;
 
     bool m_act = scene_state.variables.m_act > 0;
-    if (metro_time < 10) metro_time = 10;
+    if (metro_time < METRO_MIN_UNSUPPORTED_MS) {
+        metro_time = METRO_MIN_UNSUPPORTED_MS;
+    }
 
     if (m_act && !metro_timer_enabled) {  // enable the timer
         timer_add(&metroTimer, metro_time, &metroTimer_callback, NULL);

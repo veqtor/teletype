@@ -35,7 +35,7 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_O_WRAP, &op_T, &op_TIME, &op_TIME_ACT, &op_X, &op_Y, &op_Z,
 
     // metronome
-    &op_M, &op_M_ACT, &op_M_RESET,
+    &op_M, &op_M_SYM_EXCLAMATION, &op_M_ACT, &op_M_RESET,
 
     // patterns
     &op_P_N, &op_P, &op_PN, &op_P_L, &op_PN_L, &op_P_WRAP, &op_PN_WRAP,
@@ -56,8 +56,8 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_ADD, &op_SUB, &op_MUL, &op_DIV, &op_MOD, &op_RAND, &op_RRAND, &op_TOSS,
     &op_MIN, &op_MAX, &op_LIM, &op_WRAP, &op_QT, &op_AVG, &op_EQ, &op_NE,
     &op_LT, &op_GT, &op_LTE, &op_GTE, &op_NZ, &op_EZ, &op_RSH, &op_LSH, &op_EXP,
-    &op_ABS, &op_AND, &op_OR, &op_XOR, &op_JI, &op_SCALE, &op_N, &op_V, &op_VV,
-    &op_ER, &op_SYM_PLUS, &op_SYM_DASH, &op_SYM_STAR, &op_SYM_FORWARD_SLASH,
+    &op_ABS, &op_AND, &op_OR, &op_JI, &op_SCALE, &op_N, &op_V, &op_VV, &op_ER,
+    &op_SYM_PLUS, &op_SYM_DASH, &op_SYM_STAR, &op_SYM_FORWARD_SLASH,
     &op_SYM_PERCENTAGE, &op_SYM_EQUAL_x2, &op_SYM_EXCLAMATION_EQUAL,
     &op_SYM_LEFT_ANGLED, &op_SYM_RIGHT_ANGLED, &op_SYM_LEFT_ANGLED_EQUAL,
     &op_SYM_RIGHT_ANGLED_EQUAL, &op_SYM_EXCLAMATION, &op_SYM_LEFT_ANGLED_x2,
@@ -78,8 +78,7 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_WW_MUTE3, &op_WW_MUTE4, &op_WW_MUTEA, &op_WW_MUTEB,
 
     // meadowphysics
-    &op_MP_PRESET, &op_MP_RESET, &op_MP_SYNC, &op_MP_MUTE, &op_MP_UNMUTE,
-    &op_MP_FREEZE, &op_MP_UNFREEZE, &op_MP_STOP,
+    &op_MP_PRESET, &op_MP_RESET, &op_MP_STOP,
 
     // earthsea
     &op_ES_PRESET, &op_ES_MODE, &op_ES_CLOCK, &op_ES_RESET, &op_ES_PATTERN,
@@ -92,10 +91,10 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
 
     // ansible
     &op_KR_PRESET, &op_KR_PATTERN, &op_KR_SCALE, &op_KR_PERIOD, &op_KR_POS,
-    &op_KR_LOOP_ST, &op_KR_LOOP_LEN, &op_KR_RESET, &op_MP_PRESET1,
-    &op_MP_RESET1, &op_MP_STOP1, &op_MP_SCALE, &op_MP_PERIOD, &op_LV_PRESET,
-    &op_LV_RESET, &op_LV_POS, &op_LV_L_ST, &op_LV_L_LEN, &op_LV_L_DIR,
-    &op_LV_CV, &op_CY_PRESET, &op_CY_RESET, &op_CY_POS, &op_CY_REV, &op_CY_CV,
+    &op_KR_LOOP_ST, &op_KR_LOOP_LEN, &op_KR_RESET, &op_ME_PRESET, &op_ME_RESET,
+    &op_ME_STOP, &op_ME_SCALE, &op_ME_PERIOD, &op_LV_PRESET, &op_LV_RESET,
+    &op_LV_POS, &op_LV_L_ST, &op_LV_L_LEN, &op_LV_L_DIR, &op_LV_CV,
+    &op_CY_PRESET, &op_CY_RESET, &op_CY_POS, &op_CY_REV, &op_CY_CV,
     &op_MID_SHIFT, &op_MID_SLEW, &op_ARP_STYLE, &op_ARP_HOLD, &op_ARP_RPT,
     &op_ARP_GATE, &op_ARP_DIV, &op_ARP_RESET, &op_ARP_SHIFT, &op_ARP_SLEW,
     &op_ARP_FILL, &op_ARP_ROT, &op_ARP_ER,

@@ -43,6 +43,7 @@
 
         # metronome
         "M"           => { MATCH_OP(E_OP_M); };
+        "M!"          => { MATCH_OP(E_OP_M_SYM_EXCLAMATION); };
         "M.ACT"       => { MATCH_OP(E_OP_M_ACT); };
         "M.RESET"     => { MATCH_OP(E_OP_M_RESET); };
 
@@ -126,7 +127,6 @@
         "ABS"         => { MATCH_OP(E_OP_ABS); };
         "AND"         => { MATCH_OP(E_OP_AND); };
         "OR"          => { MATCH_OP(E_OP_OR); };
-        "XOR"         => { MATCH_OP(E_OP_XOR); };
         "JI"          => { MATCH_OP(E_OP_JI); };
         "SCALE"       => { MATCH_OP(E_OP_SCALE); };
         "N"           => { MATCH_OP(E_OP_N); };
@@ -180,14 +180,9 @@
         "WW.MUTEA"    => { MATCH_OP(E_OP_WW_MUTEA); };
         "WW.MUTEB"    => { MATCH_OP(E_OP_WW_MUTEB); };
 
-        # earthsea
+        # meadowphysics
         "MP.PRESET"   => { MATCH_OP(E_OP_MP_PRESET); };
         "MP.RESET"    => { MATCH_OP(E_OP_MP_RESET); };
-        "MP.SYNC"     => { MATCH_OP(E_OP_MP_SYNC); };
-        "MP.MUTE"     => { MATCH_OP(E_OP_MP_MUTE); };
-        "MP.UNMUTE"   => { MATCH_OP(E_OP_MP_UNMUTE); };
-        "MP.FREEZE"   => { MATCH_OP(E_OP_MP_FREEZE); };
-        "MP.UNFREEZE" => { MATCH_OP(E_OP_MP_UNFREEZE); };
         "MP.STOP"     => { MATCH_OP(E_OP_MP_STOP); };
 
         # earthsea
@@ -228,11 +223,11 @@
         "KR.L.ST"     => { MATCH_OP(E_OP_KR_LOOP_ST); };
         "KR.L.LEN"    => { MATCH_OP(E_OP_KR_LOOP_LEN); };
         "KR.RES"      => { MATCH_OP(E_OP_KR_RESET); };
-        "MP.PRE"      => { MATCH_OP(E_OP_MP_PRESET1); };
-        "MP.RES"      => { MATCH_OP(E_OP_MP_RESET1); };
-        "MP.OFF"      => { MATCH_OP(E_OP_MP_STOP1); };
-        "MP.SCALE"    => { MATCH_OP(E_OP_MP_SCALE); };
-        "MP.PERIOD"   => { MATCH_OP(E_OP_MP_PERIOD); };
+        "ME.PRESET"   => { MATCH_OP(E_OP_ME_PRESET); };
+        "ME.RESET"    => { MATCH_OP(E_OP_ME_RESET); };
+        "ME.STOP"     => { MATCH_OP(E_OP_ME_STOP); };
+        "ME.SCALE"    => { MATCH_OP(E_OP_ME_SCALE); };
+        "ME.PERIOD"   => { MATCH_OP(E_OP_ME_PERIOD); };
         "LV.PRE"      => { MATCH_OP(E_OP_LV_PRESET); };
         "LV.RES"      => { MATCH_OP(E_OP_LV_RESET); };
         "LV.POS"      => { MATCH_OP(E_OP_LV_POS); };

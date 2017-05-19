@@ -12,11 +12,11 @@ extern const tele_op_t op_KR_LOOP_ST;
 extern const tele_op_t op_KR_LOOP_LEN;
 extern const tele_op_t op_KR_RESET;
 
-extern const tele_op_t op_MP_PRESET1;
-extern const tele_op_t op_MP_RESET1;
-extern const tele_op_t op_MP_STOP1;
-extern const tele_op_t op_MP_SCALE;
-extern const tele_op_t op_MP_PERIOD;
+extern const tele_op_t op_ME_PRESET;
+extern const tele_op_t op_ME_RESET;
+extern const tele_op_t op_ME_STOP;
+extern const tele_op_t op_ME_SCALE;
+extern const tele_op_t op_ME_PERIOD;
 
 extern const tele_op_t op_LV_PRESET;
 extern const tele_op_t op_LV_RESET;
