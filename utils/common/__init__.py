@@ -63,7 +63,8 @@ def _convert_struct_name_to_op_name(name):
         "SYM_LEFT_ANGLED_x2":     "<<",
         "SYM_RIGHT_ANGLED_x2":    ">>",
         "SYM_AMPERSAND_x2":       "&&",
-        "SYM_PIPE_x2":            "||"
+        "SYM_PIPE_x2":            "||",
+        "M_SYM_EXCLAMATION":      "M!"
     }
 
     if stripped in MAPPINGS:
