@@ -60,11 +60,11 @@ output `x` to `y` (0-1).
 ["TR.POL"]
 prototype = "TR.POL x"
 prototype_set = "TR.POL x y"
-short = "CHECK THIS Set polarity of trigger output x to y (0-1)"
+short = "Set polarity of trigger output x to y (0-1)"
 description = """
-CHECK THIS
 Get the current polarity of trigger output `x`. Set the polarity of trigger 
-output `x` to `y` (0-1).
+output `x` to `y` (0-1). When TR.POL = 1, the pulse is 0 to 1 then back to 0.
+When TR.POL = 0, the inverse is true, 1 to 0 to 1.
 """
 
 ["TR.TIME"]
