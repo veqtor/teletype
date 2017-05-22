@@ -1,7 +1,7 @@
 ["Q"]
 prototype = "Q"
 prototype_set = "Q x"
-short = "Modify the queue entries`"
+short = "Modify the queue entries"
 description = """
 Gets the output value from the queue, or places `x` into the queue.
 """

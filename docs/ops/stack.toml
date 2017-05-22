@@ -1,5 +1,5 @@
 ["S"]
-prototype = "S : ..."
+prototype = "S: ..."
 short = "Place a command onto the stack"
 description = """
 Add the command following the colon to the top of the stack. If the stack
