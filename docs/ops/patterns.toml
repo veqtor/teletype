@@ -24,7 +24,6 @@ retrieves the working pattern value at index 4
 This applies to `PN` as well, except the pattern number is the first variable and a second variable specifies the index.
 """
 
-
 [PN]
 prototype = "PN x y"
 prototype_set = "PN x y z"
@@ -98,19 +97,25 @@ prototype = "P.I"
 prototype_set = "P.I x"
 short = "get/set index position for the working pattern."
 description = """
-get/set index position for the working pattern. values greater than pattern length return the step 1 beyond pattern length. negative values are indexed backwards from the end of the pattern length.
+get/set index position for the working pattern. all values greater than pattern length return the first step beyond the pattern length. negative values are indexed backwards from the end of the pattern length.
 
 Example: 
 
-With a pattern length of `6` for the working pattern: 
+With a pattern length of `6` (`P.L 6`), yielding an index range of `0-5`: 
+
+`P.I 3`
+
+moves the index of the working pattern to `3` 
 
 `P.I 10`
-moves the ‘working pattern’ to index `6` of the pattern
+
+moves the index of the working pattern to `6`
 
 `P.I -2`
-moves the ‘working pattern’ to index `4` of the pattern
 
-This same logic applies to `PN.I`, except the pattern number is the first variable and a second variable specifics the index.
+moves the index of the working pattern to `4`
+
+This applies to `PN.I`, except the pattern number is the first variable and a second variable specifics the index.
 """
 
 ["PN.I"]
