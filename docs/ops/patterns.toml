@@ -148,7 +148,7 @@ prototype = "P.PREV"
 prototype_set = "P.PREV x"
 short = "decrement index of working pattern then get/set value"
 
-["PN.PREV x"]
+["PN.PREV"]
 prototype = "PN.PREV x"
 prototype_set = "PN.PREV x y"
 short = "decrement index of pattern `x` then get/set value"
