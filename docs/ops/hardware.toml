@@ -40,8 +40,8 @@ description = """
 Get the value of the IN jack. This returns a valuue in the range 0-16383.
 """
 
-["PARAM "]
-prototype = "PARAM "
+["PARAM"]
+prototype = "PARAM"
 aliases = ["PRM"]
 short = "Get the value of PARAM knob (0-16383)"
 description = """
@@ -83,7 +83,7 @@ description = """
 Flip the state of trigger output `x`.
 """
 
-["TR.PULSE "]
+["TR.PULSE"]
 prototype = "TR.PULSE x"
 aliases = ["TR.P"]
 short = "Pulse trigger output x"
