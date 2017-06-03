@@ -112,6 +112,8 @@ const tele_op_t op_V     = MAKE_GET_OP(V       , op_V_get       , 1, true);
 const tele_op_t op_VV    = MAKE_GET_OP(VV      , op_VV_get      , 1, true);
 const tele_op_t op_ER    = MAKE_GET_OP(ER      , op_ER_get      , 3, true);
 
+const tele_op_t op_XOR   = MAKE_ALIAS_OP(XOR, op_NE_get, NULL, 2, true);
+
 const tele_op_t op_SYM_PLUS               = MAKE_ALIAS_OP(+ , op_ADD_get, NULL, 2, true);
 const tele_op_t op_SYM_DASH               = MAKE_ALIAS_OP(- , op_SUB_get, NULL, 2, true);
 const tele_op_t op_SYM_STAR               = MAKE_ALIAS_OP(* , op_MUL_get, NULL, 2, true);

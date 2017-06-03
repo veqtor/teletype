@@ -133,6 +133,7 @@
         "V"           => { MATCH_OP(E_OP_V); };
         "VV"          => { MATCH_OP(E_OP_VV); };
         "ER"          => { MATCH_OP(E_OP_ER); };
+        "XOR"         => { MATCH_OP(E_OP_XOR); };
         "+"           => { MATCH_OP(E_OP_SYM_PLUS); };
         "-"           => { MATCH_OP(E_OP_SYM_DASH); };
         "*"           => { MATCH_OP(E_OP_SYM_STAR); };

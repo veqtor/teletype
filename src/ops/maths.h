@@ -38,6 +38,8 @@ extern const tele_op_t op_V;
 extern const tele_op_t op_VV;
 extern const tele_op_t op_ER;
 
+extern const tele_op_t op_XOR;  // XOR alias NE
+
 extern const tele_op_t op_SYM_PLUS;                // + alias ADD
 extern const tele_op_t op_SYM_DASH;                // - alias SUB
 extern const tele_op_t op_SYM_STAR;                // * alias MUL
