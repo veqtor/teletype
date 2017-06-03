@@ -26,6 +26,26 @@ static void op_TO_KILL_get(const void *data, scene_state_t *ss,
 
 static void op_TO_TR_PULSE_DIV_get(const void *data, scene_state_t *ss,
                                    exec_state_t *es, command_state_t *cs);
+static void op_TO_TR_PULSE_MUTE_get(const void *data, scene_state_t *ss,
+                                    exec_state_t *es, command_state_t *cs);
+static void op_TO_TR_M_MUL_get(const void *data, scene_state_t *ss,
+                               exec_state_t *es, command_state_t *cs);
+
+static void op_TO_M_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                        command_state_t *cs);
+static void op_TO_M_S_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs);
+static void op_TO_M_M_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs);
+static void op_TO_M_BPM_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs);
+static void op_TO_M_ACT_get(const void *data, scene_state_t *ss,
+                            exec_state_t *es, command_state_t *cs);
+static void op_TO_M_SYNC_get(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs);
+static void op_TO_M_COUNT_get(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs);
+
 static void op_TO_TR_M_get(const void *data, scene_state_t *ss,
                            exec_state_t *es, command_state_t *cs);
 static void op_TO_TR_M_S_get(const void *data, scene_state_t *ss,
@@ -65,6 +85,8 @@ static void op_TO_CV_N_SET_get(const void *data, scene_state_t *ss,
                                exec_state_t *es, command_state_t *cs);
 static void op_TO_CV_SCALE_get(const void *data, scene_state_t *ss,
                                exec_state_t *es, command_state_t *cs);
+static void op_TO_CV_LOG_get(const void *data, scene_state_t *ss,
+                             exec_state_t *es, command_state_t *cs);
 
 static void op_TO_OSC_get(const void *data, scene_state_t *ss, exec_state_t *es,
                           command_state_t *cs);
@@ -117,6 +139,8 @@ static void op_TO_OSC_CYC_S_SET_get(const void *data, scene_state_t *ss,
                                     exec_state_t *es, command_state_t *cs);
 static void op_TO_OSC_CYC_M_SET_get(const void *data, scene_state_t *ss,
                                     exec_state_t *es, command_state_t *cs);
+static void op_TO_OSC_CTR_get(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs);
 
 static void op_TO_ENV_ACT_get(const void *data, scene_state_t *ss,
                               exec_state_t *es, command_state_t *cs);
@@ -133,6 +157,13 @@ static void op_TO_ENV_DEC_S_get(const void *data, scene_state_t *ss,
 static void op_TO_ENV_DEC_M_get(const void *data, scene_state_t *ss,
                                 exec_state_t *es, command_state_t *cs);
 static void op_TO_ENV_TRIG_get(const void *data, scene_state_t *ss,
+                               exec_state_t *es, command_state_t *cs);
+
+static void op_TO_ENV_EOR_get(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs);
+static void op_TO_ENV_EOC_get(const void *data, scene_state_t *ss,
+                              exec_state_t *es, command_state_t *cs);
+static void op_TO_ENV_LOOP_get(const void *data, scene_state_t *ss,
                                exec_state_t *es, command_state_t *cs);
 
 static void op_TO_CV_INIT_get(const void *data, scene_state_t *ss,
@@ -194,6 +225,17 @@ const tele_op_t op_TO_TR_POL 	        = MAKE_GET_OP(TO.TR.POL           , op_TO_
 const tele_op_t op_TO_KILL            = MAKE_GET_OP(TO.KILL             , op_TO_KILL_get            , 1, false);
 
 const tele_op_t op_TO_TR_PULSE_DIV    = MAKE_GET_OP(TO.TR.PULSE.DIV     , op_TO_TR_PULSE_DIV_get    , 2, false);
+const tele_op_t op_TO_TR_PULSE_MUTE   = MAKE_GET_OP(TO.TR.PULSE.MUTE    , op_TO_TR_PULSE_MUTE_get   , 2, false);
+const tele_op_t op_TO_TR_M_MUL        = MAKE_GET_OP(TO.TR.M.MUL         , op_TO_TR_M_MUL_get        , 2, false);
+
+const tele_op_t op_TO_M               = MAKE_GET_OP(TO.M                , op_TO_M_get               , 2, false);
+const tele_op_t op_TO_M_S             = MAKE_GET_OP(TO.M.S              , op_TO_M_S_get             , 2, false);
+const tele_op_t op_TO_M_M             = MAKE_GET_OP(TO.M.M              , op_TO_M_M_get             , 2, false);
+const tele_op_t op_TO_M_BPM           = MAKE_GET_OP(TO.M.BPM            , op_TO_M_BPM_get           , 2, false);
+const tele_op_t op_TO_M_ACT           = MAKE_GET_OP(TO.M.ACT            , op_TO_M_ACT_get           , 2, false);
+const tele_op_t op_TO_M_SYNC          = MAKE_GET_OP(TO.M.SYNC           , op_TO_M_SYNC_get          , 1, false);
+const tele_op_t op_TO_M_COUNT         = MAKE_GET_OP(TO.M.COUNT          , op_TO_M_COUNT_get         , 2, false);
+
 const tele_op_t op_TO_TR_M            = MAKE_GET_OP(TO.TR.M             , op_TO_TR_M_get            , 2, false);
 const tele_op_t op_TO_TR_M_S          = MAKE_GET_OP(TO.TR.M.S           , op_TO_TR_M_S_get          , 2, false);
 const tele_op_t op_TO_TR_M_M          = MAKE_GET_OP(TO.TR.M.M           , op_TO_TR_M_M_get          , 2, false);
@@ -214,6 +256,7 @@ const tele_op_t op_TO_CV_QT_SET       = MAKE_GET_OP(TO.CV.QT.SET        , op_TO_
 const tele_op_t op_TO_CV_N            = MAKE_GET_OP(TO.CV.N             , op_TO_CV_N_get            , 2, false);
 const tele_op_t op_TO_CV_N_SET        = MAKE_GET_OP(TO.CV.N.SET         , op_TO_CV_N_SET_get        , 2, false);
 const tele_op_t op_TO_CV_SCALE        = MAKE_GET_OP(TO.CV.SCALE         , op_TO_CV_SCALE_get        , 2, false);
+const tele_op_t op_TO_CV_LOG          = MAKE_GET_OP(TO.CV.LOG           , op_TO_CV_LOG_get          , 2, false);
 
 const tele_op_t op_TO_OSC             = MAKE_GET_OP(TO.OSC              , op_TO_OSC_get             , 2, false);
 const tele_op_t op_TO_OSC_SET         = MAKE_GET_OP(TO.OSC.SET          , op_TO_OSC_SET_get         , 2, false);
@@ -241,6 +284,7 @@ const tele_op_t op_TO_OSC_CYC_M       = MAKE_GET_OP(TO.OSC.CYC.M        , op_TO_
 const tele_op_t op_TO_OSC_CYC_SET     = MAKE_GET_OP(TO.OSC.CYC.SET      , op_TO_OSC_CYC_SET_get     , 2, false);
 const tele_op_t op_TO_OSC_CYC_S_SET   = MAKE_GET_OP(TO.OSC.CYC.S.SET    , op_TO_OSC_CYC_S_SET_get   , 2, false);
 const tele_op_t op_TO_OSC_CYC_M_SET   = MAKE_GET_OP(TO.OSC.CYC.M.SET    , op_TO_OSC_CYC_M_SET_get   , 2, false);
+const tele_op_t op_TO_OSC_CTR         = MAKE_GET_OP(TO.OSC.CTR          , op_TO_OSC_CTR_get         , 2, false);
 
 const tele_op_t op_TO_ENV_ACT         = MAKE_GET_OP(TO.ENV.ACT          , op_TO_ENV_ACT_get         , 2, false);
 const tele_op_t op_TO_ENV_ATT         = MAKE_GET_OP(TO.ENV.ATT          , op_TO_ENV_ATT_get         , 2, false);
@@ -251,6 +295,10 @@ const tele_op_t op_TO_ENV_DEC_S       = MAKE_GET_OP(TO.ENV.DEC.S        , op_TO_
 const tele_op_t op_TO_ENV_DEC_M       = MAKE_GET_OP(TO.ENV.DEC.M        , op_TO_ENV_DEC_M_get       , 2, false);
 const tele_op_t op_TO_ENV_TRIG        = MAKE_GET_OP(TO.ENV.TRIG         , op_TO_ENV_TRIG_get        , 1, false);
 
+const tele_op_t op_TO_ENV_EOR         = MAKE_GET_OP(TO.ENV.EOR          , op_TO_ENV_EOR_get         , 2, false);
+const tele_op_t op_TO_ENV_EOC         = MAKE_GET_OP(TO.ENV.EOC          , op_TO_ENV_EOC_get         , 2, false);
+const tele_op_t op_TO_ENV_LOOP        = MAKE_GET_OP(TO.ENV.LOOP         , op_TO_ENV_LOOP_get        , 2, false);
+
 const tele_op_t op_TO_CV_INIT         = MAKE_GET_OP(TO.CV.INIT          , op_TO_CV_INIT_get         , 1, false);
 const tele_op_t op_TO_TR_INIT         = MAKE_GET_OP(TO.TR.INIT          , op_TO_TR_INIT_get         , 1, false);
 const tele_op_t op_TO_INIT            = MAKE_GET_OP(TO.INIT             , op_TO_INIT_get            , 1, false);
@@ -258,6 +306,7 @@ const tele_op_t op_TO_INIT            = MAKE_GET_OP(TO.INIT             , op_TO_
 // TXo Ailiases
 const tele_op_t op_TO_TR_P            = MAKE_ALIAS_OP(TO.TR.P           , op_TO_TR_PULSE_get        , NULL, 1, false);
 const tele_op_t op_TO_TR_P_DIV        = MAKE_ALIAS_OP(TO.TR.P.DIV       , op_TO_TR_PULSE_DIV_get    , NULL, 2, false);
+const tele_op_t op_TO_TR_P_MUTE       = MAKE_ALIAS_OP(TO.TR.P.MUTE      , op_TO_TR_PULSE_MUTE_get   , NULL, 2, false);
 
 // TXi Operators
 const tele_op_t op_TI_PARAM           = MAKE_GET_OP(TI.PARAM            , op_TI_PARAM_get           , 1, true);
@@ -320,6 +369,11 @@ void TXSet(uint8_t model, uint8_t command, command_state_t *cs) {
     int16_t value = cs_pop(cs);
     TXSend(model, command, output, value, true);
 }
+void TXDeviceSet(uint8_t model, uint8_t command, command_state_t *cs) {
+    uint8_t output = DeviceToOutput(cs_pop(cs));
+    int16_t value = cs_pop(cs);
+    TXSend(model, command, output, value, true);
+}
 void TXReceive(uint8_t model, command_state_t *cs, uint8_t mode, bool shift) {
     // zero-index the output
     uint8_t input = cs_pop(cs) - 1;
@@ -334,39 +388,17 @@ void TXReceive(uint8_t model, command_state_t *cs, uint8_t mode, bool shift) {
     uint8_t buffer[2];
     buffer[0] = port;
     tele_ii_tx(address, buffer, 1);
-    // now read the vaule
+    // now read the value
     buffer[0] = 0;
     buffer[1] = 0;
     tele_ii_rx(address, buffer, 2);
     int16_t value = (buffer[0] << 8) + buffer[1];
     cs_push(cs, value);
 }
+uint8_t DeviceToOutput(int16_t device) {
+    return ((device - 1) * 4) + 1;
+}
 // Temporary Init Functions (will refactor to the TELEX soon)
-void TRInit(uint8_t output) {
-    TXSend(TO, TO_TR_POL, output, 1, true);
-    TXSend(TO, TO_TR, output, 0, true);
-    TXSend(TO, TO_TR_TIME, output, 100, true);
-    TXSend(TO, TO_TR_PULSE_DIV, output, 1, true);
-    TXSend(TO, TO_TR_M_ACT, output, 0, true);
-    TXSend(TO, TO_TR_M, output, 1000, true);
-}
-void CVInit(uint8_t output) {
-    TXSend(TO, TO_CV_SET, output, 0, true);
-    TXSend(TO, TO_CV_OFF, output, 0, true);
-    TXSend(TO, TO_CV_SLEW, output, 0, true);
-    TXSend(TO, TO_CV_SCALE, output, 0, true);
-
-    TXSend(TO, TO_OSC_FQ_SET, output, 0, true);
-    TXSend(TO, TO_OSC_SCALE, output, 0, true);
-    TXSend(TO, TO_OSC_WAVE, output, 0, true);
-    TXSend(TO, TO_OSC_PHASE, output, 0, true);
-    TXSend(TO, TO_OSC_RECT, output, 0, true);
-    TXSend(TO, TO_OSC_SLEW, output, 0, true);
-
-    TXSend(TO, TO_ENV_ACT, output, 0, true);
-    TXSend(TO, TO_ENV_ATT, output, 12, true);
-    TXSend(TO, TO_ENV_DEC, output, 250, true);
-}
 void INInit(uint8_t input) {
     TXSend(TI, TI_IN_SCALE, input, 0, true);
     TXSend(TI, TI_IN_TOP, input, 16383, true);
@@ -418,6 +450,46 @@ static void op_TO_TR_PULSE_DIV_get(const void *NOTUSED(data), scene_state_t *ss,
                                    exec_state_t *NOTUSED(es),
                                    command_state_t *cs) {
     TXSet(TO, TO_TR_PULSE_DIV, cs);
+}
+static void op_TO_TR_PULSE_MUTE_get(const void *NOTUSED(data),
+                                    scene_state_t *ss,
+                                    exec_state_t *NOTUSED(es),
+                                    command_state_t *cs) {
+    TXSet(TO, TO_TR_PULSE_MUTE, cs);
+}
+static void op_TO_TR_M_MUL_get(const void *NOTUSED(data), scene_state_t *ss,
+                               exec_state_t *NOTUSED(es), command_state_t *cs) {
+    TXSet(TO, TO_TR_M_MUL, cs);
+}
+static void op_TO_M_get(const void *NOTUSED(data), scene_state_t *ss,
+                        exec_state_t *NOTUSED(es), command_state_t *cs) {
+    TXDeviceSet(TO, TO_M, cs);
+}
+static void op_TO_M_S_get(const void *NOTUSED(data), scene_state_t *ss,
+                          exec_state_t *NOTUSED(es), command_state_t *cs) {
+    TXDeviceSet(TO, TO_M_S, cs);
+}
+static void op_TO_M_M_get(const void *NOTUSED(data), scene_state_t *ss,
+                          exec_state_t *NOTUSED(es), command_state_t *cs) {
+    TXDeviceSet(TO, TO_M_M, cs);
+}
+static void op_TO_M_BPM_get(const void *NOTUSED(data), scene_state_t *ss,
+                            exec_state_t *NOTUSED(es), command_state_t *cs) {
+    TXDeviceSet(TO, TO_M_BPM, cs);
+}
+static void op_TO_M_ACT_get(const void *NOTUSED(data), scene_state_t *ss,
+                            exec_state_t *NOTUSED(es), command_state_t *cs) {
+    TXDeviceSet(TO, TO_M_ACT, cs);
+}
+
+static void op_TO_M_SYNC_get(const void *NOTUSED(data), scene_state_t *ss,
+                             exec_state_t *NOTUSED(es), command_state_t *cs) {
+    TXCmd(TO, TO_M_SYNC, DeviceToOutput(cs_pop(cs)));
+}
+
+static void op_TO_M_COUNT_get(const void *NOTUSED(data), scene_state_t *ss,
+                              exec_state_t *NOTUSED(es), command_state_t *cs) {
+    TXDeviceSet(TO, TO_M_COUNT, cs);
 }
 static void op_TO_TR_M_get(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
@@ -499,6 +571,10 @@ static void op_TO_CV_N_SET_get(const void *NOTUSED(data), scene_state_t *ss,
 static void op_TO_CV_SCALE_get(const void *NOTUSED(data), scene_state_t *ss,
                                exec_state_t *NOTUSED(es), command_state_t *cs) {
     TXSet(TO, TO_CV_SCALE, cs);
+}
+static void op_TO_CV_LOG_get(const void *NOTUSED(data), scene_state_t *ss,
+                             exec_state_t *NOTUSED(es), command_state_t *cs) {
+    TXSet(TO, TO_CV_LOG, cs);
 }
 static void op_TO_OSC_get(const void *NOTUSED(data), scene_state_t *ss,
                           exec_state_t *NOTUSED(es), command_state_t *cs) {
@@ -616,6 +692,10 @@ static void op_TO_OSC_CYC_M_SET_get(const void *NOTUSED(data),
                                     command_state_t *cs) {
     TXSet(TO, TO_OSC_CYC_M_SET, cs);
 }
+static void op_TO_OSC_CTR_get(const void *NOTUSED(data), scene_state_t *ss,
+                              exec_state_t *NOTUSED(es), command_state_t *cs) {
+    TXSet(TO, TO_OSC_CTR, cs);
+}
 static void op_TO_ENV_ACT_get(const void *NOTUSED(data), scene_state_t *ss,
                               exec_state_t *NOTUSED(es), command_state_t *cs) {
     TXSet(TO, TO_ENV_ACT, cs);
@@ -652,23 +732,29 @@ static void op_TO_ENV_TRIG_get(const void *NOTUSED(data), scene_state_t *ss,
                                exec_state_t *NOTUSED(es), command_state_t *cs) {
     TXCmd(TO, TO_ENV_TRIG, cs_pop(cs));
 }
+static void op_TO_ENV_EOR_get(const void *NOTUSED(data), scene_state_t *ss,
+                              exec_state_t *NOTUSED(es), command_state_t *cs) {
+    TXSet(TO, TO_ENV_EOR, cs);
+}
+static void op_TO_ENV_EOC_get(const void *NOTUSED(data), scene_state_t *ss,
+                              exec_state_t *NOTUSED(es), command_state_t *cs) {
+    TXSet(TO, TO_ENV_EOC, cs);
+}
+static void op_TO_ENV_LOOP_get(const void *NOTUSED(data), scene_state_t *ss,
+                               exec_state_t *NOTUSED(es), command_state_t *cs) {
+    TXSet(TO, TO_ENV_LOOP, cs);
+}
 static void op_TO_CV_INIT_get(const void *NOTUSED(data), scene_state_t *ss,
                               exec_state_t *NOTUSED(es), command_state_t *cs) {
-    CVInit(cs_pop(cs));
+    TXCmd(TO, TO_CV_INIT, cs_pop(cs));
 }
 static void op_TO_TR_INIT_get(const void *NOTUSED(data), scene_state_t *ss,
                               exec_state_t *NOTUSED(es), command_state_t *cs) {
-    TRInit(cs_pop(cs));
+    TXCmd(TO, TO_TR_INIT, cs_pop(cs));
 }
 static void op_TO_INIT_get(const void *NOTUSED(data), scene_state_t *ss,
                            exec_state_t *NOTUSED(es), command_state_t *cs) {
-    uint8_t end = cs_pop(cs) * 4;
-    uint8_t start = end - 3;
-    uint8_t i;
-    for (i = start; i <= end; i++) {
-        CVInit(i);
-        TRInit(i);
-    }
+    TXCmd(TO, TO_INIT, DeviceToOutput(cs_pop(cs)));
 }
 
 // TXi
@@ -733,11 +819,11 @@ static void op_TI_IN_CALIB_get(const void *NOTUSED(data), scene_state_t *ss,
 }
 static void op_TI_STORE_get(const void *NOTUSED(data), scene_state_t *ss,
                             exec_state_t *NOTUSED(es), command_state_t *cs) {
-    TXCmd(TI, TI_STORE, cs_pop(cs));
+    TXCmd(TI, TI_STORE, DeviceToOutput(cs_pop(cs)));
 }
 static void op_TI_RESET_get(const void *NOTUSED(data), scene_state_t *ss,
                             exec_state_t *NOTUSED(es), command_state_t *cs) {
-    TXCmd(TI, TI_RESET, cs_pop(cs));
+    TXCmd(TI, TI_RESET, DeviceToOutput(cs_pop(cs)));
 }
 static void op_TI_PARAM_INIT_get(const void *NOTUSED(data), scene_state_t *ss,
                                  exec_state_t *NOTUSED(es),
