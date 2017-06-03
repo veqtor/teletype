@@ -42,7 +42,8 @@ OPS_SECTIONS = [
     "meadowphysics",
     "orca",
     "justfriends",
-    "telex"
+    "telex_i",
+    "telex_o"
 ]
 
 
