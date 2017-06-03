@@ -14,6 +14,17 @@ extern const tele_op_t op_TO_TR_TIME_M;
 extern const tele_op_t op_TO_TR_POL;
 
 extern const tele_op_t op_TO_TR_PULSE_DIV;
+extern const tele_op_t op_TO_TR_PULSE_MUTE;
+extern const tele_op_t op_TO_TR_M_MUL;
+
+extern const tele_op_t op_TO_M;
+extern const tele_op_t op_TO_M_S;
+extern const tele_op_t op_TO_M_M;
+extern const tele_op_t op_TO_M_BPM;
+extern const tele_op_t op_TO_M_ACT;
+extern const tele_op_t op_TO_M_SYNC;
+extern const tele_op_t op_TO_M_COUNT;
+
 extern const tele_op_t op_TO_TR_M;
 extern const tele_op_t op_TO_TR_M_S;
 extern const tele_op_t op_TO_TR_M_M;
@@ -36,6 +47,7 @@ extern const tele_op_t op_TO_CV_QT_SET;
 extern const tele_op_t op_TO_CV_N;
 extern const tele_op_t op_TO_CV_N_SET;
 extern const tele_op_t op_TO_CV_SCALE;
+extern const tele_op_t op_TO_CV_LOG;
 
 extern const tele_op_t op_TO_OSC;
 extern const tele_op_t op_TO_OSC_SET;
@@ -63,6 +75,7 @@ extern const tele_op_t op_TO_OSC_CYC_M;
 extern const tele_op_t op_TO_OSC_CYC_SET;
 extern const tele_op_t op_TO_OSC_CYC_S_SET;
 extern const tele_op_t op_TO_OSC_CYC_M_SET;
+extern const tele_op_t op_TO_OSC_CTR;
 
 extern const tele_op_t op_TO_ENV_ACT;
 extern const tele_op_t op_TO_ENV_ATT;
@@ -73,12 +86,18 @@ extern const tele_op_t op_TO_ENV_DEC_S;
 extern const tele_op_t op_TO_ENV_DEC_M;
 extern const tele_op_t op_TO_ENV_TRIG;
 
+extern const tele_op_t op_TO_ENV_EOR;
+extern const tele_op_t op_TO_ENV_EOC;
+extern const tele_op_t op_TO_ENV_LOOP;
+
 extern const tele_op_t op_TO_CV_INIT;
 extern const tele_op_t op_TO_TR_INIT;
 extern const tele_op_t op_TO_INIT;
 
 extern const tele_op_t op_TO_TR_P;
 extern const tele_op_t op_TO_TR_P_DIV;
+extern const tele_op_t op_TO_TR_P_MUTE;
+extern const tele_op_t op_TO_TR_P_MUL;
 
 
 // TXi Operators
@@ -115,10 +134,10 @@ void TXSend(uint8_t model, uint8_t command, uint8_t output, int16_t value,
             bool set);
 void TXCmd(uint8_t model, uint8_t command, uint8_t output);
 void TXSet(uint8_t model, uint8_t command, command_state_t *cs);
+void TXDeviceSet(uint8_t model, uint8_t command, command_state_t *cs);
 void TXReceive(uint8_t model, command_state_t *cs, uint8_t mode, bool shift);
+uint8_t DeviceToOutput(int16_t device);
 // temporary init functions
-void TRInit(uint8_t output);
-void CVInit(uint8_t output);
 void INInit(uint8_t input);
 void PRMInit(uint8_t input);
 
@@ -163,14 +182,29 @@ void PRMInit(uint8_t input);
 #define TO_CV_SLEW_M 0x14
 #define TO_CV_OFF 0x15
 
+#define TO_TR_PULSE_MUTE 0x16
+#define TO_TR_M_MUL 0x17
+
+#define TO_M 0x18
+#define TO_M_S 0x19
+#define TO_M_M 0x1A
+#define TO_M_BPM 0x1B
+#define TO_M_ACT 0x1C
+#define TO_M_SYNC 0x1D
+#define TO_M_COUNT 0x1E
+
 #define TO_KILL 0x20
 #define TO_RESET 0x21
+#define TO_TR_INIT 0x22
+#define TO_CV_INIT 0x23
+#define TO_INIT 0x24
 
 #define TO_CV_QT 0x30
 #define TO_CV_QT_SET 0x31
 #define TO_CV_N 0x32
 #define TO_CV_N_SET 0x33
 #define TO_CV_SCALE 0x34
+#define TO_CV_LOG 0x35
 
 #define TO_OSC 0x40
 #define TO_OSC_SET 0x41
@@ -199,6 +233,8 @@ void PRMInit(uint8_t input);
 #define TO_OSC_CYC_S_SET 0x58
 #define TO_OSC_CYC_M_SET 0x59
 
+#define TO_OSC_CTR 0x5A
+
 #define TO_ENV_ACT 0x60
 #define TO_ENV_ATT 0x61
 #define TO_ENV_ATT_S 0x62
@@ -209,6 +245,10 @@ void PRMInit(uint8_t input);
 #define TO_ENV_TRIG 0x67
 #define TO_ENV_CYC 0x68
 #define TO_ENV_BPOL 0x69
+
+#define TO_ENV_EOR 0x6A
+#define TO_ENV_EOC 0x6B
+#define TO_ENV_LOOP 0x6C
 
 // TELEXi
 

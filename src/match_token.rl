@@ -279,6 +279,17 @@
         "TO.KILL"          => { MATCH_OP(E_OP_TO_KILL); };
 
         "TO.TR.PULSE.DIV"  => { MATCH_OP(E_OP_TO_TR_PULSE_DIV); };
+        "TO.TR.PULSE.MUTE" => { MATCH_OP(E_OP_TO_TR_PULSE_MUTE); };
+        "TO.TR.M.MUL"      => { MATCH_OP(E_OP_TO_TR_M_MUL); };
+
+        "TO.M"             => { MATCH_OP(E_OP_TO_M); };
+        "TO.M.S"           => { MATCH_OP(E_OP_TO_M_S); };
+        "TO.M.M"           => { MATCH_OP(E_OP_TO_M_M); };
+        "TO.M.BPM"         => { MATCH_OP(E_OP_TO_M_BPM); };
+        "TO.M.ACT"         => { MATCH_OP(E_OP_TO_M_ACT); };
+        "TO.M.SYNC"        => { MATCH_OP(E_OP_TO_M_SYNC); };
+        "TO.M.COUNT"       => { MATCH_OP(E_OP_TO_M_COUNT); };
+
         "TO.TR.M"          => { MATCH_OP(E_OP_TO_TR_M); };
         "TO.TR.M.S"        => { MATCH_OP(E_OP_TO_TR_M_S); };
         "TO.TR.M.M"        => { MATCH_OP(E_OP_TO_TR_M_M); };
@@ -299,13 +310,15 @@
         "TO.CV.N"          => { MATCH_OP(E_OP_TO_CV_N); };
         "TO.CV.N.SET"      => { MATCH_OP(E_OP_TO_CV_N_SET); };
         "TO.CV.SCALE"      => { MATCH_OP(E_OP_TO_CV_SCALE); };
+        "TO.CV.LOG"        => { MATCH_OP(E_OP_TO_CV_LOG); };
 
         "TO.CV.INIT"       => { MATCH_OP(E_OP_TO_CV_INIT); };
         "TO.TR.INIT"       => { MATCH_OP(E_OP_TO_TR_INIT); };
         "TO.INIT"          => { MATCH_OP(E_OP_TO_INIT); };
 
         "TO.TR.P"          => { MATCH_OP(E_OP_TO_TR_P); };
-        "TO.TR.P.DIV"      => { MATCH_OP(E_OP_TO_TR_P_DIV); };        
+        "TO.TR.P.DIV"      => { MATCH_OP(E_OP_TO_TR_P_DIV); }; 
+        "TO.TR.P.MUTE"     => { MATCH_OP(E_OP_TO_TR_P_MUTE); };       
 
         "TO.OSC"           => { MATCH_OP(E_OP_TO_OSC); };
         "TO.OSC.SET"       => { MATCH_OP(E_OP_TO_OSC_SET); };
@@ -332,6 +345,7 @@
         "TO.OSC.CYC.SET"   => { MATCH_OP(E_OP_TO_OSC_CYC_SET); };
         "TO.OSC.CYC.S.SET" => { MATCH_OP(E_OP_TO_OSC_CYC_S_SET); };
         "TO.OSC.CYC.M.SET" => { MATCH_OP(E_OP_TO_OSC_CYC_M_SET); };
+        "TO.OSC.CTR"       => { MATCH_OP(E_OP_TO_OSC_CTR); };
 
         "TO.ENV.ACT"       => { MATCH_OP(E_OP_TO_ENV_ACT); };
         "TO.ENV.ATT"       => { MATCH_OP(E_OP_TO_ENV_ATT); };
@@ -341,6 +355,10 @@
         "TO.ENV.DEC.S"     => { MATCH_OP(E_OP_TO_ENV_DEC_S); };
         "TO.ENV.DEC.M"     => { MATCH_OP(E_OP_TO_ENV_DEC_M); };
         "TO.ENV.TRIG"      => { MATCH_OP(E_OP_TO_ENV_TRIG); };
+
+        "TO.ENV.EOR"       => { MATCH_OP(E_OP_TO_ENV_EOR); };
+        "TO.ENV.EOC"       => { MATCH_OP(E_OP_TO_ENV_EOC); };
+        "TO.ENV.LOOP"       => { MATCH_OP(E_OP_TO_ENV_LOOP); };
 
         "TI.PARAM"         => { MATCH_OP(E_OP_TI_PARAM); };
         "TI.PARAM.QT"      => { MATCH_OP(E_OP_TI_PARAM_QT); };
