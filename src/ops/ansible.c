@@ -36,12 +36,12 @@ static void op_KR_LOOP_LEN_set(const void *data, scene_state_t *ss,
 static void op_KR_RESET_get(const void *data, scene_state_t *ss,
                             exec_state_t *es, command_state_t *cs);
 
-static void op_ME_PRESET_get(const void *data, scene_state_t *ss,
-                             exec_state_t *es, command_state_t *cs);
-static void op_ME_PRESET_set(const void *data, scene_state_t *ss,
-                             exec_state_t *es, command_state_t *cs);
-static void op_ME_RESET_get(const void *data, scene_state_t *ss,
-                            exec_state_t *es, command_state_t *cs);
+static void op_ME_PRE_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs);
+static void op_ME_PRE_set(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs);
+static void op_ME_RES_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                          command_state_t *cs);
 static void op_ME_STOP_get(const void *data, scene_state_t *ss,
                            exec_state_t *es, command_state_t *cs);
 static void op_ME_SCALE_get(const void *data, scene_state_t *ss,
@@ -132,8 +132,8 @@ const tele_op_t op_KR_LOOP_ST  = MAKE_GET_SET_OP(KR.L.ST    , op_KR_LOOP_ST_get 
 const tele_op_t op_KR_LOOP_LEN = MAKE_GET_SET_OP(KR.L.LEN   , op_KR_LOOP_LEN_get , op_KR_LOOP_LEN_set , 2, true);
 const tele_op_t op_KR_RESET    = MAKE_GET_OP    (KR.RES     , op_KR_RESET_get                         , 2, false);
 
-const tele_op_t op_ME_PRESET   = MAKE_GET_SET_OP(ME.PRESET  , op_ME_PRESET_get   , op_ME_PRESET_set   , 0, true);
-const tele_op_t op_ME_RESET    = MAKE_GET_OP    (ME.RESET   , op_ME_RESET_get                         , 1, false);
+const tele_op_t op_ME_PRE      = MAKE_GET_SET_OP(ME.PRE     , op_ME_PRE_get      , op_ME_PRE_set      , 0, true);
+const tele_op_t op_ME_RES      = MAKE_GET_OP    (ME.RES     , op_ME_RES_get                           , 1, false);
 const tele_op_t op_ME_STOP     = MAKE_GET_OP    (ME.STOP    , op_ME_STOP_get                          , 1, false);
 const tele_op_t op_ME_SCALE    = MAKE_GET_SET_OP(ME.SCALE   , op_ME_SCALE_get    , op_ME_SCALE_set    , 0, true);
 const tele_op_t op_ME_PERIOD   = MAKE_GET_SET_OP(ME.PERIOD  , op_ME_PERIOD_get   , op_ME_PERIOD_set   , 0, true);
@@ -322,17 +322,15 @@ static void op_KR_RESET_get(const void *NOTUSED(data),
     tele_ii_tx(II_KR_ADDR, d, 3);
 }
 
-static void op_ME_PRESET_set(const void *NOTUSED(data),
-                             scene_state_t *NOTUSED(ss),
-                             exec_state_t *NOTUSED(es), command_state_t *cs) {
+static void op_ME_PRE_set(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     uint8_t d[] = { II_MP_PRESET, a };
     tele_ii_tx(II_MP_ADDR, d, 2);
 }
 
-static void op_ME_PRESET_get(const void *NOTUSED(data),
-                             scene_state_t *NOTUSED(ss),
-                             exec_state_t *NOTUSED(es), command_state_t *cs) {
+static void op_ME_PRE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     uint8_t d[] = { II_MP_PRESET | II_GET };
     uint8_t addr = II_MP_ADDR;
     tele_ii_tx(addr, d, 1);
@@ -341,9 +339,8 @@ static void op_ME_PRESET_get(const void *NOTUSED(data),
     cs_push(cs, d[0]);
 }
 
-static void op_ME_RESET_get(const void *NOTUSED(data),
-                            scene_state_t *NOTUSED(ss),
-                            exec_state_t *NOTUSED(es), command_state_t *cs) {
+static void op_ME_RES_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+                          exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     uint8_t d[] = { II_MP_RESET, a };
     tele_ii_tx(II_MP_ADDR, d, 2);

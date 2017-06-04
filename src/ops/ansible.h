@@ -12,8 +12,8 @@ extern const tele_op_t op_KR_LOOP_ST;
 extern const tele_op_t op_KR_LOOP_LEN;
 extern const tele_op_t op_KR_RESET;
 
-extern const tele_op_t op_ME_PRESET;
-extern const tele_op_t op_ME_RESET;
+extern const tele_op_t op_ME_PRE;
+extern const tele_op_t op_ME_RES;
 extern const tele_op_t op_ME_STOP;
 extern const tele_op_t op_ME_SCALE;
 extern const tele_op_t op_ME_PERIOD;

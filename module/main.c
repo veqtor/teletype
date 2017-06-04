@@ -260,9 +260,7 @@ void handler_PollADC(int32_t data) {
 void handler_KeyTimer(int32_t data) {
     if (front_timer) {
         if (front_timer == 1) {
-            if (mode == M_PRESET_R) {
-                process_preset_r_long_front();
-            }
+            if (mode == M_PRESET_R) { process_preset_r_long_front(); }
             front_timer = 0;
         }
         else
