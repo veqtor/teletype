@@ -96,6 +96,8 @@ def common_md():
         md_file = Path(OP_DOCS_DIR, section + ".md")
         toml_file = Path(OP_DOCS_DIR, section + ".toml")
 
+        output += "\\newpage\n"
+
         if md_file.exists() and md_file.is_file():
             print(f"Reading {md_file}")
             output += md_file.read_text()
@@ -173,7 +175,8 @@ def main():
                 format=input_format,
                 to=ext[1:],
                 outputfile=str(p),
-                extra_args=["--column=80",
+                extra_args=["--standalone",
+                            "--column=80",
                             "--toc",
                             "--toc-depth=2",
                             "--latex-engine=xelatex",

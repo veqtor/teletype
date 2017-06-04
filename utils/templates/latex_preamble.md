@@ -7,3 +7,6 @@ monofont: Menlo
 geometry: margin=1in
 links-as-notes: true
 ---
+
+\AtBeginEnvironment{longtable}{\small}{}{}
+
