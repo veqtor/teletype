@@ -260,13 +260,10 @@ void handler_PollADC(int32_t data) {
 void handler_KeyTimer(int32_t data) {
     if (front_timer) {
         if (front_timer == 1) {
-            flash_read(preset_select, &scene_state, &scene_text);
-
-            run_script(&scene_state, INIT_SCRIPT);
-
-            set_last_mode();
-
-            front_timer--;
+            if (mode == M_PRESET_R) {
+                process_preset_r_long_front();
+            }
+            front_timer = 0;
         }
         else
             front_timer--;
