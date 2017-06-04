@@ -90,14 +90,13 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_OR_ROTS, &op_OR_ROTW, &op_OR_GRST, &op_OR_CVA, &op_OR_CVB,
 
     // ansible
-    &op_KR_PRESET, &op_KR_PATTERN, &op_KR_SCALE, &op_KR_PERIOD, &op_KR_POS,
-    &op_KR_LOOP_ST, &op_KR_LOOP_LEN, &op_KR_RESET, &op_ME_PRE, &op_ME_RES,
-    &op_ME_STOP, &op_ME_SCALE, &op_ME_PERIOD, &op_LV_PRESET, &op_LV_RESET,
-    &op_LV_POS, &op_LV_L_ST, &op_LV_L_LEN, &op_LV_L_DIR, &op_LV_CV,
-    &op_CY_PRESET, &op_CY_RESET, &op_CY_POS, &op_CY_REV, &op_CY_CV,
-    &op_MID_SHIFT, &op_MID_SLEW, &op_ARP_STYLE, &op_ARP_HOLD, &op_ARP_RPT,
-    &op_ARP_GATE, &op_ARP_DIV, &op_ARP_RESET, &op_ARP_SHIFT, &op_ARP_SLEW,
-    &op_ARP_FILL, &op_ARP_ROT, &op_ARP_ER,
+    &op_KR_PRE, &op_KR_PAT, &op_KR_SCALE, &op_KR_PERIOD, &op_KR_POS,
+    &op_KR_L_ST, &op_KR_L_LEN, &op_KR_RES, &op_ME_PRE, &op_ME_RES, &op_ME_STOP,
+    &op_ME_SCALE, &op_ME_PERIOD, &op_LV_PRE, &op_LV_RES, &op_LV_POS,
+    &op_LV_L_ST, &op_LV_L_LEN, &op_LV_L_DIR, &op_LV_CV, &op_CY_PRE, &op_CY_RES,
+    &op_CY_POS, &op_CY_REV, &op_CY_CV, &op_MID_SHIFT, &op_MID_SLEW, &op_ARP_STY,
+    &op_ARP_HLD, &op_ARP_RPT, &op_ARP_GT, &op_ARP_DIV, &op_ARP_RES,
+    &op_ARP_SHIFT, &op_ARP_SLEW, &op_ARP_FIL, &op_ARP_ROT, &op_ARP_ER,
 
     // justfriends
     &op_JF_TR, &op_JF_RMODE, &op_JF_RUN, &op_JF_SHIFT, &op_JF_VTR, &op_JF_MODE,
