@@ -21,9 +21,11 @@
 #include "conf_usb_host.h"  // needed in order to include "usb_protocol_hid.h"
 #include "usb_protocol_hid.h"
 
-#define HISTORY_SIZE 16
-static tele_command_t history[HISTORY_SIZE];
-static uint8_t history_line;
+#define MAX_HISTORY_SIZE 16
+static tele_command_t history[MAX_HISTORY_SIZE];  // newest entry in index 0
+static int8_t history_line;                       // -1 for not selected
+static int8_t history_top;                        // -1 when empty
+
 static line_editor_t le;
 static process_result_t output;
 static error_t status;
@@ -84,11 +86,13 @@ void init_live_mode() {
     show_welcome_message = true;
     dirty = D_ALL;
     activity_prev = 0xFF;
+    history_top = -1;
+    history_line = -1;
 }
 
 void set_live_mode() {
     line_editor_set(&le, "");
-    history_line = HISTORY_SIZE;
+    history_line = -1;
     dirty = D_ALL;
     activity_prev = 0xFF;
 }
@@ -96,21 +100,20 @@ void set_live_mode() {
 void process_live_keys(uint8_t k, uint8_t m, bool is_held_key) {
     // <down> or C-n: history next
     if (match_no_mod(m, k, HID_DOWN) || match_ctrl(m, k, HID_N)) {
-        if (history_line < (HISTORY_SIZE - 1)) {
-            history_line++;
+        if (history_line > 0) {
+            history_line--;
             line_editor_set_command(&le, &history[history_line]);
-            dirty |= D_INPUT;
         }
         else {
-            history_line = HISTORY_SIZE;
+            history_line = -1;
             line_editor_set(&le, "");
-            dirty |= D_INPUT;
         }
+        dirty |= D_INPUT;
     }
     // <up> or C-p: history previous
     else if (match_no_mod(m, k, HID_UP) || match_ctrl(m, k, HID_P)) {
-        if (history_line) {
-            history_line--;
+        if (history_line < history_top) {
+            history_line++;
             line_editor_set_command(&le, &history[history_line]);
             dirty |= D_INPUT;
         }
@@ -130,17 +133,23 @@ void process_live_keys(uint8_t k, uint8_t m, bool is_held_key) {
         if (status != E_OK)
             return;  // quit, screen_refresh_live will display the error message
 
-        history_line = HISTORY_SIZE;
         if (command.length) {
+            // increase history_size up to a maximum
+            history_top++;
+            if (history_top >= MAX_HISTORY_SIZE)
+                history_top = MAX_HISTORY_SIZE - 1;
+
             // shuffle the history up
             // should really use some sort of ring buffer
-            for (size_t i = 0; i < HISTORY_SIZE - 1; i++) {
-                memcpy(&history[i], &history[i + 1], sizeof(command));
+            for (size_t i = history_top; i > 0; i--) {
+                memcpy(&history[i], &history[i - 1], sizeof(command));
             }
-            memcpy(&history[HISTORY_SIZE - 1], &command, sizeof(command));
+            memcpy(&history[0], &command, sizeof(command));
 
             output = run_command(&scene_state, &command);
         }
+
+        history_line = -1;
         line_editor_set(&le, "");
     }
     // [ or ]: switch to edit mode
