@@ -1,0 +1,175 @@
+["KR.PRE"]
+prototype = "KR.PRE"
+prototype_set = "KR.PRE x"
+short = "return current preset / load preset `x`"
+
+["KR.PERIOD"]
+prototype = "KR.PERIOD"
+prototype_set = "KR.PERIOD x"
+short = "get/set internal clock period"
+
+["KR.PAT"]
+prototype = "KR.PAT"
+prototype_set = "KR.PAT x"
+short = "get/set current pattern"
+
+["KR.SCALE"]
+prototype = "KR.SCALE"
+prototype_set = "KR.SCALE x"
+short = "get/set current scale"
+
+["KR.POS"]
+prototype = "KR.POS x y"
+prototype_set = "KR.POS x y z"
+short = "get/set position `z` for track `z`, parameter `y`"
+description = """
+Set position to `z` for track `x`, parameter `y`.
+
+A value of `0` for `x` means all tracks.
+
+A value of `0` for `y` means all parameters
+
+Parameters:
+
+ - `0` = all
+ - `1` = trigger
+ - `2` = note
+ - `3` = octave
+ - `4` = length
+"""
+
+["KR.L.ST"]
+prototype = "KR.L.ST x y"
+prototype_set = "KR.L.ST x y z"
+short = "get loop start for track `x`, parameter `y` / set to `z`"
+
+["KR.L.LEN"]
+prototype = "KR.L.LEN"
+prototype_set = "KR.L.LEN"
+short = "get length of trrack `x`, parameter `y` / set to `z`"
+
+["KR.RES"]
+prototype = "KR.RES x y"
+short = "reset to loop start for track `x`, parameter `y`"
+
+["ME.PRE"]
+prototype = "ME.PRE"
+prototype_set = "ME.PRE x"
+short = "return current preset / load preset `x`"
+
+["ME.SCALE"]
+prototype = "ME.SCALE"
+prototype_set = "ME.SCALE x"
+short = "get/set current scale"
+
+["ME.PERIOD"]
+prototype = "ME.PERIOD"
+prototype_set = "ME.PERIOD x"
+short = "get/set internal clock period"
+
+["ME.STOP"]
+prototype = "ME.STOP x"
+short = "stop channel `x` (`0` = all)"
+
+["ME.RES"]
+prototype = "ME.RES x"
+short = "reset channel `x` (`0` = all), also used as \"start\""
+
+["LV.PRE"]
+prototype = "LV.PRE"
+prototype_set = "LV.PRE x"
+short = "return current preset / load preset `x`"
+
+["LV.RES"]
+prototype = "LV.RES x"
+short = "reset, `0` for soft reset (on next ext. clock), `1` for hard reset"
+
+["LV.POS"]
+prototype = "LV.POS"
+prototype_set = "LV.POS x"
+short = "get/set current position"
+
+["LV.L.ST"]
+prototype = "LV.L.ST"
+prototype_set = "LV.L.ST x"
+short = "get/set loop start"
+
+["LV.L.LEN"]
+prototype = "LV.L.LEN"
+prototype_set = "LV.L.LEN x"
+short = "get/set loop length"
+
+["LV.L.DIR"]
+prototype = "LV.L.DIR"
+prototype_set = "LV.L.DIR x"
+short = "get/set loop direction"
+
+["CY.PRE"]
+prototype = "CY.PRE"
+prototype_set = "CY.PRE x"
+short = "return current preset / load preset `x`"
+
+["CY.RES"]
+prototype = "CY.RES x"
+short = "reset channel `x` (`0` = all)"
+
+["CY.POS"]
+prototype = "CY.POS x"
+prototype_set = "CY.POS x y"
+short = "get / set position of channel `x` (`x = 0` to set all), position between `0-255`"
+
+["CY.REV"]
+prototype = "CY.REV x"
+short = "reverse channel `x` (`0` = all)"
+
+["MID.SLEW"]
+prototype = "MID.SLEW t"
+short = "set pitch slew time in ms (applies to all allocation styles except FIXED)"
+
+["MID.SHIFT"]
+prototype = "MID.SHIFT o"
+short = "shift pitch CV by standard Teletype pitch value (e.g. `N 6`, `V -1`, etc)"
+
+["ARP.HLD"]
+prototype = "ARP.HLD h"
+short = "`0` disables key hold mode, other values enable"
+
+["ARP.STY"]
+prototype = "ARP.STY y"
+short = "set base arp style [0-7]"
+
+["ARP.GT"]
+prototype = "ARP.GT v g"
+short = "set voice gate length [0-127], scaled/synced to course divisions of voice clock"
+
+["ARP.SLEW"]
+prototype = "ARP.SLEW v t"
+short = "set voice slew time in ms"
+
+["ARP.RPT"]
+prototype = "ARP.RPT v n s"
+short = "set voice pattern repeat, `n` times [0-8], shifted by `s` semitones [-24, 24]"
+
+["ARP.DIV"]
+prototype = "ARP.DIV v d"
+short = "set voice clock divisor (euclidean length), range [1-32]"
+
+["ARP.FIL"]
+prototype = "ARP.FIL v f"
+short = "set voice euclidean fill, use 1 for straight clock division, range [1-32]"
+
+["ARP.ROT"]
+prototype = "ARP.ROT v r"
+short = "set voice euclidean rotation, range [-32, 32]"
+
+["ARP.ER"]
+prototype = "ARP.ER v f d r"
+short = "set all euclidean rhythm"
+
+["ARP.RES"]
+prototype = "ARP.RES v"
+short = "reset voice clock/pattern on next base clock tick"
+
+["ARP.SHIFT"]
+prototype = "ARP.SHIFT v o"
+short = "shift voice cv by standard tt pitch value (e.g. N 6, V -1, etc)"
