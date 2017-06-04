@@ -63,6 +63,7 @@ void process_preset_r_keys(uint8_t k, uint8_t m, bool is_held_key) {
     // <enter>: load preset
     else if (match_no_mod(m, k, HID_ENTER) && !is_held_key) {
         flash_read(preset_select, &scene_state, &scene_text);
+        flash_update_last_saved_scene(preset_select);
         ss_set_scene(&scene_state, preset_select);
 
         run_script(&scene_state, INIT_SCRIPT);

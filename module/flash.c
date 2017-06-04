@@ -42,8 +42,7 @@ void flash_prepare() {
     memset(text, 0, SCENE_TEXT_LINES * SCENE_TEXT_CHARS);
 
     for (uint8_t i = 0; i < SCENE_SLOTS; i++) { flash_write(i, &scene, &text); }
-    preset_select = 0;
-    flashc_memset8((void *)&f.last_scene, preset_select, 1, true);
+    flash_update_last_saved_scene(0);
     flashc_memset8((void *)&f.fresh, FIRSTRUN_KEY, 1, true);
 }
 
@@ -55,7 +54,6 @@ void flash_write(uint8_t preset_no, scene_state_t *scene,
                   ss_patterns_size(), true);
     flashc_memcpy((void *)&f.scenes[preset_no].text, text,
                   SCENE_TEXT_LINES * SCENE_TEXT_CHARS, true);
-    flashc_memset8((void *)&(f.last_scene), preset_no, 1, true);
 }
 
 void flash_read(uint8_t preset_no, scene_state_t *scene,
@@ -66,11 +64,14 @@ void flash_read(uint8_t preset_no, scene_state_t *scene,
            ss_patterns_size());
     memcpy(text, &f.scenes[preset_no].text,
            SCENE_TEXT_LINES * SCENE_TEXT_CHARS);
-    flashc_memset8((void *)&f.last_scene, preset_no, 1, true);
 }
 
 uint8_t flash_last_saved_scene() {
     return f.last_scene;
+}
+
+void flash_update_last_saved_scene(uint8_t preset_no) {
+    flashc_memset8((void *)&f.last_scene, preset_no, 1, true);
 }
 
 const char *flash_scene_text(uint8_t preset_no, size_t line) {

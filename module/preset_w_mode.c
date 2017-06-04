@@ -87,6 +87,7 @@ void process_preset_w_keys(uint8_t k, uint8_t m, bool is_held_key) {
         if (!is_held_key) {
             strcpy(scene_text[edit_line + edit_offset], line_editor_get(&le));
             flash_write(preset_select, &scene_state, &scene_text);
+            flash_update_last_saved_scene(preset_select);
             set_last_mode();
         }
     }
