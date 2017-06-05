@@ -511,8 +511,8 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         return true;
     }
-    // <print screen>: help text, or return to last mode
-    else if (match_no_mod(m, k, HID_PRINTSCREEN)) {
+    // <alt>-?: help text, or return to last mode
+    else if (match_shift_alt(m, k, HID_SLASH)) {
         if (mode == M_HELP)
             set_last_mode();
         else {
@@ -538,6 +538,18 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
     // <numpad-1> through <numpad-8>: run corresponding script
     else if (no_mod(m) && k >= HID_KEYPAD_1 && k <= HID_KEYPAD_8) {
         run_script(&scene_state, k - HID_KEYPAD_1);
+        return true;
+    }
+    // <num lock>: jump to pattern mode
+    else if (match_no_mod(m, k, HID_KEYPAD_NUM_LOCK) ||
+             match_no_mod(m, k, HID_F11)) {
+        if (mode != M_PATTERN) { set_mode(M_PATTERN); }
+        return true;
+    }
+    // <print screen>: jump to live mode
+    else if (match_no_mod(m, k, HID_PRINTSCREEN) ||
+             match_no_mod(m, k, HID_F12)) {
+        if (mode != M_LIVE) { set_mode(M_LIVE); }
         return true;
     }
     else {
