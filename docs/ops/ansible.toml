@@ -104,6 +104,10 @@ prototype = "LV.L.DIR"
 prototype_set = "LV.L.DIR x"
 short = "get/set loop direction"
 
+["LV.CV"]
+prototype = "LV.CV x"
+short = "get the current CV value for channel `x`"
+
 ["CY.PRE"]
 prototype = "CY.PRE"
 prototype_set = "CY.PRE x"
@@ -121,6 +125,10 @@ short = "get / set position of channel `x` (`x = 0` to set all), position betwee
 ["CY.REV"]
 prototype = "CY.REV x"
 short = "reverse channel `x` (`0` = all)"
+
+["CY.CV"]
+prototype = "CY.CV x"
+short = "get the current CV value for channel `x`"
 
 ["MID.SLEW"]
 prototype = "MID.SLEW t"
