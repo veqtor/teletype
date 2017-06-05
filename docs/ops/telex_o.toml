@@ -513,3 +513,7 @@ short = "initializes `CV` output `x` back to the default boot settings and behav
 ["TO.INIT"]
 prototype = "TO.INIT d"
 short = "initializes all of the `TR` and `CV` outputs for device number `d` (1-8)"
+
+["TO.KILL"]
+prototype = "TO.KILL d"
+short = "cancels all `TR` pulses and `CV` slews for device number `d` (1-8)"
