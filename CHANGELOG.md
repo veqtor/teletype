@@ -4,7 +4,7 @@
 - **BREAKING**: remove `II` op. Ops that required it will now work with out it. (e.g. `II MP.PRESET 1` will become just `MP.PRESET 1`)
 - **BREAKING**: merge the `MUTE` and `UNMUTE` ops. Now `MUTE x` will return the mute status for trigger `x` (`0` is unmuted, `1` is muted), and `MUTE x y` will set the mute for trigger `x` (`y = 0` to unmute, `y = 1` to mute)
 - **BREAKING**: remove unused Meadowphysics ops: `MP.SYNC`, `MP.MUTE`, `MP.UNMUTE`, `MP.FREEZE`, `MP.UNFREEZE`
-- **BREAKING**: rename Ansible Meadowphysics ops to start with `ME`, and make the names consistent with those used by Meadowphysics
+- **BREAKING**: rename Ansible Meadowphysics ops to start with `ME`
 - **NEW**: sub commands, use a `;` separator to run multiple commands on a single line, e.g. `X 1; Y 2`
 - **NEW**: key bindings rewritten
 - **NEW**: aliases: `+` for `ADD`, `-` for `SUB`, `*` for `MUL`, `/` for `DIV`, `%` for `MOD`, `<<` for `LSH`, `>>` for `RSH`, `==` for `EQ`, `!=` for `NE`, `<` for `LT`, `>` for `GT`, `<=` for `LTE`, `>=` for `GTE`, `!` for `EZ`, `&&` for `AND`, `||` for `OR`, `PRM` for `PARAM`, `TR.P` for `TR.PULSE`
@@ -22,6 +22,7 @@
 - **FIX**: numerous crashing bugs with text entry
 - **FIX**: `i2c` bus crashes under high `M` times with external triggers
 - **FIX**: `P.I` and `PN.I` no longer set values longer than allowed
+- **FIX**: `VV` works correctly with negative values
 
 ## v1.4.1
 - **NEW**: added Ansible remote commands `LV.CV` and `CY.CV`
