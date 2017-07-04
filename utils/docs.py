@@ -84,8 +84,9 @@ def common_md():
     op_extended_template = env.get_template("op_extended.jinga2.md")
 
     output = ""
-    output += Path(DOCS_DIR / "modes.md").read_text()
-    output += Path(DOCS_DIR / "ops.md").read_text()
+    output += Path(DOCS_DIR / "whats_new.md").read_text() + "\n\n"
+    output += Path(DOCS_DIR / "modes.md").read_text() + "\n\n"
+    output += Path(DOCS_DIR / "ops.md").read_text() + "\n\n"
 
     all_ops = set(list_ops()) | set(list_mods())
     all_ops_dict = {}
@@ -100,7 +101,7 @@ def common_md():
 
         if md_file.exists() and md_file.is_file():
             print(f"Reading {md_file}")
-            output += md_file.read_text()
+            output += md_file.read_text() + "\n\n"
             output += "\n"
 
         if toml_file.exists() and toml_file.is_file():
@@ -123,6 +124,8 @@ def common_md():
             output += op_table_template.render(ops=ops.values())
             output += "\n"
             output += "\n".join([e[1] for e in extended]) + "\n\n"
+
+    output += Path(DOCS_DIR / "advanced.md").read_text() + "\n\n"
 
     output += "\\appendix\n\n"
 
