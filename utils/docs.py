@@ -9,8 +9,8 @@ import pytoml as toml
 
 from common import list_ops, list_mods
 
-if sys.version_info < (3, 6):
-    raise "Need Python 3.6 or later"
+if (sys.version_info.major, sys.version_info.minor) < (3, 6):
+    raise Exception("need Python 3.6 or later")
 
 THIS_FILE = Path(__file__).resolve()
 ROOT_DIR = THIS_FILE.parent.parent

@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 
+import sys
 from os import path
 
 from common import list_tele_ops, list_tele_mods, OP_C
+
+if (sys.version_info.major, sys.version_info.minor) < (3, 6):
+    raise Exception("need Python 3.6 or later")
 
 THIS_FILE = path.realpath(__file__)
 THIS_DIR = path.dirname(THIS_FILE)
