@@ -17,6 +17,7 @@ ROOT_DIR = THIS_FILE.parent.parent
 TEMPLATE_DIR = ROOT_DIR / "utils" / "templates"
 DOCS_DIR = ROOT_DIR / "docs"
 OP_DOCS_DIR = DOCS_DIR / "ops"
+FONTS_DIR = ROOT_DIR / "utils" / "fonts"
 
 env = jinja2.Environment(
     autoescape=False,
@@ -171,7 +172,8 @@ def main():
                             "--toc-depth=2",
                             "--css=" + str(TEMPLATE_DIR / "docs.css")])
         elif ext == ".pdf" or ext == ".tex":
-            latex = Path(TEMPLATE_DIR / "latex_preamble.md").read_text()
+            latex_preamble = env.get_template("latex_preamble.jinga2.md")
+            latex = latex_preamble.render(fonts_dir=FONTS_DIR)
             latex += output
             pypandoc.convert_text(
                 latex,

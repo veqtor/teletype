@@ -7,13 +7,13 @@ subparagraph: true
 fontsize: 12pt
 mainfont: Roboto-Regular.ttf
 mainfontoptions:
-- Path={{fonts_dir}}roboto-hinted/
+- Path=/Users/sam/Dropbox/Projects/monome/teletype/utils/fonts/roboto-hinted/
 - BoldFont=Roboto-Bold.ttf
 - ItalicFont=Roboto-Italic.ttf
 - BoldItalicFont=Roboto-BoldItalic.ttf
 monofont: RobotoMono-Regular.ttf
 monofontoptions:
-- Path={{fonts_dir}}roboto-mono/
+- Path=/Users/sam/Dropbox/Projects/monome/teletype/utils/fonts/roboto-mono/
 - BoldFont=RobotoMono-Bold.ttf
 - ItalicFont=RobotoMono-Italic.ttf
 - BoldItalicFont=RobotoMono-BoldItalic.ttf
