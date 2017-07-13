@@ -15,15 +15,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Help text ///////////////////////////////////////////////////////////////////
 
-#define HELP_PAGES 8
+#define HELP_PAGES 7
 
-#define HELP1_LENGTH 38
-const char* help1[HELP1_LENGTH] = { "1/8 HELP",
+#define HELP1_LENGTH 41
+const char* help1[HELP1_LENGTH] = { "1/7 HELP",
                                     "[ ] NAVIGATE HELP PAGES",
                                     "UP/DOWN TO SCROLL",
                                     " ",
-                                    "TAB|EDIT/LIVE",
-                                    "TILDE|TRACKER",
+                                    "TAB|EDIT/LIVE/PATTERN",
+                                    "PRINT SCREEN|JUMP TO LIVE",
+                                    "NUM LOCK|JUMP TO PATTERN",
+                                    "F1-F10|EXECUTE SCRIPT",
+                                    "ALT-F1-F10|EDIT SCRIPT",
                                     "ESC|SCENE",
                                     "ALT-ESC|WRITE",
                                     " ",
@@ -42,7 +45,7 @@ const char* help1[HELP1_LENGTH] = { "1/8 HELP",
                                     "SH-ENTER|INSERT",
                                     "SH-BSP|CLEAR",
                                     " ",
-                                    "// TRACKER",
+                                    "// PATTERN",
                                     "ARROWS|NAVIGATE",
                                     "ALT-ARROWS|JUMP",
                                     "0-9|NUMERIC ENTRY",
@@ -58,18 +61,22 @@ const char* help1[HELP1_LENGTH] = { "1/8 HELP",
                                     "ALT-L,S,E|JUMP" };
 
 #define HELP2_LENGTH 13
-const char* help2[HELP2_LENGTH] = {
-    "2/8 VARIABLES",           " ",
-    "X, Y, Z|GENERAL PURPOSE", "T|USE FOR TIME",
-    "A-D|ASSIGNED TO 1-4",     " ",
-    "// SPECIAL VARIABLES",    "I|USED BY LOOP",
-    "O|INCREMENTS ON READ",    "DRUNK|INC BY -1, 0, +1",
-    "Q|SHIFT REGISTER",        "Q.N|SET Q LENGTH",
-    "Q.AVG|AVERAGE OF ALL Q"
-};
+const char* help2[HELP2_LENGTH] = { "2/7 VARIABLES",
+                                    " ",
+                                    "X, Y, Z|GENERAL PURPOSE",
+                                    "T|USE FOR TIME",
+                                    "A, B, C, D|ASSIGNED TO 1-4",
+                                    " ",
+                                    "// SPECIAL VARIABLES",
+                                    "I|USED BY LOOP",
+                                    "O|INCREMENTS ON READ",
+                                    "DRUNK|INC BY -1, 0, +1",
+                                    "Q|SHIFT REGISTER",
+                                    "Q.N|SET Q LENGTH",
+                                    "Q.AVG|AVERAGE OF ALL Q" };
 
-#define HELP3_LENGTH 20
-const char* help3[HELP3_LENGTH] = { "3/8 PARAMETERS",
+#define HELP3_LENGTH 21
+const char* help3[HELP3_LENGTH] = { "3/7 PARAMETERS",
                                     " ",
                                     "TR A-D|SET TR VALUE (0,1)",
                                     "TR.TIME A-D|TR PULSE TIME",
@@ -88,10 +95,11 @@ const char* help3[HELP3_LENGTH] = { "3/8 PARAMETERS",
                                     "TIME|TIMER COUNT (MS)",
                                     "TIME.ACT|ENABLE TIMER (0/1)",
                                     " ",
+                                    "SCRIPT A|RUN SCRIPT",
                                     "SCENE|GET/SET SCENE #" };
 
 #define HELP4_LENGTH 9
-const char* help4[HELP4_LENGTH] = { "4/8 DATA AND TABLES",
+const char* help4[HELP4_LENGTH] = { "4/7 DATA AND TABLES",
                                     " ",
                                     "ALL PARAMS HAVE 16B RANGE",
                                     "-32768 TO 32767",
@@ -102,7 +110,7 @@ const char* help4[HELP4_LENGTH] = { "4/8 DATA AND TABLES",
                                     "VV 0-1000|V WITH 2 DECIMALS" };
 
 #define HELP5_LENGTH 35
-const char* help5[HELP5_LENGTH] = { "5/8 OPERATORS",
+const char* help5[HELP5_LENGTH] = { "5/7 OPERATORS",
                                     " ",
                                     "RAND A|RANDOM 0 - A",
                                     "RRAND A B|RANDOM A - B",
@@ -139,31 +147,31 @@ const char* help5[HELP5_LENGTH] = { "5/8 OPERATORS",
                                     "TR.PULSE X|PULSE TR X" };
 
 #define HELP6_LENGTH 22
-const char* help6[HELP6_LENGTH] = { "6/8 PRE :",
+const char* help6[HELP6_LENGTH] = { "6/7 PRE :",
                                     " ",
                                     "EACH PRE NEEDS A : FOLLOWED",
                                     "BY A COMMAND TO OPERATE ON",
                                     " ",
-                                    "PROB A :|PROBABALITY 0-100",
+                                    "PROB A: | PROBABALITY 0-100",
                                     " ",
-                                    "DEL A :|DELAY BY A (MS)",
+                                    "DEL A: |DELAY BY A (MS)",
                                     "DEL.CLR|KILL ALL DELAYS",
                                     " ",
-                                    "S :|PUSH ONTO STACK",
+                                    "S: |PUSH ONTO STACK",
                                     "S.CLR|CLEAR S",
                                     "S.ALL|EXECUTE ALL S",
                                     "S.POP|EXECUTE NEWEST S",
                                     "S.L|QUERY LENGTH OF S",
                                     " ",
-                                    "IF A :|EXECUTE IF NON-ZERO",
-                                    "ELIF A :|AFTER IF WHEN TRUE",
-                                    "ELSE :|AFTER FAILED IF",
+                                    "IF A: |EXECUTE IF NON-ZERO",
+                                    "ELIF A: |AFTER IF WHEN TRUE",
+                                    "ELSE: |AFTER FAILED IF",
                                     " ",
-                                    "L A B :|ITERATE FROM A-B",
+                                    "L A B: |ITERATE FROM A-B",
                                     "NB: I IS UPDATED EACH TIME" };
 
 #define HELP7_LENGTH 26
-const char* help7[HELP7_LENGTH] = { "7/8 PATTERNS",
+const char* help7[HELP7_LENGTH] = { "7/7 PATTERNS",
                                     " ",
                                     "// DIRECT ACCESS",
                                     "P A|GET VAL AT INDEX A",
@@ -190,60 +198,16 @@ const char* help7[HELP7_LENGTH] = { "7/8 PATTERNS",
                                     "P.NEXT A|GET/SET NEXT POS",
                                     "P.PREV A|GET/SET PREV POS" };
 
-#define HELP8_LENGTH 42
-const char* help8[HELP8_LENGTH] = { "8/8 REMOTE",
-                                    " ",
-                                    "REMOTE CONTROL OF MONOME",
-                                    "TRILOGY MODULES OVER II",
-                                    " ",
-                                    "ALL MESSAGES NEED A VALUE",
-                                    " ",
-                                    "// WHITE WHALE",
-                                    "WW.PRESET|RECALL PRESET",
-                                    "WW.POS|CUT TO POSITION",
-                                    "WW.SYNC|CUT & HARD SYNC",
-                                    "WW.START|SET LOOP START",
-                                    "WW.END|SET LOOP END",
-                                    "WW.PMODE|SET PLAY MODE",
-                                    "WW.PATTERN|  CHANGE PATTERN",
-                                    "WW.QPATTERN|  QUEUED P CHANGE",
-                                    "WW.MUTE1|MUTE TR 1",
-                                    "WW.MUTE2|MUTE TR 2",
-                                    "WW.MUTE3|MUTE TR 3",
-                                    "WW.MUTE4|MUTE TR 4",
-                                    "WW.MUTEA|MUTE CV A",
-                                    "WW.MUTEB|MUTE CV B",
-                                    " ",
-                                    "// MEADOWPHYSICS",
-                                    "MP.PRESET|RECALL PRESET",
-                                    "MP.RESET|RESET POSITIONS",
-                                    "MP.SYNC|RESET POS AND SYNC",
-                                    "MP.MUTE|MUTES OUTPUT 1-8",
-                                    "MP.UNMUTE|UNMUTES OUTPUT",
-                                    "MP.FREEZE|FREEZE ROW 1-8",
-                                    "MP.UNFREEZE|  UNFREEZE ROW",
-                                    " ",
-                                    "// EARTHSEA",
-                                    "ES.PRESET|RECALL PRESET",
-                                    "ES.MODE|SET PATTERN CLOCK",
-                                    "ES.CLOCK|NEXT PATT EVENT",
-                                    "ES.RESET|PLAY PATTERN",
-                                    "ES.PATTERN|SET PATTERN #",
-                                    "ES.TRANS|SET TRANSPOSE",
-                                    "ES.STOP|STOP PATTERN",
-                                    "ES.TRIPLE|RECALL SHAPE 1-4",
-                                    "ES.MAGIC|1=HALF, 2=DOUBLE" };
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Help mode ///////////////////////////////////////////////////////////////////
 
 const char** help_pages[HELP_PAGES] = { help1, help2, help3, help4,
-                                        help5, help6, help7, help8 };
+                                        help5, help6, help7 };
 const uint8_t help_length[HELP_PAGES] = { HELP1_LENGTH, HELP2_LENGTH,
                                           HELP3_LENGTH, HELP4_LENGTH,
                                           HELP5_LENGTH, HELP6_LENGTH,
-                                          HELP7_LENGTH, HELP8_LENGTH };
+                                          HELP7_LENGTH };
 
 static uint8_t page_no;
 static uint8_t offset;
