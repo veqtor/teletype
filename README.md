@@ -70,7 +70,7 @@ To format the code using `clang-format`, run `make format` in the project's root
 
 ## Documentation
 
-In order to build the documentation you will need Python 3.6, [Pandoc][], as well as the Python libraries specified in the [`requirements.pip`][requirements.pip] file. In addition, to generate the PDF output you will also require [TexLive][] (or [MacTex][]).
+In order to build the documentation you will need Python 3.6 or greater, [Pandoc][], as well as the Python libraries specified in the [`requirements.pip`][requirements.pip] file. In addition, to generate the PDF output you will also require [TexLive][] (or [MacTex][]).
 
 On OSX the dependencies can be installed with `brew`.
 
@@ -82,7 +82,9 @@ cd utils
 pip3 install -r requirements.pip
 ```
 
-On Linux I would suggest using your package manager to install all the dependencies (including those in the [`requirements.pip`][requirements.pip] file).
+On Linux I would suggest using [`virtualenv`][virtualenv] to install all the Python dependencies (including those in the [`requirements.pip`][requirements.pip] file), and to ensure that the `python3` binary is version 3.6 or greater instead of the default of your distro.
+
+[virtualenv]: https://virtualenv.pypa.io/en/stable/
 
 To generate the documentation:
 
