@@ -731,6 +731,10 @@ int main(void) {
     init_live_mode();
     set_mode(M_LIVE);
 
+    // wait 50ms before running the init script to allow for any i2c devices to
+    // fully initalise
+    delay_ms(50);
+
     run_script(&scene_state, INIT_SCRIPT);
 
     while (true) { check_events(); }
