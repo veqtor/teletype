@@ -1,3 +1,4 @@
+# Modes
 
 ## Global key bindings
 
@@ -9,7 +10,7 @@ These bindings work everywhere.
 | `<esc>`                      | preset read mode, or return to last mode       |
 | `alt-<esc>`                  | preset write mode                              |
 | `win-<esc>`                  | clear delays, stack and slews                  |
-| `<print screen>`             | help text, or return to last mode              |
+| `<alt>-?`                    | help text, or return to last mode              |
 | `<F1>` to `<F8>`             | run corresponding script                       |
 | `<F9>`                       | run metro script                               |
 | `<F10>`                      | run init script                                |
@@ -17,6 +18,8 @@ These bindings work everywhere.
 | `alt-<F9>`                   | edit metro script                              |
 | `alt-<F10>`                  | edit init script                               |
 | `<numpad-1>` to `<numpad-8>` | run corresponding script                       |
+| `<num lock>` / `<F11>`       | jump to pattern mode                           |
+| `<print screen>` / `<F12>`   | jump to live mode                              |
 
 ## Text editing
 

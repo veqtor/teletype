@@ -260,13 +260,8 @@ void handler_PollADC(int32_t data) {
 void handler_KeyTimer(int32_t data) {
     if (front_timer) {
         if (front_timer == 1) {
-            flash_read(preset_select, &scene_state, &scene_text);
-
-            run_script(&scene_state, INIT_SCRIPT);
-
-            set_last_mode();
-
-            front_timer--;
+            if (mode == M_PRESET_R) { process_preset_r_long_front(); }
+            front_timer = 0;
         }
         else
             front_timer--;
@@ -516,8 +511,8 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
         }
         return true;
     }
-    // <print screen>: help text, or return to last mode
-    else if (match_no_mod(m, k, HID_PRINTSCREEN)) {
+    // <alt>-?: help text, or return to last mode
+    else if (match_shift_alt(m, k, HID_SLASH)) {
         if (mode == M_HELP)
             set_last_mode();
         else {
@@ -543,6 +538,18 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
     // <numpad-1> through <numpad-8>: run corresponding script
     else if (no_mod(m) && k >= HID_KEYPAD_1 && k <= HID_KEYPAD_8) {
         run_script(&scene_state, k - HID_KEYPAD_1);
+        return true;
+    }
+    // <num lock>: jump to pattern mode
+    else if (match_no_mod(m, k, HID_KEYPAD_NUM_LOCK) ||
+             match_no_mod(m, k, HID_F11)) {
+        if (mode != M_PATTERN) { set_mode(M_PATTERN); }
+        return true;
+    }
+    // <print screen>: jump to live mode
+    else if (match_no_mod(m, k, HID_PRINTSCREEN) ||
+             match_no_mod(m, k, HID_F12)) {
+        if (mode != M_LIVE) { set_mode(M_LIVE); }
         return true;
     }
     else {
@@ -573,7 +580,9 @@ void tele_metro_updated() {
     uint32_t metro_time = scene_state.variables.m;
 
     bool m_act = scene_state.variables.m_act > 0;
-    if (metro_time < 10) metro_time = 10;
+    if (metro_time < METRO_MIN_UNSUPPORTED_MS) {
+        metro_time = METRO_MIN_UNSUPPORTED_MS;
+    }
 
     if (m_act && !metro_timer_enabled) {  // enable the timer
         timer_add(&metroTimer, metro_time, &metroTimer_callback, NULL);
@@ -721,6 +730,10 @@ int main(void) {
 
     init_live_mode();
     set_mode(M_LIVE);
+
+    // wait 50ms before running the init script to allow for any i2c devices to
+    // fully initalise
+    delay_ms(50);
 
     run_script(&scene_state, INIT_SCRIPT);
 

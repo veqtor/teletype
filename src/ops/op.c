@@ -35,7 +35,7 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_O_WRAP, &op_T, &op_TIME, &op_TIME_ACT, &op_X, &op_Y, &op_Z,
 
     // metronome
-    &op_M, &op_M_ACT, &op_M_RESET,
+    &op_M, &op_M_SYM_EXCLAMATION, &op_M_ACT, &op_M_RESET,
 
     // patterns
     &op_P_N, &op_P, &op_PN, &op_P_L, &op_PN_L, &op_P_WRAP, &op_PN_WRAP,
@@ -55,13 +55,13 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     // maths
     &op_ADD, &op_SUB, &op_MUL, &op_DIV, &op_MOD, &op_RAND, &op_RRAND, &op_TOSS,
     &op_MIN, &op_MAX, &op_LIM, &op_WRAP, &op_QT, &op_AVG, &op_EQ, &op_NE,
-    &op_LT, &op_GT, &op_NZ, &op_EZ, &op_RSH, &op_LSH, &op_EXP, &op_ABS, &op_AND,
-    &op_OR, &op_XOR, &op_JI, &op_SCALE, &op_N, &op_V, &op_VV, &op_ER,
-    &op_SYM_PLUS, &op_SYM_DASH, &op_SYM_STAR, &op_SYM_FORWARD_SLASH,
+    &op_LT, &op_GT, &op_LTE, &op_GTE, &op_NZ, &op_EZ, &op_RSH, &op_LSH, &op_EXP,
+    &op_ABS, &op_AND, &op_OR, &op_JI, &op_SCALE, &op_N, &op_V, &op_VV, &op_ER,
+    &op_XOR, &op_SYM_PLUS, &op_SYM_DASH, &op_SYM_STAR, &op_SYM_FORWARD_SLASH,
     &op_SYM_PERCENTAGE, &op_SYM_EQUAL_x2, &op_SYM_EXCLAMATION_EQUAL,
     &op_SYM_LEFT_ANGLED, &op_SYM_RIGHT_ANGLED, &op_SYM_LEFT_ANGLED_EQUAL,
     &op_SYM_RIGHT_ANGLED_EQUAL, &op_SYM_EXCLAMATION, &op_SYM_LEFT_ANGLED_x2,
-    &op_SYM_RIGHT_ANGLED_x2, &op_AMPERSAND_x2, &op_PIPE_x2,
+    &op_SYM_RIGHT_ANGLED_x2, &op_SYM_AMPERSAND_x2, &op_SYM_PIPE_x2,
 
     // stack
     &op_S_ALL, &op_S_POP, &op_S_CLR, &op_S_L,
@@ -78,8 +78,7 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_WW_MUTE3, &op_WW_MUTE4, &op_WW_MUTEA, &op_WW_MUTEB,
 
     // meadowphysics
-    &op_MP_PRESET, &op_MP_RESET, &op_MP_SYNC, &op_MP_MUTE, &op_MP_UNMUTE,
-    &op_MP_FREEZE, &op_MP_UNFREEZE, &op_MP_STOP,
+    &op_MP_PRESET, &op_MP_RESET, &op_MP_STOP,
 
     // earthsea
     &op_ES_PRESET, &op_ES_MODE, &op_ES_CLOCK, &op_ES_RESET, &op_ES_PATTERN,
@@ -91,14 +90,13 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_OR_ROTS, &op_OR_ROTW, &op_OR_GRST, &op_OR_CVA, &op_OR_CVB,
 
     // ansible
-    &op_KR_PRESET, &op_KR_PATTERN, &op_KR_SCALE, &op_KR_PERIOD, &op_KR_POS,
-    &op_KR_LOOP_ST, &op_KR_LOOP_LEN, &op_KR_RESET, &op_MP_PRESET1,
-    &op_MP_RESET1, &op_MP_STOP1, &op_MP_SCALE, &op_MP_PERIOD, &op_LV_PRESET,
-    &op_LV_RESET, &op_LV_POS, &op_LV_L_ST, &op_LV_L_LEN, &op_LV_L_DIR,
-    &op_LV_CV, &op_CY_PRESET, &op_CY_RESET, &op_CY_POS, &op_CY_REV, &op_CY_CV,
-    &op_MID_SHIFT, &op_MID_SLEW, &op_ARP_STYLE, &op_ARP_HOLD, &op_ARP_RPT,
-    &op_ARP_GATE, &op_ARP_DIV, &op_ARP_RESET, &op_ARP_SHIFT, &op_ARP_SLEW,
-    &op_ARP_FILL, &op_ARP_ROT, &op_ARP_ER,
+    &op_KR_PRE, &op_KR_PAT, &op_KR_SCALE, &op_KR_PERIOD, &op_KR_POS,
+    &op_KR_L_ST, &op_KR_L_LEN, &op_KR_RES, &op_ME_PRE, &op_ME_RES, &op_ME_STOP,
+    &op_ME_SCALE, &op_ME_PERIOD, &op_LV_PRE, &op_LV_RES, &op_LV_POS,
+    &op_LV_L_ST, &op_LV_L_LEN, &op_LV_L_DIR, &op_LV_CV, &op_CY_PRE, &op_CY_RES,
+    &op_CY_POS, &op_CY_REV, &op_CY_CV, &op_MID_SHIFT, &op_MID_SLEW, &op_ARP_STY,
+    &op_ARP_HLD, &op_ARP_RPT, &op_ARP_GT, &op_ARP_DIV, &op_ARP_RES,
+    &op_ARP_SHIFT, &op_ARP_SLEW, &op_ARP_FIL, &op_ARP_ROT, &op_ARP_ER,
 
     // justfriends
     &op_JF_TR, &op_JF_RMODE, &op_JF_RUN, &op_JF_SHIFT, &op_JF_VTR, &op_JF_MODE,
@@ -108,17 +106,21 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_TO_TR, &op_TO_TR_TOG, &op_TO_TR_PULSE, &op_TO_TR_TIME, &op_TO_TR_TIME_S,
     &op_TO_TR_TIME_M, &op_TO_TR_POL, &op_TO_KILL,
 
-    &op_TO_TR_PULSE_DIV, &op_TO_TR_M, &op_TO_TR_M_S, &op_TO_TR_M_M,
-    &op_TO_TR_M_BPM, &op_TO_TR_M_ACT, &op_TO_TR_M_SYNC, &op_TO_TR_WIDTH,
-    &op_TO_TR_M_COUNT,
+    &op_TO_TR_PULSE_DIV, &op_TO_TR_PULSE_MUTE, &op_TO_TR_M_MUL,
+
+    &op_TO_M, &op_TO_M_S, &op_TO_M_M, &op_TO_M_BPM, &op_TO_M_ACT, &op_TO_M_SYNC,
+    &op_TO_M_COUNT,
+
+    &op_TO_TR_M, &op_TO_TR_M_S, &op_TO_TR_M_M, &op_TO_TR_M_BPM, &op_TO_TR_M_ACT,
+    &op_TO_TR_M_SYNC, &op_TO_TR_WIDTH, &op_TO_TR_M_COUNT,
 
     &op_TO_CV, &op_TO_CV_SLEW, &op_TO_CV_SLEW_S, &op_TO_CV_SLEW_M,
     &op_TO_CV_SET, &op_TO_CV_OFF, &op_TO_CV_QT, &op_TO_CV_QT_SET, &op_TO_CV_N,
-    &op_TO_CV_N_SET, &op_TO_CV_SCALE,
+    &op_TO_CV_N_SET, &op_TO_CV_SCALE, &op_TO_CV_LOG,
 
     &op_TO_CV_INIT, &op_TO_TR_INIT, &op_TO_INIT,
 
-    &op_TO_TR_P, &op_TO_TR_P_DIV,
+    &op_TO_TR_P, &op_TO_TR_P_DIV, &op_TO_TR_P_MUTE,
 
     &op_TO_OSC, &op_TO_OSC_SET, &op_TO_OSC_QT, &op_TO_OSC_QT_SET, &op_TO_OSC_FQ,
     &op_TO_OSC_FQ_SET, &op_TO_OSC_N, &op_TO_OSC_N_SET, &op_TO_OSC_LFO,
@@ -126,10 +128,11 @@ const tele_op_t *tele_ops[E_OP__LENGTH] = {
     &op_TO_OSC_WIDTH, &op_TO_OSC_RECT, &op_TO_OSC_SLEW, &op_TO_OSC_SLEW_S,
     &op_TO_OSC_SLEW_M, &op_TO_OSC_SCALE, &op_TO_OSC_CYC, &op_TO_OSC_CYC_S,
     &op_TO_OSC_CYC_M, &op_TO_OSC_CYC_SET, &op_TO_OSC_CYC_S_SET,
-    &op_TO_OSC_CYC_M_SET,
+    &op_TO_OSC_CYC_M_SET, &op_TO_OSC_CTR,
 
     &op_TO_ENV_ACT, &op_TO_ENV_ATT, &op_TO_ENV_ATT_S, &op_TO_ENV_ATT_M,
     &op_TO_ENV_DEC, &op_TO_ENV_DEC_S, &op_TO_ENV_DEC_M, &op_TO_ENV_TRIG,
+    &op_TO_ENV_EOR, &op_TO_ENV_EOC, &op_TO_ENV_LOOP,
 
     &op_TI_PARAM, &op_TI_PARAM_QT, &op_TI_PARAM_N, &op_TI_PARAM_SCALE,
     &op_TI_PARAM_MAP, &op_TI_IN, &op_TI_IN_QT, &op_TI_IN_N, &op_TI_IN_SCALE,

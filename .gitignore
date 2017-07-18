@@ -41,9 +41,14 @@
 # Debug files
 *.dSYM/
 
+# Python
+__pycache__/
+
 # Build outputs
 /src/match_token.c
 /src/scanner.c
 /simulator/tt
 /module/gitversion.c
 /tests/tests
+/docs/teletype.pdf
+/docs/teletype.html

@@ -43,6 +43,7 @@
 
         # metronome
         "M"           => { MATCH_OP(E_OP_M); };
+        "M!"          => { MATCH_OP(E_OP_M_SYM_EXCLAMATION); };
         "M.ACT"       => { MATCH_OP(E_OP_M_ACT); };
         "M.RESET"     => { MATCH_OP(E_OP_M_RESET); };
 
@@ -116,6 +117,8 @@
         "NE"          => { MATCH_OP(E_OP_NE); };
         "LT"          => { MATCH_OP(E_OP_LT); };
         "GT"          => { MATCH_OP(E_OP_GT); };
+        "LTE"         => { MATCH_OP(E_OP_LTE); };
+        "GTE"         => { MATCH_OP(E_OP_GTE); };
         "NZ"          => { MATCH_OP(E_OP_NZ); };
         "EZ"          => { MATCH_OP(E_OP_EZ); };
         "RSH"         => { MATCH_OP(E_OP_RSH); };
@@ -124,13 +127,13 @@
         "ABS"         => { MATCH_OP(E_OP_ABS); };
         "AND"         => { MATCH_OP(E_OP_AND); };
         "OR"          => { MATCH_OP(E_OP_OR); };
-        "XOR"         => { MATCH_OP(E_OP_XOR); };
         "JI"          => { MATCH_OP(E_OP_JI); };
         "SCALE"       => { MATCH_OP(E_OP_SCALE); };
         "N"           => { MATCH_OP(E_OP_N); };
         "V"           => { MATCH_OP(E_OP_V); };
         "VV"          => { MATCH_OP(E_OP_VV); };
         "ER"          => { MATCH_OP(E_OP_ER); };
+        "XOR"         => { MATCH_OP(E_OP_XOR); };
         "+"           => { MATCH_OP(E_OP_SYM_PLUS); };
         "-"           => { MATCH_OP(E_OP_SYM_DASH); };
         "*"           => { MATCH_OP(E_OP_SYM_STAR); };
@@ -145,8 +148,8 @@
         "!"           => { MATCH_OP(E_OP_SYM_EXCLAMATION); };
         "<<"          => { MATCH_OP(E_OP_SYM_LEFT_ANGLED_x2); };
         ">>"          => { MATCH_OP(E_OP_SYM_RIGHT_ANGLED_x2); };
-        "&&"          => { MATCH_OP(E_OP_AMPERSAND_x2); };
-        "||"          => { MATCH_OP(E_OP_PIPE_x2); };
+        "&&"          => { MATCH_OP(E_OP_SYM_AMPERSAND_x2); };
+        "||"          => { MATCH_OP(E_OP_SYM_PIPE_x2); };
 
         # stack
         "S.ALL"       => { MATCH_OP(E_OP_S_ALL); };
@@ -178,14 +181,9 @@
         "WW.MUTEA"    => { MATCH_OP(E_OP_WW_MUTEA); };
         "WW.MUTEB"    => { MATCH_OP(E_OP_WW_MUTEB); };
 
-        # earthsea
+        # meadowphysics
         "MP.PRESET"   => { MATCH_OP(E_OP_MP_PRESET); };
         "MP.RESET"    => { MATCH_OP(E_OP_MP_RESET); };
-        "MP.SYNC"     => { MATCH_OP(E_OP_MP_SYNC); };
-        "MP.MUTE"     => { MATCH_OP(E_OP_MP_MUTE); };
-        "MP.UNMUTE"   => { MATCH_OP(E_OP_MP_UNMUTE); };
-        "MP.FREEZE"   => { MATCH_OP(E_OP_MP_FREEZE); };
-        "MP.UNFREEZE" => { MATCH_OP(E_OP_MP_UNFREEZE); };
         "MP.STOP"     => { MATCH_OP(E_OP_MP_STOP); };
 
         # earthsea
@@ -218,42 +216,42 @@
         "OR.CVB"      => { MATCH_OP(E_OP_OR_CVB); };
 
         # ansible
-        "KR.PRE"      => { MATCH_OP(E_OP_KR_PRESET); };
-        "KR.PAT"      => { MATCH_OP(E_OP_KR_PATTERN); };
+        "KR.PRE"      => { MATCH_OP(E_OP_KR_PRE); };
+        "KR.PAT"      => { MATCH_OP(E_OP_KR_PAT); };
         "KR.SCALE"    => { MATCH_OP(E_OP_KR_SCALE); };
         "KR.PERIOD"   => { MATCH_OP(E_OP_KR_PERIOD); };
         "KR.POS"      => { MATCH_OP(E_OP_KR_POS); };
-        "KR.L.ST"     => { MATCH_OP(E_OP_KR_LOOP_ST); };
-        "KR.L.LEN"    => { MATCH_OP(E_OP_KR_LOOP_LEN); };
-        "KR.RES"      => { MATCH_OP(E_OP_KR_RESET); };
-        "MP.PRE"      => { MATCH_OP(E_OP_MP_PRESET1); };
-        "MP.RES"      => { MATCH_OP(E_OP_MP_RESET1); };
-        "MP.OFF"      => { MATCH_OP(E_OP_MP_STOP1); };
-        "MP.SCALE"    => { MATCH_OP(E_OP_MP_SCALE); };
-        "MP.PERIOD"   => { MATCH_OP(E_OP_MP_PERIOD); };
-        "LV.PRE"      => { MATCH_OP(E_OP_LV_PRESET); };
-        "LV.RES"      => { MATCH_OP(E_OP_LV_RESET); };
+        "KR.L.ST"     => { MATCH_OP(E_OP_KR_L_ST); };
+        "KR.L.LEN"    => { MATCH_OP(E_OP_KR_L_LEN); };
+        "KR.RES"      => { MATCH_OP(E_OP_KR_RES); };
+        "ME.PRE"      => { MATCH_OP(E_OP_ME_PRE); };
+        "ME.RES"      => { MATCH_OP(E_OP_ME_RES); };
+        "ME.STOP"     => { MATCH_OP(E_OP_ME_STOP); };
+        "ME.SCALE"    => { MATCH_OP(E_OP_ME_SCALE); };
+        "ME.PERIOD"   => { MATCH_OP(E_OP_ME_PERIOD); };
+        "LV.PRE"      => { MATCH_OP(E_OP_LV_PRE); };
+        "LV.RES"      => { MATCH_OP(E_OP_LV_RES); };
         "LV.POS"      => { MATCH_OP(E_OP_LV_POS); };
         "LV.L.ST"     => { MATCH_OP(E_OP_LV_L_ST); };
         "LV.L.LEN"    => { MATCH_OP(E_OP_LV_L_LEN); };
         "LV.L.DIR"    => { MATCH_OP(E_OP_LV_L_DIR); };
         "LV.CV"       => { MATCH_OP(E_OP_LV_CV); };
-        "CY.PRE"      => { MATCH_OP(E_OP_CY_PRESET); };
-        "CY.RES"      => { MATCH_OP(E_OP_CY_RESET); };
+        "CY.PRE"      => { MATCH_OP(E_OP_CY_PRE); };
+        "CY.RES"      => { MATCH_OP(E_OP_CY_RES); };
         "CY.POS"      => { MATCH_OP(E_OP_CY_POS); };
         "CY.REV"      => { MATCH_OP(E_OP_CY_REV); };
         "CY.CV"       => { MATCH_OP(E_OP_CY_CV); };
         "MID.SHIFT"   => { MATCH_OP(E_OP_MID_SHIFT); };
         "MID.SLEW"    => { MATCH_OP(E_OP_MID_SLEW); };
-        "ARP.STY"     => { MATCH_OP(E_OP_ARP_STYLE); };
-        "ARP.HLD"     => { MATCH_OP(E_OP_ARP_HOLD); };
+        "ARP.STY"     => { MATCH_OP(E_OP_ARP_STY); };
+        "ARP.HLD"     => { MATCH_OP(E_OP_ARP_HLD); };
         "ARP.RPT"     => { MATCH_OP(E_OP_ARP_RPT); };
-        "ARP.GT"      => { MATCH_OP(E_OP_ARP_GATE); };
+        "ARP.GT"      => { MATCH_OP(E_OP_ARP_GT); };
         "ARP.DIV"     => { MATCH_OP(E_OP_ARP_DIV); };
-        "ARP.RES"     => { MATCH_OP(E_OP_ARP_RESET); };
+        "ARP.RES"     => { MATCH_OP(E_OP_ARP_RES); };
         "ARP.SHIFT"   => { MATCH_OP(E_OP_ARP_SHIFT); };
         "ARP.SLEW"    => { MATCH_OP(E_OP_ARP_SLEW); };
-        "ARP.FIL"     => { MATCH_OP(E_OP_ARP_FILL); };
+        "ARP.FIL"     => { MATCH_OP(E_OP_ARP_FIL); };
         "ARP.ROT"     => { MATCH_OP(E_OP_ARP_ROT); };
         "ARP.ER"      => { MATCH_OP(E_OP_ARP_ER); };
 
@@ -282,6 +280,17 @@
         "TO.KILL"          => { MATCH_OP(E_OP_TO_KILL); };
 
         "TO.TR.PULSE.DIV"  => { MATCH_OP(E_OP_TO_TR_PULSE_DIV); };
+        "TO.TR.PULSE.MUTE" => { MATCH_OP(E_OP_TO_TR_PULSE_MUTE); };
+        "TO.TR.M.MUL"      => { MATCH_OP(E_OP_TO_TR_M_MUL); };
+
+        "TO.M"             => { MATCH_OP(E_OP_TO_M); };
+        "TO.M.S"           => { MATCH_OP(E_OP_TO_M_S); };
+        "TO.M.M"           => { MATCH_OP(E_OP_TO_M_M); };
+        "TO.M.BPM"         => { MATCH_OP(E_OP_TO_M_BPM); };
+        "TO.M.ACT"         => { MATCH_OP(E_OP_TO_M_ACT); };
+        "TO.M.SYNC"        => { MATCH_OP(E_OP_TO_M_SYNC); };
+        "TO.M.COUNT"       => { MATCH_OP(E_OP_TO_M_COUNT); };
+
         "TO.TR.M"          => { MATCH_OP(E_OP_TO_TR_M); };
         "TO.TR.M.S"        => { MATCH_OP(E_OP_TO_TR_M_S); };
         "TO.TR.M.M"        => { MATCH_OP(E_OP_TO_TR_M_M); };
@@ -302,13 +311,15 @@
         "TO.CV.N"          => { MATCH_OP(E_OP_TO_CV_N); };
         "TO.CV.N.SET"      => { MATCH_OP(E_OP_TO_CV_N_SET); };
         "TO.CV.SCALE"      => { MATCH_OP(E_OP_TO_CV_SCALE); };
+        "TO.CV.LOG"        => { MATCH_OP(E_OP_TO_CV_LOG); };
 
         "TO.CV.INIT"       => { MATCH_OP(E_OP_TO_CV_INIT); };
         "TO.TR.INIT"       => { MATCH_OP(E_OP_TO_TR_INIT); };
         "TO.INIT"          => { MATCH_OP(E_OP_TO_INIT); };
 
         "TO.TR.P"          => { MATCH_OP(E_OP_TO_TR_P); };
-        "TO.TR.P.DIV"      => { MATCH_OP(E_OP_TO_TR_P_DIV); };        
+        "TO.TR.P.DIV"      => { MATCH_OP(E_OP_TO_TR_P_DIV); }; 
+        "TO.TR.P.MUTE"     => { MATCH_OP(E_OP_TO_TR_P_MUTE); };       
 
         "TO.OSC"           => { MATCH_OP(E_OP_TO_OSC); };
         "TO.OSC.SET"       => { MATCH_OP(E_OP_TO_OSC_SET); };
@@ -335,6 +346,7 @@
         "TO.OSC.CYC.SET"   => { MATCH_OP(E_OP_TO_OSC_CYC_SET); };
         "TO.OSC.CYC.S.SET" => { MATCH_OP(E_OP_TO_OSC_CYC_S_SET); };
         "TO.OSC.CYC.M.SET" => { MATCH_OP(E_OP_TO_OSC_CYC_M_SET); };
+        "TO.OSC.CTR"       => { MATCH_OP(E_OP_TO_OSC_CTR); };
 
         "TO.ENV.ACT"       => { MATCH_OP(E_OP_TO_ENV_ACT); };
         "TO.ENV.ATT"       => { MATCH_OP(E_OP_TO_ENV_ATT); };
@@ -344,6 +356,10 @@
         "TO.ENV.DEC.S"     => { MATCH_OP(E_OP_TO_ENV_DEC_S); };
         "TO.ENV.DEC.M"     => { MATCH_OP(E_OP_TO_ENV_DEC_M); };
         "TO.ENV.TRIG"      => { MATCH_OP(E_OP_TO_ENV_TRIG); };
+
+        "TO.ENV.EOR"       => { MATCH_OP(E_OP_TO_ENV_EOR); };
+        "TO.ENV.EOC"       => { MATCH_OP(E_OP_TO_ENV_EOC); };
+        "TO.ENV.LOOP"       => { MATCH_OP(E_OP_TO_ENV_LOOP); };
 
         "TI.PARAM"         => { MATCH_OP(E_OP_TI_PARAM); };
         "TI.PARAM.QT"      => { MATCH_OP(E_OP_TI_PARAM_QT); };

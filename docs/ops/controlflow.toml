@@ -1,0 +1,105 @@
+[IF]
+prototype = "IF x: ..."
+short = "if `x` is not zero execute command"
+description = """
+If `x` is not zero execute command
+
+#### Advanced `IF` / `ELIF` / `ELSE` usage
+
+  1. Intermediate statements always run
+
+    ```text
+    SCRIPT 1:
+    IF 0: 0        => do nothing
+    TR.P 1         => always happens
+    ELSE: TR.P 2   => else branch runs because of the previous IF
+    ```
+
+  2. `ELSE` without an `IF`
+
+    ```text
+    SCRIPT 1:
+    ELSE: TR.P 1   => never runs, as there is no preceding IF
+    ```
+
+
+  3. `ELIF` without an `IF`
+
+    ```text
+    SCRIPT 1:
+    ELIF 1: TR.P 1  => never runs, as there is no preceding IF
+    ```
+
+  4. Independent scripts
+
+    ```text
+    SCRIPT 1:
+    IF 1: TR.P 1    => pulse output 1
+
+    SCRIPT 2:
+    ELSE: TR.P 2    => never runs regardless of what happens in script 1
+                       (see example 2)
+    ```
+
+  5. Dependent scripts
+
+    ```text
+    SCRIPT 1:
+    IF 0: TR.P 1    => do nothing
+    SCRIPT 2        => will pulse output 2
+
+    SCRIPT 2:
+    ELSE: TR.P 2    => will not pulse output 2 if called directly,
+                       but will if called from script 1
+    ```
+"""
+
+[ELIF]
+prototype = "ELIF x: ..."
+short = "if all previous `IF` / `ELIF` fail, and `x` is not zero, execute command"
+
+[ELSE]
+prototype = "ELSE: ..."
+short = "if all previous `IF` / `ELIF` fail, excute command"
+
+[L]
+prototype = "L x y: ..."
+short = "run the command sequentially with `I` values from `x` to `y`"
+description = """
+Run the command sequentially with `I` values from `x` to `y`.
+
+For example:
+
+```
+L 1 4: TR.PULSE I   => pulse outputs 1, 2, 3 and 4
+L 4 1: TR.PULSE I   => pulse outputs 4, 3, 2 and 1
+```
+"""
+
+[PROB]
+prototype = "PROB x: ..."
+short = "potentially execute command with probability `x` (0-100)"
+
+[SCRIPT]
+prototype = "SCRIPT x"
+short = "execute script `x` (1-8), recursion allowed"
+description = """
+Execute script `x` (1-8), recursion allowed.
+
+There is a limit of 8 for the maximum number of nested calls to `SCRIPT` to stop infinite loops from locking up the Teletype.
+"""
+
+[SCENE]
+prototype = "SCENE x"
+short = "load scene `x` (0-31)"
+description = """
+Load scene `x` (0-31).
+
+Does _not_ execute the `I` script.
+
+**WARNING**: You will lose any unsaved changes to your scene.
+"""
+
+[KILL]
+prototype = "KILL"
+short = "clears stack, clears delays, cancels pulses, cancels slews"

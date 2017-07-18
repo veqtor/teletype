@@ -80,9 +80,3 @@ include $(MAKEFILE_PATH)
 # Add the git commit id to a file for use when printing out the version
 ../module/gitversion.c: ../.git/HEAD ../.git/index
 	echo "const char *git_version = \"$(shell git describe --always --dirty | tr '[a-z]' '[A-Z]')\";" > $@
-
-# Make a zip release
-.PHONY: release
-release: teletype.hex
-	rm -f teletype.zip && \
-	zip teletype.zip teletype.hex flash.sh update_firmware.command
