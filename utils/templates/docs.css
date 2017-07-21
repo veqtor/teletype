@@ -2,16 +2,30 @@ body {
     font-family: Helvetica, arial, sans-serif;
     font-size: 14px;
     line-height: 1.6;
-    padding-top: 10px;
-    padding-bottom: 10px;
     background-color: white;
-    padding: 30px;
+    display: flex;
+    margin: 0;
+    height: 100vh;
 }
-body > *:first-child {
-    margin-top: 0 !important;
+
+#TOC {
+    width: 30%;
+    height: 100%;
+    overflow-y: scroll;
 }
-body > *:last-child {
-    margin-bottom: 0 !important;
+
+.content {
+    width: calc(70% - 40px);
+    padding: 0 20px;
+    height: 100%;
+    overflow-y: scroll;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+.content-inner {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
 }
 a {
     color: #4183C4;
