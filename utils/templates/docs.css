@@ -243,6 +243,8 @@ blockquote >:last-child {
 }
 table {
     padding: 0;
+    width: 100%;
+    table-layout: fixed;
 }
 table tr {
     border-top: 1px solid #cccccc;
@@ -259,6 +261,7 @@ table tr th {
     text-align: left;
     margin: 0;
     padding: 6px 13px;
+    word-break: break-word;
 }
 table tr td {
     border: 1px solid #cccccc;
@@ -356,10 +359,12 @@ tt {
     font-family: Menlo, Consolas, monospace;
     margin: 0 2px;
     padding: 0 5px;
-    white-space: nowrap;
     border: 1px solid #eaeaea;
     background-color: #f8f8f8;
     border-radius: 3px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: scroll;
 }
 pre code {
     margin: 0;
