@@ -95,7 +95,13 @@ $endif$
 
     navBar.onclick = toggleNavBar;
 
-    var hidden = true;
+    var hidden;
+
+    if (window.innerWidth < 700) {
+        hidden = false;
+    } else {
+        hidden = true;
+    }
     toggleNavBar();
 </script>
 <div class="content">
