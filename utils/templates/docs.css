@@ -4,23 +4,47 @@ body {
     line-height: 1.6;
     background-color: white;
     display: flex;
+    flex-wrap: wrap;
     margin: 0;
     height: 100vh;
 }
 
+.NavBar {
+    width: 100%;
+    background: #848992;
+    color: #fff;
+    padding: 10px;
+    display: flex;
+    text-transform: uppercase;
+    align-items: center;
+    cursor: pointer;
+    position: fixed;
+}
+
+.NavBar .Icon {
+    height: 15px;
+    width: 15px;
+    fill: #fff;
+    margin-right: 20px;
+    margin-top: -2px;
+}
+
 #TOC {
-    width: 30%;
-    height: 100%;
+    width: 250px;
+    height: calc(100% - 62px);
     overflow-y: scroll;
+    padding: 10px;
+    margin-top: 42px;
 }
 
 .content {
-    width: calc(70% - 40px);
     padding: 0 20px;
-    height: 100%;
+    height: calc(100% - 62px);
     overflow-y: scroll;
     max-width: 100%;
     overflow-x: hidden;
+    flex: 1;
+    margin-top: 42px;
 }
 .content-inner {
     width: 100%;
