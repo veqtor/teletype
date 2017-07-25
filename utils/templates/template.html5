@@ -120,5 +120,44 @@ $endfor$
             val.setAttribute("target", "_blank");
         }
     });
+
+    // Make headers clickable and copy link to section
+    [].forEach.call(document.querySelectorAll('h1,h2,h3,h4'), val => {
+        // see: https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
+        function copyTextToClipboard(text) {
+            var textArea = document.createElement("textarea");
+            textArea.style.position = 'fixed';
+            textArea.style.top = 0;
+            textArea.style.left = 0;
+            textArea.style.width = '2em';
+            textArea.style.height = '2em';
+            textArea.style.padding = 0;
+            textArea.style.border = 'none';
+            textArea.style.outline = 'none';
+            textArea.style.boxShadow = 'none';
+            textArea.style.background = 'transparent';
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+        }
+
+        var newElem = document.createElement("span");
+        newElem.classList.add("CopyLink");
+        newElem.innerHTML = "Copy link to clipboard";
+        val.appendChild(newElem);
+
+        val.addEventListener('click', function(event) {
+            var fullLink = window.location.origin + window.location.pathname +
+                "#" + val.getAttribute("id");
+            copyTextToClipboard(fullLink);
+            newElem.innerHTML = "Copied!";
+        });
+
+        val.addEventListener('mouseout', function(event) {
+            newElem.innerHTML = "Copy link to clipboard";
+        });
+    });
 </script>
 </html>

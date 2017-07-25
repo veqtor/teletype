@@ -51,6 +51,21 @@ body {
     max-width: 800px;
     margin: 0 auto;
 }
+
+.CopyLink {
+    font-size: 12px;
+    font-weight: 400;
+    margin-left: 10px;
+    display: none;
+}
+
+h1:hover .CopyLink,
+h2:hover .CopyLink,
+h3:hover .CopyLink,
+h4:hover .CopyLink {
+    display: inline;
+}
+
 a {
     color: #4183C4;
 }
@@ -79,6 +94,9 @@ h6 {
     -webkit-font-smoothing: antialiased;
     cursor: text;
     position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
 }
 h1:hover a.anchor,
 h2:hover a.anchor,
