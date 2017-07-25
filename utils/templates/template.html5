@@ -113,4 +113,12 @@ $endfor$
 </div>
 </div>
 </body>
+<script>
+    // All non-internal links should open new tab/window
+    [].forEach.call(document.getElementsByTagName("a"), val => {
+        if (val.getAttribute("href").charAt(0) !== '#') {
+            val.setAttribute("target", "_blank");
+        }
+    });
+</script>
 </html>
