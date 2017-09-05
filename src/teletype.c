@@ -149,8 +149,10 @@ process_result_t run_script_with_exec_state(scene_state_t *ss, exec_state_t *es,
     if (es->exec_depth > 8) { return result; }
 
     for (size_t i = 0; i < ss_get_script_len(ss, script_no); i++) {
-        result =
-            process_command(ss, es, ss_get_script_command(ss, script_no, i));
+        do {
+            result = process_command(ss, es,
+                                     ss_get_script_command(ss, script_no, i));
+        } while (es->while_continue);
     }
 
     // decrease the depth once the commands have been run
@@ -161,8 +163,12 @@ process_result_t run_script_with_exec_state(scene_state_t *ss, exec_state_t *es,
 
 process_result_t run_command(scene_state_t *ss, const tele_command_t *cmd) {
     exec_state_t es;
+    process_result_t o;
     es_init(&es);
-    return process_command(ss, &es, cmd);
+    do {
+        o = process_command(ss, &es, cmd);
+    } while (es.while_continue);
+    return o;
 }
 
 

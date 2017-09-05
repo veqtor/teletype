@@ -18,6 +18,7 @@
 #define PATTERN_LENGTH 64
 #define SCRIPT_MAX_COMMANDS 6
 #define SCRIPT_COUNT 10
+#define WHILE_DEPTH 10000
 
 #define METRO_SCRIPT 8
 #define INIT_SCRIPT 9
@@ -153,6 +154,8 @@ size_t ss_scripts_size(void);
 typedef struct {
     bool if_else_condition;
     uint8_t exec_depth;
+    bool while_continue;
+    uint16_t while_depth;
 } exec_state_t;
 
 extern void es_init(exec_state_t *es);
