@@ -105,15 +105,15 @@ static void mod_W_func(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
     int16_t a = cs_pop(cs);
     if (a) {
         process_command(ss, es, post_command);
-        es->while_depth++;
-        if(es->while_depth < WHILE_DEPTH)
-            es->while_continue = true;
+        es->while_depth[es->exec_depth]++;
+        if(es->while_depth[es->exec_depth] < WHILE_DEPTH)
+            es->while_continue[es->exec_depth] = true;
         else
-            es->while_continue = false;
+            es->while_continue[es->exec_depth] = false;
 
     }
     else
-        es->while_continue = false;
+        es->while_continue[es->exec_depth] = false;
 }
 
 static void op_SCENE_get(const void *NOTUSED(data), scene_state_t *ss,

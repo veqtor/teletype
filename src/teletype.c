@@ -146,13 +146,13 @@ process_result_t run_script_with_exec_state(scene_state_t *ss, exec_state_t *es,
     // only allow the depth to reach 8
     // (if we want to allow this number to be any bigger we really should
     // convert this recursive call to use some sort of trampoline!)
-    if (es->exec_depth > 8) { return result; }
+    if (es->exec_depth > EXEC_DEPTH) { return result; }
 
     for (size_t i = 0; i < ss_get_script_len(ss, script_no); i++) {
         do {
             result = process_command(ss, es,
                                      ss_get_script_command(ss, script_no, i));
-        } while (es->while_continue);
+        } while (es->while_continue[es->exec_depth]);
     }
 
     // decrease the depth once the commands have been run
@@ -167,7 +167,7 @@ process_result_t run_command(scene_state_t *ss, const tele_command_t *cmd) {
     es_init(&es);
     do {
         o = process_command(ss, &es, cmd);
-    } while (es.while_continue);
+    } while (es.while_continue[0]);
     return o;
 }
 
