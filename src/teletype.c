@@ -139,7 +139,7 @@ process_result_t run_script(scene_state_t *ss, size_t script_no) {
 
 process_result_t run_script_with_exec_state(scene_state_t *ss, exec_state_t *es,
                                             size_t script_no) {
-    process_result_t result = {.has_value = false, .value = 0};
+    process_result_t result = {.has_value = false, .value = 0 };
 
     for (size_t i = 0; i < ss_get_script_len(ss, script_no); i++) {
         result =
