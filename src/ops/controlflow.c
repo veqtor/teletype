@@ -56,9 +56,9 @@ static void mod_IF_func(scene_state_t *ss, exec_state_t *es,
                         const tele_command_t *post_command) {
     int16_t a = cs_pop(cs);
 
-    es->if_else_condition = false;
+    es_variables(es)->if_else_condition = false;
     if (a) {
-        es->if_else_condition = true;
+        es_variables(es)->if_else_condition = true;
         process_command(ss, es, post_command);
     }
 }
@@ -68,9 +68,9 @@ static void mod_ELIF_func(scene_state_t *ss, exec_state_t *es,
                           const tele_command_t *post_command) {
     int16_t a = cs_pop(cs);
 
-    if (!es->if_else_condition) {
+    if (!es_variables(es)->if_else_condition) {
         if (a) {
-            es->if_else_condition = true;
+            es_variables(es)->if_else_condition = true;
             process_command(ss, es, post_command);
         }
     }
@@ -79,8 +79,8 @@ static void mod_ELIF_func(scene_state_t *ss, exec_state_t *es,
 static void mod_ELSE_func(scene_state_t *ss, exec_state_t *es,
                           command_state_t *NOTUSED(cs),
                           const tele_command_t *post_command) {
-    if (!es->if_else_condition) {
-        es->if_else_condition = true;
+    if (!es_variables(es)->if_else_condition) {
+        es_variables(es)->if_else_condition = true;
         process_command(ss, es, post_command);
     }
 }
@@ -89,11 +89,17 @@ static void mod_L_func(scene_state_t *ss, exec_state_t *es, command_state_t *cs,
                        const tele_command_t *post_command) {
     int16_t a = cs_pop(cs);
     int16_t b = cs_pop(cs);
-    int16_t loop_size = a < b ? b - a : a - b;
+    int16_t *i = &es_variables(es)->i;
 
-    for (int16_t i = 0; i <= loop_size; i++) {
-        ss->variables.i = a < b ? a + i : a - i;
-        process_command(ss, es, post_command);
+    if (a < b) {
+        for(*i = a; *i <= b; (*i)++) 
+            process_command(ss, es, post_command);
+        (*i)--;  // leave es_variables.i in the correct state
+    }
+    else {
+        for(*i = a; *i >= b; (*i)--) 
+            process_command(ss, es, post_command);
+        (*i)++;
     }
 }
 
