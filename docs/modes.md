@@ -115,6 +115,7 @@ The pattern mode clipboard is independent of text and code clipboard.
 | `[`              | preset down |
 | `]`              | preset up   |
 | `<enter>`        | enter text  |
+| `shift-<enter>`  | insert text |
 | `alt-<enter>`    | save preset |
 
 ## Help mode
