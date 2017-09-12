@@ -274,6 +274,8 @@ size_t es_depth(exec_state_t *es) {
 
 size_t es_push(exec_state_t *es) {
     if (es->exec_depth < EXEC_DEPTH) {
+        es->variables[es->exec_depth].while_depth = 0;
+        es->variables[es->exec_depth].while_continue = false;
         es->variables[es->exec_depth].if_else_condition = true;
         es->variables[es->exec_depth].i = 0;
         es->exec_depth += 1;                   // exec_depth = 1 at the root

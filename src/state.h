@@ -19,6 +19,7 @@
 #define SCRIPT_MAX_COMMANDS 6
 #define SCRIPT_COUNT 10
 #define EXEC_DEPTH 8
+#define WHILE_DEPTH 10000
 
 #define METRO_SCRIPT 8
 #define INIT_SCRIPT 9
@@ -162,6 +163,8 @@ void ss_update_script_last(scene_state_t *ss, size_t idx);
 typedef struct {
     bool if_else_condition;
     int16_t i;
+    bool while_continue;
+    uint16_t while_depth;
 } exec_vars_t;
 
 typedef struct {
