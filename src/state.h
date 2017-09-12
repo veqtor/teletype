@@ -165,6 +165,7 @@ typedef struct {
     exec_vars_t variables[EXEC_DEPTH];
     uint8_t exec_depth;
     bool overflow;
+    bool breaking;
 } exec_state_t;
 
 extern void es_init(exec_state_t *es);

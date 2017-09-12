@@ -253,6 +253,7 @@ size_t ss_scripts_size() {
 void es_init(exec_state_t *es) {
     es->exec_depth = 0;
     es->overflow = false;
+    es->breaking = false;
 }
 
 size_t es_depth(exec_state_t *es) {
