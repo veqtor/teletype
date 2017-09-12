@@ -142,6 +142,8 @@ process_result_t run_script_with_exec_state(scene_state_t *ss, exec_state_t *es,
     process_result_t result = {.has_value = false, .value = 0 };
 
     for (size_t i = 0; i < ss_get_script_len(ss, script_no); i++) {
+        if (ss_get_script_comment(ss, script_no, i))
+		continue;
         result =
             process_command(ss, es, ss_get_script_command(ss, script_no, i));
     }
