@@ -92,6 +92,7 @@ typedef struct {
     uint8_t l;
     tele_command_t c[SCRIPT_MAX_COMMANDS];
     bool comment[SCRIPT_MAX_COMMANDS];
+    int16_t last_time;
 } scene_script_t;
 
 typedef struct {
@@ -151,6 +152,8 @@ void ss_delete_script_command(scene_state_t *ss, size_t script_idx,
 
 scene_script_t *ss_scripts_ptr(scene_state_t *ss);
 size_t ss_scripts_size(void);
+int16_t ss_get_script_last(scene_state_t *ss, size_t idx);
+void ss_update_script_last(scene_state_t *ss, size_t idx);
 
 ////////////////////////////////////////////////////////////////////////////////
 // EXEC STATE //////////////////////////////////////////////////////////////////
@@ -166,6 +169,7 @@ typedef struct {
     uint8_t exec_depth;
     bool overflow;
     bool breaking;
+    uint16_t script_number;
 } exec_state_t;
 
 extern void es_init(exec_state_t *es);

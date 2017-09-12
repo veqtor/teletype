@@ -141,6 +141,14 @@ process_result_t run_script_with_exec_state(scene_state_t *ss, exec_state_t *es,
                                             size_t script_no) {
     process_result_t result = {.has_value = false, .value = 0 };
 
+    es->script_number = script_no;
+    // increase the execution depth on each call (e.g. from SCRIPT)
+    es->exec_depth++;
+    // only allow the depth to reach 8
+    // (if we want to allow this number to be any bigger we really should
+    // convert this recursive call to use some sort of trampoline!)
+    if (es->exec_depth > 8) { return result; }
+
     for (size_t i = 0; i < ss_get_script_len(ss, script_no); i++) {
         if (ss_get_script_comment(ss, script_no, i))
 		    continue;
@@ -153,7 +161,7 @@ process_result_t run_script_with_exec_state(scene_state_t *ss, exec_state_t *es,
     // decrease the depth once the commands have been run
     es->exec_depth--;
     es->breaking = false;
-
+    ss_update_script_last(ss, script_no);
     return result;
 }
 
