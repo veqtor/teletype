@@ -74,7 +74,7 @@ static void op_VV_get(const void *data, scene_state_t *ss, exec_state_t *es,
                       command_state_t *cs);
 static void op_ER_get(const void *data, scene_state_t *ss, exec_state_t *es,
                       command_state_t *cs);
-static void op_MSPB_get(const void *data, scene_state_t *ss, exec_state_t *es,
+static void op_BPM_get(const void *data, scene_state_t *ss, exec_state_t *es,
                       command_state_t *cs);
 
 
@@ -113,7 +113,7 @@ const tele_op_t op_N     = MAKE_GET_OP(N       , op_N_get       , 1, true);
 const tele_op_t op_V     = MAKE_GET_OP(V       , op_V_get       , 1, true);
 const tele_op_t op_VV    = MAKE_GET_OP(VV      , op_VV_get      , 1, true);
 const tele_op_t op_ER    = MAKE_GET_OP(ER      , op_ER_get      , 3, true);
-const tele_op_t op_MSPB  = MAKE_GET_OP(MSPB    , op_MSPB_get    , 1, true);
+const tele_op_t op_BPM  = MAKE_GET_OP(BPM    , op_BPM_get    , 1, true);
 
 const tele_op_t op_XOR   = MAKE_ALIAS_OP(XOR, op_NE_get, NULL, 2, true);
 
@@ -462,7 +462,7 @@ static void op_ER_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
     cs_push(cs, euclidean(fill, len, step));
 }
 
-static void op_MSPB_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+static void op_BPM_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                       exec_state_t *NOTUSED(es), command_state_t *cs) {
     int16_t a = cs_pop(cs);
     uint32_t ret;

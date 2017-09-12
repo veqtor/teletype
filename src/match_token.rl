@@ -133,7 +133,7 @@
         "V"           => { MATCH_OP(E_OP_V); };
         "VV"          => { MATCH_OP(E_OP_VV); };
         "ER"          => { MATCH_OP(E_OP_ER); };
-        "MSPB"        => { MATCH_OP(E_OP_MSPB);; };
+        "BPM"         => { MATCH_OP(E_OP_BPM);; };
         "XOR"         => { MATCH_OP(E_OP_XOR); };
         "+"           => { MATCH_OP(E_OP_SYM_PLUS); };
         "-"           => { MATCH_OP(E_OP_SYM_DASH); };
