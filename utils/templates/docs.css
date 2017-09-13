@@ -382,7 +382,7 @@ tt {
     border-radius: 3px;
     white-space: pre-wrap;
     word-break: break-word;
-    overflow-x: scroll;
+    overflow-x: auto;
 }
 pre code {
     margin: 0;
