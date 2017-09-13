@@ -170,7 +170,8 @@ def main():
                             "--self-contained",
                             "--toc",
                             "--toc-depth=2",
-                            "--css=" + str(TEMPLATE_DIR / "docs.css")])
+                            "--css=" + str(TEMPLATE_DIR / "docs.css"),
+                            "--template=" + str(TEMPLATE_DIR / "template.html5")])
         elif ext == ".pdf" or ext == ".tex":
             latex_preamble = env.get_template("latex_preamble.jinja2.md")
             latex = latex_preamble.render(fonts_dir=FONTS_DIR) + "\n\n"
