@@ -17,6 +17,8 @@ These bindings work everywhere.
 | `alt-<F1>` to `alt-<F8>`     | edit corresponding script                      |
 | `alt-<F9>`                   | edit metro script                              |
 | `alt-<F10>`                  | edit init script                               |
+| `ctrl-<F1>` to `ctrl-<F8>`   | mute/unmute corresponding script               |
+| `ctrl-<F9>`                  | enable/disable metro script                    |
 | `<numpad-1>` to `<numpad-8>` | run corresponding script                       |
 | `<num lock>` / `<F11>`       | jump to pattern mode                           |
 | `<print screen>` / `<F12>`   | jump to live mode                              |
@@ -61,13 +63,14 @@ In most cases, the clipboard is shared between _live_, _edit_ and the 2 _preset_
 | `]`                | next script               |
 | `<enter>`          | enter command             |
 | `shift-<enter>`    | insert command            |
+| `alt-/`            | toggle line comment       |
 
 ## Tracker mode
 
 The tracker mode clipboard is independent of text and code clipboard.
 
-| Key                 | Action                                          |
-|---------------------|-------------------------------------------------|
+| Key                 | Action                                                                                |
+|---------------------|---------------------------------------------------------------------------------------|
 | `<down>`            | move down                                                                             |
 | `alt-<down>`        | move a page down                                                                      |
 | `<up>`              | move up                                                                               |
@@ -80,8 +83,8 @@ The tracker mode clipboard is independent of text and code clipboard.
 | `]`                 | increment by 1                                                                        |
 | `<backspace>`       | delete a digit                                                                        |
 | `shift-<backspace>` | delete an entry, shift numbers up                                                     |
-| `<enter>`           | move down (increase length only if on the entry immediately after the current length) |
-| `shift-<enter>`     | duplicate entry and shift downwards (increase length as `<enter>`)                    |
+| `<enter>`           | commit edit (increase length if cursor in position after last entry)                  |
+| `shift-<enter>`     | commit edit, then duplicate entry and shift downwards (increase length as `<enter>`)  |
 | `alt-x`             | cut value (n.b. `ctrl-x` not supported)                                               |
 | `alt-c`             | copy value (n.b. `ctrl-c` not supported)                                              |
 | `alt-v`             | paste value (n.b. `ctrl-v` not supported)                                             |
@@ -95,6 +98,7 @@ The tracker mode clipboard is independent of text and code clipboard.
 | `-`                 | negate value                                                                          |
 | `<space>`           | toggle non-zero to zero, and zero to 1                                                |
 | `0` to `9`          | numeric entry                                                                         |
+| `shift-2` (`@`)     | toggle turtle display marker (`<`)                                                    |
 
 ## Preset read mode
 

@@ -58,12 +58,14 @@
 scene_state_t scene_state;
 char scene_text[SCENE_TEXT_LINES][SCENE_TEXT_CHARS];
 uint8_t preset_select;
-region line[8] = {
-    {.w = 128, .h = 8, .x = 0, .y = 0 },  {.w = 128, .h = 8, .x = 0, .y = 8 },
-    {.w = 128, .h = 8, .x = 0, .y = 16 }, {.w = 128, .h = 8, .x = 0, .y = 24 },
-    {.w = 128, .h = 8, .x = 0, .y = 32 }, {.w = 128, .h = 8, .x = 0, .y = 40 },
-    {.w = 128, .h = 8, .x = 0, .y = 48 }, {.w = 128, .h = 8, .x = 0, .y = 56 }
-};
+region line[8] = { { .w = 128, .h = 8, .x = 0, .y = 0 },
+                   { .w = 128, .h = 8, .x = 0, .y = 8 },
+                   { .w = 128, .h = 8, .x = 0, .y = 16 },
+                   { .w = 128, .h = 8, .x = 0, .y = 24 },
+                   { .w = 128, .h = 8, .x = 0, .y = 32 },
+                   { .w = 128, .h = 8, .x = 0, .y = 40 },
+                   { .w = 128, .h = 8, .x = 0, .y = 48 },
+                   { .w = 128, .h = 8, .x = 0, .y = 56 } };
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -90,13 +92,13 @@ static uint8_t front_timer;
 static uint8_t mod_key = 0, hold_key, hold_key_count = 0;
 
 // timers
-static softTimer_t clockTimer = {.next = NULL, .prev = NULL };
-static softTimer_t refreshTimer = {.next = NULL, .prev = NULL };
-static softTimer_t keyTimer = {.next = NULL, .prev = NULL };
-static softTimer_t cvTimer = {.next = NULL, .prev = NULL };
-static softTimer_t adcTimer = {.next = NULL, .prev = NULL };
-static softTimer_t hidTimer = {.next = NULL, .prev = NULL };
-static softTimer_t metroTimer = {.next = NULL, .prev = NULL };
+static softTimer_t clockTimer = { .next = NULL, .prev = NULL };
+static softTimer_t refreshTimer = { .next = NULL, .prev = NULL };
+static softTimer_t keyTimer = { .next = NULL, .prev = NULL };
+static softTimer_t cvTimer = { .next = NULL, .prev = NULL };
+static softTimer_t adcTimer = { .next = NULL, .prev = NULL };
+static softTimer_t hidTimer = { .next = NULL, .prev = NULL };
+static softTimer_t metroTimer = { .next = NULL, .prev = NULL };
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -190,32 +192,32 @@ void cvTimer_callback(void* o) {
 }
 
 void clockTimer_callback(void* o) {
-    event_t e = {.type = kEventTimer, .data = 0 };
+    event_t e = { .type = kEventTimer, .data = 0 };
     event_post(&e);
 }
 
 void refreshTimer_callback(void* o) {
-    event_t e = {.type = kEventScreenRefresh, .data = 0 };
+    event_t e = { .type = kEventScreenRefresh, .data = 0 };
     event_post(&e);
 }
 
 void keyTimer_callback(void* o) {
-    event_t e = {.type = kEventKeyTimer, .data = 0 };
+    event_t e = { .type = kEventKeyTimer, .data = 0 };
     event_post(&e);
 }
 
 void adcTimer_callback(void* o) {
-    event_t e = {.type = kEventPollADC, .data = 0 };
+    event_t e = { .type = kEventPollADC, .data = 0 };
     event_post(&e);
 }
 
 void hidTimer_callback(void* o) {
-    event_t e = {.type = kEventHidTimer, .data = 0 };
+    event_t e = { .type = kEventHidTimer, .data = 0 };
     event_post(&e);
 }
 
 void metroTimer_callback(void* o) {
-    event_t e = {.type = kEventAppCustom, .data = 0 };
+    event_t e = { .type = kEventAppCustom, .data = 0 };
     event_post(&e);
 }
 
@@ -536,6 +538,19 @@ bool process_global_keys(uint8_t k, uint8_t m, bool is_held_key) {
         set_mode(M_EDIT);
         return true;
     }
+    // ctrl-<F1> through ctrl-<F8> mute triggers
+    // ctrl-<F9> toggle metro
+    else if (mod_only_ctrl(m) && k >= HID_F1 && k <= HID_F8) {
+        bool muted = ss_get_mute(&scene_state, (k - HID_F1));
+        ss_set_mute(&scene_state, (k - HID_F1), !muted);
+        screen_mutes_updated();
+        return true;
+    }
+    else if (mod_only_ctrl(m) && k == HID_F9) {
+        scene_state.variables.m_act = !scene_state.variables.m_act;
+        tele_metro_updated();
+        return true;
+    }
     // <numpad-1> through <numpad-8>: run corresponding script
     else if (no_mod(m) && k >= HID_KEYPAD_1 && k <= HID_KEYPAD_8) {
         run_script(&scene_state, k - HID_KEYPAD_1);
@@ -580,7 +595,7 @@ void render_init(void) {
 void tele_metro_updated() {
     uint32_t metro_time = scene_state.variables.m;
 
-    bool m_act = scene_state.variables.m_act > 0;
+    bool m_act = scene_state.variables.m_act;
     if (metro_time < METRO_MIN_UNSUPPORTED_MS) {
         metro_time = METRO_MIN_UNSUPPORTED_MS;
     }
@@ -658,7 +673,10 @@ void tele_scene(uint8_t i) {
 }
 
 void tele_kill() {
-    for (int i = 0; i < 4; i++) aout[i].step = 1;
+    for (int i = 0; i < 4; i++) {
+        aout[i].step = 1;
+        tele_tr(i, 0);
+    }
 }
 
 
@@ -737,6 +755,7 @@ int main(void) {
     delay_ms(50);
 
     run_script(&scene_state, INIT_SCRIPT);
+    scene_state.initializing = false;
 
     while (true) { check_events(); }
 }

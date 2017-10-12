@@ -23,7 +23,9 @@ env = jinja2.Environment(
     autoescape=False,
     loader=jinja2.FileSystemLoader(str(TEMPLATE_DIR)),
     trim_blocks=True,
-    lstrip_blocks=True
+    lstrip_blocks=True,
+    cache_size=0,
+    auto_reload=True
 )
 
 # determines the order in which sections are displayed
@@ -37,6 +39,7 @@ OPS_SECTIONS = [
     "delay",
     "stack",
     "queue",
+    "turtle",
     "ansible",
     "whitewhale",
     "meadowphysics",
@@ -136,7 +139,7 @@ def common_md():
     sorted_ops = [kv[1] for kv in sorted(all_ops_dict.items())]
     output += op_table_template.render(ops=sorted_ops)
 
-    output += "# Missing documentation\n\n"
+    output += "\n\n# Missing documentation\n\n"
     missing_ops = all_ops - ops_with_docs
     output += ", ".join([f"`{o}`" for o in sorted(missing_ops)]) + "\n\n"
 

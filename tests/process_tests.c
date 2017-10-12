@@ -11,9 +11,11 @@
 // correct (allows contiuation of state)
 TEST process_helper_state(scene_state_t* ss, size_t n, char* lines[],
                           int16_t answer) {
-    process_result_t result = {.has_value = false, .value = 0 };
+    process_result_t result = { .has_value = false, .value = 0 };
     exec_state_t es;
     es_init(&es);
+    es_push(&es);
+    es_variables(&es)->script_number = 1;
     for (size_t i = 0; i < n; i++) {
         tele_command_t cmd;
         char error_msg[TELE_ERROR_MSG_LENGTH];
@@ -231,9 +233,8 @@ TEST test_Q() {
 
     // 1+2+3+4+5+6+7+8+9+10+11+12+13+14+15+16 = 136
     // 136 / 16 = 8.5
-    // TODO fix Q.AVG to return 9 in this circumstance
     char* test4[1] = { "Q.AVG" };
-    CHECK_CALL(process_helper_state(&ss, 1, test4, 8));
+    CHECK_CALL(process_helper_state(&ss, 1, test4, 9));
 
     char* test5[2] = { "Q.AVG 5", "Q.AVG" };
     CHECK_CALL(process_helper_state(&ss, 2, test5, 5));
@@ -278,6 +279,8 @@ TEST test_blank_command() {
     ss_init(&ss);
     exec_state_t es;
     es_init(&es);
+    es_push(&es);
+    es_variables(&es)->script_number = 1;
     tele_command_t cmd;
     char error_msg[TELE_ERROR_MSG_LENGTH];
 

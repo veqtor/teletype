@@ -73,12 +73,14 @@ CSRCS = \
 	../module/preset_w_mode.c   				\
 	../module/usb_disk_mode.c   				\
 	../src/command.c					\
+	../src/every.c					\
 	../src/helpers.c					\
 	../src/match_token.c					\
 	../src/scanner.c					\
 	../src/state.c						\
 	../src/table.c						\
 	../src/teletype.c					\
+	../src/turtle.c					\
 	../src/ops/op.c						\
 	../src/ops/ansible.c					\
 	../src/ops/controlflow.c				\
@@ -96,6 +98,7 @@ CSRCS = \
 	../src/ops/telex.c					\
 	../src/ops/variables.c					\
 	../src/ops/whitewhale.c					\
+	../src/ops/turtle.c					\
 	../libavr32/src/adc.c					\
 	../libavr32/src/events.c				\
 	../libavr32/src/euclidean/euclidean.c			\
@@ -190,10 +193,10 @@ INC_PATH = \
 	common/utils
 
 # Additional search paths for libraries.
-LIB_PATH =
+LIB_PATH = 
 
 # List of libraries to use during linking.
-LIBS =
+LIBS = 
 
 # Path relative to top level directory pointing to a linker script.
 LINKER_SCRIPT = ../src/link_uc3b0512.lds

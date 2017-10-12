@@ -1,5 +1,5 @@
 #include "match_token.h"
-
+#
 #include <ctype.h>   // isdigit
 #include <stdlib.h>  // rand, strtol
 
@@ -37,9 +37,29 @@
         "T"           => { MATCH_OP(E_OP_T); };
         "TIME"        => { MATCH_OP(E_OP_TIME); };
         "TIME.ACT"    => { MATCH_OP(E_OP_TIME_ACT); };
+        "LAST"        => { MATCH_OP(E_OP_LAST); };
         "X"           => { MATCH_OP(E_OP_X); };
         "Y"           => { MATCH_OP(E_OP_Y); };
         "Z"           => { MATCH_OP(E_OP_Z); };
+        
+        # turtle
+        "@"           => { MATCH_OP(E_OP_TURTLE); };
+        "@X"          => { MATCH_OP(E_OP_TURTLE_X); };
+        "@Y"          => { MATCH_OP(E_OP_TURTLE_Y); };
+        "@MOVE"       => { MATCH_OP(E_OP_TURTLE_MOVE); };
+        "@F"          => { MATCH_OP(E_OP_TURTLE_F); };
+        "@FX1"        => { MATCH_OP(E_OP_TURTLE_FX1); };
+        "@FY1"        => { MATCH_OP(E_OP_TURTLE_FY1); };
+        "@FX2"        => { MATCH_OP(E_OP_TURTLE_FX2); };
+        "@FY2"        => { MATCH_OP(E_OP_TURTLE_FY2); };
+        "@SPEED"      => { MATCH_OP(E_OP_TURTLE_SPEED); };
+        "@DIR"        => { MATCH_OP(E_OP_TURTLE_DIR); };
+        "@STEP"       => { MATCH_OP(E_OP_TURTLE_STEP); };
+        "@BUMP"       => { MATCH_OP(E_OP_TURTLE_BUMP); };
+        "@WRAP"       => { MATCH_OP(E_OP_TURTLE_WRAP); };
+        "@BOUNCE"     => { MATCH_OP(E_OP_TURTLE_BOUNCE); };
+        "@SCRIPT"     => { MATCH_OP(E_OP_TURTLE_SCRIPT); };
+        "@SHOW"       => { MATCH_OP(E_OP_TURTLE_SHOW); };
 
         # metronome
         "M"           => { MATCH_OP(E_OP_M); };
@@ -133,6 +153,7 @@
         "V"           => { MATCH_OP(E_OP_V); };
         "VV"          => { MATCH_OP(E_OP_VV); };
         "ER"          => { MATCH_OP(E_OP_ER); };
+        "BPM"         => { MATCH_OP(E_OP_BPM);; };
         "XOR"         => { MATCH_OP(E_OP_XOR); };
         "+"           => { MATCH_OP(E_OP_SYM_PLUS); };
         "-"           => { MATCH_OP(E_OP_SYM_DASH); };
@@ -161,6 +182,9 @@
         "SCRIPT"      => { MATCH_OP(E_OP_SCRIPT); };
         "KILL"        => { MATCH_OP(E_OP_KILL); };
         "SCENE"       => { MATCH_OP(E_OP_SCENE); };
+        "BREAK"       => { MATCH_OP(E_OP_BREAK); };
+        "BRK"         => { MATCH_OP(E_OP_BRK); };
+        "SYNC"        => { MATCH_OP(E_OP_SYNC); };
 
         # delay
         "DEL.CLR"     => { MATCH_OP(E_OP_DEL_CLR); };
@@ -393,6 +417,10 @@
         "ELIF"        => { MATCH_MOD(E_MOD_ELIF); };
         "ELSE"        => { MATCH_MOD(E_MOD_ELSE); };
         "L"           => { MATCH_MOD(E_MOD_L); };
+        "W"           => { MATCH_MOD(E_MOD_W); };
+        "EVERY"       => { MATCH_MOD(E_MOD_EVERY); };
+        "SKIP"        => { MATCH_MOD(E_MOD_SKIP); };
+        "OTHER"       => { MATCH_MOD(E_MOD_OTHER); };
 
         # delay
         "PROB"        => { MATCH_MOD(E_MOD_PROB); };

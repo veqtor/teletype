@@ -1,7 +1,28 @@
 # Changelog
 
-## v2.0.1
+## V2.1
+- **BREAKING**: the `I` variable is now scoped to the `L` loop, and does not exist outside of an execution context.  Scripts using `I` as a general-purpose variable will be broken. 
+- **FIX**: `SCENE` will not run from `INIT` script during scene load.
+- **NEW**: Tracker data entry overhaul.  Type numbers, press enter to commit.
+- **NEW**: new op: `BPM` to get milliseconds per beat in given BPM
+- **NEW**: script lines can be disabled / enabled with ctrl-/
+- **NEW**: shift-enter in scene write mode now inserts a line
+- **NEW**: new ops: `LAST x` for the last time script `x` was called
+- **NEW**: `SCRIPT` with no arguments gets the current script number.
+- **FIX**: `AVG` and `Q.AVG` now round up properly
+- **NEW**: new op: `BREAK` to stop the remainder of the script
+- **NEW**: new mod: `W [condition]: [statement]` will execute `statement` as long as `condition` is true (up to an iteration limit).
+- **NEW**: new mods: `EVERY x:`, `SKIP x:`, `OTHER:` to alternately execute or not execute a command.
+- **NEW**: new op: `SYNC x` will synchronize all `EVERY` and `SKIP` line to the same step.
+- **NEW**: new feature: @ - the turtle.  Walks around the pattern grid.  Many ops, see documentation.
+- **OLD**: ctrl-F1 to F8 mute/unmute scripts.
+- **NEW**: ctrl-F9 enables/disables METRO.
+- **FIX**: recursive delay fix.  Now you can `1: DEL 500: SCRIPT 1` for temporal recursion.
+- **FIX**: KILL now clears TR output as well as disabling the METRO script.
+- **FIX**: if / else conditions no longer transcend their script
+- **IMP**: functional exectuion stack for `SCRIPT` operations
 
+## v2.0.1
 - **FIX**: update IRQ masking which prevents screen glitches and crashing under heavy load
 
 ## v2.0
