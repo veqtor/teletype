@@ -20,6 +20,12 @@ The turtle can be constrained on the tracker grid by setting its fence with `@FX
 
 Finally, the turtle can be displayed on the tracker screen with `@SHOW 1`, where it will indicate the current cell by pointing to it from the right side with the `<` symbol.
 
+#### New Mods: EVERY, SKIP, and OTHER, plus SYNC
+
+These mods allow rhythmic division of control flow. EVERY X: executes the post-command once per X at the Xth time the script is called. SKIP X: executes it every time but the Xth. OTHER: will execute when the previous EVERY/SKIP command did not.
+
+Finally, SYNC X will set each EVERY and SKIP counter to X without modifying its divisor value. Using a negative number will set it to that number of steps before the step. Using SYNC -1 will cause each EVERY to execute on its next call, and each SKIP will not execute.
+
 #### Script Line "Commenting"
 
 Individual lines in scripts can now be disabled from execution by highlighting the line and pressing `ALT-/`.  Disabled lines will appear dim.  This status will persist through save/load from flash, but will not carry over to scenes saved to USB drive.
