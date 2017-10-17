@@ -18,6 +18,8 @@ To access the value that the turtle operator points to, use `@`, which can also 
 
 The turtle can be constrained on the tracker grid by setting its fence with `@FX1`, `@FY1`, `@FX2`, and `@FY2`, or by using the shortcut operator `@F x1 y1 x2 y2`.  When the turtle reaches the fence, its behaviour is governed by its _fence mode_, where the turtle can simply stop (`@BUMP`), wrap around to the other edge (`@WRAP`), or bounce off the fence and change direction (`@BOUNCE`).  Each of these can be set to `1` to enable that mode.
 
+Setting `@SCRIPT N` will cause script `N` to execute whenever the turtle crosses the boundary to another cell.  This is different from simply calling `@STEP; @SCRIPT N` because the turtle is not guaranteed to change cells on every step if it is moving slowly enough.
+
 Finally, the turtle can be displayed on the tracker screen with `@SHOW 1`, where it will indicate the current cell by pointing to it from the right side with the `<` symbol.
 
 #### New Mods: EVERY, SKIP, and OTHER, plus SYNC
