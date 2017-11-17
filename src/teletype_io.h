@@ -17,6 +17,8 @@ extern void tele_tr(uint8_t i, int16_t v);
 extern void tele_cv(uint8_t i, int16_t v, uint8_t s);
 extern void tele_cv_slew(uint8_t i, int16_t v);
 
+extern void tele_update_in(void);
+
 // inform target if there are delays
 extern void tele_has_delays(bool has_delays);
 
