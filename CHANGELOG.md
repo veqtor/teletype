@@ -2,6 +2,7 @@
 
 ## vNEXT
 - **NEW**: added a cheat sheet PDF
+- **FIX** : corrected functionality of JI op for 1volt/octave tuning
 
 ## v2.1
 - **BREAKING**: the `I` variable is now scoped to the `L` loop, and does not exist outside of an execution context.  Scripts using `I` as a general-purpose variable will be broken. 

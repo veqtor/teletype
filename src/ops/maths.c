@@ -379,17 +379,50 @@ static void op_OR_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
 
 static void op_JI_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
                       exec_state_t *NOTUSED(es), command_state_t *cs) {
-    int16_t a = cs_pop(cs);
-    int16_t b = cs_pop(cs);
+    const uint8_t prime[5] = { 3, 5, 7, 11, 13 };
+    const int16_t ji_const[5] = { 15331, 8437, 21159, 12041, 18357 };
+    int32_t result;
+    int16_t n = abs(cs_pop(cs));
+    int16_t d = abs(cs_pop(cs));
 
-    if (a == 0) {
+    if (n == 0 || d == 0) {  // early return if zeroes
         cs_push(cs, 0);
         return;
     }
 
-    uint32_t ji = (((a << 8) / b) * 1684) >> 8;
-    while (ji > 1683) ji >>= 1;
-    cs_push(cs, ji);
+    while (!(n & 1)) { n >>= 1; }  // factors of 2 ignored
+    while (!(d & 1)) { d >>= 1; }
+
+    for (uint8_t p = 0; p <= 5; p++) {  // find num factors
+        if (n <= 2) { break; }          // succeed if all primes found
+        if (p == 5) {                   // failed to find solution
+            cs_push(cs, 0);
+            return;
+        }
+        int32_t quotient = n / prime[p];
+        while (n == quotient * prime[p]) {  // match
+            result += ji_const[p];
+            n = quotient;
+            quotient = n / prime[p];
+        }
+    }
+    for (uint8_t p = 0; p <= 5; p++) {  // denom
+        if (d <= 2) { break; }          // succeed if all primes found
+        if (p == 5) {
+            cs_push(cs, 0);
+            return;
+        }
+        int32_t quotient = d / prime[p];
+        while (d == quotient * prime[p]) {  // match
+            result -= ji_const[p];          // SUBTRACT for denominator
+            d = quotient;
+            quotient = d / prime[p];
+        }
+    }
+    result = ( result + 8 ) >> 4; // round & scale
+    while (result >= 1638) { result -= 1638; }  // normalize `V 0` to `V 1`
+    while (result < 0) { result += 1638; }
+    cs_push(cs, result);
 }
 
 static void op_SCALE_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
