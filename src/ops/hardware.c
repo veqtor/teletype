@@ -188,6 +188,7 @@ static void op_CV_OFF_set(const void *NOTUSED(data), scene_state_t *ss,
 
 static void op_IN_get(const void *NOTUSED(data), scene_state_t *ss,
                       exec_state_t *NOTUSED(es), command_state_t *cs) {
+    tele_update_in();
     cs_push(cs, ss->variables.in);
 }
 

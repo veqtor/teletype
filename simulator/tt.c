@@ -36,6 +36,11 @@ void tele_cv_slew(uint8_t i, int16_t v) {
     printf("\n");
 }
 
+void tele_update_in(void) {
+    printf("UPDATE IN");
+    printf("\n");
+}
+
 void tele_has_delays(bool i) {
     printf("DELAY  i:%s", i ? "true" : "false");
     printf("\n");
