@@ -129,6 +129,7 @@ typedef enum {
     E_OP_VV,
     E_OP_ER,
     E_OP_BPM,
+    E_OP_LFSR,
     E_OP_XOR,
     E_OP_SYM_PLUS,
     E_OP_SYM_DASH,

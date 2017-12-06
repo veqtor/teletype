@@ -148,6 +148,7 @@
         "AND"         => { MATCH_OP(E_OP_AND); };
         "OR"          => { MATCH_OP(E_OP_OR); };
         "JI"          => { MATCH_OP(E_OP_JI); };
+        "LFSR"        => { MATCH_OP(E_OP_LFSR); };
         "SCALE"       => { MATCH_OP(E_OP_SCALE); };
         "N"           => { MATCH_OP(E_OP_N); };
         "V"           => { MATCH_OP(E_OP_V); };

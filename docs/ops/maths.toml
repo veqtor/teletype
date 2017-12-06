@@ -128,6 +128,17 @@ description = """
 Logical OR of `x` and `y`. Returns `1` if either `x` or `y` are greater than `0`, otherwise it returns `0`.
 """
 
+[LFSR]
+prototype = "LFSR s i"
+short = "lfsr `s` with bit at `i`"
+description = """
+Limited feedback shift-register psuedo-random noise generator helper.
+
+- `s` is state, insert previous output, or 1 to reset
+- `i` is feedback tap index (`1-32`), higher values yield higher complexity
+
+"""
+
 [JI]
 prototype = "JI x y"
 short = "just intonation helper, precision ratio divider normalised to 1V"

@@ -76,6 +76,8 @@ static void op_ER_get(const void *data, scene_state_t *ss, exec_state_t *es,
                       command_state_t *cs);
 static void op_BPM_get(const void *data, scene_state_t *ss, exec_state_t *es,
                        command_state_t *cs);
+static void op_LFSR_get(const void *data, scene_state_t *ss, exec_state_t *es,
+                       command_state_t *cs);
 
 
 // clang-format off
@@ -114,6 +116,7 @@ const tele_op_t op_V     = MAKE_GET_OP(V       , op_V_get       , 1, true);
 const tele_op_t op_VV    = MAKE_GET_OP(VV      , op_VV_get      , 1, true);
 const tele_op_t op_ER    = MAKE_GET_OP(ER      , op_ER_get      , 3, true);
 const tele_op_t op_BPM  = MAKE_GET_OP(BPM    , op_BPM_get    , 1, true);
+const tele_op_t op_LFSR   = MAKE_GET_OP(LFSR     , op_LFSR_get  , 2, true);
 
 const tele_op_t op_XOR   = MAKE_ALIAS_OP(XOR, op_NE_get, NULL, 2, true);
 
@@ -501,4 +504,12 @@ static void op_BPM_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
     if (a > 1000) a = 1000;
     ret = ((((uint32_t)(1 << 31)) / ((a << 20) / 60)) * 1000) >> 11;
     cs_push(cs, (int16_t)ret);
+}
+
+
+static void op_LFSR_get(const void *NOTUSED(data), scene_state_t *NOTUSED(ss),
+                       exec_state_t *NOTUSED(es), command_state_t *cs) {
+    int16_t v = cs_pop(cs);
+    int16_t b = cs_pop(cs);
+    cs_push(cs, (v << 1) | ((v & 1) ^ (v >> b) & 1));
 }
